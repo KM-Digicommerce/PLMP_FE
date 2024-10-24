@@ -29,7 +29,7 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.post('http://192.168.1.10:8000/api/obtainAllProductList/'); // Fetch all products without filtering by productTypeId
+        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`); // Fetch all products without filtering by productTypeId
 
         // Assuming your response structure contains "data" with "product_list"
         if (response.data && response.data.data && response.data.data.product_list) {
@@ -67,7 +67,7 @@ const ProductList = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post('http://192.168.1.10:8000/api/upload_file/', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -157,7 +157,7 @@ const ProductList = () => {
     };
 
     try {
-      const response = await axios.put('http://192.168.1.10:8000/api/productBulkUpdate/', updates);
+      const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
       Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
         window.location.reload(); // Refresh the page to show updated data
       });
