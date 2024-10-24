@@ -14,11 +14,11 @@ function App() {
   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
   const [showCategoriesTable, setShowCategoriesTable] = useState(false); // State to show/hide the table
   const [showProductList, setShowProductList] = useState(false); // State to show/hide the product list
-
+  
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-      console.log('API Response:', res.data); // Log the API response
+      console.log('API Response: here', res.data); // Log the API response
       setCategoriesData(res.data.data);
     } catch (err) {
       console.log('ERROR', err);
