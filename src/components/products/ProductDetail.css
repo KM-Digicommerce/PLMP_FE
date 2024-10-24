@@ -1,12 +1,10 @@
-/ src/components/ProductDetail.css /
 
-/ Basic styling for the product edit form /
 .product-edit-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
     max-width: 800px;
-    / margin: 0 auto; /
+    margin: 0 auto; 
     background: #fff;
     padding: 20px;
     border-radius: 8px;

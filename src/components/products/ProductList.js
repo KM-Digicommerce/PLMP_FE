@@ -1,19 +1,16 @@
 // src\components\products\ProductList.js
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import './ProductList.css';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import UploadIcon from '@mui/icons-material/Upload';
-import IconButton from '@mui/material/IconButton';
+
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);
   const [error, setError] = useState(null);
-  const [uploadError, setUploadError] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [bulkEditData, setBulkEditData] = useState({
@@ -29,86 +26,31 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`); // Fetch all products without filtering by productTypeId
+        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`); 
 
-        // Assuming your response structure contains "data" with "product_list"
         if (response.data && response.data.data && response.data.data.product_list) {
-          setResponseData(response.data.data.product_list); // Update state with product_list
+          setResponseData(response.data.data.product_list); 
         } else {
           alert("Unexpected response structure");
         }
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false); // Set loading to false when done
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Fetch data only once when the component mounts
+  }, []);
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
+
 
   const handleProductSelect = (productId) => {
     navigate(`/product/${productId}`);    
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      Swal.fire({
-        text: 'Please select a file to upload.',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+  
 
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log(response.data.data.status, 'file status');
-      if (response.data && response.data.status === false) {
-        showUploadErrorSwal(response.data.message || 'Failed to upload the file.');
-      } else {
-        Swal.fire({
-          title: 'Success!',
-          text: 'File uploaded successfully!',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-        setUploadError(null);
-        setSelectedFile(null);
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      showUploadErrorSwal('An error occurred while uploading the file.');
-    }
-  };
-
-  const showUploadErrorSwal = (message) => {
-    Swal.fire({
-      title: 'Upload Failed',
-      text: message,
-      icon: 'error',
-      confirmButtonText: 'Reupload',
-      showCancelButton: true,
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        triggerFileInput();
-      }
-    });
-  };
-
-  const triggerFileInput = () => {
-    document.getElementById('file-input').click();
-  };
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
@@ -159,7 +101,7 @@ const ProductList = () => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
       Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
+        window.location.reload(); 
       });
     } catch (err) {
       Swal.fire('Error', 'Failed to apply bulk edit', 'error');
@@ -168,24 +110,7 @@ const ProductList = () => {
 
   return (
     <div className="product-list">
-      <div className="upload-container">
-        <input
-          type="file"
-          id="file-input"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-        <IconButton onClick={triggerFileInput} color="primary" aria-label="upload file">
-          <UploadIcon />
-        </IconButton>
-        {selectedFile && (
-          <span className="file-name">{selectedFile.name}</span>
-        )}
-        <button onClick={handleUpload}>Upload</button>
-        {uploadError && (
-          <p className="error-message">{uploadError}</p>
-        )}
-      </div>
+      
       <div className="search-container">
         <input
           type="text"

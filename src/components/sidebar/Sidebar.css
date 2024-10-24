@@ -1,27 +1,61 @@
-/* src\components\sidebar\Sidebar.css */
+.sidebar {
+  background-color: #2b1b4f;
+  height: 100vh; 
+  color: white;
+  text-align: center;
+}
 
-.topMenu{
+.topMenu {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .topMenu li {
-  padding-bottom: 10px;
+  padding: 10px 15px; 
   font-size: 16px;
   font-weight: 500;
+  cursor: pointer; 
+  transition: background-color 0.3s;
 }
 
- .subMenu{
+.topMenu li:hover::before {
+  width: 3px; 
+}
+
+.topMenu li:hover {
+  background-color: #f2f2f2;
+  color: #2b1b4f;
+  border-radius: 80rem 0rem 0rem 80rem;
+}
+
+.subMenu {
   padding: 0;
   margin-top: 5px;
+  padding-left: 15px;
 }
 
-.subMenu li{
-  padding-bottom: 5px;
+.subMenu li {
+  padding: 8px 15px;
   font-size: 14px;
   font-weight: 400;
   list-style: none;
-  padding-left: 5px;
+  transition: background-color 0.3s;
 }
 
+.subMenu li:hover {
+  background-color: #51607d;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%; 
+  }
+}
+.upload-container {
+  margin-top: 10px;
+  background-color: #ffffff; 
+  padding: 10px; 
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+}
