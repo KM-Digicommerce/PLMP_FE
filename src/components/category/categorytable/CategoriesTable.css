@@ -61,3 +61,55 @@ tr:hover .action-buttons {
 .CategoryName{
   background-color: lightgray;
 }
+.CategoryMain {
+  padding: 20px;
+}
+
+.CategoryTable-header {
+  margin-bottom: 20px;
+}
+
+.CategoryContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.DropdownsContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.DropdownColumn {
+  flex: 1; /* Each dropdown takes an equal amount of space */
+  margin-right: 15px; /* Spacing between columns */
+}
+
+.DropdownColumn label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.DropdownColumn select {
+  width: 100%; /* Full width for dropdowns */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.DropdownColumn select:focus {
+  border-color: #007bff; /* Focus border color */
+}
+
+.CategoryContainerRight {
+  flex: 1; /* Make sure this takes the remaining space */
+  margin-left: 20px;
+}
+
+.CategoryContainerRight p {
+  font-weight: bold;
+}
