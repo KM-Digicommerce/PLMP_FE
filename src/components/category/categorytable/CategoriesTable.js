@@ -1,6 +1,6 @@
 // src/components/category/categorytable/CategoriesTable.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CategoriesTable.css';
 import axios from 'axios';
 import AddCategory from '../categoryform/AddCategory';
@@ -10,25 +10,57 @@ import AddProductType from '../categoryform/AddProductType';
 const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedCategoryIdPopup, setSelectedCategoryIdPopup] = useState('');
   const [selectedSectionId, setSelectedSectionId] = useState('');
+  const [selectedSectionIdPopup, setSelectedSectionIdPopup] = useState('');
   const [selectedProductTypeId, setSelectedProductTypeId] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(true); // State to control dropdown open
+  const [showAddCategoryPopup, setShowAddCategoryPopup] = useState(false); 
+  const [showAddSectionPopup, setShowAddSectionPopup] = useState(false); // State to control AddCategory popup
+  const [showAddProductTypePopup, setShowAddProductTypePopup] = useState(false); // State to control AddCategory popup
 
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleCategorySelect = (e) => {
-    setSelectedCategoryId(e.target.value);
-    setSelectedSectionId(''); // Reset section when category changes
+    const selectedValue = e.target.value;
+    setSelectedCategoryId(selectedValue); // Reset section when category changes
+    setSelectedCategoryIdPopup(selectedValue);
     setSelectedProductTypeId(''); // Reset product type when category changes
+    setDropdownOpen(true);
+    if (selectedValue === 'add') {
+      setShowAddCategoryPopup(true);
+    } else {
+      setShowAddCategoryPopup(false);
+    }
   };
-
+  const closeAddCategoryPopup = () => {
+    setShowAddCategoryPopup(false);
+    setShowAddSectionPopup(false);
+    setShowAddProductTypePopup(false);
+  };
   const handleSectionSelect = (e) => {
-    setSelectedSectionId(e.target.value);
+    console.log('selectedCategoryIdPopup',selectedCategoryIdPopup);
+    
+    const selectedValue = e.target.value;
+    setSelectedSectionId(selectedValue);
+    setSelectedSectionIdPopup(selectedValue);
     setSelectedProductTypeId(''); // Reset product type when section changes
+    if (selectedValue === 'add') {
+      setShowAddSectionPopup(true);
+    } else {
+      setShowAddSectionPopup(false);
+    }
   };
 
   const handleProductTypeSelect = (e) => {
-    setSelectedProductTypeId(e.target.value);
+    const selectedValue = e.target.value;
+    setSelectedProductTypeId(selectedValue);
+    if (selectedValue === 'add') {
+      setShowAddProductTypePopup(true);
+    } else {
+      setShowAddProductTypePopup(false);
+    }
   };
 
   if (!Array.isArray(filteredCategories) || filteredCategories.length === 0) {
@@ -144,12 +176,31 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             </select>
           </div>
         </div>
-        <div className='CategoryContainerRight'>
-          <p>Categories Forms</p>
-          <AddCategory refreshCategories={refreshCategories} />
-          <AddSection categories={categories} refreshCategories={refreshCategories} />
-          <AddProductType categories={categories} refreshCategories={refreshCategories} />
-        </div>
+        {showAddCategoryPopup && (
+          <div className="popup">
+            <div className="popup-content">
+              <button onClick={closeAddCategoryPopup}>Close</button>
+              <AddCategory refreshCategories={refreshCategories} />
+            </div>
+          </div>
+        )}
+        {showAddSectionPopup && (
+          <div className="popup">
+            <div className="popup-content">
+              <button onClick={closeAddCategoryPopup}>Close</button>
+              <AddSection  selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
+              </div>
+          </div>
+        )}
+        {showAddProductTypePopup && (
+          <div className="popup">
+            <div className="popup-content">
+              <button onClick={closeAddCategoryPopup}>Close</button>
+              <AddProductType selectedCategoryIdPopup={selectedCategoryIdPopup}
+                selectedSectionIdPopup={selectedSectionIdPopup} categories={categories} refreshCategories={refreshCategories} />
+              </div>
+          </div>
+        )}
       </div>
     </div>
   );

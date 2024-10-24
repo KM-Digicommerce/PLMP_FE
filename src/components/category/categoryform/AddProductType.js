@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './AddCategory.css'
 
-const AddProductType = ({ categories, refreshCategories }) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
-  const [selectedSectionId, setSelectedSectionId] = useState('');
+const AddProductType = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categories, refreshCategories }) => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
+  const [selectedSectionId, setSelectedSectionId] = useState(selectedSectionIdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
 
   const handleCategoryChange = (e) => {

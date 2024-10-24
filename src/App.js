@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRou
 import Sidebar from './components/sidebar/Sidebar';
 import ProductList from './components/products/ProductList';
 import Header from './components/Header/Header';
-import CategoriesTable from './components/category/categorytable/CategoriesTable'; 
+import CategoriesTable from './components/category/categorytable/CategoriesTable';
 import axios from 'axios';
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
   const [showCategoriesTable, setShowCategoriesTable] = useState(false); // State to show/hide the table
   const [showProductList, setShowProductList] = useState(false); // State to show/hide the product list
-  
+
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
@@ -46,18 +46,22 @@ function App() {
         <Header />
         <div className="main-container">
           <div className="sidebar-container">
-            <Sidebar 
-              setSelectedProductTypeId={setSelectedProductTypeId} 
+            <Sidebar
+              setSelectedProductTypeId={setSelectedProductTypeId}
               onCategoriesClick={handleCategoriesClick}
               onAllProductsClick={handleAllProductsClick} // Pass the click handler
             />
           </div>
           <div className="right-container">
             {showCategoriesTable ? (
-              <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} /> 
+              <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} />
             ) : showProductList ? ( // Corrected syntax here
               <ProductList productTypeId={selectedProductTypeId} />
-            ) : null} {/* Render nothing if neither is selected */}
+            ) : null} <div className="welcome-container">
+              <h1 className="welcome-title">Welcome to PLMP Project Tool</h1>
+              <p className="welcome-message">Your one-stop solution for managing products and categories efficiently.</p>
+
+            </div>
           </div>
         </div>
       </>

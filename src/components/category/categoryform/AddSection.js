@@ -3,10 +3,15 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './AddCategory.css'
 
-const AddSection = ({ categories, refreshCategories }) => {
+const AddSection = ({ selectedCategoryIdPopup, categories, refreshCategories }) => {
   const [sectionName, setSectionName] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
 
+  console.log(selectedCategoryIdPopup,'selectedCategoryIdPopup');
+  console.log(categories,'categories');
+  console.log(refreshCategories,'refreshCategories');
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
