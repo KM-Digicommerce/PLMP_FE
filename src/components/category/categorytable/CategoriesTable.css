@@ -1,0 +1,63 @@
+/* src/components/CategoriesTable.css */
+
+p{
+  margin: 0;
+  font-weight: 500;
+}
+
+table, th, td {
+  border: 1px solid lightgray;
+    border-collapse: collapse;
+    text-align: left;
+  min-width: 18px;
+  padding: 5px 10px;
+}
+
+th{
+  font-size: 16px;
+    font-weight: 500;
+}
+
+td{
+  font-size: 14px;
+    font-weight: 400;
+  
+}
+
+.action-buttons {
+  display: none; 
+  margin-left: 10px; 
+}
+
+tr:hover .action-buttons {
+  display: inline; 
+}
+
+.action {
+  margin-left: 5px; 
+  cursor: pointer; 
+  color: blue; 
+}
+
+.CategoryTable-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.btn-addNewCategory button {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+}
+
+
+.CategoryContainer{
+  display: flex;
+  gap: 20px;
+}
+
+.CategoryName{
+  background-color: lightgray;
+}

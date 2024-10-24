@@ -1,0 +1,18 @@
+/* src\components\category\categoryform\AddCategory.css */
+
+.add-category , .add-section , .add-product-type{
+    margin: 20px 0px;
+}
+
+input[type="text"] {
+    margin-right: 10px;
+}
+
+.form-title{
+    margin-bottom: 5px;
+}
+
+select {
+    display: block;
+    margin-bottom: 7px;
+}

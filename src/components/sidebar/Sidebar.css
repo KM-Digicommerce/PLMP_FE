@@ -1,0 +1,27 @@
+/* src\components\sidebar\Sidebar.css */
+
+.topMenu{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topMenu li {
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+ .subMenu{
+  padding: 0;
+  margin-top: 5px;
+}
+
+.subMenu li{
+  padding-bottom: 5px;
+  font-size: 14px;
+  font-weight: 400;
+  list-style: none;
+  padding-left: 5px;
+}
+
