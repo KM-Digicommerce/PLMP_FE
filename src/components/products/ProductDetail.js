@@ -17,7 +17,7 @@ const ProductDetail = () => {
     useEffect(() => {
         const fetchProductDetail = async () => {
             try {
-                const response = await axios.post('http://192.168.1.8:8000/api/obtainProductDetails/', {
+                const response = await axios.post('http://192.168.1.10:8000/api/obtainProductDetails/', {
                     // const response = await axios.post('http://192.168.162.82:8000/api/obtainProductDetails/', {
 
                     id: id, // Use the id from the URL
@@ -35,7 +35,7 @@ const ProductDetail = () => {
                 } else {
                     setError('Product not found');
                 }
-                const variantResponse = await axios.post('http://192.168.1.8:8000/api/obtainAllVarientList/', {
+                const variantResponse = await axios.post('http://192.168.1.10:8000/api/obtainAllVarientList/', {
                     product_id: id, // Adjust if the API needs a product ID
                 });
                 console.log(variantResponse.data, 'Variant List Response');
@@ -85,7 +85,7 @@ const ProductDetail = () => {
                     Key_features: formData.Key_features
                 },
             };
-            const response = await axios.put(`http://192.168.1.8:8000/api/productUpdate/`, payload); // Update the product
+            const response = await axios.put(`http://192.168.1.10:8000/api/productUpdate/`, payload); // Update the product
             // const response = await axios.put(`http://192.168.162.82:8000/api/productUpdate/`, payload);
             console.log(response.data, 'Product updated successfully');
             Swal.fire({
