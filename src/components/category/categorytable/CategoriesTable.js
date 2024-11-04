@@ -332,8 +332,8 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
             </div>
           </div>
           {/* Section Dropdown */}
-          {level2Categories.length > 0 && (
-            <>
+          {/* {level2Categories.length > 0 && ( */}
+            {/* <> */}
               <div className='DropdownColumn'>
                 <label htmlFor="sectionSelect">Level 2:</label>
                 <div className="custom-dropdown" onClick={() => setIsSectionDropdownOpen(!isSectionDropdownOpen)}>
@@ -370,11 +370,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                   )}
                 </div>
               </div>
-            </>
-          )}
+            {/* </> */}
+          {/* // )} */}
           {/* Product Type Dropdown */}
-          {level3Categories.length > 0 && (
-            <>
+          {/* {level3Categories.length > 0 && (
+            <> */}
               <div className='DropdownColumn'>
                 <label htmlFor="productTypeSelect">Level 3:</label>
                 <div className="custom-dropdown" onClick={() => setIsProductTypeDropdownOpen(!isProductTypeDropdownOpen)}>
@@ -411,11 +411,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                   )}
                 </div>
               </div>
-            </>
-          )}
+            {/* </>
+          )} */}
           {/* Level 4 Dropdown */}
-          {level4Categories.length > 0 && (
-            <>
+          {/* {level4Categories.length > 0 && (
+            <> */}
               <div className='DropdownColumn'>
                 <label htmlFor="productTypeSelect">Level 4:</label>
                 <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
@@ -452,11 +452,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                   )}
                 </div>
               </div>
-            </>
-          )}
+            {/* </>
+          )} */}
           {/* Level 5 Dropdown */}
-          {level5Categories.length > 0 && (
-            <>
+          {/* {level5Categories.length > 0 && (
+            <> */}
               <div className='DropdownColumn'>
                 <label htmlFor="productTypeSelect">Level 5:</label>
                 <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
@@ -493,12 +493,12 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                   )}
                 </div>
               </div>
-              </>
-    )}
+              {/* </>
+    )} */}
 
     {/* Level 6 Dropdown */}
-    {level6Categories.length > 0 && (
-            <>
+    {/* {level6Categories.length > 0 && (
+            <> */}
               <div className='DropdownColumn'>
                 <label htmlFor="productTypeSelect">Level 6:</label>
                 <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
@@ -535,8 +535,8 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                   )}
                 </div>
               </div>
-              </>
-            )}
+              {/* </>
+            )} */}
             </div>
             
           {showAddCategoryPopup && (
