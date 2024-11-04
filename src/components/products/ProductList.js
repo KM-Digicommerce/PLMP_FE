@@ -1,7 +1,7 @@
 // src\components\products\ProductList.js
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -26,10 +26,10 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`); 
+        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
 
         if (response.data && response.data.data && response.data.data.product_list) {
-          setResponseData(response.data.data.product_list); 
+          setResponseData(response.data.data.product_list);
         } else {
           alert("Unexpected response structure");
         }
@@ -46,10 +46,10 @@ const ProductList = () => {
 
 
   const handleProductSelect = (productId) => {
-    navigate(`/product/${productId}`);    
+    navigate(`/product/${productId}`);
   };
 
-  
+
 
 
   const handleSelectAll = (event) => {
@@ -101,7 +101,7 @@ const ProductList = () => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
       Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
-        window.location.reload(); 
+        window.location.reload();
       });
     } catch (err) {
       Swal.fire('Error', 'Failed to apply bulk edit', 'error');
@@ -110,7 +110,7 @@ const ProductList = () => {
 
   return (
     <div className="product-list">
-      
+
       <div className="search-container">
         <input
           type="text"
@@ -157,23 +157,21 @@ const ProductList = () => {
         <table className="product-table">
           <thead>
             <tr>
-            <th className="checkbox-column">
-            <input
+              <th className="checkbox-column">
+                <input
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={selectedProducts.length === filteredProducts.length}
                 />
               </th>
-              <th className="product-column">Product</th>
-      <th className="manufacturer-column">Manufacturer</th>
-      <th className="tags-column">Tags</th>
-      <th className="features-column">Features</th>
-      <th className="price-column">Price</th>
+              <th className="product-column">Product Name</th>
+              <th className="manufacturer-column">Manufacturer</th>
+              <th className="price-column">Price</th>
             </tr>
           </thead>
           <tbody>
             {filteredProducts.map((item) => (
-              <tr key={item.product_id}>
+              <tr key={`product-${item.product_id}`}>
                 <td className="checkbox-column">
                   <input
                     type="checkbox"
@@ -195,17 +193,10 @@ const ProductList = () => {
                       className="product-image-round"
                     />
                   )}
-                  {/* {item.product_name} */}
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
-                {/* <td>{item.ManufacturerName}</td>
-                <td>{item.tags}</td>
-                <td>{item.Key_features}</td> */}
-                {/* <td>{item.BasePrice}</td> */}
                 <td className="manufacturer-column">{item.ManufacturerName}</td>
-        <td className="tags-column">{item.tags}</td>
-        <td className="features-column">{item.Key_features}</td>
-        <td className="price-column">{item.BasePrice}</td>
+                <td className="price-column">{item.BasePrice}</td>
               </tr>
             ))}
           </tbody>

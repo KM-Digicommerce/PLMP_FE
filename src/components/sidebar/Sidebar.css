@@ -1,10 +1,3 @@
-.sidebar {
-  background-color: #2b1b4f;
-  height: 100vh; 
-  color: white;
-  text-align: center;
-}
-
 .topMenu {
   margin: 0;
   padding: 0;
@@ -19,14 +12,10 @@
   transition: background-color 0.3s;
 }
 
-.topMenu li:hover::before {
-  width: 3px; 
-}
 
 .topMenu li:hover {
-  background-color: #f2f2f2;
+  background-color: #f4f4f4a1;
   color: #2b1b4f;
-  border-radius: 80rem 0rem 0rem 80rem;
 }
 
 .subMenu {
@@ -58,4 +47,33 @@
   padding: 10px; 
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+}
+.sidebar {
+  background-color: #4a4e69; /* Darker shade */
+  color: #f9f5e6; /* Light text */
+  height: 300vh;
+  width: 250px;
+  font-family: 'Verdana', sans-serif;
+}
+.topMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.topMenu li {
+  padding: 15px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s;
+}
+.topMenu li:hover {
+  color: #ae0a5d; /* Yellow color on hover */
+}
+.topMenu li:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 5px;
+  height: 100%;
 }

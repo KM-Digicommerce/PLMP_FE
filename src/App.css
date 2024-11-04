@@ -12,8 +12,6 @@ body{
 }
 
 .sidebar-container{
-  background-color: #2b1b4f;
-  min-height: 100vh;
   min-width: 250px;
   width: 10%;
   /* padding: 20px; */
@@ -26,5 +24,34 @@ body{
   padding: 20px;
 }
 
+/* Example CSS for buttons */
+.button {
+  background-color: #5a67d8; /* Primary button color */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #4c51bf; /* Darker shade on hover */
+}
+
+/* Example CSS for cards */
+.card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 15px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Elevate card on hover */
+}
 
 

@@ -1,0 +1,35 @@
+.add-product-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+.add-product-container h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #2b1b4f;
+}
+
+.add-product-container input,
+.add-product-container textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-product-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #2b1b4f;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

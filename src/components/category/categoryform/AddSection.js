@@ -1,22 +1,23 @@
 // src/components/AddSection.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './AddCategory.css'
+import './AddCategory.css';
+import Swal from 'sweetalert2';
 
 const AddSection = ({ selectedCategoryIdPopup, categories, refreshCategories }) => {
   const [sectionName, setSectionName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
 
-  console.log(selectedCategoryIdPopup,'selectedCategoryIdPopup');
-  console.log(categories,'categories');
-  console.log(refreshCategories,'refreshCategories');
+  // console.log(selectedCategoryIdPopup,'selectedCategoryIdPopup');
+  // console.log(categories,'categories');
+  // console.log(refreshCategories,'refreshCategories');
 
   
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_IP}/createSection/`, {
+      await axios.post(`${process.env.REACT_APP_IP}/createCategory1/`, {
         name: sectionName,
         category_id: selectedCategoryId,
       });
@@ -26,7 +27,9 @@ const AddSection = ({ selectedCategoryIdPopup, categories, refreshCategories }) 
       
       // Refresh categories after adding a section
       await refreshCategories(); 
-      alert('Section added successfully!');
+      Swal.fire('Success', 'Section added successfully!', 'success').then(() => {
+        window.location.reload(); // Refresh the page to show updated data
+    })
     } catch (error) {
       console.error('Error adding section:', error);
       alert('Error adding section. Please try again.');
@@ -44,7 +47,7 @@ const AddSection = ({ selectedCategoryIdPopup, categories, refreshCategories }) 
         >
           <option value="">Select a Category</option>
           {categories.map((category) => (
-            <option key={category.category_id} value={category.category_id}>
+            <option key={category._id} value={category._id}>
               {category.name}
             </option>
           ))}

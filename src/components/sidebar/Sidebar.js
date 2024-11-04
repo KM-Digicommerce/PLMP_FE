@@ -4,8 +4,10 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons'; 
 
-const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClick, onAllProductsClick }) => {
+const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showImportOptions, setShowImportOptions] = useState(false); 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -84,7 +86,21 @@ const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClic
       showUploadErrorSwal('An error occurred while uploading the file.');
     }
   };
-
+  const [data, setData] = useState([]); // Ensure you have data in state
+    const handleExport = () => {
+        if (!data || data.length === 0) {
+            alert('No data to export');
+            return;
+        }
+        const dataStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = `${process.env.REACT_APP_IP}/exportAll/`;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${data.product_name || 'product'}_details.json`; // Ensure `data` has `product_name`
+        a.click();
+        window.URL.revokeObjectURL(url); // Clean up the URL object
+    };
   return (
     <div className="sidebar">
       <ul className="topMenu">
@@ -98,7 +114,7 @@ const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClic
             </ul>
           )}
         </li>
-        <li>Variants</li>
+        <li onClick={OnAllVariantsClick}>Variants</li>
         
         <li 
           onMouseEnter={() => setShowImportOptions(true)} // Open on hover
@@ -134,7 +150,7 @@ const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClic
           )}
         </li>
         
-        <li>Export</li>
+        <li className="top-menu export-button btn" onClick={handleExport} > Export <FontAwesomeIcon icon={faDownload} /> </li>
         <li>Settings</li>
       </ul>
 

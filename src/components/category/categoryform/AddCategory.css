@@ -1,7 +1,8 @@
 /* src\components\category\categoryform\AddCategory.css */
 
 .add-category , .add-section , .add-product-type{
-    margin: 20px 0px;
+    margin: 55px 0px;
+    text-align: center;
 }
 
 input[type="text"] {

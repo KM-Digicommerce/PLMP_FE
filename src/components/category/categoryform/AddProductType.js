@@ -1,13 +1,17 @@
 // src/components/AddProductType.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './AddCategory.css'
+import './AddCategory.css';
+import Swal from 'sweetalert2';
 
 const AddProductType = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categories, refreshCategories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedSectionId, setSelectedSectionId] = useState(selectedSectionIdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
 
+  console.log(selectedSectionId,'selectedSectionId 1');
+  console.log(categories,'categories 2');
+  console.log(refreshCategories,'refreshCategories 3');
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
     setSelectedSectionId(''); // Reset section selection when category changes
@@ -17,17 +21,18 @@ const AddProductType = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categ
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_IP}/createProductType/`, {
+      await axios.post(`${process.env.REACT_APP_IP}/createCategory2/`, {
         name: productTypeName,
-        section_id: selectedSectionId,
+        category_id: selectedSectionId,
       });
-
       setProductTypeName('');
       setSelectedCategoryId('');
       setSelectedSectionId('');
 
       await refreshCategories(); 
-      alert('Product type added successfully!');
+      Swal.fire('Success', 'Product type added successfully!', 'success').then(() => {
+        window.location.reload(); // Refresh the page to show updated data
+    })
     } catch (error) {
       console.error('Error adding product type:', error);
       alert('Error adding product type. Please try again.');
@@ -45,7 +50,7 @@ const AddProductType = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categ
         >
           <option value="">Select a Category</option>
           {categories.map((category) => (
-            <option key={category.category_id} value={category.category_id}>
+            <option key={category._id} value={category._id}>
               {category.name}
             </option>
           ))}
@@ -58,10 +63,10 @@ const AddProductType = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categ
           >
             <option value="">Select a Section</option>
             {categories
-              .find((cat) => cat.category_id === selectedCategoryId)
-              ?.sections.map((section) => (
-                <option key={section.section_id} value={section.section_id}>
-                  {section.section_name}
+              .find((level2) => level2._id === selectedCategoryId)
+              ?.level_one_category_list.map((section) => (
+                <option key={section._id} value={section._id}>
+                  {section.name}
                 </option>
               ))}
           </select>
