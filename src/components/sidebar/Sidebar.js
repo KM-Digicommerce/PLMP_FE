@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons'; 
 
-const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick }) => {
+const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick,OnAddProductClick }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showImportOptions, setShowImportOptions] = useState(false); 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -110,7 +110,7 @@ const Sidebar = ({ setSelectedProductTypeId, refreshCategories, onCategoriesClic
           {showProductsSubmenu && (
             <ul className="subMenu">
               <li onClick={onAllProductsClick}>All Products</li>
-              <li>Add New Product</li>
+              <li onClick={OnAddProductClick}>Add New Product</li>
             </ul>
           )}
         </li>

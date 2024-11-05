@@ -9,6 +9,7 @@ import ProductDetail from './components/products/ProductDetail';
 import Header from './components/Header/Header';
 import CategoriesTable from './components/category/categorytable/CategoriesTable';
 import VariantList from './components/variants/VariantList';
+import AddProduct from './components/products/AddProduct';
 import axios from 'axios';
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
   const [showCategoriesTable, setShowCategoriesTable] = useState(false); // State to show/hide the table
   const [showProductList, setShowProductList] = useState(false); // State to show/hide the product list
   const [showVariantsTable, setShowVariantsTable] = useState(false); // State to show/hide the table
+  const [addProduct, setAddProduct] = useState(false); // State to show/hide the product list
+
 
   const fetchCategories = async () => {
     try {
@@ -47,7 +50,12 @@ function App() {
     setShowProductList(false); // Show the product list
     setShowVariantsTable(true);
   };
-
+  const handleAddProductsClick = () => {
+    setShowCategoriesTable(false); // Hide the categories table
+    setShowProductList(false); // Show the product list
+    setShowVariantsTable(false);
+    setAddProduct(true);
+  };
   return (
     <Router> {/* Wrap your App in Router */}
       <>
@@ -59,6 +67,7 @@ function App() {
               onCategoriesClick={handleCategoriesClick}
               onAllProductsClick={handleAllProductsClick} // Pass the click handler
               OnAllVariantsClick={handleAllVariantsClick}
+              OnAddProductClick={handleAddProductsClick}
             />
           </div>
           <div className="right-container">
@@ -73,14 +82,14 @@ function App() {
                     <ProductList productTypeId={selectedProductTypeId} />
                   ) :showVariantsTable ? (
                     <VariantList  path="/variants/" categories={categoriesData} />
+                  ) : addProduct ? (
+                    <AddProduct  path="/addproduct/" categories={categoriesData} />
                   ) : null
                 }
               />
 
               {/* Product Detail Page */}
               <Route path="/product/:productId" element={<ProductDetail />} />
-              {/* <Route path="/variants/" element={<VariantList />} /> */}
-
             </Routes>
           </div>
         </div>

@@ -1,35 +1,139 @@
 .add-product-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
+    max-width: 178px;
+    /* margin: 0 auto; */
     padding: 20px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    /* border-radius: 8px; */
+    float: right;
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff; */
+}
+input[type="text"] {
+    margin: 10px 20px 10px 10px;
 }
 
-.add-product-container h2 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #2b1b4f;
+.form-section {
+    margin-bottom: 20px;
 }
 
-.add-product-container input,
-.add-product-container textarea {
+.input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-group input, .input-group textarea {
+    width: 48%; /* Adjust width as needed */
+    padding: 10px 0px 10px 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+textarea {
+    height: 80px; /* Adjust height as needed */
+    margin: 10px;
+}
+
+.save-button {
+    display: block;
     width: 100%;
-    margin-bottom: 10px;
     padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 
-.add-product-container button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #2b1b4f;
+.save-button:hover {
+    background-color: #0056b3;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it is above other elements */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 55%; /* Limit width to 90% of viewport */
+    max-height: 90%; /* Limit height to 90% of viewport */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    display: flex;
+    flex-direction: column; /* Arrange child elements in a column */
+}
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
     border: none;
-    border-radius: 4px;
+    font-size: 20px;
     cursor: pointer;
+    color: #4c4949;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.form-section {
+    margin-bottom: 15px; /* Space between sections */
+}
+
+input, textarea {
+    width: 90%; /* Full width */
+    margin-bottom: 10px; /* Space between inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Border for inputs */
+    border-radius: 4px; /* Rounded corners */
+}
+
+textarea {
+    resize: vertical; /* Allow vertical resizing */
+    min-height: 100px; /* Minimum height for textareas */
+}
+
+.add-product-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.save-button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button {
+    background-color: #28a745;
+    color: white;
 }

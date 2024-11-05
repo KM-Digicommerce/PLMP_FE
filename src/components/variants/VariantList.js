@@ -29,6 +29,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         level5: '',
         level6: '',
     });
+    const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
 
     const filteredCategories = categories.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
@@ -79,11 +80,12 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setSelectedlevel6('');
         setIsCategoryDropdownOpen(false);
     };
-   
+
     const handleCategorySelectForVariants = async (id) => {
+        setSelectedCategoryForVariant(id);
         try {
             const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
-            console.log('API Response: here', res.data.data); // Log the API response
+            // console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
@@ -91,7 +93,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     };
     useEffect(() => {
         handleCategorySelectForVariants();
-      }, []);
+    }, []);
     const handleSectionSelect = (id) => {
         setSelectedSectionId(id);
         setSelectedProductTypeId('');
@@ -126,7 +128,18 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     };
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const handleAddVariant = useCallback(async (category_varient_id) => {
+
+    //  To make visible the next level categories
+const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
+const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedSectionId);
+const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : [];
+const levelThreeCategoryForVisible = level3Categories.find(level3 => level3._id === selectedProductTypeId);
+const level4Categories = levelThreeCategoryForVisible ? levelThreeCategoryForVisible.level_three_category_list : [];
+const levelFourCategoryForVisible = level4Categories.find(level4 => level4._id === selectedlevel4);
+const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
+const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
+const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
+    const handleAddVariant = useCallback(async (category_varient_id,selectedCategoryForVariant) => {
         setIsLoading(true);
         setError(null);
         Swal.fire({
@@ -145,9 +158,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                 try {
                     const response = await axios.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
                         name: result.value,
-                        category_varient_id: category_varient_id
+                        category_varient_id: category_varient_id,
+                        category_id:selectedCategoryForVariant
                     });
-                    console.log('Variant added successfully:', response.data);
+                    Swal.fire('Success', 'Variant added successfully!', 'success')
                     await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
 
                 } catch (err) {
@@ -159,11 +173,51 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             }
         });
     }, []); // Add dependencies if required
-    
-    
+
+    const handleAddVariantValue = async (typeId) => {
+        // Show Swal popup to get the new type_value_name
+        const { value: typeValueName } = await Swal.fire({
+            title: 'Add Variant Value',
+            input: 'text',
+            inputPlaceholder: 'Enter variant value name',
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to enter a value!';
+                }
+            },
+        });
+
+        if (typeValueName) {
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                // Make API call to add the new variant value
+                const response = await axios.post(
+                    `${process.env.REACT_APP_IP}/createValueForVarientName/`,
+                    {
+                        name: typeValueName,
+                        option_id: typeId,
+                    }
+                );
+                Swal.fire('Success', 'Variant value added successfully!', 'success')
+                await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
+                // Here you can update the state or fetch the updated data if needed
+
+            } catch (err) {
+                console.error('Error adding variant value:', err);
+                setError('Failed to add variant value. Please try again.');
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
     return (
         <div>
-            <h1 className='header_cls'>VariantList Schema!</h1>
+            <h2 className='header_cls'>VariantList Schema!</h2>
             <div className='CategoryContainer'>
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
@@ -347,14 +401,12 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     </div>
                 </div>
             </div>
-
-            {variantsData.varient_list && variantsData.varient_list.length > 0 && (
-                <div>
-                    <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleAddVariant(variantsData.category_varient_id);
-                              }}
+                      {level2Categories.length > 0 && variantsData.varient_list && (
+            <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                                handleAddVariant(variantsData.category_varient_id,selectedCategoryForVariant);
+                        }}
                         disabled={isLoading}
                         className='addvariant_btn'
                         style={{
@@ -363,20 +415,17 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     >
                         {isLoading ? 'Adding...' : 'Add Variant'}
                     </button>
+                      )}
                     {error && <p style={{ color: 'red' }}>{error}</p>}
-
-                    <table className="variant-table">
+            {variantsData.varient_list && variantsData.varient_list.length > 0 && (
+                <div>
+                    {/* <table className="variant-table">
                         <thead>
                             <tr>
                                 {variantsData.varient_list.map((variant, index) => (
                                     <th key={index}>{variant.type_name}</th>
                                 ))}
-                                <th>Variant Name</th>
-                                <th>Price</th>
-                                <th>Price</th>
-                                <th>Price</th>
-                                <th>Price</th>
-                                {/* Add more headers as needed */}
+
                             </tr>
                         </thead>
                         <tbody>
@@ -387,13 +436,9 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                             <tr key={index}>
                                                 <td>{variants.type_value_name}</td>
                                                 <td>{variants.type_value_id}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                {/* Add more data as needed */}
+
                                             </tr>
-                                            
+
                                         ))
                                     ) : (
                                         <tr key={`no-variants-${variantIndex}`}>
@@ -406,36 +451,105 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                     <td colSpan={3}>No product variants available</td>
                                 </tr>
                             )}
- <tr>
-                {/* Button under each relevant column */}
-                <td>
-                    <button
-                        onClick={() =>("name")}
-                        disabled={isLoading}
-                    >
-                        Add Variant Name
-                    </button>
-                </td>
-                <td>
-                    <button
-                        onClick={() =>("type")}
-                        disabled={isLoading}
-                    >
-                        Add Type
-                    </button>
-                </td>
-                <td>
-                    <button
-                        onClick={() =>("price")}
-                        disabled={isLoading}
-                    >
-                        Add Price
-                    </button>
-                </td>
-                {/* Repeat for more columns as needed */}
-            </tr>
+                            <tr>
+
+                                <td>
+                                    <button
+                                        onClick={() => ("name")}
+                                        disabled={isLoading}
+                                    >
+                                        Add Variant Name
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        onClick={() => ("type")}
+                                        disabled={isLoading}
+                                    >
+                                        Add Type
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        onClick={() => ("price")}
+                                        disabled={isLoading}
+                                    >
+                                        Add Price
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
-                    </table>
+                    </table> */}
+
+{variantsData.varient_list && (
+  <table className="variant-table">
+    <thead>
+      <tr>
+        {variantsData.varient_list.map((variant, index) => (
+          <th key={index}>{variant.type_name}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {/* Using a dynamic row structure to ensure all type_value_name values are displayed */}
+      {variantsData.varient_list.length > 0 && (
+        <tr>
+          {variantsData.varient_list.map((variant, index) => (
+            <td key={index}>
+              {/* Check for multiple values */}
+              {variant.option_value_list && variant.option_value_list.length > 0 ? (
+                <>
+                  {/* Highlight if there are multiple values */}
+                  <ul style={{ padding: 0, listStyleType: 'none' }}>
+                    {variant.option_value_list.map((value, valueIndex) => (
+                      <li key={valueIndex}>
+                        * {value.type_value_name || ""}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                "No value available"
+              )}
+            </td>
+          ))}
+        </tr>
+      )}
+
+      {/* Add variant button row */}
+      <tr>
+        {variantsData.varient_list.map((variant, index) => (
+          <td key={index}>
+            <button
+              onClick={() => handleAddVariantValue(variant.type_id)}
+              disabled={isLoading}
+              style={{
+                padding: '5px 10px',
+                backgroundColor: '#007bff',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                marginTop: '10px',
+              }}
+            >
+              {isLoading ? 'Saving...' : 'Add Variant Value'}
+            </button>
+          </td>
+        ))}
+      </tr>
+
+      {/* Displaying a single message row if no variants are available */}
+      {variantsData.varient_list.length === 0 && (
+        <tr>
+          <td colSpan={variantsData.varient_list.length}>No product variants available</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+)}
+
+
                 </div>
             )}
         </div>

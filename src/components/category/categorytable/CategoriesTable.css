@@ -66,11 +66,11 @@ tr:hover .action-buttons {
   background-color: lightgray;
 }
 .CategoryMain {
-  padding: 20px;
+  padding: 7px;
 }
 
 .CategoryTable-header {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .CategoryContainer {
@@ -80,14 +80,23 @@ tr:hover .action-buttons {
 }
 
 .DropdownsContainer {
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 100%; */
+  /* display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px;  */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; 
 }
 
 .DropdownColumn {
-  flex: 1; /* Each dropdown takes an equal amount of space */
-  margin-right: 15px; /* Spacing between columns */
+  flex: 1 1 calc(33.33% - 10px);
+  box-sizing: border-box;
+
+  /* flex: 1;
+  margin-right: 15px;  */
 }
 
 .DropdownColumn label {
@@ -143,7 +152,7 @@ tr:hover .action-buttons {
 .popup-content, button {
   top: 10px;
   right: 10px;
-  background: rgb(174, 170, 170);
+  background: rgb(16 155 87);
   color: white;
   border: none;
   padding: 5px;
@@ -160,7 +169,7 @@ tr:hover .action-buttons {
 .selected-category {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
 }
 
 .dropdown-options {
@@ -171,15 +180,16 @@ tr:hover .action-buttons {
   background: white;
   border: 1px solid #ccc;
   z-index: 1000;
-  max-height: 200px; /* Limit dropdown height */
+  max-height: 300px; /* Limit dropdown height */
   overflow-y: auto; /* Scroll if overflow */
 }
 
 .dropdown-option {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px;
 }
 
 .dropdown-option:hover {
@@ -226,4 +236,7 @@ tr:hover .action-buttons {
 }
 .close_btn{
   float: right;
+}
+.dropdown-search-input{
+  margin-right: 10px;
 }
