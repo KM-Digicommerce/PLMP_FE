@@ -41,11 +41,12 @@ const Login = () => {
         <img src="path/to/your/image.jpg" alt="Login" />
       </div> */}
       <div className="login-container">
-        <h2>Login</h2>
+        <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="name">Name</label>
+          <div className='one'>
+            <label className="label-login" htmlFor="name">Name</label>
             <input
+            className="label-input"
               type="1"
               id="name"
               value={name}
@@ -53,9 +54,11 @@ const Login = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
+          <div className='one'>
+            <label className="label-login" htmlFor="password">Password</label>
             <input
+                className="label-input"
+
               type="password"
               id="password"
               value={password}
@@ -63,7 +66,7 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" disabled={loading}>
+          <button className='button' type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
           {error && <p className="error-message">{error}</p>}
