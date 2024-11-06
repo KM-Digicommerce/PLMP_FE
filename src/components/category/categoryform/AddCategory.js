@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import './AddCategory.css'
+import './AddCategory.css';
+import Swal from 'sweetalert2';
 
 const AddCategory = ({ refreshCategories }) => {
   const [categoryName, setCategoryName] = useState('');
@@ -20,7 +21,9 @@ const AddCategory = ({ refreshCategories }) => {
 
       // Call the refresh function to update the category list
       await refreshCategories(); // Ensure it's awaited for proper sequencing
-      alert('Category added successfully!');
+      Swal.fire('Success', 'Category added successfully!', 'success').then(() => {
+        window.location.reload(); // Refresh the page to show updated data
+    })
 
       // Log the updated categories to verify the addition
       console.log('Updated Categories after addition:');

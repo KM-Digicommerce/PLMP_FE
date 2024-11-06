@@ -1,16 +1,71 @@
-/* src\components\Header.css */
+
+/* Header.css */
 
 .header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background-color: #384450;
-  color: white;
-  }
+  justify-content: space-between; 
+  padding: 43px 84px;
+  background-color: #4f46e5; /* Using a deep indigo blue for a modern look */
+  color: #f3f4f6; /* Light grey color for text */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+.image-container1 {
+  display: flex;
+  width:77px;
+
+}
+
+.image-container1 img {
+  max-width: 100%; /* Make image responsive */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 28px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  transition: transform 0.3s ease; /* Smooth scale effect on hover */
+  width: 70px;
+}
+
+.image-container1 img:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 600;
+  color: #f3f4f6;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+.header-actions {
+  display: flex; 
+  align-items: center; 
+  width: 125px;
+}
+
+.logout-button {
+  color: #f3f4f6;
+  background-color: #6366f1;
+  border: none; 
+  border-radius: 8px; 
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  width: 114px;
+
+}
+
+.logout-button:hover {
+  background-color: #a5b4fc;
+}
+
+.logout-icon {
+  margin-right: 8px;
   
-  .logo {
-    font-size: 18px;
-    font-weight: 500;
-  }
-  
+}
+

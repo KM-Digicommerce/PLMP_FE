@@ -1,6 +1,4 @@
 /* / src/components/ProductList.css / */
-
-
 .product-list {
   background-color: white;
   padding: 20px;
@@ -137,4 +135,7 @@ border: 1px solid #ccc;
 
 .price-column {
   width: 80px; /* Smaller width for price column */
+}
+.product-cell{
+  cursor: pointer;
 }

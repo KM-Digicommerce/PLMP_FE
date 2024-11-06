@@ -1,0 +1,62 @@
+.header_cls{
+    text-align: left;
+}
+.variant-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Adjusts the space above the table */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Adds shadow for depth */
+}
+
+.variant-table th,
+.variant-table td {
+    padding: 12px; /* Adjusts padding for a better look */
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Light border for separation */
+}
+
+.variant-table th {
+    background-color: #f2f2f2; /* Light background for headers */
+    font-weight: bold;
+}
+
+.variant-table tr:hover {
+    background-color: #f5f5f5; /* Hover effect for rows */
+}
+.addvariant_btn{
+    float: right ;
+    padding: 10px 15px ;
+    background-color: #007bff ;
+    color: #fff ;
+    border: none ;
+    border-radius: 5px ;
+    cursor: pointer ;
+    margin: 10px 0px 10px 0px ;
+}
+.variant-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.variant-table th, .variant-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.variant-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.variant-table td {
+    vertical-align: top; /* Aligns content to the top */
+}
+
+.variant-table button {
+    transition: background-color 0.3s ease;
+}
+
+.variant-table button:hover {
+    background-color: #0056b3;
+}
