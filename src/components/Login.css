@@ -127,3 +127,14 @@ button:hover {
         display: none; /* Hide image on small screens if necessary */
     }
 }
+/* Login.css */
+.link-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+  }
+  

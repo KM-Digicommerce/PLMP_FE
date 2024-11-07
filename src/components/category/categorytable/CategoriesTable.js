@@ -20,30 +20,60 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 
 const CategoriesTable = ({ categories, refreshCategories }) => {
+  const [products, setProducts] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selectedCategoryIdPopup, setSelectedCategoryIdPopup] = useState('');
-  const [ selectedLevel2Id,  setSelectedLevel2Id] = useState('');
-  const [ selectedLevel2IdPopup,  setSelectedLevel2IdPopup] = useState('');
-  const [ selectedLevel3IdPopup,  setSelectedLevel3IdPopup] = useState('');
+  const [selectedLevel2Id, setSelectedLevel2Id] = useState('');
+  const [selectedLevel2IdPopup, setSelectedLevel2IdPopup] = useState('');
+  const [selectedLevel3IdPopup, setSelectedLevel3IdPopup] = useState('');
   const [selectedLevel4IdPopup, setSelectedLevel4IdPopup] = useState('');
   const [selectedLevel5IdPopup, setSelectedLevel5IdPopup] = useState('');
 
-  const [selectedProductTypeId,  setSelectedLevel3Id] = useState('');
+  const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
+
+  useEffect(() => {
+    // Only fetch products if both selectedCategory and selectedLevel are set
+    const fetchProducts = async () => {
+      if (selectedCategoryId) {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_IP}/obtainAllProductList/`,
+            {
+              params: {
+                category_id: selectedCategoryId
+                // level: selectedLevel
+              }
+            }
+          );
+          console.log(response.data.data.product_list,'response.data.data');
+          
+          setProducts(response.data.data.product_list);
+        } catch (error) {
+          console.error('Error fetching product list:', error);
+        }
+      }
+    };
+
+    fetchProducts();
+  // }, [selectedCategory, selectedLevel]);
+}, [selectedCategoryId]);
+
+  const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
   const [selectedlevel4, setSelectedlevel4] = useState('');
   const [selectedlevel5, setSelectedlevel5] = useState('');
   const [selectedlevel6, setSelectedlevel6] = useState('');
   const [showAddCategoryPopup, setShowAddCategoryPopup] = useState(false);
-  const [ showAddLevel2Popup,  setShowAddLevel2Popup] = useState(false); // State to control AddCategory popup
-  const [showAddProductTypePopup,  setShowAddLevel3Popup] = useState(false); // State to control AddCategory popup
+  const [showAddLevel2Popup, setShowAddLevel2Popup] = useState(false); // State to control AddCategory popup
+  const [showAddProductTypePopup, setShowAddLevel3Popup] = useState(false); // State to control AddCategory popup
   const [showAddlevel4Popup, setShowAddlevel4Popup] = useState(false);
   const [showAddlevel5Popup, setShowAddlevel5Popup] = useState(false);
   const [showAddlevel6Popup, setShowAddlevel6Popup] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  const [ isLevel2DropdownOpen,  setIsLevel2DropdownOpen] = useState(false);
-  const [ isLevel3DropdownOpen,  setIsLevel3DropdownOpen] = useState(false);
+  const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
+  const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
 
   const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
   const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
@@ -65,11 +95,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
     level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
   );
-  const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id ===  selectedLevel2Id) : null;
+  const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
   const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
     level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
   );
-  const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedProductTypeId) : null;
+  const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
   const filteredCategoriesLevel4 = levelThreeCategory?.level_three_category_list.filter(level4 =>
     level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase())
   );
@@ -83,9 +113,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   );
   // To make visible the next level categories
   const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
-  const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id ===  selectedLevel2Id);
+  const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
   const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : [];
-  const levelThreeCategoryForVisible = level3Categories.find(level3 => level3._id === selectedProductTypeId);
+  const levelThreeCategoryForVisible = level3Categories.find(level3 => level3._id === selectedLevel3Id);
   const level4Categories = levelThreeCategoryForVisible ? levelThreeCategoryForVisible.level_three_category_list : [];
   const levelFourCategoryForVisible = level4Categories.find(level4 => level4._id === selectedlevel4);
   const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
@@ -97,7 +127,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
     setSelectedCategoryIdPopup(selectedValue);
-     setSelectedLevel3Id('');
+    setSelectedLevel3Id('');
     setSelectedlevel4('');
     setSelectedlevel5('');
     setSelectedlevel6('');
@@ -107,47 +137,47 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddCategoryPopup(false);
     }
     setIsCategoryDropdownOpen(false);
-     setIsLevel2DropdownOpen(false);
-     setIsLevel3DropdownOpen(false);
+    setIsLevel2DropdownOpen(false);
+    setIsLevel3DropdownOpen(false);
     setSearchQuery('');
   };
   const closeAddCategoryPopup = () => {
     setShowAddCategoryPopup(false);
-     setShowAddLevel2Popup(false);
-     setShowAddLevel3Popup(false);
+    setShowAddLevel2Popup(false);
+    setShowAddLevel3Popup(false);
     window.location.reload();
   };
-  const  handleLevel2Select = (e) => {
+  const handleLevel2Select = (e) => {
     console.log('selectedCategoryIdPopup', selectedCategoryIdPopup);
     const selectedValue = e;
-     setSelectedLevel2Id(selectedValue);
-     setSelectedLevel2IdPopup(selectedValue);
-     setSelectedLevel3Id(''); // Reset product type when section changes
+    setSelectedLevel2Id(selectedValue);
+    setSelectedLevel2IdPopup(selectedValue);
+    setSelectedLevel3Id(''); // Reset product type when section changes
     setSelectedlevel4('');
     setSelectedlevel5('');
     setSelectedlevel6('');
     if (selectedValue === 'add') {
-       setShowAddLevel2Popup(true);
+      setShowAddLevel2Popup(true);
     } else {
-       setShowAddLevel2Popup(false);
+      setShowAddLevel2Popup(false);
     }
-     setIsLevel2DropdownOpen(false);
-     setIsLevel3DropdownOpen(false);
+    setIsLevel2DropdownOpen(false);
+    setIsLevel3DropdownOpen(false);
   };
 
-  const  handleLevel3Select = (e) => {
+  const handleLevel3Select = (e) => {
     const selectedValue = e;
-     setSelectedLevel3Id(selectedValue);
-     setSelectedLevel3IdPopup(selectedValue);
+    setSelectedLevel3Id(selectedValue);
+    setSelectedLevel3IdPopup(selectedValue);
     setSelectedlevel4('');
     setSelectedlevel5('');
     setSelectedlevel6('');
     if (selectedValue === 'add') {
-       setShowAddLevel3Popup(true);
+      setShowAddLevel3Popup(true);
     } else {
-       setShowAddLevel3Popup(false);
+      setShowAddLevel3Popup(false);
     }
-     setIsLevel3DropdownOpen(false);
+    setIsLevel3DropdownOpen(false);
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
@@ -276,6 +306,28 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     });
   };
 
+  const handleSort = (column) => {
+    // Toggle sort direction or set ascending for the first time
+    const direction = sortOrder.column === column && sortOrder.direction === 'asc' ? 'desc' : 'asc';
+    setSortOrder({ column, direction });
+  };
+
+  const sortProducts = (products) => {
+    const sortedProducts = [...products];
+    sortedProducts.sort((a, b) => {
+      if (a[sortOrder.column] < b[sortOrder.column]) {
+        return sortOrder.direction === 'asc' ? -1 : 1;
+      }
+      if (a[sortOrder.column] > b[sortOrder.column]) {
+        return sortOrder.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    return sortedProducts;
+  };
+
+  const sortedProducts = sortProducts(products);
+
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
@@ -309,7 +361,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select Category</span>
                   </div>
                   {filteredCategories.map(level1 => (
-                    <div className="dropdown-option" key={level1._id} >
+                    <div className="dropdown-option" key={level1._id} onClick={() => handleCategorySelect(level1._id)} >
                       {editingCategoryId === level1._id ? (
                         <div>
                           {/* <input
@@ -322,7 +374,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                         </div>
                       ) : (
                         <div>
-                          <span onClick={() => handleCategorySelect(level1._id)}>{level1.name}</span>
+                          <span>{level1.name}</span>
                           {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level1._id, level1.name, 'level-1')} />
                           <DeleteOutlinedIcon onClick={(e) => {
                             e.stopPropagation();
@@ -344,15 +396,15 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           {/* <> */}
           <div className='DropdownColumn'>
             <label htmlFor="sectionSelect">Level 2:</label>
-            <div className="custom-dropdown" onClick={() =>  setIsLevel2DropdownOpen(! isLevel2DropdownOpen)}>
+            <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
               <div className="selected-category">
-                { selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id ===  selectedLevel2Id)?.name : 'Select category'}
+                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  < AddOutlinedIcon onClick={() =>  handleLevel2Select("add")} />
+                  < AddOutlinedIcon onClick={() => handleLevel2Select("add")} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
               </div>
-              { isLevel2DropdownOpen && (
+              {isLevel2DropdownOpen && (
                 <div className="dropdown-options">
                   <input
                     type="text"
@@ -362,11 +414,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     className="dropdown-search-input"
                     onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
                   />
-                  <div className="dropdown-option" onClick={() =>  handleLevel2Select('')}>
+                  <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel2?.map(level2 => (
-                    <div className="dropdown-option" key={level2._id} onClick={() =>  handleLevel2Select(level2._id)}>
+                    <div className="dropdown-option" key={level2._id} onClick={() => handleLevel2Select(level2._id)}>
                       <span>{level2.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level2._id, level2.name, 'level-2')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -389,15 +441,15 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             <> */}
           <div className='DropdownColumn'>
             <label htmlFor="productTypeSelect">Level 3:</label>
-            <div className="custom-dropdown" onClick={() =>  setIsLevel3DropdownOpen(! isLevel3DropdownOpen)}>
+            <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
               <div className="selected-category">
-                {selectedProductTypeId ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedProductTypeId)?.name : 'Select category'}
+                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  <AddOutlinedIcon onClick={() =>  handleLevel3Select('add')} />
+                  <AddOutlinedIcon onClick={() => handleLevel3Select('add')} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
               </div>
-              { isLevel3DropdownOpen && (
+              {isLevel3DropdownOpen && (
                 <div className="dropdown-options">
                   <input
                     type="text"
@@ -407,11 +459,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     className="dropdown-search-input"
                     onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
                   />
-                  <div className="dropdown-option" onClick={() =>  handleLevel3Select('')}>
+                  <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel3?.map(level3 => (
-                    <div className="dropdown-option" key={level3._id} onClick={() =>  handleLevel3Select(level3._id)}>
+                    <div className="dropdown-option" key={level3._id} onClick={() => handleLevel3Select(level3._id)}>
                       <span>{level3.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level3._id, level3.name, 'level-3')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -510,7 +562,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                           }} /> */}
                     </div>
                   ))}
-                 
+
                 </div>
               )}
             </div>
@@ -554,7 +606,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                           }} /> */}
                     </div>
                   ))}
-                
+
                 </div>
               )}
             </div>
@@ -576,8 +628,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             </Button>
           </DialogActions>
         </Dialog>
-        
-         <Dialog open={ showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
+
+        <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <DialogTitle>Add New Category</DialogTitle>
           <DialogContent>
             < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
@@ -591,12 +643,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             </Button>
           </DialogActions>
         </Dialog>
-        
-         <Dialog open={showAddProductTypePopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
+
+        <Dialog open={showAddProductTypePopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <DialogTitle>Add New Category</DialogTitle>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
-                 selectedLevel2IdPopup={ selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories}/>
+              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeAddCategoryPopup} color="secondary">
@@ -607,15 +659,15 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             </Button>
           </DialogActions>
         </Dialog>
-        
-         <Dialog open={showAddlevel4Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
+
+        <Dialog open={showAddlevel4Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <DialogTitle>Add New Category</DialogTitle>
           <DialogContent>
             <AddLevelFour selectedCategoryIdPopup={selectedCategoryIdPopup}
-                 selectedLevel2IdPopup={ selectedLevel2IdPopup}
-                 selectedLevel3IdPopup={ selectedLevel3IdPopup}
-                categories={categories}
-                refreshCategories={refreshCategories} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup}
+              selectedLevel3IdPopup={selectedLevel3IdPopup}
+              categories={categories}
+              refreshCategories={refreshCategories} />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeAddCategoryPopup} color="secondary">
@@ -626,16 +678,16 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             </Button>
           </DialogActions>
         </Dialog>
-       
+
         <Dialog open={showAddlevel5Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <DialogTitle>Add New Category</DialogTitle>
           <DialogContent>
             <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup}
-                 selectedLevel2IdPopup={ selectedLevel2IdPopup}
-                 selectedLevel3IdPopup={ selectedLevel3IdPopup}
-                selectedLevel4IdPopup={selectedLevel4IdPopup}
-                categories={categories}
-                refreshCategories={refreshCategories} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup}
+              selectedLevel3IdPopup={selectedLevel3IdPopup}
+              selectedLevel4IdPopup={selectedLevel4IdPopup}
+              categories={categories}
+              refreshCategories={refreshCategories} />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeAddCategoryPopup} color="secondary">
@@ -651,12 +703,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           <DialogTitle>Add New Category</DialogTitle>
           <DialogContent>
             <AddLevelSix selectedCategoryIdPopup={selectedCategoryIdPopup}
-                 selectedLevel2IdPopup={ selectedLevel2IdPopup}
-                 selectedLevel3IdPopup={ selectedLevel3IdPopup}
-                selectedLevel4IdPopup={selectedLevel4IdPopup}
-                selectedLevel5IdPopup={selectedLevel5IdPopup}
-                categories={categories}
-                refreshCategories={refreshCategories} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup}
+              selectedLevel3IdPopup={selectedLevel3IdPopup}
+              selectedLevel4IdPopup={selectedLevel4IdPopup}
+              selectedLevel5IdPopup={selectedLevel5IdPopup}
+              categories={categories}
+              refreshCategories={refreshCategories} />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeAddCategoryPopup} color="secondary">
@@ -668,7 +720,83 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogActions>
         </Dialog>
       </div>
+      {/* {level2Categories.length > 0 && variantsData.varient_list && ( */}
+      {/* {level2Categories.length > 0 && level3Categories && (
 
+<div style={{ padding: '20px' }}>
+      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
+      <TableContainer component={Paper} sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Product Name</TableCell>
+              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Tags</TableCell>
+              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Price</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
+                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
+                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.price}</TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+      )} */}
+      {level2Categories.length > 0 && level3Categories && (
+      <div style={{ padding: '20px' }}>
+        <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
+        <TableContainer
+          component={Paper}
+          sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('product_name')}
+                >
+                  Product Name
+                  {sortOrder.column === 'product_name' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('tags')}
+                >
+                  Tags
+                  {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('price')}
+                >
+                  Price
+                  {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedProducts.map((product) => (
+                <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.price}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    )}
     </div>
   );
 };

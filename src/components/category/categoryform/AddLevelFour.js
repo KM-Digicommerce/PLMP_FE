@@ -4,16 +4,16 @@ import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 
-const AddLevelFour = ({ selectedCategoryIdPopup, selectedSectionIdPopup, selectedProductTypeIdPopup, categories, refreshCategories }) => {
+const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, categories, refreshCategories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
-  const [selectedSectionId, setSelectedSectionId] = useState(selectedSectionIdPopup || '');
-  const [selectedProductTypeId, setSelectedProductTypeId] = useState(selectedProductTypeIdPopup || '');
+  const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
+  const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedProductTypeIdPopup || '');
   const [levelFourName, setLevelFourName] = useState('');
 
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
-    setSelectedSectionId('');
-    setSelectedProductTypeId('');
+    setselectedLevel2Id('');
+    setSelectedLevel3Id('');
   };
 
   const handleSubmit = async (e) => {
@@ -21,13 +21,13 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedSectionIdPopup, selecte
     try {
       await axios.post(`${process.env.REACT_APP_IP}/createCategory3/`, {
         name: levelFourName,
-        category_id: selectedProductTypeId,
+        category_id: selectedLevel3Id,
       });
 
       setLevelFourName('');
       setSelectedCategoryId('');
-      setSelectedSectionId('');
-      setSelectedProductTypeId('');
+      setselectedLevel2Id('');
+      setSelectedLevel3Id('');
 
       await refreshCategories();
       Swal.fire('Success', 'Level 4 category added successfully!', 'success').then(() => {
@@ -52,7 +52,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedSectionIdPopup, selecte
           ))}
         </select>
         {selectedCategoryId && (
-          <select value={selectedSectionId} onChange={(e) => setSelectedSectionId(e.target.value)} required>
+          <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
             <option value="">Select a Section</option>
             {categories
               .find((cat) => cat._id === selectedCategoryId)
@@ -63,12 +63,12 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedSectionIdPopup, selecte
               ))}
           </select>
         )}
-        {selectedSectionId && (
-          <select value={selectedProductTypeId} onChange={(e) => setSelectedProductTypeId(e.target.value)} required>
+        {selectedLevel2Id && (
+          <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
             <option value="">Select a Product Type</option>
             {categories
               .find((cat) => cat._id === selectedCategoryId)
-              ?.level_one_category_list.find((sec) => sec._id === selectedSectionId)
+              ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
               ?.level_two_category_list.map((productType) => (
                 <option key={productType._id} value={productType._id}>
                   {productType.name}

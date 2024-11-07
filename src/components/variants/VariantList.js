@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback  } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
@@ -6,15 +6,15 @@ import './VariantList.css';
 
 const VariantList = ({ categories, variants, refreshVariants }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
-    const [selectedSectionId, setSelectedSectionId] = useState('');
-    const [selectedProductTypeId, setSelectedProductTypeId] = useState('');
+    const [selectedLevel2Id, setselectedLevel2Id] = useState('');
+    const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
     const [selectedlevel4, setSelectedlevel4] = useState('');
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
 
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-    const [isSectionDropdownOpen, setIsSectionDropdownOpen] = useState(false);
-    const [isProductTypeDropdownOpen, setIsProductTypeDropdownOpen] = useState(false);
+    const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
+    const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
@@ -40,12 +40,12 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
     );
 
-    const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedSectionId) : null;
+    const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
     const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
         level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
     );
 
-    const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedProductTypeId) : null;
+    const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
     const filteredCategoriesLevel4 = levelThreeCategory?.level_three_category_list.filter(level4 =>
         level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
     );
@@ -73,8 +73,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         } catch (err) {
             console.log('ERROR', err);
         }
-        setSelectedSectionId('');
-        setSelectedProductTypeId('');
+        setselectedLevel2Id('');
+        setSelectedLevel3Id('');
         setSelectedlevel4('');
         setSelectedlevel5('');
         setSelectedlevel6('');
@@ -94,21 +94,21 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     useEffect(() => {
         handleCategorySelectForVariants();
     }, []);
-    const handleSectionSelect = (id) => {
-        setSelectedSectionId(id);
-        setSelectedProductTypeId('');
+    const handleLevel2Select = (id) => {
+        setselectedLevel2Id(id);
+        setSelectedLevel3Id('');
         setSelectedlevel4('');
         setSelectedlevel5('');
         setSelectedlevel6('');
-        setIsSectionDropdownOpen(false);
+        setIsLevel2DropdownOpen(false);
     };
 
-    const handleProductTypeSelect = (id) => {
-        setSelectedProductTypeId(id);
+    const handleLevel3Select = (id) => {
+        setSelectedLevel3Id(id);
         setSelectedlevel4('');
         setSelectedlevel5('');
         setSelectedlevel6('');
-        setIsProductTypeDropdownOpen(false);
+        setIsLevel3DropdownOpen(false);
     };
 
     const handleLevelSelect = (level, id) => {
@@ -130,16 +130,16 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const [error, setError] = useState(null);
 
     //  To make visible the next level categories
-const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
-const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedSectionId);
-const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : [];
-const levelThreeCategoryForVisible = level3Categories.find(level3 => level3._id === selectedProductTypeId);
-const level4Categories = levelThreeCategoryForVisible ? levelThreeCategoryForVisible.level_three_category_list : [];
-const levelFourCategoryForVisible = level4Categories.find(level4 => level4._id === selectedlevel4);
-const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
-const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
-const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    const handleAddVariant = useCallback(async (category_varient_id,selectedCategoryForVariant) => {
+    const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
+    const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
+    const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : [];
+    const levelThreeCategoryForVisible = level3Categories.find(level3 => level3._id === selectedLevel3Id);
+    const level4Categories = levelThreeCategoryForVisible ? levelThreeCategoryForVisible.level_three_category_list : [];
+    const levelFourCategoryForVisible = level4Categories.find(level4 => level4._id === selectedlevel4);
+    const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
+    const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
+    const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
+    const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant) => {
         setIsLoading(true);
         setError(null);
         Swal.fire({
@@ -159,7 +159,7 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                     const response = await axios.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
                         name: result.value,
                         category_varient_id: category_varient_id,
-                        category_id:selectedCategoryForVariant
+                        category_id: selectedCategoryForVariant
                     });
                     Swal.fire('Success', 'Variant added successfully!', 'success')
                     await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
@@ -214,7 +214,24 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
             }
         }
     };
+    const [searchQuery, setSearchQuery] = useState('');
+    // Safely access the variant list if available
+    const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
 
+    // Check if there are any variants before performing filtering
+    const filteredVariantList = variantList.length > 0
+      ? variantList.flatMap((variant) =>
+          variant.option_value_list
+            ? variant.option_value_list.filter((value) =>
+                value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+            : []
+        )
+      : [];
+  
+    const handleSearchChangeforVariants = (e) => {
+      setSearchQuery(e.target.value);
+    };
     return (
         <div>
             <h2 className='header_cls'>VariantList Schema!</h2>
@@ -253,11 +270,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                     {/* Level 2 Dropdown */}
                     <div className='DropdownColumn'>
                         <label htmlFor="sectionSelect">Level 2:</label>
-                        <div className="custom-dropdown" onClick={() => setIsSectionDropdownOpen(!isSectionDropdownOpen)}>
+                        <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedSectionId ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedSectionId)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                             </div>
-                            {isSectionDropdownOpen && (
+                            {isLevel2DropdownOpen && (
                                 <div className="dropdown-options">
                                     <input
                                         type="text"
@@ -267,11 +284,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                                         className="dropdown-search-input"
                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                     />
-                                    <div className="dropdown-option" onClick={() => handleSectionSelect('')}>
+                                    <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleSectionSelect(level2._id); handleCategorySelectForVariants(level2._id); }}>
+                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -283,11 +300,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                     {/* Level 3 Dropdown */}
                     <div className='DropdownColumn'>
                         <label htmlFor="productTypeSelect">Level 3:</label>
-                        <div className="custom-dropdown" onClick={() => setIsProductTypeDropdownOpen(!isProductTypeDropdownOpen)}>
+                        <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedProductTypeId ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedProductTypeId)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                             </div>
-                            {isProductTypeDropdownOpen && (
+                            {isLevel3DropdownOpen && (
                                 <div className="dropdown-options">
                                     <input
                                         type="text"
@@ -297,11 +314,11 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                                         className="dropdown-search-input"
                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                     />
-                                    <div className="dropdown-option" onClick={() => handleProductTypeSelect('')}>
+                                    <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleProductTypeSelect(level3._id); handleCategorySelectForVariants(level3._id); }}>
+                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -401,154 +418,243 @@ const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisib
                     </div>
                 </div>
             </div>
-                      {level2Categories.length > 0 && variantsData.varient_list && (
-            <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                                handleAddVariant(variantsData.category_varient_id,selectedCategoryForVariant);
-                        }}
-                        disabled={isLoading}
-                        className='addvariant_btn'
-                        style={{
+            {level2Categories.length > 0 && variantsData.varient_list && (
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant);
+                    }}
+                    disabled={isLoading}
+                    className='addvariant_btn'
+                    style={{
 
-                        }}
-                    >
-                        {isLoading ? 'Adding...' : 'Add Variant'}
-                    </button>
-                      )}
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    }}
+                >
+                    {isLoading ? 'Adding...' : '+ Add variant'}
+                </button>
+            )}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             {variantsData.varient_list && variantsData.varient_list.length > 0 && (
                 <div>
-                    {/* <table className="variant-table">
-                        <thead>
-                            <tr>
-                                {variantsData.varient_list.map((variant, index) => (
-                                    <th key={index}>{variant.type_name}</th>
-                                ))}
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {variantsData.varient_list.length > 0 ? (
-                                variantsData.varient_list.map((variant, variantIndex) => (
-                                    variant.option_value_list && variant.option_value_list.length > 0 ? (
-                                        variant.option_value_list.map((variants, index) => (
-                                            <tr key={index}>
-                                                <td>{variants.type_value_name}</td>
-                                                <td>{variants.type_value_id}</td>
-
-                                            </tr>
-
-                                        ))
-                                    ) : (
-                                        <tr key={`no-variants-${variantIndex}`}>
-                                            <td colSpan={3}>No product variants available</td>
-                                        </tr>
-                                    )
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={3}>No product variants available</td>
-                                </tr>
-                            )}
-                            <tr>
-
-                                <td>
-                                    <button
-                                        onClick={() => ("name")}
-                                        disabled={isLoading}
-                                    >
-                                        Add Variant Name
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        onClick={() => ("type")}
-                                        disabled={isLoading}
-                                    >
-                                        Add Type
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        onClick={() => ("price")}
-                                        disabled={isLoading}
-                                    >
-                                        Add Price
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> */}
+                   
 
 {variantsData.varient_list && (
-  <table className="variant-table">
-    <thead>
-      <tr>
-        {variantsData.varient_list.map((variant, index) => (
-          <th key={index}>{variant.type_name}</th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {/* Using a dynamic row structure to ensure all type_value_name values are displayed */}
-      {variantsData.varient_list.length > 0 && (
-        <tr>
+  <div className="variant-container">
+    <div className="variant-header">
+      <span>Variants</span>
+    </div>
+
+    {/* {variantsData.varient_list.map((variant, index) => (
+      <div key={index} className="variant-option-section">
+        <div className="variant-option-header">
+          <span className="variant-option-type">{variant.type_name}</span>
+        </div>
+        <div className="variant-option-values">
+          {variant.option_value_list.map((optionValue, idx) => (
+            <span key={idx} className="variant-tag">
+              {optionValue.type_value_name}
+            </span>
+          ))}
           {variantsData.varient_list.map((variant, index) => (
-            <td key={index}>
-              {/* Check for multiple values */}
-              {variant.option_value_list && variant.option_value_list.length > 0 ? (
-                <>
-                  {/* Highlight if there are multiple values */}
-                  <ul style={{ padding: 0, listStyleType: 'none' }}>
+                                  <td key={index}>
+                                    <button
+                                      onClick={() => handleAddVariantValue(variant.type_id)}
+                                      disabled={isLoading}
+                                      style={{
+                                        padding: '5px 10px',
+                                        backgroundColor: '#007bff',
+                                        color: '#fff',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        marginTop: '10px',
+                                      }}
+                                    >
+                                      {isLoading ? 'Saving...' : 'Add Variant Value'}
+                                    </button>
+                                  </td>
+                                ))}
+        </div>
+      </div>
+    ))}
+
+    <table className="variant-table">
+      <thead>
+        <tr>
+          <th>Variant</th>
+          <th>Price</th>
+          <th>Available</th>
+        </tr>
+      </thead>
+      <tbody>
+        {variantsData.varient_list.map((variant, index) => (
+          variant.option_value_list.map((optionValue, idx) => (
+            <tr key={`${index}-${idx}`}>
+              <td className="variant-name">
+                {optionValue.type_value_name}
+              </td>
+              <td className="variant-price">
+                <input
+                  type="text"
+                  defaultValue={variant.price || ""}
+                  className="price-input"
+                />
+              </td>
+              <td className="variant-available">
+                <input
+                  type="number"
+                  defaultValue={variant.available || ""}
+                  className="available-input"
+                />
+              </td>
+            </tr>
+          ))
+        ))}
+      </tbody>
+    </table>
+
+    {/* {variantsData.varient_list && (
+  <div className="variant-container">
+    <div className="variant-option-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Option Type</th>
+            <th>Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {variantsData.varient_list.map((variant, index) => (
+            <tr key={index}>
+              <td>{variant.type_name}</td>
+              <td>
+                {variant.option_value_list.length > 0 ? (
+                  <ul className="option-value-list">
                     {variant.option_value_list.map((value, valueIndex) => (
-                      <li key={valueIndex}>
-                        * {value.type_value_name || ""}
+                      <li key={valueIndex} className="option-value-item">
+                        {value.type_value_name}
                       </li>
                     ))}
                   </ul>
-                </>
-              ) : (
-                "No value available"
-              )}
-            </td>
+                ) : (
+                  <span>No values available</span>
+                )}
+                <button
+                  onClick={() => handleAddVariantValue(variant.type_id)}
+                  disabled={isLoading}
+                  className="add-variant-value-button"
+                >
+                  {isLoading ? "Saving..." : "+ Add Variant Value"}
+                </button>
+              </td>
+            </tr>
           ))}
-        </tr>
-      )}
+        </tbody>
+      </table>
+    </div>
 
-      {/* Add variant button row */}
-      <tr>
-        {variantsData.varient_list.map((variant, index) => (
-          <td key={index}>
-            <button
-              onClick={() => handleAddVariantValue(variant.type_id)}
-              disabled={isLoading}
-              style={{
-                padding: '5px 10px',
-                backgroundColor: '#007bff',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                marginTop: '10px',
-              }}
-            >
-              {isLoading ? 'Saving...' : 'Add Variant Value'}
-            </button>
-          </td>
-        ))}
-      </tr>
+    Second table for displaying Variant, Price, and Available
+    <div className="variant-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Variant</th>
+            <th>Price</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {variantsData.varient_list.flatMap((variant) =>
+            variant.option_value_list.map((value, valueIndex) => (
+              <tr key={value.type_value_id}>
+                <td>{value.type_value_name}</td>
+                <td><input type="text" placeholder="price" /></td>
+                <td><input type="text" placeholder="stock" /></td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)} */}
+{variantList.length > 0 && (
+      <div className="variant-container">
+        <div className="variant-option-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Option Type</th>
+                <th>Values</th>
+              </tr>
+            </thead>
+            <tbody>
+              {variantList.map((variant, index) => (
+                <tr key={index}>
+                  <td>{variant.type_name}</td>
+                  <td>
+                    {variant.option_value_list.length > 0 ? (
+                      <ul className="option-value-list">
+                        {variant.option_value_list.map((value, valueIndex) => (
+                          <li key={valueIndex} className="option-value-item">
+                            {value.type_value_name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span>No values available</span>
+                    )}
+                    <button
+                      onClick={() => handleAddVariantValue(variant.type_id)}
+                      disabled={isLoading}
+                      className="add-variant-value-button"
+                    >
+                      {isLoading ? "Saving..." : "+ Add Variant Value"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Displaying a single message row if no variants are available */}
-      {variantsData.varient_list.length === 0 && (
-        <tr>
-          <td colSpan={variantsData.varient_list.length}>No product variants available</td>
-        </tr>
-      )}
-    </tbody>
-  </table>
+        {/* Search Bar for the second table */}
+        <div className="search-bar">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChangeforVariants}
+            className='variant_search'
+            placeholder="Search variant values..."
+          
+          />
+        </div>
+
+        {/* Second table for displaying Variant, Price, and Available */}
+        <div className="variant-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Variant</th>
+                <th>Price</th>
+                <th>Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredVariantList.map((value, valueIndex) => (
+                <tr key={value.type_value_id}>
+                  <td>{value.type_value_name}</td>
+                  <td><input type="text" placeholder="price" /></td>
+                  <td><input type="text" placeholder="stock" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+  </div>
 )}
-
 
                 </div>
             )}
