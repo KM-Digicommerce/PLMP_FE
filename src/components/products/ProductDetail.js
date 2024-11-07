@@ -16,6 +16,8 @@ const ProductDetail = () => {
 
     useEffect(() => {
         const fetchProductDetail = async () => {
+            console.log('Product ID from URL:', productId); // Add this line for debugging
+
             try {
                 const response = await axios.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
                     id: productId, // Use the id from the URL

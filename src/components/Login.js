@@ -1,6 +1,7 @@
 // src/components/Login.js
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import './Login.css';
 
@@ -9,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,7 +74,13 @@ const Login = () => {
           {error && <p className="error-message">{error}</p>}
         </form>
         <p className="forgot-password">
-          <a href="/forgot-password">Forgot Password?</a>
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => navigate('/forgot-password')}
+          >
+            Forgot Password?
+          </button>
         </p>
       </div>
     </div>

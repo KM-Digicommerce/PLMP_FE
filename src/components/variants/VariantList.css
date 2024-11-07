@@ -31,7 +31,8 @@
     border: none ;
     border-radius: 5px ;
     cursor: pointer ;
-    margin: 10px 0px 10px 0px ;
+    margin: 10px 0px 10px 0px;
+    width: 15%;
 }
 .variant-table {
     width: 100%;
@@ -60,3 +61,62 @@
 .variant-table button:hover {
     background-color: #0056b3;
 }
+.variant-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+  }
+  
+  .variant-option-table table, .variant-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .variant-option-table th, .variant-table th {
+    text-align: left;
+    padding: 10px;
+    background-color: #f5f5f5;
+  }
+  
+  .variant-option-table td, .variant-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .option-value-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .option-value-item {
+    padding: 6px 12px;
+    background-color: #eee;
+    border-radius: 12px;
+  }
+  
+  .add-variant-value-button {
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-variant-value-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  .variant_search{
+    padding: 8px;
+    margin-bottom : 10px !important;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }

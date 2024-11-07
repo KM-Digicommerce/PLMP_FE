@@ -4,17 +4,17 @@ import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 
-const  AddLevelThree = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categories, refreshCategories }) => {
+const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
-  const [selectedSectionId, setSelectedSectionId] = useState(selectedSectionIdPopup || '');
+  const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
 
-  console.log(selectedSectionId,'selectedSectionId 1');
+  console.log(selectedLevel2Id,'selectedLevel2Id 1');
   console.log(categories,'categories 2');
   console.log(refreshCategories,'refreshCategories 3');
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
-    setSelectedSectionId(''); // Reset section selection when category changes
+    setselectedLevel2Id(''); // Reset section selection when category changes
   };
 
   const handleSubmit = async (e) => {
@@ -23,11 +23,11 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categ
     try {
       await axios.post(`${process.env.REACT_APP_IP}/createCategory2/`, {
         name: productTypeName,
-        category_id: selectedSectionId,
+        category_id: selectedLevel2Id,
       });
       setProductTypeName('');
       setSelectedCategoryId('');
-      setSelectedSectionId('');
+      setselectedLevel2Id('');
 
       await refreshCategories(); 
       Swal.fire('Success', 'Product type added successfully!', 'success').then(() => {
@@ -57,8 +57,8 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedSectionIdPopup, categ
         </select>
         {selectedCategoryId && (
           <select 
-            value={selectedSectionId} 
-            onChange={(e) => setSelectedSectionId(e.target.value)} 
+            value={selectedLevel2Id} 
+            onChange={(e) => setselectedLevel2Id(e.target.value)} 
             required
           >
             <option value="">Select Level 2 Category</option>

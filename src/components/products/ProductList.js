@@ -26,7 +26,7 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
+        const response = await axios.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
 
         if (response.data && response.data.data && response.data.data.product_list) {
           setResponseData(response.data.data.product_list);
