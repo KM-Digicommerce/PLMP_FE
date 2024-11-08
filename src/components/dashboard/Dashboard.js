@@ -14,7 +14,6 @@ import {
 } from 'chart.js';
 import './Dashboard.css';
 
-// Register components with Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,22 +29,7 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sales Overview Data (static for now)
-  const salesData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [
-      {
-        label: 'Sales ($)',
-        data: [5000, 8000, 6000, 12000, 15000, 18000],
-        borderColor: '#007bff',
-        backgroundColor: 'rgba(0, 123, 255, 0.2)',
-        borderWidth: 2,
-        tension: 0.3,
-      },
-    ],
-  };
 
-  // Chart Options
   const options = {
     responsive: true,
     plugins: {
@@ -55,13 +39,12 @@ function Dashboard() {
     },
   };
 
-  // Fetch dashboard data from backend
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const response = await axios.get('http://192.168.1.13:8000/api/obtainDashboardCount/');
         if (response.data) {
-          setDashboardData(response.data.data); // Update state with fetched data
+          setDashboardData(response.data.data); 
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -77,7 +60,18 @@ function Dashboard() {
     return <div>Loading...</div>;
   }
 
-  // Prepare category project data for the Bar chart
+  const variantData = {
+    labels: dashboardData.varent_list.map(item => item.type_name),
+    datasets: [
+      {
+        label: 'Option Value Count',
+        data: dashboardData.varent_list.map(item => item.option_value_count),
+        backgroundColor: '#0156B7',
+        borderWidth: 1,
+      },
+    ],
+  };
+
   const categoryData = {
     labels: Object.keys(dashboardData.category_project_dict),
     datasets: [
@@ -115,13 +109,11 @@ function Dashboard() {
       </div>
 
       <div className="charts-section">
-        {/* Sales Overview Chart */}
-        {/* <div className="chart-card">
-          <h3>Sales Overview</h3>
-          <Line data={salesData} options={options} />
-        </div> */}
+        <div className="chart-card">
+          <h3>Varient Options</h3>
+          <Line data={variantData} options={options} />
+        </div>
 
-        {/* Category Project Count Chart */}
         <div className="chart-card">
           <h3>Category Products Count</h3>
           <Bar data={categoryData} options={options} />
