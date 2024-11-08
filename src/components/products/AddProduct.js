@@ -286,11 +286,11 @@ const AddProduct = (categories) => {
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
 
-    const filteredCategories = categories.categories.filter(category =>
+    const filteredCategories = categories.categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
 
-    const levelOneCategory = categories.categories.find(level1 => level1._id === selectedCategoryId);
+    const levelOneCategory = categories.categories.category_list.find(level1 => level1._id === selectedCategoryId);
     const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
         level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
     );
@@ -412,7 +412,7 @@ const AddProduct = (categories) => {
                         <label htmlFor="categorySelect">Level 1:</label>
                         <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                             <div className="selected-category">
-                                {selectedCategoryId ? categories.categories.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedCategoryId ? categories.categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                             </div>
                             {isCategoryDropdownOpen && (
                                 <div className="dropdown-options">

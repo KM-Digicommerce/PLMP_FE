@@ -5,19 +5,11 @@ import axios from 'axios';
 import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faChevronDown, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
 
-const Sidebar = ({ 
-  setSelectedLevel3Id, 
-  refreshCategories, 
-  onCategoriesClick, 
-  onAllProductsClick, 
-  OnAllVariantsClick, 
-  OnAddProductClick,
-  onDashboardClick  // Add the new prop to handle dashboard click
-}) => {
+const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick,OnAddProductClick }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
-  const [showImportOptions, setShowImportOptions] = useState(false);
+  const [showImportOptions, setShowImportOptions] = useState(false); 
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -27,7 +19,7 @@ const Sidebar = ({
       title: 'Upload Failed',
       text: message,
       icon: 'error',
-      confirmButtonText: 'OK',
+      confirmButtonText: 'OK'
     });
   };
 
@@ -53,11 +45,11 @@ const Sidebar = ({
     if (!selectedFile) {
       Swal.fire({
         text: 'Please select a file to upload.',
-        confirmButtonText: 'OK',
+        confirmButtonText: 'OK'
       });
       return;
     }
-
+    
     setShowImportOptions(false);
     setLoading(true);
 
@@ -67,10 +59,10 @@ const Sidebar = ({
     try {
       const response = await axios.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       });
-
+      
       if (response.data && response.data.data.status === false) {
         showUploadErrorSwal(response.data.message || 'Failed to upload the file.');
       } else {
@@ -78,9 +70,9 @@ const Sidebar = ({
           title: 'Success!',
           text: 'File uploaded successfully!',
           icon: 'success',
-          confirmButtonText: 'OK',
+          confirmButtonText: 'OK'
         });
-        setSelectedFile(null);
+        setSelectedFile(null); 
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -89,7 +81,7 @@ const Sidebar = ({
       setLoading(false);
     }
   };
-
+  const [data, setData] = useState([]); 
   const handleExport = async () => {
     setLoading(true);
     try {
@@ -124,60 +116,65 @@ const Sidebar = ({
       setLoading(false);
     }
   };
-
   return (
     <div className="sidebar">
-      <ul className="topMenu">
-        <li onClick={onDashboardClick}>Dashboard</li>
-        <li onClick={onCategoriesClick}>Categories</li>
-        
-        {/* Dashboard link */}
+    <ul className="topMenu">
+    <li onClick={() => {  onCategoriesClick(); }}>
+  <FontAwesomeIcon icon={faTags} className="icon" />
+  Categories
+</li>
 
-        <li onClick={handleProductsClick}>
-          Products
-          {showProductsSubmenu && (
-            <ul className="subMenu">
-              <li onClick={onAllProductsClick}>All Products</li>
-              <li onClick={OnAddProductClick}>Add New Product</li>
-            </ul>
-          )}
-        </li>
-
-        <li onClick={OnAllVariantsClick}>Variants</li>
-
-        <li
-          onMouseEnter={() => setShowImportOptions(true)}
-          onMouseLeave={() => {
-            if (!selectedFile) setShowImportOptions(false);
-          }}
-        >
-          Import
-          {showImportOptions && (
-            <div className="upload-container">
-              <input
-                type="file"
-                id="file-input"
-                style={{ display: 'none' }}
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-              <IconButton onClick={triggerFileInput} color="primary" aria-label="upload file">
-                <UploadIcon />
-              </IconButton>
-              {selectedFile && <span className="file-name">{selectedFile.name}</span>}
-              <button onClick={handleUpload} disabled={loading}>
-                {loading ? 'Uploading...' : 'Upload'}
-              </button>
-            </div>
-          )}
-        </li>
-
-        <li className="top-menu export-button btn" onClick={handleExport} disabled={loading}>
-          {loading ? 'Exporting...' : 'Export'} <FontAwesomeIcon icon={faDownload} />
-        </li>
-        <li>Settings</li>
-      </ul>
-    </div>
+      <li onClick={toggleProductsSubmenu} className="productsMenu">
+        <FontAwesomeIcon icon={faBox} className="icon" />
+        Products
+        {showProductsSubmenu && (
+          <ul className="subMenu">
+            <li onClick={onAllProductsClick}>All Products</li>
+            <li onClick={OnAddProductClick}>Add New Product</li>
+          </ul>
+        )}
+      </li>
+      <li onClick={OnAllVariantsClick}>
+        <FontAwesomeIcon icon={faUser} className="icon" />
+        Variants
+      </li>
+      <li
+           onMouseEnter={() => setShowImportOptions(true)}
+           onMouseLeave={() => {
+             if (!selectedFile) setShowImportOptions(false);
+           }}
+         >
+                  <FontAwesomeIcon icon={faFileImport} className="icon" />
+                  Import
+           {showImportOptions && (
+             <div className="upload-container">
+               <input
+                 type="file"
+                 id="file-input"
+                 style={{ display: 'none' }}
+                 ref={fileInputRef}
+                 onChange={handleFileChange}
+               />
+               <IconButton onClick={triggerFileInput} color="primary" aria-label="upload file">
+                 <UploadIcon />
+               </IconButton>
+               {selectedFile && <span className="file-name">{selectedFile.name}</span>}
+               <button onClick={handleUpload} disabled={loading}>
+                 {loading ? 'Uploading...' : 'Upload'}
+               </button>
+             </div>
+           )}
+         </li>
+      <li onClick={handleExport}>
+        <FontAwesomeIcon icon={faFileExport} className="icon" />
+        Export
+      </li>
+      <li>
+        <FontAwesomeIcon icon={faCog} className="icon" />
+        Settings
+      </li>
+    </ul>
+  </div>
   );
 };
 

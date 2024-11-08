@@ -87,11 +87,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQueryLevel5, setSearchQueryLevel5] = useState('');
   const [searchQueryLevel6, setSearchQueryLevel6] = useState('');
 
-  const filteredCategories = categories.filter(category =>
+  const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const levelOneCategory = categories.find(level1 => level1._id === selectedCategoryId);
+  const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
   const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
     level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
   );
@@ -335,7 +335,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
-        <h2>Categories</h2>
+        <h3>Categories</h3>
       </div>
 
       <div className='CategoryContainer'>
@@ -344,7 +344,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             <label htmlFor="categorySelect">Level 1: </label>
             <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
               <div className="selected-category">
-                {selectedCategoryId ? categories.find(level1 => level1._id === selectedCategoryId)?.name
+                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name
                   : 'Select Category'}
                 <span className="dropdown-icons">
                   <AddOutlinedIcon onClick={() => handleCategorySelect("add")} />
@@ -619,53 +619,29 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             )} */}
         </div>
         <Dialog open={showAddCategoryPopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+  <button onClick={closeAddCategoryPopup} color="secondary" className="close-button">   <span className="close-icon">X</span></button>
           <DialogContent>
             <AddCategory refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddProductTypePopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel4Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelFour selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -673,18 +649,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel5Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -693,18 +661,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel6Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelSix selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -714,14 +674,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
       </div>
       {/* {level2Categories.length > 0 && variantsData.varient_list && ( */}

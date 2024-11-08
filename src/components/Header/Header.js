@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './Header.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,11 +15,17 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="image-container1">
-        <img src="https://kmdigicommerce.com/wp-content/uploads/2024/08/KM-2048x1976.png" alt="Login" />
+      <div className="header-left">
+        <div className="logo-container">
+          <img 
+            src="https://kmdigicommerce.com/wp-content/uploads/2024/08/KM-2048x1976.png" 
+            alt="Logo" 
+            className="logo-image"
+          />
+          <div className="logo">Product Library Management Portal</div>
+        </div>
       </div>
-      <div className="logo">Product Library Management Portal</div>
-      <div className="header-actions">
+      <div className="header-right">
         <button className="logout-button" onClick={handleLogout}>
           <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
           Logout

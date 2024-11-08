@@ -1,53 +1,50 @@
 
 /* Header.css */
 
+/* Header.css */
 .header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: space-between; 
-  padding: 20px 10px;
-  background-color: #8111ab; /* Using a deep indigo blue for a modern look */
-  color: #f3f4f6; /* Light grey color for text */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  padding: 8px 8px; 
+  background-color: rgb(26 26 26);
+  color: #f3f4f6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.image-container1 {
+
+.header-left {
   display: flex;
-  width:77px;
-
+  align-items: center;
 }
 
-.image-container1 img {
-  max-width: 100%; /* Make image responsive */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 28px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-  transition: transform 0.3s ease; /* Smooth scale effect on hover */
-  width: 70px;
+.logo-container {
+  display: flex;
+  align-items: center;
 }
 
-.image-container1 img:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
+.logo-image {
+  width: 35px; /* Adjust logo size */
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-right: 15px; /* Space between logo and text */
 }
 
 .logo {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 18px;
   color: #f3f4f6;
-  font-family: 'Poppins', sans-serif;
-  text-align: center;
 }
 
-.header-actions {
-  display: flex; 
-  align-items: center; 
-  width: 125px;
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .logout-button {
   color: #f3f4f6;
-  background-color: #6366f1;
-  border: none; 
-  border-radius: 8px; 
+  background-color: #6e6e70;
+  border: none;
+  border-radius: 8px;
   padding: 8px 16px;
   cursor: pointer;
   font-size: 16px;
@@ -56,16 +53,13 @@
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease;
-  width: 114px;
-
+  width: 100%;
 }
 
 .logout-button:hover {
-  background-color: #a5b4fc;
+  background-color: rgba(204, 204, 204, 1);
 }
 
 .logout-icon {
   margin-right: 8px;
-  
 }
-
