@@ -77,36 +77,36 @@ const ProductList = () => {
     item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleBulkEditChange = (e) => {
-    const { name, value } = e.target;
-    setBulkEditData({ ...bulkEditData, [name]: value });
-  };
+  // const handleBulkEditChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setBulkEditData({ ...bulkEditData, [name]: value });
+  // };
 
-  const handleBulkEditSubmit = async () => {
-    if (!bulkEditData.product_name && !bulkEditData.BasePrice && !bulkEditData.tags) {
-      Swal.fire('Please enter values to update!', '', 'warning');
-      return;
-    }
-    const updates = {
-      ids: selectedProducts,
-      update_obj: {
-        ...(bulkEditData.product_name && { product_name: bulkEditData.product_name }),
-        ...(bulkEditData.BasePrice && { BasePrice: bulkEditData.BasePrice }),
-        ...(bulkEditData.ManufacturerName && { ManufacturerName: bulkEditData.ManufacturerName }),
-        ...(bulkEditData.tags && { tags: bulkEditData.tags }),
-        ...(bulkEditData.Key_features && { Key_features: bulkEditData.Key_features }),
-      },
-    };
+  // const handleBulkEditSubmit = async () => {
+  //   if (!bulkEditData.product_name && !bulkEditData.BasePrice && !bulkEditData.tags) {
+  //     Swal.fire('Please enter values to update!', '', 'warning');
+  //     return;
+  //   }
+  //   const updates = {
+  //     ids: selectedProducts,
+  //     update_obj: {
+  //       ...(bulkEditData.product_name && { product_name: bulkEditData.product_name }),
+  //       ...(bulkEditData.BasePrice && { BasePrice: bulkEditData.BasePrice }),
+  //       ...(bulkEditData.ManufacturerName && { ManufacturerName: bulkEditData.ManufacturerName }),
+  //       ...(bulkEditData.tags && { tags: bulkEditData.tags }),
+  //       ...(bulkEditData.Key_features && { Key_features: bulkEditData.Key_features }),
+  //     },
+  //   };
 
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
-      Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
-        window.location.reload();
-      });
-    } catch (err) {
-      Swal.fire('Error', 'Failed to apply bulk edit', 'error');
-    }
-  };
+  //   try {
+  //     const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
+  //     Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
+  //       window.location.reload();
+  //     });
+  //   } catch (err) {
+  //     Swal.fire('Error', 'Failed to apply bulk edit', 'error');
+  //   }
+  // };
 
   return (
     <div className="product-list">
@@ -120,7 +120,7 @@ const ProductList = () => {
           className="search-input"
         />
       </div>
-      <div className="bulk-edit-panel">
+      {/* <div className="bulk-edit-panel">
         <h3>Bulk Edit</h3>
         <div className="bulk-edit-inputs">
           <input
@@ -148,7 +148,7 @@ const ProductList = () => {
             Apply Changes
           </button>
         </div>
-      </div>
+      </div> */}
       {loading ? (
         <p>Loading products...</p>
       ) : error ? (

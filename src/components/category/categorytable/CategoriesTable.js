@@ -95,6 +95,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
     level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
   );
+  //const filteredCategoriesLevel2 = categories.flatMap(level1 => level1.level_one_category_list).filter(level2 =>
+    //   level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
+    // );
   const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
   const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
     level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
@@ -127,6 +130,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
     setSelectedCategoryIdPopup(selectedValue);
+    setSelectedLevel2Id('');
     setSelectedLevel3Id('');
     setSelectedlevel4('');
     setSelectedlevel5('');
@@ -755,7 +759,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           component={Paper}
           sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
         >
-          <Table>
+           <Table>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -769,18 +773,42 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                 <TableCell
                   align="left"
                   sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                  onClick={() => handleSort('tags')}
-                >
-                  Tags
-                  {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                   onClick={() => handleSort('price')}
                 >
                   Price
                   {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('model')}
+                >
+                  Model
+                  {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('breadcrumb')}
+                >
+                  Breadcrumb
+                  {sortOrder.column === 'breadcrumb' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('msrp')}
+                >
+                  Msrp
+                  {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('tags')}
+                >
+                  Tags
+                  {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -788,8 +816,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               {sortedProducts.map((product) => (
                 <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                   <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.base_price}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.msrp}</TableCell>
                   <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
-                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.price}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

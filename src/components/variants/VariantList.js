@@ -223,6 +223,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
       ? variantList.flatMap((variant) =>
           variant.option_value_list
             ? variant.option_value_list.filter((value) =>
+                value.type_value_name && 
                 value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
               )
             : []
