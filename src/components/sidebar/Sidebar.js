@@ -116,14 +116,16 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
       setLoading(false);
     }
   };
+  const toggleProductsSubmenu = () => {
+    setShowProductsSubmenu(!showProductsSubmenu);
+  };
   return (
     <div className="sidebar">
     <ul className="topMenu">
-    <li onClick={() => {  onCategoriesClick(); }}>
-  <FontAwesomeIcon icon={faTags} className="icon" />
-  Categories
-</li>
-
+      <li onClick={onCategoriesClick}>
+        <FontAwesomeIcon icon={faTags} className="icon" />
+        Categories
+      </li>
       <li onClick={toggleProductsSubmenu} className="productsMenu">
         <FontAwesomeIcon icon={faBox} className="icon" />
         Products
