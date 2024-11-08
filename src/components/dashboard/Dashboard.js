@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
+import axios from 'axios';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +27,10 @@ ChartJS.register(
 );
 
 function Dashboard() {
-  // Sales Overview Data
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Sales Overview Data (static for now)
   const salesData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June'],
     datasets: [
@@ -41,25 +45,6 @@ function Dashboard() {
     ],
   };
 
-  // Top Products Data
-  const topProductsData = {
-    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],
-    datasets: [
-      {
-        label: 'Units Sold',
-        data: [120, 150, 180, 200, 170],
-        backgroundColor: [
-          '#0156B7',
-          '#0156B7',
-          '#0156B7',
-          '#0156B7',
-          '#0156B7',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
   // Chart Options
   const options = {
     responsive: true,
@@ -70,37 +55,76 @@ function Dashboard() {
     },
   };
 
+  // Fetch dashboard data from backend
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axios.get('http://192.168.1.13:8000/api/obtainDashboardCount/');
+        if (response.data) {
+          setDashboardData(response.data.data); // Update state with fetched data
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Prepare category project data for the Bar chart
+  const categoryData = {
+    labels: Object.keys(dashboardData.category_project_dict),
+    datasets: [
+      {
+        label: 'Projects/Products Count',
+        data: Object.values(dashboardData.category_project_dict),
+        backgroundColor: '#0156B7',
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <div className="dashboard-container">
       <h2 className="dashboard-title">Dashboard Overview</h2>
 
       <div className="stats-cards">
+        {/* Stats Cards with dynamic data */}
         <div className="card">
           <h3>Total Products</h3>
-          <p>1,245</p>
+          <p>{dashboardData.total_product}</p>
         </div>
         <div className="card">
-          <h3>Total Orders</h3>
-          <p>3,678</p>
+          <h3>Total Brands</h3>
+          <p>{dashboardData.total_brand}</p>
         </div>
         <div className="card">
-          <h3>Total Revenue</h3>
-          <p>$120,560</p>
+          <h3>Total Last Level Categories</h3>
+          <p>{dashboardData.total_last_level_category}</p>
         </div>
         <div className="card">
-          <h3>New Customers</h3>
-          <p>245</p>
+          <h3>Total Parent Level Categories</h3>
+          <p>{dashboardData.total_parent_level_category}</p>
         </div>
       </div>
 
       <div className="charts-section">
-        <div className="chart-card">
+        {/* Sales Overview Chart */}
+        {/* <div className="chart-card">
           <h3>Sales Overview</h3>
           <Line data={salesData} options={options} />
-        </div>
+        </div> */}
+
+        {/* Category Project Count Chart */}
         <div className="chart-card">
-          <h3>Top Products</h3>
-          <Bar data={topProductsData} options={options} />
+          <h3>Category Products Count</h3>
+          <Bar data={categoryData} options={options} />
         </div>
       </div>
     </div>

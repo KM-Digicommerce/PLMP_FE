@@ -7,7 +7,15 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick }) => {
+const Sidebar = ({ 
+  setSelectedLevel3Id, 
+  refreshCategories, 
+  onCategoriesClick, 
+  onAllProductsClick, 
+  OnAllVariantsClick, 
+  OnAddProductClick,
+  onDashboardClick  // Add the new prop to handle dashboard click
+}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -120,7 +128,11 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
   return (
     <div className="sidebar">
       <ul className="topMenu">
+        <li onClick={onDashboardClick}>Dashboard</li>
         <li onClick={onCategoriesClick}>Categories</li>
+        
+        {/* Dashboard link */}
+
         <li onClick={handleProductsClick}>
           Products
           {showProductsSubmenu && (
@@ -130,6 +142,7 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
             </ul>
           )}
         </li>
+
         <li onClick={OnAllVariantsClick}>Variants</li>
 
         <li
