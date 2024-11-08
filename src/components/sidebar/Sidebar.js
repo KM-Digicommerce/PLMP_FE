@@ -6,10 +6,19 @@ import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faChevronDown, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
-const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, onAllProductsClick, OnAllVariantsClick,OnAddProductClick }) => {
+const Sidebar = ({ 
+  setSelectedLevel3Id, 
+  refreshCategories, 
+  onCategoriesClick, 
+  onAllProductsClick, 
+  OnAllVariantsClick, 
+  OnAddProductClick,
+  onDashboardClick 
+}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
-  const [showImportOptions, setShowImportOptions] = useState(false); 
+  const [showImportOptions, setShowImportOptions] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -19,7 +28,7 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
       title: 'Upload Failed',
       text: message,
       icon: 'error',
-      confirmButtonText: 'OK'
+      confirmButtonText: 'OK',
     });
   };
 
@@ -45,11 +54,11 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
     if (!selectedFile) {
       Swal.fire({
         text: 'Please select a file to upload.',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
       });
       return;
     }
-    
+
     setShowImportOptions(false);
     setLoading(true);
 
@@ -59,10 +68,10 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
     try {
       const response = await axios.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      
+
       if (response.data && response.data.data.status === false) {
         showUploadErrorSwal(response.data.message || 'Failed to upload the file.');
       } else {
@@ -70,9 +79,9 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
           title: 'Success!',
           text: 'File uploaded successfully!',
           icon: 'success',
-          confirmButtonText: 'OK'
+          confirmButtonText: 'OK',
         });
-        setSelectedFile(null); 
+        setSelectedFile(null);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -122,6 +131,7 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
   return (
     <div className="sidebar">
     <ul className="topMenu">
+	<li onClick={onDashboardClick}><DashboardIcon />Dashboard</li>
       <li onClick={onCategoriesClick}>
         <FontAwesomeIcon icon={faTags} className="icon" />
         Categories
@@ -161,7 +171,7 @@ const Sidebar = ({ setSelectedLevel3Id, refreshCategories, onCategoriesClick, on
                  <UploadIcon />
                </IconButton>
                {selectedFile && <span className="file-name">{selectedFile.name}</span>}
-               <button onClick={handleUpload} disabled={loading}>
+               <button onClick={handleUpload} disabled={loading} className='upload_btn'>
                  {loading ? 'Uploading...' : 'Upload'}
                </button>
              </div>

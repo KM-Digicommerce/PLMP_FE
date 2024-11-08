@@ -6,7 +6,7 @@
   width: 200px;
   padding: 4px;
   font-family: Arial, sans-serif;
-  height: 100vh; 
+  height: 300vh; 
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
@@ -62,4 +62,7 @@
 .subMenu li:hover {
   color: #000;
   background-color: #eaeaea;
+}
+.upload_btn{
+  width: 100%;
 }
