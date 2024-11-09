@@ -87,14 +87,17 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQueryLevel5, setSearchQueryLevel5] = useState('');
   const [searchQueryLevel6, setSearchQueryLevel6] = useState('');
 
-  const filteredCategories = categories.filter(category =>
+  const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const levelOneCategory = categories.find(level1 => level1._id === selectedCategoryId);
+  const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
   const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
     level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
   );
+  //const filteredCategoriesLevel2 = categories.flatMap(level1 => level1.level_one_category_list).filter(level2 =>
+    //   level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
+    // );
   const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
   const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
     level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
@@ -127,6 +130,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
     setSelectedCategoryIdPopup(selectedValue);
+    setSelectedLevel2Id('');
     setSelectedLevel3Id('');
     setSelectedlevel4('');
     setSelectedlevel5('');
@@ -331,7 +335,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
-        <h2>Categories</h2>
+        <h3>Categories</h3>
       </div>
 
       <div className='CategoryContainer'>
@@ -340,7 +344,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             <label htmlFor="categorySelect">Level 1: </label>
             <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
               <div className="selected-category">
-                {selectedCategoryId ? categories.find(level1 => level1._id === selectedCategoryId)?.name
+                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name
                   : 'Select Category'}
                 <span className="dropdown-icons">
                   <AddOutlinedIcon onClick={() => handleCategorySelect("add")} />
@@ -615,53 +619,29 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             )} */}
         </div>
         <Dialog open={showAddCategoryPopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+  <button onClick={closeAddCategoryPopup} color="secondary" className="close-button">   <span className="close-icon">X</span></button>
           <DialogContent>
             <AddCategory refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddProductTypePopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel4Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelFour selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -669,18 +649,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel5Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -689,18 +661,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
 
         <Dialog open={showAddlevel6Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <DialogTitle>Add New Category</DialogTitle>
+        <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             <AddLevelSix selectedCategoryIdPopup={selectedCategoryIdPopup}
               selectedLevel2IdPopup={selectedLevel2IdPopup}
@@ -710,14 +674,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               categories={categories}
               refreshCategories={refreshCategories} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddCategoryPopup} color="secondary">
-              Close
-            </Button>
-            <Button onClick={() => refreshCategories()} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
         </Dialog>
       </div>
       {/* {level2Categories.length > 0 && variantsData.varient_list && ( */}
@@ -755,7 +711,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           component={Paper}
           sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
         >
-          <Table>
+           <Table>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -769,18 +725,42 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                 <TableCell
                   align="left"
                   sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                  onClick={() => handleSort('tags')}
-                >
-                  Tags
-                  {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                   onClick={() => handleSort('price')}
                 >
                   Price
                   {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('model')}
+                >
+                  Model
+                  {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('breadcrumb')}
+                >
+                  Breadcrumb
+                  {sortOrder.column === 'breadcrumb' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('msrp')}
+                >
+                  Msrp
+                  {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                  onClick={() => handleSort('tags')}
+                >
+                  Tags
+                  {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -788,8 +768,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               {sortedProducts.map((product) => (
                 <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                   <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.base_price}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
+                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.msrp}</TableCell>
                   <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
-                  <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.price}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
