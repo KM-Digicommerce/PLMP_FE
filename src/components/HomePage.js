@@ -1,6 +1,5 @@
-// src/components/HomePage.js
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom'; // Make sure to import Route and Routes
+import { Routes, Route } from 'react-router-dom';
 import './HomePage.css';
 import Sidebar from './sidebar/Sidebar';
 import ProductList from './products/ProductList';
@@ -9,15 +8,17 @@ import Header from './Header/Header';
 import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
+import Dashboard from './dashboard/Dashboard';
 import axios from 'axios';
 
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
-  const [showCategoriesTable, setShowCategoriesTable] = useState(true); // Default to show categories
+  const [showCategoriesTable, setShowCategoriesTable] = useState(false);
   const [showProductList, setShowProductList] = useState(false);
   const [showVariantsTable, setShowVariantsTable] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard
 
   const fetchCategories = async () => {
     try {
@@ -31,8 +32,9 @@ function HomePage() {
   useEffect(() => {
     fetchCategories();
   }, []);
-  
+
   const handleCategoriesClick = () => {
+    setShowDashboard(false);
     setShowCategoriesTable(true);
     setShowProductList(false);
     setShowVariantsTable(false);
@@ -40,6 +42,7 @@ function HomePage() {
   };
 
   const handleAllProductsClick = () => {
+    setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(true);
     setSelectedProductTypeId(null);
@@ -48,6 +51,7 @@ function HomePage() {
   };
 
   const handleAllVariantsClick = () => {
+    setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(false);
     setShowVariantsTable(true);
@@ -55,10 +59,19 @@ function HomePage() {
   };
 
   const handleAddProductsClick = () => {
+    setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(false);
     setShowVariantsTable(false);
     setAddProduct(true);
+  };
+
+  const handleDashboardClick = () => {
+    setShowDashboard(true);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
   };
 
   return (
@@ -72,12 +85,15 @@ function HomePage() {
             onAllProductsClick={handleAllProductsClick}
             OnAllVariantsClick={handleAllVariantsClick}
             OnAddProductClick={handleAddProductsClick}
+            onDashboardClick={handleDashboardClick}
           />
         </div>
         <div className="right-container">
           <Routes>
             <Route path="/" element={
-              showCategoriesTable ? (
+              showDashboard ? (
+                <Dashboard />
+              ) : showCategoriesTable ? (
                 <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} />
               ) : showProductList ? (
                 <ProductList productTypeId={selectedProductTypeId} />

@@ -8,14 +8,14 @@ body{
 }
 
 .sidebar-container{
-  min-width: 250px;
+  min-width: 208px;
   width: 10%;
 }
 
 
 .right-container {
   background-color: #f2f2f2;
-  width: 90%;
+  width: 100%;
   padding: 5px;
 }
 

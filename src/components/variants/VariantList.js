@@ -31,11 +31,11 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
 
-    const filteredCategories = categories.filter(category =>
+    const filteredCategories = categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
 
-    const levelOneCategory = categories.find(level1 => level1._id === selectedCategoryId);
+    const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
     const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
         level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
     );
@@ -223,6 +223,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
       ? variantList.flatMap((variant) =>
           variant.option_value_list
             ? variant.option_value_list.filter((value) =>
+                value.type_value_name && 
                 value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
               )
             : []
@@ -242,7 +243,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                         <label htmlFor="categorySelect">Level 1:</label>
                         <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                             <div className="selected-category">
-                                {selectedCategoryId ? categories.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                             </div>
                             {isCategoryDropdownOpen && (
                                 <div className="dropdown-options">

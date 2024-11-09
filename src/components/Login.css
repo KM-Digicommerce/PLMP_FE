@@ -9,7 +9,7 @@ body {
 .login-page {
     display: flex;
     height: 100vh;
-    background-color: #3e8197;
+    background-color: #8e8e8e;
 
 }
 
@@ -136,5 +136,6 @@ button:hover {
     text-decoration: underline;
     padding: 0;
     font-size: inherit;
+    width:100%
   }
   
