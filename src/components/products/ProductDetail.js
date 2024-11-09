@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css'; // Importing CSS for styling
 
@@ -97,7 +97,7 @@ const ProductDetail = () => {
         }
     };
     const handleBackClick = () => {
-        navigate('/'); // Adjust the path to match your product listing route
+        navigate('/Homepage'); // Adjust the path to match your product listing route
     };
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -105,7 +105,7 @@ const ProductDetail = () => {
     return (
         <div className="product-detail">
             <button onClick={handleBackClick} className="back-button">
-                &larr; Back to Products
+                &larr; Back to HomePage
             </button>
             <form onSubmit={handleSubmit} className="product-edit-form">
                 <div className="product-edit-container">
@@ -119,7 +119,7 @@ const ProductDetail = () => {
 
                     {/* Right side: Product Information */}
                     <div className="product-info-section">
-                        <h2>Edit Product Details</h2>
+                        <h3>Edit Product Details</h3>
                         <div className="form-group">
                             <label htmlFor="product_name">Product Name</label>
                             <input

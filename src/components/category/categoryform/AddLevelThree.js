@@ -49,7 +49,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
           required
         >
           <option value="">Select Level 1 Category</option>
-          {categories.map((category) => (
+          {categories.category_list.map((category) => (
             <option key={category._id} value={category._id}>
               {category.name}
             </option>

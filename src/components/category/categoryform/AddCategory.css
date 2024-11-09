@@ -15,5 +15,7 @@ input[type="text"] {
 
 select {
     display: block;
+    margin-top: 8px;
     margin-bottom: 7px;
+    padding: 8px;
 }
