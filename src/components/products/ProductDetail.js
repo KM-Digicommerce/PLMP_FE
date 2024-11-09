@@ -36,7 +36,7 @@ const ProductDetail = () => {
                 const variantResponse = await axios.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
                     product_id: productId, // Adjust if the API needs a product ID
                 });
-                console.log(variantResponse.data, 'Variant List Response');
+                console.log(variantResponse.data.data, 'Variant List Response');
                 if (variantResponse.data && variantResponse.data.data) {
                     setVariantData(variantResponse.data.data || []);
                 }
@@ -75,10 +75,19 @@ const ProductDetail = () => {
                 update_obj: {
                     product_name: formData.product_name,
                     url: formData.url,
-                    BasePrice: formData.BasePrice,
-                    Manufacturer_name: formData.ManufacturerName,
+                    base_price: formData.base_price,
+                    breadcrumb: formData.breadcrumb,
                     tags: formData.tags,
-                    Key_features: formData.Key_features
+                    key_features: formData.key_features,
+                    msrp: formData.msrp,
+                    features: formData.features,
+                    long_description: formData.long_description,
+                    short_description: formData.short_description,
+                    attributes: formData.attributes,
+                    model: formData.model,
+                    upc_ean: formData.upc_ean,
+
+
                 },
             };
             const response = await axios.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload); // Update the product
@@ -119,64 +128,70 @@ const ProductDetail = () => {
 
                     {/* Right side: Product Information */}
                     <div className="product-info-section">
-                        <h3>Edit Product Details</h3>
+                        <h3 className='edit_prd'>Edit Product Details</h3>
                         <div className="form-group">
                             <label htmlFor="product_name">Product Name</label>
-                            <input
-                                type="text"
-                                id="product_name"
-                                name="product_name"
-                                value={String(formData.product_name || '')}
-                                onChange={handleChange}
-                                required
+                            <input type="text" id="product_name" name="product_name" value={String(formData.product_name || '')} onChange={handleChange} required
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="BasePrice">Base Price</label>
-                            <input
-                                type="text"
-                                id="BasePrice"
-                                name="BasePrice"
-                                value={String(formData.BasePrice || '')}
-                                onChange={handleChange}
-                                required
+                            <label htmlFor="base_price">Base Price</label>
+                            <input type="text" id="base_price" name="base_price" value={String(formData.base_price || '')} onChange={handleChange} required
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="ManufacturerName">Manufacturer Name</label>
-                            <input
-                                type="text"
-                                id="ManufacturerName"
-                                name="ManufacturerName"
-                                value={String(formData.ManufacturerName || '')}
-                                onChange={handleChange}
+                            <label htmlFor="msrp">MSRP</label>
+                            <input type="text" id="msrp" name="msrp" value={String(formData.msrp || '')} onChange={handleChange} required
                             />
                         </div>
-
+                        <div className="form-group">
+                            <label htmlFor="model">Model</label>
+                            <input type="text" id="model" name="model" value={String(formData.model || '')} onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="breadcrumb">Breadcrumb</label>
+                            <input type="text" id="breadcrumb" name="breadcrumb" value={String(formData.breadcrumb || '')} onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="upc_ean">UPC_EAN</label>
+                            <input type="text" id="upc_ean" name="upc_ean" value={String(formData.upc_ean || '')} onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="long_description">Long Description</label>
+                            <input type="text" id="long_description" name="long_description" value={String(formData.long_description || '')} onChange={handleChange}
+                            />
+                            </div>
+                        <div className="form-group">
+                            <label htmlFor="short_description">Short Description</label>
+                            <input type="text" id="short_description" name="short_description" value={String(formData.short_description || '')} onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="attributes">Attributes</label>
+                            <input type="text" id="attributes" name="attributes" value={String(formData.attributes || '')} onChange={handleChange}
+                            />
+                        </div>
                         <div className="form-group">
                             <label htmlFor="tags">Tags</label>
-                            <input
-                                type="text"
-                                id="tags"
-                                name="tags"
-                                value={String(formData.tags || '')}
-                                onChange={handleChange}
+                            <input type="text" id="tags" name="tags" value={String(formData.tags || '')} onChange={handleChange}
                             />
                         </div>
-
                         <div className="form-group">
-                            <label htmlFor="Key_features">Key Features</label>
-                            <input
-                                type="text"
-                                id="Key_features"
-                                name="Key_features"
-                                value={String(formData.Key_features || '')}
-                                onChange={handleChange}
+                            <label htmlFor="features">Features</label>
+                            <input type="text" id="features" name="features" value={String(formData.features || '')} onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="key_features">Key Features</label>
+                            <input type="text" id="key_features" name="key_features" value={String(formData.key_features || '')} onChange={handleChange}
                             />
                         </div>
 
-                        <button type="submit" className="save-button">Save Changes</button>
+                        <button type="submit" className="save-button_pdp">Save Changes</button>
                     </div>
                 </div>
             </form>
@@ -191,25 +206,20 @@ const ProductDetail = () => {
                             <th>Unfinished Price</th>
                             <th>Finished Price</th>
                             <th>Options</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {variantData.map((variant) => (
-                            <tr key={variant.id}>
-                                <td>{variant.varient_sku}</td>
+                            <tr key={variant.sku_number}>
+                                <td>{variant.sku_number}</td>
                                 <td>{variant.unfinished_price}</td>
                                 <td>{variant.finished_price}</td>
                                 <td>
-                                    {variant.options.map((option, index) => (
+                                    {variant.varient_option_list.map((option, index) => (
                                         <div key={index}>
-                                            {option.option_name}: {option.option_value}
+                                            {option.type_name}: {option.type_value}
                                         </div>
                                     ))}
-                                </td>
-                                <td>
-                                    <button>Edit</button>
-                                    <button>Delete</button>
                                 </td>
                             </tr>
                         ))}

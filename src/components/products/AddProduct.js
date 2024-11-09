@@ -7,7 +7,7 @@ import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 
 // Simple Modal component
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId,selectedVariants,handleVariantDetailChange }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange }) => {
     // console.log(selectedCategoryId,'selectedCategoryId');
 
     const [variantOptions, setVariantOptions] = useState([]);  // State to store variant options
@@ -30,7 +30,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             fetchVariants();
         }
     }, [isOpen, selectedCategoryId]);
-  
+
 
     if (!isOpen) return null;
 
@@ -44,9 +44,9 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <input type="text" name="model" placeholder="Model" value={productData.model} onChange={handleChange} />
                     <input type="text" name="mpn" placeholder="MPN" value={productData.mpn} onChange={handleChange} />
                     <input type="text" name="upc_ean" placeholder="UPC/EAN" value={productData.upc_ean} onChange={handleChange} />
-                    <input type="text" name="breadcrumb" placeholder="Breadcrumb" value={productData.breadcrumb} onChange={handleChange}/>
-                    <input type="text" name="brand_name" placeholder="Brand Name" value={productData.brand_name} onChange={handleChange}/>
-                    <input type="text" name="product_name" placeholder="Product Name" required value={productData.product_name}  onChange={handleChange}/>
+                    <input type="text" name="breadcrumb" placeholder="Breadcrumb" value={productData.breadcrumb} onChange={handleChange} />
+                    <input type="text" name="brand_name" placeholder="Brand Name" value={productData.brand_name} onChange={handleChange} />
+                    <input type="text" name="product_name" placeholder="Product Name" required value={productData.product_name} onChange={handleChange} />
                 </div>
 
                 <div className="form-section">
@@ -71,39 +71,42 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 {/* Variant Section */}
                 <div className="form-section">
                     <h3>Variant Details</h3>
-                    <input type="text" name="sku" placeholder="SKU" 
-                    value={selectedVariants.sku}
-                    onChange={handleVariantDetailChange}
+                    <input type="text" name="sku" placeholder="SKU"
+                        value={selectedVariants.sku}
+                        onChange={handleVariantDetailChange}
                     />
-                    <input type="number" name="unfinishedPrice" placeholder="Unfinished Price" 
-                    value={selectedVariants.unfinishedPrice}
-                    onChange={handleVariantDetailChange}
+                    <input type="number" name="unfinishedPrice" placeholder="Unfinished Price"
+                        value={selectedVariants.unfinishedPrice}
+                        onChange={handleVariantDetailChange}
                     />
-                    <input type="number" name="finishedPrice" placeholder="Finished Price" 
-                    value={selectedVariants.finishedPrice}
-                    onChange={handleVariantDetailChange}
+                    <input type="number" name="finishedPrice" placeholder="Finished Price"
+                        value={selectedVariants.finishedPrice}
+                        onChange={handleVariantDetailChange}
                     />
-
+                    <input type="number" name="quantity" placeholder="Quantity"
+                        value={selectedVariants.quantity}
+                        onChange={handleVariantDetailChange}
+                    />
                     {/* Options Dropdown with border */}
                     {variantOptions?.map((variant) => (
-                <div key={variant.type_id}>
-                    <FormControl fullWidth variant="outlined" sx={{ mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-                        <InputLabel id={`variant-${variant.type_id}`}>{variant.type_name}</InputLabel>
-                        <Select
-                            labelId={`variant-${variant.type_id}`}
-                            value={selectedVariants[variant.type_id] || ''}
-                            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-                            label={variant.type_name}
-                        >
-                            {variant.option_value_list?.map((option) => (
-                                <MenuItem key={option.type_value_id} value={option.type_value_id}>
-                                    {option.type_value_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </div>
-            ))}
+                        <div key={variant.type_id}>
+                            <FormControl fullWidth variant="outlined" sx={{ mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
+                                <InputLabel id={`variant-${variant.type_id}`}>{variant.type_name}</InputLabel>
+                                <Select
+                                    labelId={`variant-${variant.type_id}`}
+                                    value={selectedVariants[variant.type_id] || ''}
+                                    onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+                                    label={variant.type_name}
+                                >
+                                    {variant.option_value_list?.map((option) => (
+                                        <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                            {option.type_value_name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
+                    ))}
                 </div>
 
                 <button onClick={onSave} className="save-button">Save Product</button>
@@ -147,16 +150,17 @@ const AddProduct = (categories) => {
         sku: '',
         unfinishedPrice: '',
         finishedPrice: '',
-      });
-    
-      // Handles changes for SKU, Unfinished Price, and Finished Price
-      const handleVariantDetailChange = (e) => {
+        quantity: ''
+    });
+
+    // Handles changes for SKU, Unfinished Price, and Finished Price
+    const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
         setSelectedVariants((prev) => ({
-          ...prev,
-          [name]: value
+            ...prev,
+            [name]: value
         }));
-      };
+    };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProductData({
@@ -174,7 +178,16 @@ const AddProduct = (categories) => {
             ...prev,
             [typeId]: optionId,
         }));
+console.log(selectedVariants,'selectedVariants');
+console.log(typeId,'typeId');
+console.log(optionId,'optionId');
 
+const filteredOptions = Object.entries(selectedVariants)
+.filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
+.map(([nameId, valueId]) => ({
+    option_name_id: nameId,
+    option_value_id: valueId
+}));
         // Update productData with selected variants
         setProductData((prevData) => ({
             ...prevData,
@@ -183,10 +196,12 @@ const AddProduct = (categories) => {
                 varients: [
                     {
                         ...prevData.product_obj.varients[0],
-                        options: Object.entries({ ...prevData, [typeId]: optionId }).map(([nameId, valueId]) => ({
-                            option_name_id: nameId,
-                            option_value_id: valueId
-                        }))
+                        // options: Object.entries({ ...prevData, [typeId]: optionId }).map(([nameId, valueId]) => ({
+                            // options: Object.entries(selectedVariants).map(([nameId, valueId]) => ({
+                            // option_name_id: nameId,
+                            // option_value_id: valueId
+                            options:filteredOptions,
+                        // }))
                     }
                 ]
             }
@@ -198,14 +213,11 @@ const AddProduct = (categories) => {
             const payload = {
                 product_obj: {
                     ...productData.product_obj,
-                    sku: productData.sku,
-                    unfinished_price: productData.unfinishedPrice,
-                    finished_price: productData.finishedPrice,
                     varients: productData.product_obj.varients.map(variant => ({
-                        ...variant,
                         sku_number: selectedVariants.sku,
-                        unfinished_price: selectedVariants.unfinishedPrice,
+                        un_finished_price: selectedVariants.unfinishedPrice,
                         finished_price: selectedVariants.finishedPrice,
+                        quantity:selectedVariants.quantity,
                         options: variant.options.map(option => ({
                             option_name_id: option.option_name_id,
                             option_value_id: option.option_value_id
@@ -213,12 +225,11 @@ const AddProduct = (categories) => {
                     }))
                 }
             };
+
             const response = await axios.post(
                 `${process.env.REACT_APP_IP}/createProduct/`,
-                payload  
+                payload
             );
-            console.log(response.data.status, 'response.data.status');
-            console.log(response.data, 'response.data');
 
             if (response.data.status === true) {
                 alert('Product added successfully!');
@@ -238,20 +249,18 @@ const AddProduct = (categories) => {
                         msrp: '',
                         base_price: '',
                         key_features: '',
-                        varients: [
-                            {
-                                sku_number: '',
-                                finished_price: '',
-                                un_finished_price: '',
-                                quantity: '',
-                                options: []
-                            }
-                        ],
+                        varients: [{
+                            sku_number: '',
+                            finished_price: '',
+                            un_finished_price: '',
+                            quantity: '',
+                            options: []
+                        }],
                         category_id: '',
                         category_name: ''
                     }
                 });
-                setIsModalOpen(false); // Close the modal after saving
+                setIsModalOpen(false);
             } else {
                 alert('Failed to add product');
             }
@@ -260,6 +269,74 @@ const AddProduct = (categories) => {
             alert('An error occurred while adding the product.');
         }
     };
+
+    // const handleSave = async () => {
+    //     try {
+    //         const payload = {
+    //             product_obj: {
+    //                 ...productData.product_obj,
+    //                 sku: productData.sku,
+    //                 unfinished_price: productData.unfinishedPrice,
+    //                 finished_price: productData.finishedPrice,
+    //                 varients: productData.product_obj.varients.map(variant => ({
+    //                     ...variant,
+    //                     sku_number: selectedVariants.sku,
+    //                     unfinished_price: selectedVariants.unfinishedPrice,
+    //                     finished_price: selectedVariants.finishedPrice,
+    //                     options: variant.options.map(option => ({
+    //                         option_name_id: option.option_name_id,
+    //                         option_value_id: option.option_value_id
+    //                     }))
+    //                 }))
+    //             }
+    //         };
+    //         const response = await axios.post(
+    //             `${process.env.REACT_APP_IP}/createProduct/`,
+    //             payload  
+    //         );
+    //         console.log(response.data.status, 'response.data.status');
+    //         console.log(response.data, 'response.data');
+
+    //         if (response.data.status === true) {
+    //             alert('Product added successfully!');
+    //             setProductData({
+    //                 product_obj: {
+    //                     model: '',
+    //                     mpn: '',
+    //                     upc_ean: '',
+    //                     breadcrumb: '',
+    //                     brand_name: '',
+    //                     product_name: '',
+    //                     long_description: '',
+    //                     short_description: '',
+    //                     features: '',
+    //                     attributes: '',
+    //                     tags: '',
+    //                     msrp: '',
+    //                     base_price: '',
+    //                     key_features: '',
+    //                     varients: [
+    //                         {
+    //                             sku_number: '',
+    //                             finished_price: '',
+    //                             un_finished_price: '',
+    //                             quantity: '',
+    //                             options: []
+    //                         }
+    //                     ],
+    //                     category_id: '',
+    //                     category_name: ''
+    //                 }
+    //             });
+    //             setIsModalOpen(false); // Close the modal after saving
+    //         } else {
+    //             alert('Failed to add product');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error adding product:', error);
+    //         alert('An error occurred while adding the product.');
+    //     }
+    // };
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedLevel2Id, setselectedLevel2Id] = useState('');
     const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
@@ -588,22 +665,22 @@ const AddProduct = (categories) => {
                     </div>
                 </div>
             </div>
-            {level2Categories.length > 0 && level3Categories &&(
-            <div className="add-product-container">
-                <button onClick={() => setIsModalOpen(true)} className="add-product-button">Add Product</button>
-                <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSave={handleSave}
-                    productData={productData}
-                    handleChange={handleChange}
-                    handleVariantChange={handleVariantChange}
-                    selectedCategoryId={selectedCategoryForVariant}  // Pass category ID to Modal
-                    selectedVariants={selectedVariants}
-                    handleVariantDetailChange={handleVariantDetailChange}
+            {level2Categories.length > 0 && level3Categories && (
+                <div className="add-product-container">
+                    <button onClick={() => setIsModalOpen(true)} className="add-product-button">Add Product</button>
+                    <Modal
+                        isOpen={isModalOpen}
+                        onClose={() => setIsModalOpen(false)}
+                        onSave={handleSave}
+                        productData={productData}
+                        handleChange={handleChange}
+                        handleVariantChange={handleVariantChange}
+                        selectedCategoryId={selectedCategoryForVariant}  // Pass category ID to Modal
+                        selectedVariants={selectedVariants}
+                        handleVariantDetailChange={handleVariantDetailChange}
 
-                />
-            </div>
+                    />
+                </div>
             )}
         </div>
     );
