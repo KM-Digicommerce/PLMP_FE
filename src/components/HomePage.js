@@ -18,11 +18,12 @@ function HomePage() {
   const [showProductList, setShowProductList] = useState(false);
   const [showVariantsTable, setShowVariantsTable] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard
-
+  const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+      console.log(res.data.data.category_list,'es.data.data');
+      
       setCategoriesData(res.data.data);
     } catch (err) {
       console.log('ERROR', err);
@@ -73,7 +74,6 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
-
   return (
     <div>
       <Header />
@@ -101,7 +101,8 @@ function HomePage() {
                 <VariantList categories={categoriesData} />
               ) : addProduct ? (
                 <AddProduct categories={categoriesData} />
-              ) : null
+              ) : null (
+              )
             } />
             <Route path="/product/:productId" element={<ProductDetail />} />
           </Routes>

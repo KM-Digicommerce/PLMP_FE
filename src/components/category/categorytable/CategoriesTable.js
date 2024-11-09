@@ -1,5 +1,4 @@
 // src/components/category/categorytable/CategoriesTable.js
-
 import React, { useState, useEffect } from 'react';
 import './CategoriesTable.css';
 import axios from 'axios';
@@ -16,10 +15,8 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
+
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 
 const CategoriesTable = ({ categories, refreshCategories }) => {
@@ -90,8 +87,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  console.log(filteredCategories,'filteredCategories');
 
   const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
+  console.log(levelOneCategory,'levelOneCategory');
+  
   const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
     level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
   );
@@ -676,34 +676,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogContent>
         </Dialog>
       </div>
-      {/* {level2Categories.length > 0 && variantsData.varient_list && ( */}
-      {/* {level2Categories.length > 0 && level3Categories && (
-
-<div style={{ padding: '20px' }}>
-      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
-      <TableContainer component={Paper} sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Product Name</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Tags</TableCell>
-              <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px' }}>Price</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
-                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
-                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
-                <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.price}</TableCell>
-
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-      )} */}
       {level2Categories.length > 0 && level3Categories && (
       <div style={{ padding: '20px' }}>
         <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
