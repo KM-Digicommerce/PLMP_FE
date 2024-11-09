@@ -42,7 +42,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get('http://192.168.1.13:8000/api/obtainDashboardCount/');
+        const response = await axios.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
         if (response.data) {
           setDashboardData(response.data.data); 
         }
@@ -110,12 +110,12 @@ function Dashboard() {
 
       <div className="charts-section">
         <div className="chart-card">
-          <h3>Varient Options</h3>
+          <h3>Varient-Options Count</h3>
           <Line data={variantData} options={options} />
         </div>
 
         <div className="chart-card">
-          <h3>Category Products Count</h3>
+          <h3>Category-Products Count</h3>
           <Bar data={categoryData} options={options} />
         </div>
       </div>
