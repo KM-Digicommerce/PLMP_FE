@@ -1,7 +1,7 @@
 // src/components/Login.js
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 
@@ -9,16 +9,17 @@ const Login = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [email, setEmail] = useState(''); // Added email state
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [otpError, setOtpError] = useState('');
-  const [emailError, setEmailError] = useState(''); // Added email error state
-  const [otpSent, setOtpSent] = useState(false); // Track OTP sent state
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [emailError, setEmailError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const navigate = useNavigate();
 
   // Handle login form submission
   const handleSubmit = async (e) => {
@@ -34,7 +35,7 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('token', response.data.token);
-        window.location.href = '/HomePage'; 
+        window.location.href = '/HomePage';
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -42,7 +43,7 @@ const Login = () => {
       setError('Invalid name or password');
       console.error(err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -62,10 +63,11 @@ const Login = () => {
         email,
         newPassword,
       });
-  
+
       if (response.data.success) {
         alert('Password updated successfully');
-        setShowForgotPassword(false); 
+        setShowForgotPassword(false);
+        setOtpSent(false);
       } else if (response.data.error === 'Invalid OTP') {
         setOtpError('Invalid OTP. Please try again.');
       } else if (response.data.error === 'OTP has expired') {
@@ -83,23 +85,27 @@ const Login = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setEmailError('');
+    setLoadingEmail(true);
 
     if (!email) {
       setEmailError('Please enter a valid email');
+      setLoadingEmail(false);
       return;
     }
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_IP}/sendOtp/`, { email });
-      console.log(response)
+      console.log(response);
       if (response.data.status) {
-        setOtpSent(true); // OTP sent successfully
+        setOtpSent(true);
       } else {
         setEmailError('Failed to send OTP, please try again');
       }
     } catch (err) {
       setEmailError('An error occurred while sending OTP');
       console.error(err);
+    } finally {
+      setLoadingEmail(false);
     }
   };
 
@@ -108,7 +114,7 @@ const Login = () => {
       <div className="login-container">
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
-          <div className='one'>
+          <div className="one">
             <label className="label-login" htmlFor="name">Name</label>
             <input
               className="label-input"
@@ -119,7 +125,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className='one'>
+          <div className="one">
             <label className="label-login" htmlFor="password">Password</label>
             <input
               className="label-input"
@@ -130,14 +136,14 @@ const Login = () => {
               required
             />
           </div>
-          <button className='button-login' type="submit" disabled={loading}>
+          <button className="button-login" type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
           {error && <p className="error-message">{error}</p>}
         </form>
 
         <p className="forgot-password" onClick={() => setShowForgotPassword(true)}>
-            Forgot Password?
+          Forgot Password?
         </p>
       </div>
 
@@ -145,8 +151,13 @@ const Login = () => {
       {showForgotPassword && (
         <div className="forgot-password-modal">
           <div className="modal-content-reset-password">
-            {/* Close "X" Button */}
-            <button className="close-x-modal" onClick={() => setShowForgotPassword(false)}>
+            <button
+              className="close-x-modal"
+              onClick={() => {
+                setShowForgotPassword(false);
+                setOtpSent(false);
+              }}
+            >
               &times;
             </button>
 
@@ -164,8 +175,8 @@ const Login = () => {
                       required
                     />
                   </div>
-                  <button className="button" type="submit">
-                    Send OTP
+                  <button className="button" type="submit" disabled={loadingEmail}>
+                    {loadingEmail ? 'Sending...' : 'Send OTP'}
                   </button>
                   {emailError && <p className="error-message">{emailError}</p>}
                 </form>
@@ -179,7 +190,7 @@ const Login = () => {
                     <input
                       type="text"
                       id="otp"
-                      value={otp}
+                      value={otp || ''}
                       onChange={(e) => setOtp(e.target.value)}
                       required
                     />
