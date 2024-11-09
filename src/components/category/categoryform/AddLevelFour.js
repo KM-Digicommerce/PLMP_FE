@@ -45,7 +45,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
       <form onSubmit={handleSubmit}>
         <select value={selectedCategoryId} onChange={handleCategoryChange} required>
           <option value="">Select a Category</option>
-          {categories.map((category) => (
+          {categories.category_list.map((category) => (
             <option key={category._id} value={category._id}>
               {category.name}
             </option>

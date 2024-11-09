@@ -46,7 +46,7 @@ const ProductList = () => {
 
 
   const handleProductSelect = (productId) => {
-    navigate(`/product/${productId}`);
+    navigate(`/HomePage/product/${productId}`);
   };
 
 
