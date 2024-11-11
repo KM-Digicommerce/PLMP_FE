@@ -117,6 +117,21 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
 };
 
 const AddProduct = (categories) => {
+    const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
+    const [isAddProductVisible, setIsAddProductVisible] = useState(false);  // Add this line
+
+useEffect(() => {
+  // Fetch the API response and store last_level_category IDs
+  const fetchCategoryData = async () => {
+    const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+    console.log(res.data.data.last_level_category,'Response the check');
+    
+    setLastLevelCategoryIds(res.data.data.last_level_category);
+  };
+  
+  fetchCategoryData();
+}, []);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productData, setProductData] = useState({
         product_obj: {
@@ -342,6 +357,19 @@ const filteredOptions = Object.entries(selectedVariants)
     };
 
     const handleCategorySelectForVariants = async (id, category_level) => {
+        console.log(lastLevelCategoryIds.includes(id),'REsponse to set');
+        console.log(id,'ID');
+        const selectedIdString = String(id);
+
+        const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
+
+        if (isIdInLastLevel) {
+            setIsAddProductVisible(true);
+        }
+        else{
+            setIsAddProductVisible(false);
+        }
+
         setSelectedCategoryForVariant(id);
         setProductData((prevData) => ({
             ...prevData,
@@ -593,7 +621,7 @@ const filteredOptions = Object.entries(selectedVariants)
                     </div>
                 </div>
             </div>
-            {level2Categories.length > 0 && level3Categories && (
+            {isAddProductVisible && (
                 <div className="add-product-container">
                     <button onClick={() => setIsModalOpen(true)} className="add-product-button">Add Product</button>
                     <Modal

@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import './Dashboard.css';
 import axiosInstance from '../../../src/utils/axiosConfig';
+import Unauthorized from '../Unauthorized';
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +30,7 @@ ChartJS.register(
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
 
 
   const options = {
@@ -44,11 +46,15 @@ function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
-        if (response.data) {
+        if (response.status === 401) {
+          setUnauthorized(true);
+        } else if (response.data) {
           setDashboardData(response.data.data); 
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        if (error.response && error.response.status === 401) {
+          setUnauthorized(true);
+        } else console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
@@ -56,6 +62,10 @@ function Dashboard() {
 
     fetchDashboardData();
   }, []);
+
+  if (unauthorized) {
+    return <Unauthorized />;
+  }
 
   if (loading) {
     return <div>Loading...</div>;

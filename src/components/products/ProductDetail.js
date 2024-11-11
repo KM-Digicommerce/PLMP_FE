@@ -115,7 +115,7 @@ const ProductDetail = () => {
     return (
         <div className="product-detail">
             <button onClick={handleBackClick} className="back-button">
-                &larr; Back to HomePage
+                &larr; Back to ProductList 
             </button>
             <form onSubmit={handleSubmit} className="product-edit-form">
                 <div className="product-edit-container">
