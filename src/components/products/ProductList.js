@@ -180,7 +180,7 @@ const ProductList = () => {
                   />
                 </td>
                 <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
-                  {Array.isArray(item.url) ? (
+                  {/* {Array.isArray(item.url) ? (
                     <img
                       src={item.url[0]}
                       alt={item.product_name}
@@ -192,7 +192,7 @@ const ProductList = () => {
                       alt={item.product_name}
                       className="product-image-round"
                     />
-                  )}
+                  )} */}
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
                 <td className="manufacturer-column">{item.ManufacturerName}</td>
