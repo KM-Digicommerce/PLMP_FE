@@ -3,6 +3,7 @@ import axios from 'axios';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 
 
@@ -18,7 +19,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
                 try {
-                    const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${selectedCategoryId}`);
+                    const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${selectedCategoryId}`);
                     console.log("Response 1", res.data.data);
                     console.log("Response 2", res.data.data.varient_list);
                     setVariantOptions(res.data.data.varient_list);
@@ -226,7 +227,7 @@ const filteredOptions = Object.entries(selectedVariants)
                 }
             };
 
-            const response = await axios.post(
+            const response = await axiosInstance.post(
                 `${process.env.REACT_APP_IP}/createProduct/`,
                 payload
             );
@@ -290,7 +291,7 @@ const filteredOptions = Object.entries(selectedVariants)
     //                 }))
     //             }
     //         };
-    //         const response = await axios.post(
+    //         const response = await axiosInstance.post(
     //             `${process.env.REACT_APP_IP}/createProduct/`,
     //             payload  
     //         );
@@ -399,7 +400,7 @@ const filteredOptions = Object.entries(selectedVariants)
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
-            const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
         } catch (err) {
@@ -424,7 +425,7 @@ const filteredOptions = Object.entries(selectedVariants)
             }
         }));
         try {
-            const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             // console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
         } catch (err) {

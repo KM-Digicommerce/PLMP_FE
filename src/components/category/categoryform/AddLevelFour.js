@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, categories, refreshCategories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
@@ -19,7 +20,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_IP}/createCategory3/`, {
+      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory3/`, {
         name: levelFourName,
         category_id: selectedLevel3Id,
       });

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const VariantList = ({ categories, variants, refreshVariants }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
@@ -67,7 +68,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
-            const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
         } catch (err) {
@@ -84,7 +85,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const handleCategorySelectForVariants = async (id) => {
         setSelectedCategoryForVariant(id);
         try {
-            const res = await axios.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             // console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
         } catch (err) {
@@ -156,7 +157,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
+                    const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
                         name: result.value,
                         category_varient_id: category_varient_id,
                         category_id: selectedCategoryForVariant
@@ -187,6 +188,13 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     return 'You need to enter a value!';
                 }
             },
+            customClass: {
+              container: 'swal-custom-container',  
+              popup: 'swal-custom-popup',          
+              title: 'swal-custom-title',          
+              confirmButton: 'swal-custom-confirm',
+              cancelButton: 'swal-custom-cancel'   
+          }
         });
 
         if (typeValueName) {
@@ -195,7 +203,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                 setError(null);
 
                 // Make API call to add the new variant value
-                const response = await axios.post(
+                const response = await axiosInstance.post(
                     `${process.env.REACT_APP_IP}/createValueForVarientName/`,
                     {
                         name: typeValueName,
@@ -425,13 +433,11 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                         e.stopPropagation();
                         handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant);
                     }}
-                    disabled={isLoading}
                     className='addvariant_btn'
                     style={{
 
                     }}
-                >
-                    {isLoading ? 'Adding...' : '+ Add variant'}
+                >+ Add variant
                 </button>
             )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -445,140 +451,6 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
       <span>Variants</span>
     </div>
 
-    {/* {variantsData.varient_list.map((variant, index) => (
-      <div key={index} className="variant-option-section">
-        <div className="variant-option-header">
-          <span className="variant-option-type">{variant.type_name}</span>
-        </div>
-        <div className="variant-option-values">
-          {variant.option_value_list.map((optionValue, idx) => (
-            <span key={idx} className="variant-tag">
-              {optionValue.type_value_name}
-            </span>
-          ))}
-          {variantsData.varient_list.map((variant, index) => (
-                                  <td key={index}>
-                                    <button
-                                      onClick={() => handleAddVariantValue(variant.type_id)}
-                                      disabled={isLoading}
-                                      style={{
-                                        padding: '5px 10px',
-                                        backgroundColor: '#007bff',
-                                        color: '#fff',
-                                        border: 'none',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer',
-                                        marginTop: '10px',
-                                      }}
-                                    >
-                                      {isLoading ? 'Saving...' : 'Add Variant Value'}
-                                    </button>
-                                  </td>
-                                ))}
-        </div>
-      </div>
-    ))}
-
-    <table className="variant-table">
-      <thead>
-        <tr>
-          <th>Variant</th>
-          <th>Price</th>
-          <th>Available</th>
-        </tr>
-      </thead>
-      <tbody>
-        {variantsData.varient_list.map((variant, index) => (
-          variant.option_value_list.map((optionValue, idx) => (
-            <tr key={`${index}-${idx}`}>
-              <td className="variant-name">
-                {optionValue.type_value_name}
-              </td>
-              <td className="variant-price">
-                <input
-                  type="text"
-                  defaultValue={variant.price || ""}
-                  className="price-input"
-                />
-              </td>
-              <td className="variant-available">
-                <input
-                  type="number"
-                  defaultValue={variant.available || ""}
-                  className="available-input"
-                />
-              </td>
-            </tr>
-          ))
-        ))}
-      </tbody>
-    </table>
-
-    {/* {variantsData.varient_list && (
-  <div className="variant-container">
-    <div className="variant-option-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Option Type</th>
-            <th>Values</th>
-          </tr>
-        </thead>
-        <tbody>
-          {variantsData.varient_list.map((variant, index) => (
-            <tr key={index}>
-              <td>{variant.type_name}</td>
-              <td>
-                {variant.option_value_list.length > 0 ? (
-                  <ul className="option-value-list">
-                    {variant.option_value_list.map((value, valueIndex) => (
-                      <li key={valueIndex} className="option-value-item">
-                        {value.type_value_name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <span>No values available</span>
-                )}
-                <button
-                  onClick={() => handleAddVariantValue(variant.type_id)}
-                  disabled={isLoading}
-                  className="add-variant-value-button"
-                >
-                  {isLoading ? "Saving..." : "+ Add Variant Value"}
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    Second table for displaying Variant, Price, and Available
-    <div className="variant-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Variant</th>
-            <th>Price</th>
-            <th>Available</th>
-          </tr>
-        </thead>
-        <tbody>
-          {variantsData.varient_list.flatMap((variant) =>
-            variant.option_value_list.map((value, valueIndex) => (
-              <tr key={value.type_value_id}>
-                <td>{value.type_value_name}</td>
-                <td><input type="text" placeholder="price" /></td>
-                <td><input type="text" placeholder="stock" /></td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
-  </div>
-)} */}
 {variantList.length > 0 && (
       <div className="variant-container">
         <div className="variant-option-table">
@@ -592,7 +464,11 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             <tbody>
               {variantList.map((variant, index) => (
                 <tr key={index}>
-                  <td>{variant.type_name}</td>
+                  <td>{variant.type_name} <button
+                      onClick={() => handleAddVariantValue(variant.type_id)}
+                      className="add-variant-value-button"
+                    >+
+                    </button></td>
                   <td>
                     {variant.option_value_list.length > 0 ? (
                       <ul className="option-value-list">

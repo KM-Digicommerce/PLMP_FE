@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faChevronDown, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const Sidebar = ({ 
   setSelectedLevel3Id, 
@@ -66,7 +67,7 @@ const Sidebar = ({
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
+      const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/upload_file/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -94,7 +95,7 @@ const Sidebar = ({
   const handleExport = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_IP}/exportAll/`, {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/exportAll/`, {
         responseType: 'blob', // Important for downloading files
       });
 

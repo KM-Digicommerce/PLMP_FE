@@ -1,122 +1,121 @@
 .header_cls{
-    text-align: left;
+  text-align: left;
 }
 .variant-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px; /* Adjusts the space above the table */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Adds shadow for depth */
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
 
 .variant-table th,
 .variant-table td {
-    padding: 12px; /* Adjusts padding for a better look */
-    text-align: left;
-    border-bottom: 1px solid #ddd; /* Light border for separation */
+  padding: 12px; 
+  text-align: left;
+  border-bottom: 1px solid #ddd; 
 }
 
 .variant-table th {
-    background-color: #f2f2f2; /* Light background for headers */
-    font-weight: bold;
+  background-color: #f2f2f2; 
+  font-weight: bold;
 }
 
 .variant-table tr:hover {
-    background-color: #f5f5f5; /* Hover effect for rows */
+  background-color: #f5f5f5; 
 }
 .addvariant_btn{
-    float: right ;
-    padding: 10px 15px ;
-    background-color: #007bff ;
-    color: #fff ;
-    border: none ;
-    border-radius: 5px ;
-    cursor: pointer ;
-    margin: 10px 0px 10px 0px;
-    width: 15%;
-}
-.variant-table {
-    width: 100%;
-    border-collapse: collapse;
+  float: right ;
+  padding: 10px 15px ;
+  background-color: #007bff ;
+  color: #fff ;
+  border: none ;
+  border-radius: 5px ;
+  cursor: pointer ;
+  margin: 10px 0px 10px 0px;
+  width: 15%;
 }
 
 .variant-table th, .variant-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.variant-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
 
 .variant-table td {
-    vertical-align: top; /* Aligns content to the top */
+  vertical-align: top;
 }
 
 .variant-table button {
-    transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .variant-table button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 .variant-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 16px;
-  }
-  
-  .variant-option-table table, .variant-table table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .variant-option-table th, .variant-table th {
-    text-align: left;
-    padding: 10px;
-    background-color: #f5f5f5;
-  }
-  
-  .variant-option-table td, .variant-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .option-value-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  
-  .option-value-item {
-    padding: 6px 12px;
-    background-color: #eee;
-    border-radius: 12px;
-  }
-  
-  .add-variant-value-button {
-    display: block;
-    margin: 6px 0px 0px 0px;
-    padding: 8px 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .add-variant-value-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  .variant_search{
-    padding: 8px;
-    margin-bottom : 10px !important;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px;
+}
+
+.variant-option-table table, .variant-table table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.variant-option-table th, .variant-table th {
+  text-align: left;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.variant-option-table td, .variant-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.option-value-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.option-value-item {
+  padding: 5px 8px;
+  background-color: #e0dede;
+  border-radius: 12px;
+}
+
+.add-variant-value-button {
+  background-color: rgb(16 155 87);;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 22%;
+  float: right;
+  padding: 0px;
+}
+
+.swal-custom-confirm {
+  width: 40%;
+}
+.swal2-cancel {
+width:47%;
+}
+.add-variant-value-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.variant_search{
+  padding: 8px;
+  margin-bottom : 10px !important;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

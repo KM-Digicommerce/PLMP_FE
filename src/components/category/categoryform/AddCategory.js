@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const AddCategory = ({ refreshCategories }) => {
   const [categoryName, setCategoryName] = useState('');
@@ -12,7 +13,7 @@ const AddCategory = ({ refreshCategories }) => {
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_IP}/createCategory/`, {
+      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory/`, {
         name: categoryName,
       });
 
@@ -27,7 +28,7 @@ const AddCategory = ({ refreshCategories }) => {
 
       // Log the updated categories to verify the addition
       console.log('Updated Categories after addition:');
-      const updatedCategories = await axios.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+      const updatedCategories = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
       console.log(updatedCategories.data.data);
     } catch (error) {
       console.error('Error adding category:', error);

@@ -16,6 +16,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 
@@ -36,7 +37,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const fetchProducts = async () => {
       if (selectedCategoryId) {
         try {
-          const response = await axios.get(
+          const response = await axiosInstance.get(
             `${process.env.REACT_APP_IP}/obtainAllProductList/`,
             {
               params: {
@@ -447,7 +448,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   //   if (!confirmDelete) return; // Exit if user cancels
 
   //   try {
-  //     const response = await axios.delete(`${process.env.REACT_APP_IP}/deleteCategory/`, {
+  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/deleteCategory/`, {
   //       data: { id: categoryId,category_name:category_name}, // Payload for delete API
   //     });
 
@@ -465,7 +466,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   // };
   // const handleEditCategory = async (categoryId, name) => {
   //   try {
-  //     const response = await axios.delete(`${process.env.REACT_APP_IP}/updateCategory/`, {
+  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/updateCategory/`, {
   //       data: {
   //         id: categoryId,
   //         name: newCategoryName,
@@ -508,7 +509,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       console.log(result, 'result');
       if (result.isConfirmed) {
         try {
-          await axios.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
+          await axiosInstance.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
             id: productTypeId,
             name: result.value,
             category_name: category_name,

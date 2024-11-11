@@ -9,8 +9,8 @@ import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
-import axios from 'axios';
-
+// import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../utils/axiosConfig.js'
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
@@ -21,8 +21,8 @@ function HomePage() {
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-      console.log(res.data.data.category_list,'es.data.data');
+      
+      const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
       
       setCategoriesData(res.data.data);
     } catch (err) {

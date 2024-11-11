@@ -13,6 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import './Dashboard.css';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 ChartJS.register(
   CategoryScale,
@@ -42,7 +43,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
         if (response.data) {
           setDashboardData(response.data.data); 
         }
