@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 const VariantList = ({ categories, variants, refreshVariants }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');

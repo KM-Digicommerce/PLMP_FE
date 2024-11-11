@@ -3,7 +3,7 @@ import axios from 'axios';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 
 

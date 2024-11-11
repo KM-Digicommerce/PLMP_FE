@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../utils/axiosConfig';
 
 const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, selectedLevel4IdPopup, categories, refreshCategories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');

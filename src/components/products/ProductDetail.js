@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css'; // Importing CSS for styling
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 const ProductDetail = () => {
     const { productId } = useParams(); // Get the product ID from the URL
