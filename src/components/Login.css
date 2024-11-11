@@ -8,6 +8,7 @@ body {
     display: flex;
     height: 100vh;
     background-color: #8e8e8e;
+    background-image: url('../assets/istockphoto-1368151370-612x612.jpg');
 }
 
 .image-container {

@@ -57,11 +57,6 @@ tr:hover .action-buttons {
 }
 
 
-.CategoryContainer{
-  display: flex;
-  gap: 20px;
-}
-
 .CategoryName{
   background-color: lightgray;
 }
@@ -77,26 +72,22 @@ tr:hover .action-buttons {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 10px;
+    border-radius: 9px;
 }
 
 .DropdownsContainer {
-  /* display: flex;
-  justify-content: space-between;
-  width: 100%; */
-  /* display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 10px;  */
     display: flex;
     flex-wrap: wrap;
     gap: 10px; 
+    margin: 10px;
 }
 
 .DropdownColumn {
   flex: 1 1 calc(33.33% - 10px);
   box-sizing: border-box;
-
-  /* flex: 1;
-  margin-right: 15px;  */
 }
 
 .DropdownColumn label {
@@ -165,6 +156,7 @@ tr:hover .action-buttons {
   border: 1px solid #ccc;
   padding: 2px;
   border-radius: 4px;
+  margin: 8px;
 } 
 
 .selected-category {
@@ -239,7 +231,7 @@ tr:hover .action-buttons {
   float: right;
 }
 .dropdown-search-input{
-  margin-right: 10px;
+  margin-left: 1px !important;
 }
 .close-button { position: absolute; top: 10px;    right: 10px;  min-width: 30px;   padding: 5px 10px; font-size: 22px;   border-radius: 50%; background-color: transparent;  color: #6366f1;  border: none; cursor: pointer; transition: background-color 0.3s ease; width: 20%;
 }

@@ -481,13 +481,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     ) : (
                       <span>No values available</span>
                     )}
-                    <button
-                      onClick={() => handleAddVariantValue(variant.type_id)}
-                      disabled={isLoading}
-                      className="add-variant-value-button"
-                    >
-                      {isLoading ? "Saving..." : "+ Add Variant Value"}
-                    </button>
+
                   </td>
                 </tr>
               ))}
