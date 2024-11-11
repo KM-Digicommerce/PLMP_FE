@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddCategory.css'; // Assuming you have a CSS file for styling
 import Swal from 'sweetalert2';
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const AddLevelSix = ({ 
     selectedCategoryIdPopup, 
@@ -31,7 +32,7 @@ const AddLevelSix = ({
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${process.env.REACT_APP_IP}/createCategory5/`, {
+            await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory5/`, {
                 name: levelSixName,
                 category_id: selectedLevel5Id,
             });

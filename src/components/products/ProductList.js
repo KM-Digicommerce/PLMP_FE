@@ -21,6 +21,17 @@ const ProductList = () => {
     Key_features: ''
   });
   const navigate = useNavigate();
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column); 
+      setSortOrder("asc");
+    }
+  };
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +87,15 @@ const ProductList = () => {
   const filteredProducts = responseData.filter((item) =>
     item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (!sortColumn) return 0; // No sorting if no column selected
+
+    const aValue = a[sortColumn];
+    const bValue = b[sortColumn];
+
+    if (aValue === bValue) return 0;
+    return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
+  });
 
   // const handleBulkEditChange = (e) => {
   //   const { name, value } = e.target;
@@ -153,7 +173,7 @@ const ProductList = () => {
         <p>Loading products...</p>
       ) : error ? (
         <p>Error: {error}</p>
-      ) : filteredProducts.length > 0 ? (
+      ) : sortedProducts.length > 0 ? (
         <table className="product-table">
           <thead>
             <tr>
@@ -161,16 +181,30 @@ const ProductList = () => {
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
-                  checked={selectedProducts.length === filteredProducts.length}
+                  checked={selectedProducts.length === sortedProducts.length}
                 />
               </th>
-              <th className="product-column">Product Name</th>
-              <th className="manufacturer-column">Manufacturer</th>
-              <th className="price-column">Price</th>
+              <th className="product-column" onClick={() => handleSort("product_name")}> Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="model-column" onClick={() => handleSort("model")}>
+                Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="price-column" onClick={() => handleSort("base_price")}>
+                Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="msrpprice-column" onClick={() => handleSort("msrp")}>
+                MSRP Price {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="attributes-column" onClick={() => handleSort("attributes")}>
+                Attributes {sortColumn === "attributes" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="upc_ean-column" onClick={() => handleSort("upc_ean")}>
+                UPC_EAN {sortColumn === "upc_ean" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((item) => (
+            {sortedProducts.map((item) => (
               <tr key={`product-${item.product_id}`}>
                 <td className="checkbox-column">
                   <input
@@ -195,8 +229,11 @@ const ProductList = () => {
                   )} */}
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
-                <td className="manufacturer-column">{item.ManufacturerName}</td>
-                <td className="price-column">{item.BasePrice}</td>
+                <td className="model-column">{item.model}</td>
+                <td className="price-column">{item.base_price}</td>
+                <td className="msrpprice-column">{item.msrp}</td>
+                <td className="attributes-column">{item.attributes}</td>
+                <td className="upc_ean-column">{item.upc_ean}</td>
               </tr>
             ))}
           </tbody>

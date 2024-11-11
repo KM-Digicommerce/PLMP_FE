@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css'; // Importing CSS for styling
+import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 
 const ProductDetail = () => {
     const { productId } = useParams(); // Get the product ID from the URL
@@ -19,7 +20,7 @@ const ProductDetail = () => {
             console.log('Product ID from URL:', productId); // Add this line for debugging
 
             try {
-                const response = await axios.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
                     id: productId, // Use the id from the URL
                 });
 
@@ -33,7 +34,7 @@ const ProductDetail = () => {
                 } else {
                     setError('Product not found');
                 }
-                const variantResponse = await axios.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
+                const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
                     product_id: productId, // Adjust if the API needs a product ID
                 });
                 console.log(variantResponse.data.data, 'Variant List Response');
@@ -90,7 +91,7 @@ const ProductDetail = () => {
 
                 },
             };
-            const response = await axios.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload); // Update the product
+            const response = await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload); // Update the product
             console.log(response.data, 'Product updated successfully');
             Swal.fire({
                 title: 'Success!',

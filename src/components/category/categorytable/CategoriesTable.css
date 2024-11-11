@@ -46,6 +46,7 @@ tr:hover .action-buttons {
 .CategoryTable-header {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .btn-addNewCategory button {
@@ -55,23 +56,36 @@ tr:hover .action-buttons {
   border: 1px solid lightgray;
 }
 
+
+.CategoryContainer{
+  display: flex;
+  gap: 20px;
+}
+
 .CategoryName{
   background-color: lightgray;
+}
+.CategoryMain {
+  padding: 7px;
+}
+
+.CategoryTable-header {
+  margin-bottom: 10px;
 }
 
 .CategoryContainer {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 18px;
-  background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: 'transform 0.3s ease';
-
 }
 
 .DropdownsContainer {
+  /* display: flex;
+  justify-content: space-between;
+  width: 100%; */
+  /* display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px;  */
     display: flex;
     flex-wrap: wrap;
     gap: 10px; 
@@ -81,6 +95,8 @@ tr:hover .action-buttons {
   flex: 1 1 calc(33.33% - 10px);
   box-sizing: border-box;
 
+  /* flex: 1;
+  margin-right: 15px;  */
 }
 
 .DropdownColumn label {
@@ -90,7 +106,7 @@ tr:hover .action-buttons {
 }
 
 .DropdownColumn select {
-  width: 100%; 
+  width: 100%; /* Full width for dropdowns */
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -99,17 +115,28 @@ tr:hover .action-buttons {
 }
 
 .DropdownColumn select:focus {
-  border-color: #007bff; }
+  border-color: #007bff; /* Focus border color */
+}
 
 .CategoryContainerRight {
-  flex: 1; 
+  flex: 1; /* Make sure this takes the remaining space */
   margin-left: 20px;
 }
 
 .CategoryContainerRight p {
   font-weight: bold;
 }
-.popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .popup-content {
@@ -154,8 +181,8 @@ tr:hover .action-buttons {
   background: white;
   border: 1px solid #ccc;
   z-index: 1000;
-  max-height: 300px; 
-  overflow-y: auto;
+  max-height: 300px; /* Limit dropdown height */
+  overflow-y: auto; /* Scroll if overflow */
 }
 
 .dropdown-option {
@@ -167,11 +194,11 @@ tr:hover .action-buttons {
 }
 
 .dropdown-option:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Highlight on hover */
 }
 
 .deleteButton {
-  margin-left: 10px;
+  margin-left: 10px; /* Space between name and delete button */
   background-color: red;
   color: white;
   border: none;
@@ -181,10 +208,10 @@ tr:hover .action-buttons {
 }
 
 .deleteButton:hover {
-  background-color: darkred;
+  background-color: darkred; /* Darker red on hover */
 }
 .editButton {
-  margin-left: 10px; 
+  margin-left: 10px; /* Space between name and delete button */
   background-color: rgb(28, 18, 230);
   color: white;
   border: none;
@@ -194,10 +221,10 @@ tr:hover .action-buttons {
 }
 
 .editButton:hover {
-  background-color: rgb(47, 158, 233); 
+  background-color: rgb(47, 158, 233); /* Darker red on hover */
 }
 .btn_newcategory,.btn_new_section,.btn_producttype{
-  margin-left: 10px; 
+  margin-left: 10px; /* Space between name and delete button */
   background-color: rgb(15, 182, 84);
   color: white;
   border: none;
@@ -206,7 +233,7 @@ tr:hover .action-buttons {
   cursor: pointer;
 }
 .btn_newcategory:hover, .btn_new_section:hover,.btn_producttype:hover {
-  background-color: rgb(158, 224, 108); 
+  background-color: rgb(158, 224, 108); /* Darker red on hover */
 }
 .close_btn{
   float: right;
