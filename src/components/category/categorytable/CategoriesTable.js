@@ -46,8 +46,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               }
             }
           );
-          console.log(response.data.data.product_list, 'response.data.data');
-
+          // console.log(response.data.data.product_list, 'response.data.data');
           setProducts(response.data.data.product_list);
         } catch (error) {
           console.error('Error fetching product list:', error);
@@ -88,10 +87,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  console.log(filteredCategories, 'filteredCategories');
+  // console.log(filteredCategories, 'filteredCategories');
 
   const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
-  console.log(levelOneCategory, 'levelOneCategory');
+  // console.log(levelOneCategory, 'levelOneCategory');
 
   // const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
   //   level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
@@ -169,7 +168,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase())
       );
 
-  const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);
+  const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);  
   const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
   const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list)
     .flatMap(level2 => level2.level_two_category_list);
@@ -217,6 +216,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
+    if (selectedValue) {
     const level1Category = categories.category_list.find(level1 =>
       level1.level_one_category_list.some(level2 => level2._id === e)
     );
@@ -239,11 +239,15 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
+  } else{
+    setSelectedLevel2Id(selectedValue);
+    setSelectedLevel2IdPopup(selectedValue);
+  }
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-   
+    if (selectedValue) {
     // Find the corresponding parent Level 2 category
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
@@ -275,10 +279,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
 
     setIsLevel3DropdownOpen(false);
+  } else{
+    setSelectedLevel3Id(selectedValue);
+    setSelectedLevel3IdPopup(selectedValue);
+  }
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
-
+    if (selectedValue) {
     const level3Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -319,10 +327,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel4Popup(false);
     }
     setIslevel4DropdownOpen(false);
+  } else{
+    setSelectedlevel4(selectedValue);
+    setSelectedLevel4IdPopup(selectedValue);
+  }
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
-
+    if (selectedValue) {
     const level4Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -373,9 +385,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel5Popup(false);
     }
     setIslevel5DropdownOpen(false);
+  } else{
+    setSelectedlevel5(selectedValue);
+    setSelectedLevel5IdPopup(selectedValue);
+  }
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
+    if (selectedValue) {
     const level5Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -436,6 +453,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel6Popup(false);
     }
     setIslevel6DropdownOpen(false);
+  } else{
+    setSelectedlevel6(selectedValue);
+  }
   };
 
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
@@ -556,7 +576,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       <div className="CategoryTable-header">
         <h3>Categories</h3>
       </div>
-
       <div className='CategoryContainer'>
         <div className='DropdownsContainer'>
           <div className='DropdownColumn'>
@@ -895,9 +914,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogContent>
         </Dialog>
       </div>
-      {level2Categories.length > 0 && level3Categories && (
-        <div style={{ padding: '20px' }}>
-          <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
+      {levelTwoCategoryForVisible && (
+        <div>
+          <h3 >Product Listing</h3>
           <TableContainer
             component={Paper}
             sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
