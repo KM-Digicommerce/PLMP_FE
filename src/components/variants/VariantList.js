@@ -86,7 +86,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setSelectedCategoryForVariant(id);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
-            // console.log('API Response: here', res.data.data); // Log the API response
+            // console.log('API Response: here', res.data.data); 
             setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
