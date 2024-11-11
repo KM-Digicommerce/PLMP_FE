@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
-
 const Login = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +33,7 @@ const Login = () => {
       });
 
       if (response.data.data.valid) {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user_login_id', response.data.data.user_login_id);
         window.location.href = '/HomePage';
       } else {
         setError('Login failed. Please check your credentials.');

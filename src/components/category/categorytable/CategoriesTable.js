@@ -16,6 +16,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import axiosInstance from '../../../utils/axiosConfig';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 
@@ -36,7 +37,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const fetchProducts = async () => {
       if (selectedCategoryId) {
         try {
-          const response = await axios.get(
+          const response = await axiosInstance.get(
             `${process.env.REACT_APP_IP}/obtainAllProductList/`,
             {
               params: {
@@ -216,10 +217,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue) {
     const level1Category = categories.category_list.find(level1 =>
       level1.level_one_category_list.some(level2 => level2._id === e)
     );
+
     if (!level1Category) {
       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
       return;
@@ -238,15 +239,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
-  } else{
-    setSelectedLevel2Id(selectedValue);
-    setSelectedLevel2IdPopup(selectedValue);
-  }
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue) {
+   
     // Find the corresponding parent Level 2 category
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
@@ -278,14 +275,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
 
     setIsLevel3DropdownOpen(false);
-  } else{
-    setSelectedLevel3Id(selectedValue);
-    setSelectedLevel3IdPopup(selectedValue);
-  }
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
+
     const level3Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -311,6 +304,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
       return;
     }
+
     setSelectedCategoryId(level1Category._id);
     setSelectedLevel2Id(level2Category._id);
     setSelectedLevel3Id(level3Category._id);
@@ -325,14 +319,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel4Popup(false);
     }
     setIslevel4DropdownOpen(false);
-  } else{
-    setSelectedlevel4(selectedValue);
-    setSelectedLevel4IdPopup(selectedValue);
-  }
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
+
     const level4Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -383,14 +373,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel5Popup(false);
     }
     setIslevel5DropdownOpen(false);
-  } else{
-    setSelectedlevel5(selectedValue);
-    setSelectedLevel5IdPopup(selectedValue);
-  }
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
     const level5Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -451,9 +436,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel6Popup(false);
     }
     setIslevel6DropdownOpen(false);
-  } else{
-    setSelectedlevel6(selectedValue);
-  }
   };
 
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
@@ -466,7 +448,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   //   if (!confirmDelete) return; // Exit if user cancels
 
   //   try {
-  //     const response = await axios.delete(`${process.env.REACT_APP_IP}/deleteCategory/`, {
+  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/deleteCategory/`, {
   //       data: { id: categoryId,category_name:category_name}, // Payload for delete API
   //     });
 
@@ -484,7 +466,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   // };
   // const handleEditCategory = async (categoryId, name) => {
   //   try {
-  //     const response = await axios.delete(`${process.env.REACT_APP_IP}/updateCategory/`, {
+  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/updateCategory/`, {
   //       data: {
   //         id: categoryId,
   //         name: newCategoryName,
@@ -527,7 +509,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       console.log(result, 'result');
       if (result.isConfirmed) {
         try {
-          await axios.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
+          await axiosInstance.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
             id: productTypeId,
             name: result.value,
             category_name: category_name,
@@ -571,10 +553,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
   return (
     <div className="CategoryMain">
-         <div style={{ padding: '20px' }}>
       <div className="CategoryTable-header">
         <h3>Categories</h3>
       </div>
+
       <div className='CategoryContainer'>
         <div className='DropdownsContainer'>
           <div className='DropdownColumn'>
@@ -913,10 +895,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogContent>
         </Dialog>
       </div>
-      </div>
       {level2Categories.length > 0 && level3Categories && (
         <div style={{ padding: '20px' }}>
-          <h3>Product Listing</h3>
+          <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
           <TableContainer
             component={Paper}
             sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}

@@ -13,6 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import './Dashboard.css';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 ChartJS.register(
   CategoryScale,
@@ -26,8 +27,9 @@ ChartJS.register(
 );
 
 function Dashboard() {
-  const [dashboardData, setDashboardData] = useState({ varent_list: [] });
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   const options = {
     responsive: true,
@@ -41,7 +43,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
         if (response.data) {
           setDashboardData(response.data.data); 
         }
@@ -60,14 +62,11 @@ function Dashboard() {
   }
 
   const variantData = {
-    // labels: dashboardData.varent_list.map(item => item.type_name),
-    labels: dashboardData?.varent_list?.map(item => item.type_name) || [],
-
+    labels: dashboardData.varent_list.map(item => item.type_name),
     datasets: [
       {
         label: 'Option Value Count',
-        // data: dashboardData.varent_list.map(item => item.option_value_count),
-        data: dashboardData?.varent_list?.map(item => item.option_value_count) || [],
+        data: dashboardData.varent_list.map(item => item.option_value_count),
         backgroundColor: '#0156B7',
         borderWidth: 1,
       },
