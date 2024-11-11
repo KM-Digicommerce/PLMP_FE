@@ -13,7 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import './Dashboard.css';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 ChartJS.register(
   CategoryScale,

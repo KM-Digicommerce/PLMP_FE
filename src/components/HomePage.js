@@ -9,7 +9,6 @@ import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
-// import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
 import axiosInstance from '../utils/axiosConfig.js'
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);

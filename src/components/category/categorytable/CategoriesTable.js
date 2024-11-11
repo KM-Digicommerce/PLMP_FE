@@ -16,7 +16,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../utils/axiosConfig';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 

@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faChevronDown, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 const Sidebar = ({ 
   setSelectedLevel3Id, 

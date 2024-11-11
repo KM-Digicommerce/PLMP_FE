@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddCategory.css'; // Assuming you have a CSS file for styling
 import Swal from 'sweetalert2';
-import axiosInstance from '/home/dell/check/plmp_fe/src/utils/axiosConfig.js';
+import axiosInstance from '../../../utils/axiosConfig';
 
 const AddLevelSix = ({ 
     selectedCategoryIdPopup, 

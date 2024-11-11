@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import axiosInstance from '../../../src/utils/axiosConfig';
 
 
 const ProductList = () => {
@@ -37,7 +38,7 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
 
         if (response.data && response.data.data && response.data.data.product_list) {
           setResponseData(response.data.data.product_list);
