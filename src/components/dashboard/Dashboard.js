@@ -26,9 +26,8 @@ ChartJS.register(
 );
 
 function Dashboard() {
-  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardData, setDashboardData] = useState({ varent_list: [] });
   const [loading, setLoading] = useState(true);
-
 
   const options = {
     responsive: true,
@@ -61,11 +60,14 @@ function Dashboard() {
   }
 
   const variantData = {
-    labels: dashboardData.varent_list.map(item => item.type_name),
+    // labels: dashboardData.varent_list.map(item => item.type_name),
+    labels: dashboardData?.varent_list?.map(item => item.type_name) || [],
+
     datasets: [
       {
         label: 'Option Value Count',
-        data: dashboardData.varent_list.map(item => item.option_value_count),
+        // data: dashboardData.varent_list.map(item => item.option_value_count),
+        data: dashboardData?.varent_list?.map(item => item.option_value_count) || [],
         backgroundColor: '#0156B7',
         borderWidth: 1,
       },

@@ -216,10 +216,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
+    if (selectedValue) {
     const level1Category = categories.category_list.find(level1 =>
       level1.level_one_category_list.some(level2 => level2._id === e)
     );
-
     if (!level1Category) {
       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
       return;
@@ -238,11 +238,15 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
+  } else{
+    setSelectedLevel2Id(selectedValue);
+    setSelectedLevel2IdPopup(selectedValue);
+  }
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-   
+    if (selectedValue) {
     // Find the corresponding parent Level 2 category
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
@@ -274,10 +278,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
 
     setIsLevel3DropdownOpen(false);
+  } else{
+    setSelectedLevel3Id(selectedValue);
+    setSelectedLevel3IdPopup(selectedValue);
+  }
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
-
+    if (selectedValue) {
     const level3Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -303,7 +311,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
       return;
     }
-
     setSelectedCategoryId(level1Category._id);
     setSelectedLevel2Id(level2Category._id);
     setSelectedLevel3Id(level3Category._id);
@@ -318,10 +325,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel4Popup(false);
     }
     setIslevel4DropdownOpen(false);
+  } else{
+    setSelectedlevel4(selectedValue);
+    setSelectedLevel4IdPopup(selectedValue);
+  }
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
-
+    if (selectedValue) {
     const level4Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -372,9 +383,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel5Popup(false);
     }
     setIslevel5DropdownOpen(false);
+  } else{
+    setSelectedlevel5(selectedValue);
+    setSelectedLevel5IdPopup(selectedValue);
+  }
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
+    if (selectedValue) {
     const level5Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -435,6 +451,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setShowAddlevel6Popup(false);
     }
     setIslevel6DropdownOpen(false);
+  } else{
+    setSelectedlevel6(selectedValue);
+  }
   };
 
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
@@ -552,10 +571,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
   return (
     <div className="CategoryMain">
+         <div style={{ padding: '20px' }}>
       <div className="CategoryTable-header">
         <h3>Categories</h3>
       </div>
-
       <div className='CategoryContainer'>
         <div className='DropdownsContainer'>
           <div className='DropdownColumn'>
@@ -894,9 +913,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
       {level2Categories.length > 0 && level3Categories && (
         <div style={{ padding: '20px' }}>
-          <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Product Listing</h2>
+          <h3>Product Listing</h3>
           <TableContainer
             component={Paper}
             sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
