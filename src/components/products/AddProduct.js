@@ -189,7 +189,6 @@ const filteredOptions = Object.entries(selectedVariants)
     option_name_id: nameId,
     option_value_id: valueId
 }));
-        // Update productData with selected variants
         setProductData((prevData) => ({
             ...prevData,
             product_obj: {
@@ -197,12 +196,7 @@ const filteredOptions = Object.entries(selectedVariants)
                 varients: [
                     {
                         ...prevData.product_obj.varients[0],
-                        // options: Object.entries({ ...prevData, [typeId]: optionId }).map(([nameId, valueId]) => ({
-                            // options: Object.entries(selectedVariants).map(([nameId, valueId]) => ({
-                            // option_name_id: nameId,
-                            // option_value_id: valueId
                             options:filteredOptions,
-                        // }))
                     }
                 ]
             }
@@ -271,73 +265,6 @@ const filteredOptions = Object.entries(selectedVariants)
         }
     };
 
-    // const handleSave = async () => {
-    //     try {
-    //         const payload = {
-    //             product_obj: {
-    //                 ...productData.product_obj,
-    //                 sku: productData.sku,
-    //                 unfinished_price: productData.unfinishedPrice,
-    //                 finished_price: productData.finishedPrice,
-    //                 varients: productData.product_obj.varients.map(variant => ({
-    //                     ...variant,
-    //                     sku_number: selectedVariants.sku,
-    //                     unfinished_price: selectedVariants.unfinishedPrice,
-    //                     finished_price: selectedVariants.finishedPrice,
-    //                     options: variant.options.map(option => ({
-    //                         option_name_id: option.option_name_id,
-    //                         option_value_id: option.option_value_id
-    //                     }))
-    //                 }))
-    //             }
-    //         };
-    //         const response = await axiosInstance.post(
-    //             `${process.env.REACT_APP_IP}/createProduct/`,
-    //             payload  
-    //         );
-    //         console.log(response.data.status, 'response.data.status');
-    //         console.log(response.data, 'response.data');
-
-    //         if (response.data.status === true) {
-    //             alert('Product added successfully!');
-    //             setProductData({
-    //                 product_obj: {
-    //                     model: '',
-    //                     mpn: '',
-    //                     upc_ean: '',
-    //                     breadcrumb: '',
-    //                     brand_name: '',
-    //                     product_name: '',
-    //                     long_description: '',
-    //                     short_description: '',
-    //                     features: '',
-    //                     attributes: '',
-    //                     tags: '',
-    //                     msrp: '',
-    //                     base_price: '',
-    //                     key_features: '',
-    //                     varients: [
-    //                         {
-    //                             sku_number: '',
-    //                             finished_price: '',
-    //                             un_finished_price: '',
-    //                             quantity: '',
-    //                             options: []
-    //                         }
-    //                     ],
-    //                     category_id: '',
-    //                     category_name: ''
-    //                 }
-    //             });
-    //             setIsModalOpen(false); // Close the modal after saving
-    //         } else {
-    //             alert('Failed to add product');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error adding product:', error);
-    //         alert('An error occurred while adding the product.');
-    //     }
-    // };
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedLevel2Id, setselectedLevel2Id] = useState('');
     const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
