@@ -216,7 +216,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue) {
+    if (selectedValue && selectedValue != 'add') {
     const level1Category = categories.category_list.find(level1 =>
       level1.level_one_category_list.some(level2 => level2._id === e)
     );
@@ -232,22 +232,22 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedlevel4('');
     setSelectedlevel5('');
     setSelectedlevel6('');
-    if (selectedValue === 'add') {
-      setShowAddLevel2Popup(true);
-    } else {
-      setShowAddLevel2Popup(false);
-    }
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
-  } else{
-    setSelectedLevel2Id(selectedValue);
-    setSelectedLevel2IdPopup(selectedValue);
+  } else{ 
+    if (selectedValue === 'add') {
+    setShowAddLevel2Popup(true);
+  } else {
+    setShowAddLevel2Popup(false);
   }
+  setSelectedLevel2Id(selectedValue);
+  setSelectedLevel2IdPopup(selectedValue);
+}
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue) {
+    if (selectedValue && selectedValue != 'add') {
     // Find the corresponding parent Level 2 category
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
@@ -272,21 +272,22 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedlevel4('');
     setSelectedlevel5('');
     setSelectedlevel6('');
+    
+
+    setIsLevel3DropdownOpen(false);
+  } else{
     if (selectedValue === 'add') {
       setShowAddLevel3Popup(true);
     } else {
       setShowAddLevel3Popup(false);
     }
-
-    setIsLevel3DropdownOpen(false);
-  } else{
     setSelectedLevel3Id(selectedValue);
     setSelectedLevel3IdPopup(selectedValue);
   }
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
+    if (selectedValue && selectedValue != 'add') {
     const level3Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -321,20 +322,20 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedLevel4IdPopup(selectedValue);
     setSelectedlevel5('');
     setSelectedlevel6('');
+    setIslevel4DropdownOpen(false);
+  } else{
     if (selectedValue === 'add') {
       setShowAddlevel4Popup(true);
     } else {
       setShowAddlevel4Popup(false);
     }
-    setIslevel4DropdownOpen(false);
-  } else{
     setSelectedlevel4(selectedValue);
     setSelectedLevel4IdPopup(selectedValue);
   }
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
+    if (selectedValue && selectedValue != 'add') {
     const level4Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -379,20 +380,21 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedlevel5(selectedValue);
     setSelectedLevel5IdPopup(selectedValue);
     setSelectedlevel6('');
+    
+    setIslevel5DropdownOpen(false);
+  } else{
     if (selectedValue === 'add') {
       setShowAddlevel5Popup(true);
     } else {
       setShowAddlevel5Popup(false);
     }
-    setIslevel5DropdownOpen(false);
-  } else{
     setSelectedlevel5(selectedValue);
     setSelectedLevel5IdPopup(selectedValue);
   }
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
-    if (selectedValue) {
+    if (selectedValue && selectedValue != 'add') {
     const level5Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
@@ -447,13 +449,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedlevel4(level4Category._id);
     setSelectedlevel5(level5Category._id);
     setSelectedlevel6(selectedValue);
+    setIslevel6DropdownOpen(false);
+  } else{
     if (selectedValue === 'add') {
       setShowAddlevel6Popup(true);
     } else {
       setShowAddlevel6Popup(false);
     }
-    setIslevel6DropdownOpen(false);
-  } else{
     setSelectedlevel6(selectedValue);
   }
   };
@@ -859,7 +861,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         <Dialog open={showAddCategoryPopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button">   <span className="close-icon">X</span></button>
           <DialogContent>
-            <AddCategory refreshCategories={refreshCategories} />
+            <AddCategory refreshCategories={refreshCategories}  onCloseDialog={closeAddCategoryPopup}/>
           </DialogContent>
         </Dialog>
 

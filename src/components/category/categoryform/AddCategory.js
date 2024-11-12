@@ -6,10 +6,11 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const AddCategory = ({ refreshCategories }) => {
+const AddCategory = ({ refreshCategories,onCloseDialog }) => {
   const [categoryName, setCategoryName] = useState('');
 
   const handleSubmit = async (e) => {
+    onCloseDialog();
     e.preventDefault();
 
     try {
