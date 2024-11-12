@@ -1,15 +1,4 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
 
-.login-page {
-    display: flex;
-    height: 100vh;
-    background-color: #8e8e8e;
-    background-image: url('../assets/istockphoto-1368151370-612x612.jpg');
-}
 
 .image-container {
     flex: 1;
@@ -24,25 +13,6 @@ body {
     height: auto;
 }
 
-.login-container {
-    max-width: 400px;
-    margin: auto;
-    padding: 50px 100px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-}
-
-.login-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1.8em;
-}
 
 form {
     display: flex;
@@ -62,47 +32,17 @@ form {
     text-align: left;
 }
 
-.label-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-    width: 100%;
-    margin: 10px 0px 10px 0px !important;
-}
-
 input:focus {
     border-color: #007bff;
     outline: none;
 }
 
-.button-login {
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 33px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 7rem;
-}
 
-.button-login {
-    background-color: #0056b3;
-}
 
 .error-message {
     color: red;
     text-align: center;
     margin-top: 10px;
-}
-
-.forgot-password {
-    margin-top: 20px;
-    text-align: center;
-    cursor: pointer;
 }
 
 .forgot-password a {
@@ -171,7 +111,6 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    color: #f0f0f0;
 }
 
 /* Full-Height Background */
@@ -180,7 +119,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, -2.3), rgba(0, 0, 0,-2.3)), url('../assets/elegant-dark-background-with-golden-details_23-2148435443.avif') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, -2.3), rgba(0, 0, 0,-2.3)), url('/src/assets/tropical-leaves-background-zoom_23-2148580778.avif') no-repeat center center/cover;
 }
 
 /* Login Container */
@@ -194,13 +133,18 @@ body {
     text-align: center;
     color: #ffffff;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .login-h2 {
     font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
+    font-weight: 700;   
     color: #ffffff;
+    margin: 0 auto;
+    padding: 0px 0px 20px 0px;
 }
 
 .label-login {
@@ -214,13 +158,14 @@ body {
 .label-input {
     padding: 12px;
     margin-bottom: 15px;
-    width: 100%;
+    width: 94%;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: 5px;
     color: #ffffff;
     font-size: 1rem;
     transition: background-color 0.3s, border-color 0.3s;
+    margin: 10px 0px 10px 0px !important;
 }
 
 .label-input:focus {
