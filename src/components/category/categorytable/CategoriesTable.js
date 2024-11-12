@@ -1,7 +1,6 @@
 // src/components/category/categorytable/CategoriesTable.js
 import React, { useState, useEffect } from 'react';
 import './CategoriesTable.css';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import AddCategory from '../categoryform/AddCategory';
 import AddLevelTwo from '../categoryform/AddLevelTwo';

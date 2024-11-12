@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
@@ -223,10 +222,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         }
     };
     const [searchQuery, setSearchQuery] = useState('');
-    // Safely access the variant list if available
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
-
-    // Check if there are any variants before performing filtering
     const filteredVariantList = variantList.length > 0
       ? variantList.flatMap((variant) =>
           variant.option_value_list

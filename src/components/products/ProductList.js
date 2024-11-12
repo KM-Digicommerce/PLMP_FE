@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../src/utils/axiosConfig';
 

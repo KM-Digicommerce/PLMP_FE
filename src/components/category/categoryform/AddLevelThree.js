@@ -1,6 +1,5 @@
 // src/components/ AddLevelThree.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';

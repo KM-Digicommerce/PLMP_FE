@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './Sidebar.css';
 import Swal from 'sweetalert2';
-import axios from 'axios';
 import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
