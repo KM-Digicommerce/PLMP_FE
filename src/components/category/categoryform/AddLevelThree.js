@@ -63,7 +63,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
             required
           >
             <option value="">Select Level 2 Category</option>
-            {categories
+            {categories.category_list
               .find((level2) => level2._id === selectedCategoryId)
               ?.level_one_category_list.map((section) => (
                 <option key={section._id} value={section._id}>
@@ -75,6 +75,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
         <input
           type="text"
           value={productTypeName}
+          className='add_category_input'
           onChange={(e) => setProductTypeName(e.target.value)}
           placeholder="Enter category name"
           required

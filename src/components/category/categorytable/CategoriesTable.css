@@ -245,3 +245,7 @@ tr:hover .action-buttons {
 }
 .close-button:hover .close-icon {
   color: #ff0000; }
+.add_category_input{
+  width: 96%;
+  margin: 10px 0px 20px 0px !important;
+}
