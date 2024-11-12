@@ -55,7 +55,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         {selectedCategoryId && (
           <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
             <option value="">Select a Section</option>
-            {categories
+            {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.map((section) => (
                 <option key={section._id} value={section._id}>
@@ -67,7 +67,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         {selectedLevel2Id && (
           <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
             <option value="">Select a Product Type</option>
-            {categories
+            {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
               ?.level_two_category_list.map((productType) => (
@@ -80,6 +80,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         <input
           type="text"
           value={levelFourName}
+          className='add_category_input'
           onChange={(e) => setLevelFourName(e.target.value)}
           placeholder="Enter Level 4 name"
           required

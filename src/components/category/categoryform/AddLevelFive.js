@@ -58,7 +58,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         {selectedCategoryId && (
           <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
             <option value="">Select a Section</option>
-            {categories
+            {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.map((section) => (
                 <option key={section._id} value={section._id}>
@@ -70,7 +70,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         {selectedLevel2Id && (
           <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
             <option value="">Select a Product Type</option>
-            {categories
+            {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
               ?.level_two_category_list.map((productType) => (
@@ -83,7 +83,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         {selectedLevel3Id && (
           <select value={selectedLevel4Id} onChange={(e) => setSelectedLevel4Id(e.target.value)} required>
             <option value="">Select a Level 4</option>
-            {categories
+            {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
               ?.level_two_category_list.find((pt) => pt._id === selectedLevel3Id)
@@ -97,6 +97,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         <input
           type="text"
           value={levelFiveName}
+          className='add_category_input'
           onChange={(e) => setLevelFiveName(e.target.value)}
           placeholder="Enter Level 5 name"
           required
