@@ -31,7 +31,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
 
       await refreshCategories(); 
       Swal.fire('Success', 'Product type added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
+        // window.location.reload(); // Refresh the page to show updated data
     })
     } catch (error) {
       console.error('Error adding product type:', error);

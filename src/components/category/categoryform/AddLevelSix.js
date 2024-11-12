@@ -47,7 +47,7 @@ const AddLevelSix = ({
 
             await refreshCategories(); // Refresh the category list
             Swal.fire('Success', 'Level 6 category added successfully!', 'success').then(() => {
-                window.location.reload(); // Reload page to reflect changes
+                // window.location.reload(); // Reload page to reflect changes
             });
         } catch (error) {
             console.error('Error adding level 6 category:', error);

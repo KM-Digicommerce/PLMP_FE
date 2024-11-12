@@ -210,80 +210,176 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setShowAddCategoryPopup(false);
     setShowAddLevel2Popup(false);
     setShowAddLevel3Popup(false);
-    window.location.reload();
+    // window.location.reload();
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue && selectedValue != 'add') {
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id === e)
-    );
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
+    if (selectedValue && selectedValue !== 'add') {
+        let level1Category;
+
+        // Traverse through Level 1 categories to find the corresponding Level 2 category
+        categories.category_list.some(level1 => {
+            const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
+
+            if (foundLevel2) {
+                level1Category = level1;
+                return true; // Stop further search once found
+            }
+            return false;
+        });
+
+        if (!level1Category) {
+            console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
+            return;
+        }
+
+        // Set selected category IDs for Level 1 and Level 2
+        setSelectedCategoryId(level1Category._id);
+        setSelectedLevel2Id(selectedValue);
+        setSelectedLevel2IdPopup(selectedValue);
+
+        // Clear lower-level selections
+        setSelectedLevel3Id('');
+        setSelectedlevel4('');
+        setSelectedlevel5('');
+        setSelectedlevel6('');
+
+        setIsLevel2DropdownOpen(false);
+        setIsLevel3DropdownOpen(false);
+    } else {
+        if (selectedValue === 'add') {
+            setShowAddLevel2Popup(true);
+        } else {
+            setShowAddLevel2Popup(false);
+        }
+        setSelectedLevel2Id(selectedValue);
+        setSelectedLevel2IdPopup(selectedValue);
     }
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(selectedValue);
-    setSelectedLevel2IdPopup(selectedValue);
-    setSelectedLevel3Id('');
-    setSelectedlevel4('');
-    setSelectedlevel5('');
-    setSelectedlevel6('');
-    setIsLevel2DropdownOpen(false);
-    setIsLevel3DropdownOpen(false);
-  } else{ 
-    if (selectedValue === 'add') {
-    setShowAddLevel2Popup(true);
-  } else {
-    setShowAddLevel2Popup(false);
-  }
-  setSelectedLevel2Id(selectedValue);
-  setSelectedLevel2IdPopup(selectedValue);
-}
-  };
+};
+
+//   const handleLevel2Select = (e) => {
+//     const selectedValue = e;
+//     console.log(e, 'selected category id');
+//     if (selectedValue && selectedValue != 'add') {
+//     const level1Category = categories.category_list.find(level1 =>
+//       level1.level_one_category_list.some(level2 => level2._id === e)
+//     );
+
+//     if (!level1Category) {
+//       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+//       return;
+//     }
+//     setSelectedCategoryId(level1Category._id);
+//     setSelectedLevel2Id(selectedValue);
+//     setSelectedLevel2IdPopup(selectedValue);
+//     setSelectedLevel3Id('');
+//     setSelectedlevel4('');
+//     setSelectedlevel5('');
+//     setSelectedlevel6('');
+//     setIsLevel2DropdownOpen(false);
+//     setIsLevel3DropdownOpen(false);
+//   } else{ 
+//     if (selectedValue === 'add') {
+//     setShowAddLevel2Popup(true);
+//   } else {
+//     setShowAddLevel2Popup(false);
+//   }
+//   setSelectedLevel2Id(selectedValue);
+//   setSelectedLevel2IdPopup(selectedValue);
+// }
+//   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue && selectedValue != 'add') {
-    // Find the corresponding parent Level 2 category
-    const level2Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.find(level3 => level3._id === selectedValue));
-      console.log(level2Category, 'selected category id 2',level2Category._id);
-    if (!level2Category) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-      return;
+
+    if (selectedValue && selectedValue !== 'add') {
+        let level1Category, level2Category;
+
+        // Traverse through Level 1 categories to find the corresponding Level 2 and Level 3 categories
+        categories.category_list.some(level1 => {
+            const foundLevel2 = level1.level_one_category_list.find(level2 => 
+                level2.level_two_category_list.some(level3 => level3._id === selectedValue)
+            );
+
+            if (foundLevel2) {
+                level1Category = level1;
+                level2Category = foundLevel2;
+                return true; // Stop further search once found
+            }
+            return false;
+        });
+
+        if (!level2Category || !level1Category) {
+            console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
+            return;
+        }
+
+        // Set selected category IDs for Level 1, Level 2, and Level 3
+        setSelectedCategoryId(level1Category._id);
+        setSelectedLevel2Id(level2Category._id);
+        setSelectedLevel3Id(selectedValue);
+        setSelectedLevel3IdPopup(selectedValue);
+
+        // Clear lower-level selections
+        setSelectedlevel4('');
+        setSelectedlevel5('');
+        setSelectedlevel6('');
+
+        setIsLevel3DropdownOpen(false);
+    } else {
+        if (selectedValue === 'add') {
+            setShowAddLevel3Popup(true);
+        } else {
+            setShowAddLevel3Popup(false);
+        }
+        setSelectedLevel3Id(selectedValue);
+        setSelectedLevel3IdPopup(selectedValue);
     }
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id)
-    );
-    console.log(level1Category, 'selected category id 1',level1Category._id);
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
-    }
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(level2Category._id);  
-    setSelectedLevel3Id(selectedValue);
-    setSelectedLevel3IdPopup(selectedValue);
-    setSelectedlevel4('');
-    setSelectedlevel5('');
-    setSelectedlevel6('');
+};
+
+  // const handleLevel3Select = (e) => {
+  //   const selectedValue = e;
+  //   console.log(e, 'selected category id');
+  //   if (selectedValue && selectedValue != 'add') {
+  //   // Find the corresponding parent Level 2 category
+  //   const level2Category = categories.category_list
+  //     .flatMap(level1 => level1.level_one_category_list)
+  //     .find(level2 => level2.level_two_category_list.find(level3 => level3._id === selectedValue));
+  //     console.log(level2Category, 'selected category id 2',level2Category._id);
+  //   if (!level2Category) {
+  //     console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+  //     return;
+  //   }
+  //   const level1Category = categories.category_list.find(level1 =>
+  //     level1.level_one_category_list.find(level2 => level2._id)
+  //   );
+  //   console.log(level1Category, 'selected category id 1',level1Category._id);
+  //   if (!level1Category) {
+  //     console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+  //     return;
+  //   }
+  //   setSelectedCategoryId(level1Category._id);
+  //   setSelectedLevel2Id(level2Category._id);  
+  //   setSelectedLevel3Id(selectedValue);
+  //   setSelectedLevel3IdPopup(selectedValue);
+  //   setSelectedlevel4('');
+  //   setSelectedlevel5('');
+  //   setSelectedlevel6('');
     
 
-    setIsLevel3DropdownOpen(false);
-  } else{
-    if (selectedValue === 'add') {
-      setShowAddLevel3Popup(true);
-    } else {
-      setShowAddLevel3Popup(false);
-    }
-    setSelectedLevel3Id(selectedValue);
-    setSelectedLevel3IdPopup(selectedValue);
-  }
-  };
+  //   setIsLevel3DropdownOpen(false);
+  // } else{
+  //   if (selectedValue === 'add') {
+  //     setShowAddLevel3Popup(true);
+  //   } else {
+  //     setShowAddLevel3Popup(false);
+  //   }
+  //   setSelectedLevel3Id(selectedValue);
+  //   setSelectedLevel3IdPopup(selectedValue);
+  // }
+  // };
   const handlelevel4 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue != 'add') {

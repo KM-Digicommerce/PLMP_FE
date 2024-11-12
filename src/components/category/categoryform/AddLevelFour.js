@@ -31,7 +31,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
 
       await refreshCategories();
       Swal.fire('Success', 'Level 4 category added successfully!', 'success').then(() => {
-        window.location.reload();
+        // window.location.reload();
       });
     } catch (error) {
       console.error('Error adding level 4 category:', error);

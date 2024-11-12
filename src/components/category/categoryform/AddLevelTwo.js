@@ -28,7 +28,7 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories,o
       // Refresh categories after adding a section
       await refreshCategories(); 
       Swal.fire('Success', 'Section added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
+        // window.location.reload(); // Refresh the page to show updated data
     })
     } catch (error) {
       console.error('Error adding section:', error);
