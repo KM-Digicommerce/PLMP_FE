@@ -490,7 +490,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         </div>
 
         {/* Search Bar for the second table */}
-        <div className="search-bar">
+        {/* <div className="search-bar">
           <input
             type="text"
             value={searchQuery}
@@ -499,10 +499,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             placeholder="Search variant values..."
           
           />
-        </div>
+        </div> */}
 
         {/* Second table for displaying Variant, Price, and Available */}
-        <div className="variant-table">
+        {/* <div className="variant-table">
           <table>
             <thead>
               <tr>
@@ -521,7 +521,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> */}
       </div>
     )}
   </div>
