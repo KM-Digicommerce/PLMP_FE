@@ -137,6 +137,7 @@ const ProductDetail = () => {
 
                         <div className="form-group">
                             <label htmlFor="base_price">Base Price</label>
+                            <span class="input-prefix">$</span>
                             <input type="text" id="base_price" name="base_price" value={String(formData.base_price || '')} onChange={handleChange} required
                             />
                         </div>

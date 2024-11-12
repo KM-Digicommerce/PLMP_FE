@@ -250,8 +250,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     // Find the corresponding parent Level 2 category
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
-
+      .find(level2 => level2.level_two_category_list.find(level3 => level3._id === selectedValue));
+      console.log(level2Category, 'selected category id 2',level2Category._id);
     if (!level2Category) {
       console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
       return;
@@ -259,7 +259,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const level1Category = categories.category_list.find(level1 =>
       level1.level_one_category_list.some(level2 => level2._id)
     );
-
+    console.log(level1Category, 'selected category id 1',level1Category._id);
     if (!level1Category) {
       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
       return;
@@ -290,7 +290,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const level3Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
       .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id);
+      .find(level3 => level3._id === selectedValue);
 
     if (!level3Category) {
       console.error('Level 3 category not found for ID:', level3Category._id);
@@ -298,7 +298,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
     const level2Category = categories.category_list
       .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
 
     if (!level2Category) {
       console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
@@ -867,7 +867,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
+            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup}/>
           </DialogContent>
         </Dialog>
 
@@ -875,7 +875,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -886,7 +886,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel2IdPopup={selectedLevel2IdPopup}
               selectedLevel3IdPopup={selectedLevel3IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -898,7 +898,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel3IdPopup={selectedLevel3IdPopup}
               selectedLevel4IdPopup={selectedLevel4IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -911,7 +911,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel4IdPopup={selectedLevel4IdPopup}
               selectedLevel5IdPopup={selectedLevel5IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
       </div>

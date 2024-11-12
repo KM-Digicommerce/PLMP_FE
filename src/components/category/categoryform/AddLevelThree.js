@@ -4,7 +4,7 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories }) => {
+const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
@@ -37,6 +37,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
       console.error('Error adding product type:', error);
       alert('Error adding product type. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

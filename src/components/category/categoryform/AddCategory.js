@@ -9,7 +9,6 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
   const [categoryName, setCategoryName] = useState('');
 
   const handleSubmit = async (e) => {
-    onCloseDialog();
     e.preventDefault();
 
     try {
@@ -34,6 +33,7 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
       console.error('Error adding category:', error);
       alert('Error adding category. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

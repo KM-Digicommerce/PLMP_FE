@@ -11,7 +11,8 @@ const AddLevelSix = ({
     selectedLevel4IdPopup, 
     selectedLevel5IdPopup, 
     categories, 
-    refreshCategories 
+    refreshCategories,
+    onCloseDialog
 }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
     const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
@@ -52,6 +53,7 @@ const AddLevelSix = ({
             console.error('Error adding level 6 category:', error);
             Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');
         }
+        onCloseDialog();
     };
 
     useEffect(() => {
