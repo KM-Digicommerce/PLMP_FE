@@ -27,13 +27,14 @@ body {
 .login-container {
     max-width: 400px;
     margin: auto;
-    padding: 76px 150px;
-    background-color: #ffffff;
+    padding: 50px 100px;
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: white;
 }
 
 .login-h2 {
@@ -165,3 +166,130 @@ input:focus {
 
 
 
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #f0f0f0;
+}
+
+/* Full-Height Background */
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, -2.3), rgba(0, 0, 0,-2.3)), url('../assets/elegant-dark-background-with-golden-details_23-2148435443.avif') no-repeat center center/cover;
+}
+
+/* Login Container */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.login-h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+}
+
+.label-login {
+    font-weight: bold;
+    color: #dddddd;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+/* Input Field Styling */
+.label-input {
+    padding: 12px;
+    margin-bottom: 15px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.label-input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button Styling */
+.button-login {
+    padding: 12px;
+    width: 100%;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-login:hover {
+    background-color: #218838;
+}
+
+/* Error and Forgot Password Styling */
+.error-message, .forgot-password {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.forgot-password {
+    color: #007bff;
+    cursor: pointer;
+}
+
+/* Forgot Password Modal */
+.forgot-password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.modal-content-reset-password {
+    width: 350px;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.close-x-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.close-x-modal:hover {
+    color: #ff4d4d;
+}
