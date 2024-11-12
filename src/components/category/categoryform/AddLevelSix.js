@@ -79,7 +79,7 @@ const AddLevelSix = ({
                 {selectedCategoryId && (
                     <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
                         <option value="">Select a Section</option>
-                        {categories
+                        {categories.category_list
                             .find((cat) => cat._id === selectedCategoryId)
                             ?.level_one_category_list.map((section) => (
                                 <option key={section._id} value={section._id}>
@@ -91,7 +91,7 @@ const AddLevelSix = ({
                 {selectedLevel2Id && (
                     <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
                         <option value="">Select a Product Type</option>
-                        {categories
+                        {categories.category_list
                             .find((cat) => cat._id === selectedCategoryId)
                             ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
                             ?.level_two_category_list.map((productType) => (
@@ -104,7 +104,7 @@ const AddLevelSix = ({
                 {selectedLevel3Id && (
                     <select value={selectedLevel4Id} onChange={(e) => setSelectedLevel4Id(e.target.value)} required>
                         <option value="">Select a Level 4</option>
-                        {categories
+                        {categories.category_list
                             .find((cat) => cat._id === selectedCategoryId)
                             ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
                             ?.level_two_category_list.find((pt) => pt._id === selectedLevel3Id)
@@ -118,7 +118,7 @@ const AddLevelSix = ({
                 {selectedLevel4Id && (
                     <select value={selectedLevel5Id} onChange={(e) => setSelectedLevel5Id(e.target.value)} required>
                         <option value="">Select a Level 5</option>
-                        {categories
+                        {categories.category_list
                             .find((cat) => cat._id === selectedCategoryId)
                             ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
                             ?.level_two_category_list.find((pt) => pt._id === selectedLevel3Id)
@@ -133,6 +133,7 @@ const AddLevelSix = ({
                 <input
                     type="text"
                     value={levelSixName}
+                    className='add_category_input'
                     onChange={(e) => setLevelSixName(e.target.value)}
                     placeholder="Enter Level 6 name"
                     required

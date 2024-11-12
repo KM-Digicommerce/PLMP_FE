@@ -56,6 +56,7 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories }
         <input
           type="text"
           value={sectionName}
+          className='add_category_input'
           onChange={(e) => setSectionName(e.target.value)}
           placeholder="Enter category name"
           required
