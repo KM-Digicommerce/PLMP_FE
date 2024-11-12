@@ -114,11 +114,11 @@ const Login = () => {
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="one">
-            <label className="label-login" htmlFor="name">Name</label>
+            <label className="label-login" htmlFor="email">E-mail</label>
             <input
               className="label-input"
               type="text"
-              id="name"
+              id="email"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
