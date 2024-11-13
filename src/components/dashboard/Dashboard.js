@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
-import axios from 'axios';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -110,7 +109,7 @@ function Dashboard() {
           <p>{dashboardData.total_brand}</p>
         </div>
         <div className="card">
-          <h3>Total Last Level Categories</h3>
+          <h3>Total End Level Categories</h3>
           <p>{dashboardData.total_last_level_category}</p>
         </div>
         <div className="card">

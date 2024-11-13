@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
@@ -81,8 +80,28 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setSelectedlevel6('');
         setIsCategoryDropdownOpen(false);
     };
-
+    const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
+    const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
+    useEffect(() => {
+      // Fetch the API response and store last_level_category IDs
+      const fetchCategoryData = async () => {
+        const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+        console.log(res.data.data.last_level_category,'Response the check');
+        
+        setLastLevelCategoryIds(res.data.data.last_level_category);
+      };
+      
+      fetchCategoryData();
+    }, []);
     const handleCategorySelectForVariants = async (id) => {
+      const selectedIdString = String(id);
+      const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
+      if (isIdInLastLevel) {
+          setIsAddProductVisible(true);
+      }
+      else{
+          setIsAddProductVisible(false);
+      }
         setSelectedCategoryForVariant(id);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
@@ -223,10 +242,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         }
     };
     const [searchQuery, setSearchQuery] = useState('');
-    // Safely access the variant list if available
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
-
-    // Check if there are any variants before performing filtering
     const filteredVariantList = variantList.length > 0
       ? variantList.flatMap((variant) =>
           variant.option_value_list
@@ -427,7 +443,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     </div>
                 </div>
             </div>
-            {level2Categories.length > 0 && variantsData.varient_list && (
+             {isAddProductVisible && (
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
@@ -490,7 +506,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         </div>
 
         {/* Search Bar for the second table */}
-        <div className="search-bar">
+        {/* <div className="search-bar">
           <input
             type="text"
             value={searchQuery}
@@ -499,10 +515,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             placeholder="Search variant values..."
           
           />
-        </div>
+        </div> */}
 
         {/* Second table for displaying Variant, Price, and Available */}
-        <div className="variant-table">
+        {/* <div className="variant-table">
           <table>
             <thead>
               <tr>
@@ -521,7 +537,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> */}
       </div>
     )}
   </div>

@@ -1,7 +1,6 @@
 // src/components/AddCategory.js
 
 import React, { useState } from 'react';
-import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
@@ -10,7 +9,6 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
   const [categoryName, setCategoryName] = useState('');
 
   const handleSubmit = async (e) => {
-    onCloseDialog();
     e.preventDefault();
 
     try {
@@ -24,7 +22,6 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
       // Call the refresh function to update the category list
       await refreshCategories(); // Ensure it's awaited for proper sequencing
       Swal.fire('Success', 'Category added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
     })
 
       // Log the updated categories to verify the addition
@@ -35,6 +32,7 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
       console.error('Error adding category:', error);
       alert('Error adding category. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

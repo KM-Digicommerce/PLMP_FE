@@ -1,6 +1,5 @@
 // src/components/AddLevelSix.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './AddCategory.css'; // Assuming you have a CSS file for styling
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
@@ -12,7 +11,8 @@ const AddLevelSix = ({
     selectedLevel4IdPopup, 
     selectedLevel5IdPopup, 
     categories, 
-    refreshCategories 
+    refreshCategories,
+    onCloseDialog
 }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
     const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
@@ -47,12 +47,13 @@ const AddLevelSix = ({
 
             await refreshCategories(); // Refresh the category list
             Swal.fire('Success', 'Level 6 category added successfully!', 'success').then(() => {
-                window.location.reload(); // Reload page to reflect changes
+                // window.location.reload(); // Reload page to reflect changes
             });
         } catch (error) {
             console.error('Error adding level 6 category:', error);
             Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');
         }
+        onCloseDialog();
     };
 
     useEffect(() => {

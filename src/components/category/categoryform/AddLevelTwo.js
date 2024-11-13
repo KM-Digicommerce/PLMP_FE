@@ -1,11 +1,10 @@
 // src/components/ AddLevelTwo.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories }) => {
+const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories,onCloseDialog }) => {
   const [sectionName, setSectionName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
 
@@ -29,12 +28,13 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories }
       // Refresh categories after adding a section
       await refreshCategories(); 
       Swal.fire('Success', 'Section added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
+        // window.location.reload(); // Refresh the page to show updated data
     })
     } catch (error) {
       console.error('Error adding section:', error);
       alert('Error adding section. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

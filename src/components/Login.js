@@ -114,7 +114,7 @@ const Login = () => {
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="one">
-            <label className="label-login" htmlFor="email">E-mail</label>
+            <label className="label-login" htmlFor="email">Name</label>
             <input
               className="label-input"
               type="text"

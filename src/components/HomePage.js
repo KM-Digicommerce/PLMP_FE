@@ -9,7 +9,9 @@ import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
-import axiosInstance from '../utils/axiosConfig.js'
+import axiosInstance from '../utils/axiosConfig.js';
+import { useNavigate,useLocation } from 'react-router-dom';
+
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
@@ -18,11 +20,11 @@ function HomePage() {
   const [showVariantsTable, setShowVariantsTable] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
+  const navigate = useNavigate();
+  const location = useLocation();
   const fetchCategories = async () => {
     try {
-      
       const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-      
       setCategoriesData(res.data.data);
     } catch (err) {
       console.log('ERROR', err);
@@ -34,6 +36,9 @@ function HomePage() {
   }, []);
 
   const handleCategoriesClick = () => {
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
     setShowDashboard(false);
     setShowCategoriesTable(true);
     setShowProductList(false);
@@ -42,6 +47,9 @@ function HomePage() {
   };
 
   const handleAllProductsClick = () => {
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
     setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(true);
@@ -51,6 +59,10 @@ function HomePage() {
   };
 
   const handleAllVariantsClick = () => {
+    console.log(location.pathname,'productId');
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
     setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(false);
@@ -59,6 +71,9 @@ function HomePage() {
   };
 
   const handleAddProductsClick = () => {
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
     setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(false);
@@ -67,6 +82,9 @@ function HomePage() {
   };
 
   const handleDashboardClick = () => {
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
     setShowDashboard(true);
     setShowCategoriesTable(false);
     setShowProductList(false);
@@ -103,7 +121,7 @@ function HomePage() {
               ) : null (
               )
             } />
-            <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
           </Routes>
         </div>
       </div>
