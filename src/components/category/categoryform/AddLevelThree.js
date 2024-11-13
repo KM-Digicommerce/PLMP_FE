@@ -1,11 +1,10 @@
 // src/components/ AddLevelThree.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories }) => {
+const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
@@ -32,12 +31,13 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
 
       await refreshCategories(); 
       Swal.fire('Success', 'Product type added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
+        // window.location.reload(); // Refresh the page to show updated data
     })
     } catch (error) {
       console.error('Error adding product type:', error);
       alert('Error adding product type. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

@@ -1,7 +1,6 @@
 // src/components/category/categorytable/CategoriesTable.js
 import React, { useState, useEffect } from 'react';
 import './CategoriesTable.css';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import AddCategory from '../categoryform/AddCategory';
 import AddLevelTwo from '../categoryform/AddLevelTwo';
@@ -18,8 +17,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import axiosInstance from '../../../utils/axiosConfig';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 const CategoriesTable = ({ categories, refreshCategories }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
@@ -29,7 +27,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [selectedLevel3IdPopup, setSelectedLevel3IdPopup] = useState('');
   const [selectedLevel4IdPopup, setSelectedLevel4IdPopup] = useState('');
   const [selectedLevel5IdPopup, setSelectedLevel5IdPopup] = useState('');
-
+  const [searchQuerylist, setSearchQuerylist] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
 
   useEffect(() => {
@@ -63,8 +62,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [selectedlevel5, setSelectedlevel5] = useState('');
   const [selectedlevel6, setSelectedlevel6] = useState('');
   const [showAddCategoryPopup, setShowAddCategoryPopup] = useState(false);
-  const [showAddLevel2Popup, setShowAddLevel2Popup] = useState(false); // State to control AddCategory popup
-  const [showAddProductTypePopup, setShowAddLevel3Popup] = useState(false); // State to control AddCategory popup
+  const [showAddLevel2Popup, setShowAddLevel2Popup] = useState(false); 
+  const [showAddProductTypePopup, setShowAddLevel3Popup] = useState(false); 
   const [showAddlevel4Popup, setShowAddlevel4Popup] = useState(false);
   const [showAddlevel5Popup, setShowAddlevel5Popup] = useState(false);
   const [showAddlevel6Popup, setShowAddlevel6Popup] = useState(false);
@@ -75,7 +74,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
   const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
   const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-  const [editingCategoryId, setEditingCategoryId] = useState(null); // State to track editing category
+  const [editingCategoryId, setEditingCategoryId] = useState(null); 
   const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryLevel2, setSearchQueryLevel2] = useState('');
@@ -168,7 +167,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase())
       );
 
-  const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);  
+  const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);
   const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
   const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list)
     .flatMap(level2 => level2.level_two_category_list);
@@ -211,253 +210,349 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setShowAddCategoryPopup(false);
     setShowAddLevel2Popup(false);
     setShowAddLevel3Popup(false);
-    window.location.reload();
+    // window.location.reload();
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue && selectedValue != 'add') {
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id === e)
-    );
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
+    if (selectedValue && selectedValue !== 'add') {
+      let level1Category;
+
+      // Traverse through Level 1 categories to find the corresponding Level 2 category
+      categories.category_list.some(level1 => {
+        const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
+
+        if (foundLevel2) {
+          level1Category = level1;
+          return true; // Stop further search once found
+        }
+        return false;
+      });
+
+      if (!level1Category) {
+        console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
+        return;
+      }
+
+      // Set selected category IDs for Level 1 and Level 2
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(selectedValue);
+      setSelectedLevel2IdPopup(selectedValue);
+
+      // Clear lower-level selections
+      setSelectedLevel3Id('');
+      setSelectedlevel4('');
+      setSelectedlevel5('');
+      setSelectedlevel6('');
+
+      setIsLevel2DropdownOpen(false);
+      setIsLevel3DropdownOpen(false);
+    } else {
+      if (selectedValue === 'add') {
+        setShowAddLevel2Popup(true);
+      } else {
+        setShowAddLevel2Popup(false);
+      }
+      setSelectedLevel2Id(selectedValue);
+      setSelectedLevel2IdPopup(selectedValue);
     }
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(selectedValue);
-    setSelectedLevel2IdPopup(selectedValue);
-    setSelectedLevel3Id('');
-    setSelectedlevel4('');
-    setSelectedlevel5('');
-    setSelectedlevel6('');
-    setIsLevel2DropdownOpen(false);
-    setIsLevel3DropdownOpen(false);
-  } else{ 
-    if (selectedValue === 'add') {
-    setShowAddLevel2Popup(true);
-  } else {
-    setShowAddLevel2Popup(false);
-  }
-  setSelectedLevel2Id(selectedValue);
-  setSelectedLevel2IdPopup(selectedValue);
-}
   };
+
+  //   const handleLevel2Select = (e) => {
+  //     const selectedValue = e;
+  //     console.log(e, 'selected category id');
+  //     if (selectedValue && selectedValue != 'add') {
+  //     const level1Category = categories.category_list.find(level1 =>
+  //       level1.level_one_category_list.some(level2 => level2._id === e)
+  //     );
+
+  //     if (!level1Category) {
+  //       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+  //       return;
+  //     }
+  //     setSelectedCategoryId(level1Category._id);
+  //     setSelectedLevel2Id(selectedValue);
+  //     setSelectedLevel2IdPopup(selectedValue);
+  //     setSelectedLevel3Id('');
+  //     setSelectedlevel4('');
+  //     setSelectedlevel5('');
+  //     setSelectedlevel6('');
+  //     setIsLevel2DropdownOpen(false);
+  //     setIsLevel3DropdownOpen(false);
+  //   } else{ 
+  //     if (selectedValue === 'add') {
+  //     setShowAddLevel2Popup(true);
+  //   } else {
+  //     setShowAddLevel2Popup(false);
+  //   }
+  //   setSelectedLevel2Id(selectedValue);
+  //   setSelectedLevel2IdPopup(selectedValue);
+  // }
+  //   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-    if (selectedValue && selectedValue != 'add') {
-    // Find the corresponding parent Level 2 category
-    const level2Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
 
-    if (!level2Category) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-      return;
-    }
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id)
-    );
+    if (selectedValue && selectedValue !== 'add') {
+      let level1Category, level2Category;
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
-    }
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(level2Category._id);  
-    setSelectedLevel3Id(selectedValue);
-    setSelectedLevel3IdPopup(selectedValue);
-    setSelectedlevel4('');
-    setSelectedlevel5('');
-    setSelectedlevel6('');
-    
+      // Traverse through Level 1 categories to find the corresponding Level 2 and Level 3 categories
+      categories.category_list.some(level1 => {
+        const foundLevel2 = level1.level_one_category_list.find(level2 =>
+          level2.level_two_category_list.some(level3 => level3._id === selectedValue)
+        );
 
-    setIsLevel3DropdownOpen(false);
-  } else{
-    if (selectedValue === 'add') {
-      setShowAddLevel3Popup(true);
+        if (foundLevel2) {
+          level1Category = level1;
+          level2Category = foundLevel2;
+          return true; // Stop further search once found
+        }
+        return false;
+      });
+
+      if (!level2Category || !level1Category) {
+        console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
+        return;
+      }
+
+      // Set selected category IDs for Level 1, Level 2, and Level 3
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(selectedValue);
+      setSelectedLevel3IdPopup(selectedValue);
+
+      // Clear lower-level selections
+      setSelectedlevel4('');
+      setSelectedlevel5('');
+      setSelectedlevel6('');
+
+      setIsLevel3DropdownOpen(false);
     } else {
-      setShowAddLevel3Popup(false);
+      if (selectedValue === 'add') {
+        setShowAddLevel3Popup(true);
+      } else {
+        setShowAddLevel3Popup(false);
+      }
+      setSelectedLevel3Id(selectedValue);
+      setSelectedLevel3IdPopup(selectedValue);
     }
-    setSelectedLevel3Id(selectedValue);
-    setSelectedLevel3IdPopup(selectedValue);
-  }
   };
+
+  // const handleLevel3Select = (e) => {
+  //   const selectedValue = e;
+  //   console.log(e, 'selected category id');
+  //   if (selectedValue && selectedValue != 'add') {
+  //   // Find the corresponding parent Level 2 category
+  //   const level2Category = categories.category_list
+  //     .flatMap(level1 => level1.level_one_category_list)
+  //     .find(level2 => level2.level_two_category_list.find(level3 => level3._id === selectedValue));
+  //     console.log(level2Category, 'selected category id 2',level2Category._id);
+  //   if (!level2Category) {
+  //     console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+  //     return;
+  //   }
+  //   const level1Category = categories.category_list.find(level1 =>
+  //     level1.level_one_category_list.find(level2 => level2._id)
+  //   );
+  //   console.log(level1Category, 'selected category id 1',level1Category._id);
+  //   if (!level1Category) {
+  //     console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+  //     return;
+  //   }
+  //   setSelectedCategoryId(level1Category._id);
+  //   setSelectedLevel2Id(level2Category._id);  
+  //   setSelectedLevel3Id(selectedValue);
+  //   setSelectedLevel3IdPopup(selectedValue);
+  //   setSelectedlevel4('');
+  //   setSelectedlevel5('');
+  //   setSelectedlevel6('');
+
+
+  //   setIsLevel3DropdownOpen(false);
+  // } else{
+  //   if (selectedValue === 'add') {
+  //     setShowAddLevel3Popup(true);
+  //   } else {
+  //     setShowAddLevel3Popup(false);
+  //   }
+  //   setSelectedLevel3Id(selectedValue);
+  //   setSelectedLevel3IdPopup(selectedValue);
+  // }
+  // };
   const handlelevel4 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue != 'add') {
-    const level3Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id);
+      const level3Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .find(level3 => level3._id === selectedValue);
 
-    if (!level3Category) {
-      console.error('Level 3 category not found for ID:', level3Category._id);
-      return;
-    }
-    const level2Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      if (!level3Category) {
+        console.error('Level 3 category not found for ID:', level3Category._id);
+        return;
+      }
+      const level2Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
 
-    if (!level2Category) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-      return;
-    }
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id)
-    );
+      if (!level2Category) {
+        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+        return;
+      }
+      const level1Category = categories.category_list.find(level1 =>
+        level1.level_one_category_list.some(level2 => level2._id)
+      );
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
-    }
+      if (!level1Category) {
+        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+        return;
+      }
 
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(level2Category._id);
-    setSelectedLevel3Id(level3Category._id);
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(level3Category._id);
 
-    setSelectedlevel4(selectedValue);
-    setSelectedLevel4IdPopup(selectedValue);
-    setSelectedlevel5('');
-    setSelectedlevel6('');
-    setIslevel4DropdownOpen(false);
-  } else{
-    if (selectedValue === 'add') {
-      setShowAddlevel4Popup(true);
+      setSelectedlevel4(selectedValue);
+      setSelectedLevel4IdPopup(selectedValue);
+      setSelectedlevel5('');
+      setSelectedlevel6('');
+      setIslevel4DropdownOpen(false);
     } else {
-      setShowAddlevel4Popup(false);
+      if (selectedValue === 'add') {
+        setShowAddlevel4Popup(true);
+      } else {
+        setShowAddlevel4Popup(false);
+      }
+      setSelectedlevel4(selectedValue);
+      setSelectedLevel4IdPopup(selectedValue);
     }
-    setSelectedlevel4(selectedValue);
-    setSelectedLevel4IdPopup(selectedValue);
-  }
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue != 'add') {
-    const level4Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .find(level4 => level4._id);
+      const level4Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .flatMap(level3 => level3.level_three_category_list)
+        .find(level4 => level4._id);
 
-    if (!level4Category) {
-      console.error('Level 4 category not found for ID:', level4Category._id);
-      return;
-    }
-    const level3Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id);
+      if (!level4Category) {
+        console.error('Level 4 category not found for ID:', level4Category._id);
+        return;
+      }
+      const level3Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .find(level3 => level3._id);
 
-    if (!level3Category) {
-      console.error('Level 3 category not found for ID:', level3Category._id);
-      return;
-    }
-    const level2Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      if (!level3Category) {
+        console.error('Level 3 category not found for ID:', level3Category._id);
+        return;
+      }
+      const level2Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
 
-    if (!level2Category) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-      return;
-    }
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id)
-    );
+      if (!level2Category) {
+        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+        return;
+      }
+      const level1Category = categories.category_list.find(level1 =>
+        level1.level_one_category_list.some(level2 => level2._id)
+      );
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
-    }
+      if (!level1Category) {
+        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+        return;
+      }
 
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(level2Category._id);
-    setSelectedLevel3Id(level3Category._id);
-    setSelectedlevel4(level4Category._id);
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(level3Category._id);
+      setSelectedlevel4(level4Category._id);
 
-    setSelectedlevel5(selectedValue);
-    setSelectedLevel5IdPopup(selectedValue);
-    setSelectedlevel6('');
-    
-    setIslevel5DropdownOpen(false);
-  } else{
-    if (selectedValue === 'add') {
-      setShowAddlevel5Popup(true);
+      setSelectedlevel5(selectedValue);
+      setSelectedLevel5IdPopup(selectedValue);
+      setSelectedlevel6('');
+
+      setIslevel5DropdownOpen(false);
     } else {
-      setShowAddlevel5Popup(false);
+      if (selectedValue === 'add') {
+        setShowAddlevel5Popup(true);
+      } else {
+        setShowAddlevel5Popup(false);
+      }
+      setSelectedlevel5(selectedValue);
+      setSelectedLevel5IdPopup(selectedValue);
     }
-    setSelectedlevel5(selectedValue);
-    setSelectedLevel5IdPopup(selectedValue);
-  }
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue != 'add') {
-    const level5Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .flatMap(level4 => level4.level_four_category_list)
-      .find(level5 => level5._id);
+      const level5Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .flatMap(level3 => level3.level_three_category_list)
+        .flatMap(level4 => level4.level_four_category_list)
+        .find(level5 => level5._id);
 
-    if (!level5Category) {
-      console.error('Level 5 category not found for ID:', level5Category._id);
-      return;
-    }
+      if (!level5Category) {
+        console.error('Level 5 category not found for ID:', level5Category._id);
+        return;
+      }
 
-    const level4Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .find(level4 => level4._id);
+      const level4Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .flatMap(level3 => level3.level_three_category_list)
+        .find(level4 => level4._id);
 
-    if (!level4Category) {
-      console.error('Level 4 category not found for ID:', level4Category._id);
-      return;
-    }
-    const level3Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id);
+      if (!level4Category) {
+        console.error('Level 4 category not found for ID:', level4Category._id);
+        return;
+      }
+      const level3Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .flatMap(level2 => level2.level_two_category_list)
+        .find(level3 => level3._id);
 
-    if (!level3Category) {
-      console.error('Level 3 category not found for ID:', level3Category._id);
-      return;
-    }
-    const level2Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      if (!level3Category) {
+        console.error('Level 3 category not found for ID:', level3Category._id);
+        return;
+      }
+      const level2Category = categories.category_list
+        .flatMap(level1 => level1.level_one_category_list)
+        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
 
-    if (!level2Category) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-      return;
-    }
-    const level1Category = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id)
-    );
+      if (!level2Category) {
+        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+        return;
+      }
+      const level1Category = categories.category_list.find(level1 =>
+        level1.level_one_category_list.some(level2 => level2._id)
+      );
 
-    if (!level1Category) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-      return;
-    }
+      if (!level1Category) {
+        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+        return;
+      }
 
-    setSelectedCategoryId(level1Category._id);
-    setSelectedLevel2Id(level2Category._id);
-    setSelectedLevel3Id(level3Category._id);
-    setSelectedlevel4(level4Category._id);
-    setSelectedlevel5(level5Category._id);
-    setSelectedlevel6(selectedValue);
-    setIslevel6DropdownOpen(false);
-  } else{
-    if (selectedValue === 'add') {
-      setShowAddlevel6Popup(true);
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(level3Category._id);
+      setSelectedlevel4(level4Category._id);
+      setSelectedlevel5(level5Category._id);
+      setSelectedlevel6(selectedValue);
+      setIslevel6DropdownOpen(false);
     } else {
-      setShowAddlevel6Popup(false);
+      if (selectedValue === 'add') {
+        setShowAddlevel6Popup(true);
+      } else {
+        setShowAddlevel6Popup(false);
+      }
+      setSelectedlevel6(selectedValue);
     }
-    setSelectedlevel6(selectedValue);
-  }
   };
 
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
@@ -552,7 +647,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
 
   const handleSort = (column) => {
-    // Toggle sort direction or set ascending for the first time
     const direction = sortOrder.column === column && sortOrder.direction === 'asc' ? 'desc' : 'asc';
     setSortOrder({ column, direction });
   };
@@ -570,8 +664,39 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     });
     return sortedProducts;
   };
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuerylist(query);
 
+    if (query.length > 0) {
+      const matchedSuggestions = products
+        .map((product) => product.product_name)
+        .filter((name) => name.toLowerCase().includes(query.toLowerCase())); // Match anywhere in the product name
+
+
+      console.log(matchedSuggestions, 'sortedProducts');
+      setSuggestions(matchedSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuerylist(suggestion);
+    setSuggestions([]);
+  };
   const sortedProducts = sortProducts(products);
+
+  let sortedProductss = sortProducts(products);
+  console.log(sortedProductss, 'sortedProducts');
+  const getFilteredAndSortedProducts = () => {
+    return sortedProductss.filter((product) =>
+      product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
+      product.model.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
+      product.tags.toLowerCase().includes(searchQuerylist.toLowerCase())
+    );
+  };
+
 
   return (
     <div className="CategoryMain">
@@ -861,14 +986,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         <Dialog open={showAddCategoryPopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button">   <span className="close-icon">X</span></button>
           <DialogContent>
-            <AddCategory refreshCategories={refreshCategories}  onCloseDialog={closeAddCategoryPopup}/>
+            <AddCategory refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
         <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} />
+            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -876,7 +1001,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -887,7 +1012,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel2IdPopup={selectedLevel2IdPopup}
               selectedLevel3IdPopup={selectedLevel3IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -899,7 +1024,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel3IdPopup={selectedLevel3IdPopup}
               selectedLevel4IdPopup={selectedLevel4IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -912,16 +1037,62 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               selectedLevel4IdPopup={selectedLevel4IdPopup}
               selectedLevel5IdPopup={selectedLevel5IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} />
+              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
       </div>
       {levelTwoCategoryForVisible && (
         <div>
-          <h3 >Product Listing</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
+            <h3>Products</h3>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuerylist}
+                onChange={handleSearchChange}
+                style={{ marginBottom: '10px', padding: '7px', width: '50%', fontSize: '15px' }}
+              />
+              {console.log("Rendering suggestions:", suggestions)}
+              {console.log("Rendering suggestions: 2", Array.isArray(suggestions))}
+
+              {suggestions.length > 0 && (<div
+                style={{
+                  position: 'absolute',
+                  top: '83%',
+                  left: '9px',
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  zIndex: 1000,
+                  width: '434px',
+                }}
+              >
+
+                {suggestions.map((suggestion) => (
+                  <div
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className='suggest_cls'
+                    style={{
+                      padding: '6px',
+                      cursor: 'pointer',
+                      fontSize: '15px',
+                      backgroundColor: 'white', // Alternating row color
+                    }}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+              )}
+            </div>
+            <h3 style={{ fontWeight: 'normal' }}>Total Products: {getFilteredAndSortedProducts().length}</h3>
+          </div>
+
           <TableContainer
             component={Paper}
-            sx={{ margin: '20px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
+            sx={{ margin: '0px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
           >
             <Table>
               <TableHead>
@@ -966,25 +1137,40 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     Msrp
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
+                  {/* <TableCell
                     align="left"
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => handleSort('tags')}
                   >
                     Tags
                     {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sortedProducts.map((product) => (
+                {getFilteredAndSortedProducts().map((product) => (
                   <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.base_price}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}> 
+                    {Array.isArray(product.image) ? (
+                    <img
+                      src={product.image[0]}
+                      // alt={product.product_name}
+                      className="product-image-round"
+                    />
+                  ) : (
+                    <img
+                      src={product.image}
+                      // alt={product.product_name}
+                      className="product-image-round"
+                    />
+                  )}{product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
+                    </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>${product.msrp}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{
+                      product.msrp ? `$${product.msrp}` : ''}</TableCell>
+                    {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

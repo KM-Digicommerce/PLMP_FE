@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../src/utils/axiosConfig';
 
@@ -215,24 +214,24 @@ const ProductList = () => {
                   />
                 </td>
                 <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
-                  {/* {Array.isArray(item.url) ? (
+                  {Array.isArray(item.image) ? (
                     <img
-                      src={item.url[0]}
+                      src={item.image[0]}
                       alt={item.product_name}
                       className="product-image-round"
                     />
                   ) : (
                     <img
-                      src={item.url}
+                      src={item.image}
                       alt={item.product_name}
                       className="product-image-round"
                     />
-                  )} */}
+                  )}
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
                 <td className="model-column">{item.model}</td>
-                <td className="price-column">{item.base_price}</td>
-                <td className="msrpprice-column">{item.msrp}</td>
+                <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
+                <td className="msrpprice-column"> {item.msrp ? `$${item.msrp}` : ''}</td>
                 <td className="attributes-column">{item.attributes}</td>
                 <td className="upc_ean-column">{item.upc_ean}</td>
               </tr>

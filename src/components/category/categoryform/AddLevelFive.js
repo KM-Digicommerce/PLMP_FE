@@ -1,11 +1,10 @@
 // src/components/AddLevelFive.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, selectedLevel4IdPopup, categories, refreshCategories }) => {
+const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, selectedLevel4IdPopup, categories, refreshCategories, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
   const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedProductTypeIdPopup || '');
@@ -35,12 +34,13 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
 
       await refreshCategories();
       Swal.fire('Success', 'Level 5 category added successfully!', 'success').then(() => {
-        window.location.reload();
+        // window.location.reload();
       });
     } catch (error) {
       console.error('Error adding level 5 category:', error);
       alert('Error adding level 5 category. Please try again.');
     }
+    onCloseDialog();
   };
 
   return (

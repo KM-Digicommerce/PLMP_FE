@@ -1,11 +1,10 @@
 import React, { useState, useRef } from 'react';
 import './Sidebar.css';
 import Swal from 'sweetalert2';
-import axios from 'axios';
 import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBox, faChevronDown, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import axiosInstance from '../../../src/utils/axiosConfig';
 
@@ -45,10 +44,6 @@ const Sidebar = ({
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-  };
-
-  const handleProductsClick = () => {
-    setShowProductsSubmenu(!showProductsSubmenu);
   };
 
   const handleUpload = async () => {
@@ -96,23 +91,28 @@ const Sidebar = ({
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/exportAll/`, {
-        responseType: 'blob', // Important for downloading files
+        responseType: 'blob', 
       });
-
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'exported_data.json'); // Specify the download file name
+      link.setAttribute('download', 'products.xlsx'); 
       document.body.appendChild(link);
       link.click();
-      link.parentNode.removeChild(link);
+      link.parentNode.removeChild(link);      
       window.URL.revokeObjectURL(url);
-
       Swal.fire({
         title: 'Success!',
         text: 'File exported successfully!',
         icon: 'success',
         confirmButtonText: 'OK',
+        customClass: {
+              container: 'swal-custom-container',  
+              popup: 'swal-custom-popup',          
+              title: 'swal-custom-title',          
+              confirmButton: 'swal-custom-confirm',
+              cancelButton: 'swal-custom-cancel'   
+          }
       });
     } catch (error) {
       console.error('Error exporting data:', error);
@@ -123,7 +123,7 @@ const Sidebar = ({
         confirmButtonText: 'OK',
       });
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
   };
   const toggleProductsSubmenu = () => {
