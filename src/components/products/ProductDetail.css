@@ -1,118 +1,128 @@
+/* General container styling */
+.product-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+}
 
-.product-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 650px;
-    margin: 0 auto; 
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-    
-  .form-group input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .product-image {
-    max-width: 40%;
-    height: auto;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .save-button_pdp {
-    padding: 10px;
-    background-color: #0070f3;
-    color: white;
-    border: none;
-    border-radius: 6px !important;
-    cursor: pointer;
-    width: 27%;
-    float: right;
-  }
-  
-  .save-button_pdp:hover {
-    background-color: #005bb5;
-  }
-  .product-detail {
-    padding: 20px;
-  }
-  
-  .product-edit-container {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .product-image-section {
-    /* flex: 1; */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .product-image-preview {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    margin-bottom: 10px;
-  }
-  
-  .product-info-section {
-    flex: 2;
-  }
-  
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    /* margin-bottom: 5px; */
-  }
-  
-  .form-group input {
-    /* width: 100%; */
-    padding: 8px;
-    box-sizing: border-box;
-  }
-  
+/* Back button styling */
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  float: left;
+}
+.back-button:hover {
+  background-color: #0056b3;
+}
 
-  .back-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    width: 17%;
-  }
+/* Section button styling */
+.section-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  float: left;
+}
+.section-buttons button {
+  padding: 4px 16px;
+  background-color: #323335;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  width: 100%;
   
-  .back-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .swal2-confirm{
-    width: 100%;
-  }
-  .edit_prd{
-    margin: 0px 0px 6px 0px;
-  }
-  .variant-table{
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background: #fff;
-    width: 100%;
-    border: 1px solid lightgray;
-    border-collapse: collapse;
-    text-align: left;
-    min-width: 18px;
-    padding: 5px 10px;
-    margin-top: 20px;
-  }
-  
+}
+.section-buttons button:hover {
+  background-color: #706e6e94;
+  color: black;
+}
+.section-buttons button.active {
+  background-color: #706e6e94;
+  color: black;
+}
+
+/* Product info sections */
+.product-info-section, .taxonomy-section, .variant-section, .pricing-section, .other-details-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 700px;
+  /* margin-top: 1rem; */
+}
+
+.product-info-section h3, .taxonomy-section h3, .variant-section h3, .pricing-section h3, .other-details-section h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+/* Form group styling */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+.form-group label {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+.form-group input {
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Variant table styling */
+.variant-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.variant-table th, .variant-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+.variant-table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+.variant-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Save button styling */
+.save-button_pdp {
+  padding: 12px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  transition: background-color 0.2s ease;
+}
+.save-button_pdp:hover {
+  background-color: #218838;
+}

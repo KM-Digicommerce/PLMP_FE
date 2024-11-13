@@ -22,7 +22,6 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
       // Call the refresh function to update the category list
       await refreshCategories(); // Ensure it's awaited for proper sequencing
       Swal.fire('Success', 'Category added successfully!', 'success').then(() => {
-        window.location.reload(); // Refresh the page to show updated data
     })
 
       // Log the updated categories to verify the addition
