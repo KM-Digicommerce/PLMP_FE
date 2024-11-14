@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css'; // Importing CSS for styling
+import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
+
 import axiosInstance from '../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 
 
-const ProductDetail = ({categories}) => {
-    const { productId } = useParams(); 
-    const navigate = useNavigate(); 
+const ProductDetail = ({ categories }) => {
+    const { productId } = useParams();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({});
-    const [originalData, setOriginalData] = useState({}); 
-    const [variantData, setVariantData] = useState([]); 
+    const [originalData, setOriginalData] = useState({});
+    const [variantData, setVariantData] = useState([]);
     const [view, setView] = useState('productDetail');
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedLevel2Id, setselectedLevel2Id] = useState('');
@@ -21,6 +23,18 @@ const ProductDetail = ({categories}) => {
     const [selectedlevel4, setSelectedlevel4] = useState('');
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
+
+    const [categoryIdForVariant, setCategoryIdForVariant] = useState('');
+    const [categoryId, setCategoryId] = useState('');
+    const [categoryName, setCategoryName] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedVariants, setSelectedVariants] = useState({
+        sku_number: '',
+        unfinishedPrice: '',
+        finishedPrice: '',
+        quantity: '',
+    });
+    const [variantOptions, setVariantOptions] = useState([]);
 
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
@@ -39,14 +53,10 @@ const ProductDetail = ({categories}) => {
         level6: '',
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
-      console.log(categories,'categories');
-      const filteredCategories = categories?.category_list?.filter(category =>
+    //   console.log(categories,'categories');
+    const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
-    
-    // const filteredCategories = categories.category_list.filter(category =>
-    //     category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
-    // );
 
     const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
     const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
@@ -86,28 +96,9 @@ const ProductDetail = ({categories}) => {
         setSelectedlevel6('');
         setIsCategoryDropdownOpen(false);
     };
-    const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
-    const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
-    useEffect(() => {
-      // Fetch the API response and store last_level_category IDs
-      const fetchCategoryData = async () => {
-        const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-        console.log(res.data.data.last_level_category,'Response the check');
-        
-        setLastLevelCategoryIds(res.data.data.last_level_category);
-      };
-      
-      fetchCategoryData();
-    }, []);
-    const handleCategorySelectForVariants = async (id) => {
-      const selectedIdString = String(id);
-      const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
-      if (isIdInLastLevel) {
-          setIsAddProductVisible(true);
-      }
-      else{
-          setIsAddProductVisible(false);
-      }
+    const handleCategorySelectForVariants = async (id, category_name) => {
+        setCategoryId(id);
+        setCategoryName(category_name);
         setSelectedCategoryForVariant(id);
     };
     useEffect(() => {
@@ -161,12 +152,14 @@ const ProductDetail = ({categories}) => {
         const fetchProductDetail = async () => {
             try {
                 const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
-                    id: productId, 
+                    id: productId,
                 });
 
                 if (response.data && response.data.data) {
                     const productObj = response.data.data.product_obj;
-                    setFormData(productObj); 
+                    const category_id = response.data.data.category_id;
+                    setCategoryIdForVariant(category_id);
+                    setFormData(productObj);
                     setOriginalData(productObj);
                 } else {
                     setError('Product not found');
@@ -197,68 +190,164 @@ const ProductDetail = ({categories}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (JSON.stringify(formData) === JSON.stringify(originalData)) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Please edit something! No changes detected',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-        try {
-            console.log(formData,'formData');
-            
-            const payload = {
-                id: formData.product_id || '',
-                update_obj: {
-                   product_name: formData.product_name,
-                   url: formData.url,
-                   base_price: formData.base_price,
-                   breadcrumb: formData.breadcrumb,
-                   tags: formData.tags,
-                   key_features: formData.key_features,
-                   msrp: formData.msrp,
-                   features: formData.features,
-                   long_description: formData.long_description,
-                   short_description: formData.short_description,
-                   attributes: formData.attributes,
-                   model: formData.model,
-                   upc_ean: formData.upc_ean,
-                }
-            };
-            await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
-            Swal.fire({
-                title: 'Success!',
-                text: 'Product updated successfully!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.reload(); 
-            });
-        } catch (err) {
-            alert('Error updating product');
+        if (view !== 'taxonomy' && view !== 'variants') {
+            if (JSON.stringify(formData) === JSON.stringify(originalData)) {
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'Please edit something! No changes detected',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        container: 'swal-custom-container',
+                        popup: 'swal-custom-popup',
+                        title: 'swal-custom-title',
+                        confirmButton: 'swal-custom-confirm',
+                        cancelButton: 'swal-custom-cancel'
+                    }
+                });
+                return;
+            }
+            try {
+                console.log(formData, 'formData');
+
+                const payload = {
+                    id: formData.product_id || '',
+                    update_obj: {
+                        product_name: formData.product_name,
+                        url: formData.url,
+                        base_price: formData.base_price,
+                        breadcrumb: formData.breadcrumb,
+                        tags: formData.tags,
+                        key_features: formData.key_features,
+                        msrp: formData.msrp,
+                        features: formData.features,
+                        long_description: formData.long_description,
+                        short_description: formData.short_description,
+                        attributes: formData.attributes,
+                        model: formData.model,
+                        upc_ean: formData.upc_ean,
+                    }
+                };
+                await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product updated successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } catch (err) {
+                alert('Error updating product');
+            }
         }
     };
 
     const handleBackClick = () => {
-        navigate('/Homepage'); 
+        navigate('/Homepage');
     };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
+    // Handler for category dropdown selection
+
+    const swapProductToCategory = async () => {
+        if (categoryId) {
+            try {
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {
+                    product_id: productId,
+                    category_id: categoryId,
+                    category_name: categoryName
+                });
+                console.log(response.status, 'response.status');
+
+                if (response.status === 200) {
+                    alert('Category updated successfully');
+                    setCategoryId('');
+                    setCategoryName('');
+                } else {
+                    alert('Failed to update category');
+                }
+            } catch (error) {
+                console.error('Error updating category:', error);
+                alert('Error updating category');
+            }
+        } else {
+            alert('Please selected the category to updated');
+        }
+    };
+
+    // const handleVariantDetailChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setSelectedVariants({
+    //         ...selectedVariants,
+    //         [name]: value
+    //     });
+    // };
+    const handleVariantDetailChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedVariants((prevVariants) => ({
+            ...prevVariants,
+            [name]: value,
+        }));
+    };
+    
+    const handleVariantChange = (typeId, value) => {
+        setSelectedVariants({
+            ...selectedVariants,
+            [typeId]: value
+        });
+    };
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axiosInstance.post(`${process.env.REACT_APP_IP}/createAndAddVarient/`, {
+                product_id: productId,
+                // varient_obj: selectedVariants
+                varient_obj: {
+                    sku_number: selectedVariants.sku,
+                    un_finished_price: selectedVariants.unfinishedPrice,
+                    finished_price: selectedVariants.finishedPrice,
+                    quantity: selectedVariants.quantity,
+                    options:variantOptions.map((variant,option) => ({
+                        option_value_id: selectedVariants[option.type_value_id],
+                        option_name_id: selectedVariants[variant.type_id],
+                    }))
+                },
+            });
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
+        console.log(selectedVariants);
+        setIsPopupOpen(false); // Close popup after submitting
+    };
+    const handleAddVariantClick = async () => {
+        setIsPopupOpen(true);
+        try {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
+            // console.log("Response 1", res.data.data);
+            // console.log("Response 2", res.data.data.varient_list);
+            setVariantOptions(res.data.data.varient_list);
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
+    };
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
     return (
         <div className="product-detail">
-            <button onClick={handleBackClick} className="back-button">← Back to Products</button>
-            <div className="section-buttons">
-                <button onClick={() => setView('productDetail')} className={view === 'productDetail' ? 'active' : ''}>Product Detail</button>
-                <button onClick={() => setView('taxonomy')} className={view === 'taxonomy' ? 'active' : ''}>Taxonomy</button>
-                <button onClick={() => setView('variants')} className={view === 'variants' ? 'active' : ''}>Variants</button>
-                <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'active' : ''}>Pricing</button>
-                <button onClick={() => setView('otherDetails')} className={view === 'otherDetails' ? 'active' : ''}>Other Details</button>
+            <div className="section_sidebar">
+                <button onClick={handleBackClick} className="back-button">← Back to Products</button>
+                <div className="section-buttons">
+                    <button onClick={() => setView('productDetail')} className={view === 'productDetail' ? 'active' : ''}>Product Detail</button>
+                    <button onClick={() => setView('taxonomy')} className={view === 'taxonomy' ? 'active' : ''}>Taxonomy</button>
+                    <button onClick={() => setView('variants')} className={view === 'variants' ? 'active' : ''}>Variants</button>
+                    <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'active' : ''}>Pricing</button>
+                    <button onClick={() => setView('otherDetails')} className={view === 'otherDetails' ? 'active' : ''}>Other Details</button>
+                </div>
             </div>
-
 
             <form onSubmit={handleSubmit} className="product-edit-form">
                 <div className="product-edit-container">
@@ -272,7 +361,7 @@ const ProductDetail = ({categories}) => {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="base_price">Base Price</label>
-                                <input type="text" id="base_price" name="base_price" value={String(`$${formData.base_price}`|| '')} onChange={handleChange} required />
+                                <input type="text" id="base_price" name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="model">Model</label>
@@ -291,192 +380,203 @@ const ProductDetail = ({categories}) => {
                         <div className="taxonomy-section">
                             <h3>Taxonomy</h3>
                             <div className='DropdownsContainer'>
-                    {/* Level 1 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="categorySelect">Level 1:</label>
-                        <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {isCategoryDropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level1}
-                                        onChange={(e) => handleSearchChange('level1', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
-                                        <span>Select Category</span>
-                                    </div>
-                                    {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id); }}>
-                                            <span>{level1.name}</span>
+                                {/* Level 1 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="categorySelect">Level 1:</label>
+                                    <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {isCategoryDropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level1}
+                                                    onChange={(e) => handleSearchChange('level1', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
+                                                    <span>Select Category</span>
+                                                </div>
+                                                {filteredCategories.map(level1 => (
+                                                    <div className="dropdown-option" key={level1._id} onClick={() => {
+                                                        handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1');
+                                                    }} >
+                                                        <span>{level1.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Level 2 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="sectionSelect">Level 2:</label>
-                        <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {isLevel2DropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level2}
-                                        onChange={(e) => handleSearchChange('level2', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
-                                        <span>Select category</span>
-                                    </div>
-                                    {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id); }}>
-                                            <span>{level2.name}</span>
+                                {/* Level 2 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="sectionSelect">Level 2:</label>
+                                    <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {isLevel2DropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level2}
+                                                    onChange={(e) => handleSearchChange('level2', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
+                                                    <span>Select category</span>
+                                                </div>
+                                                {filteredCategoriesLevel2?.map(level2 => (
+                                                    <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                                        <span>{level2.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Level 3 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="productTypeSelect">Level 3:</label>
-                        <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {isLevel3DropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level3}
-                                        onChange={(e) => handleSearchChange('level3', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
-                                        <span>Select category</span>
-                                    </div>
-                                    {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id); }}>
-                                            <span>{level3.name}</span>
+                                {/* Level 3 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="productTypeSelect">Level 3:</label>
+                                    <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {isLevel3DropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level3}
+                                                    onChange={(e) => handleSearchChange('level3', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
+                                                    <span>Select category</span>
+                                                </div>
+                                                {filteredCategoriesLevel3?.map(level3 => (
+                                                    <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                                        <span>{level3.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Level 4 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="level4Select">Level 4:</label>
-                        <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {islevel4DropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level4}
-                                        onChange={(e) => handleSearchChange('level4', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
-                                        <span>Select category</span>
-                                    </div>
-                                    {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id); }}>
-                                            <span>{level4.name}</span>
+                                {/* Level 4 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="level4Select">Level 4:</label>
+                                    <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {islevel4DropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level4}
+                                                    onChange={(e) => handleSearchChange('level4', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
+                                                    <span>Select category</span>
+                                                </div>
+                                                {filteredCategoriesLevel4?.map(level4 => (
+                                                    <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                                        <span>{level4.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Level 5 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="level5Select">Level 5:</label>
-                        <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {islevel5DropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level5}
-                                        onChange={(e) => handleSearchChange('level5', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
-                                        <span>Select category</span>
-                                    </div>
-                                    {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id); }}>
-                                            <span>{level5.name}</span>
+                                {/* Level 5 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="level5Select">Level 5:</label>
+                                    <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {islevel5DropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level5}
+                                                    onChange={(e) => handleSearchChange('level5', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
+                                                    <span>Select category</span>
+                                                </div>
+                                                {filteredCategoriesLevel5?.map(level5 => (
+                                                    <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                                        <span>{level5.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Level 6 Dropdown */}
-                    <div className='DropdownColumn'>
-                        <label htmlFor="level6Select">Level 6:</label>
-                        <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
-                            <div className="selected-category">
-                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                            </div>
-                            {islevel6DropdownOpen && (
-                                <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level6}
-                                        onChange={(e) => handleSearchChange('level6', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
-                                    <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
-                                        <span>Select category</span>
-                                    </div>
-                                    {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id); }}>
-                                            <span>{level6.name}</span>
+                                {/* Level 6 Dropdown */}
+                                <div className='DropdownColumn'>
+                                    <label htmlFor="level6Select">Level 6:</label>
+                                    <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
+                                        <div className="selected-category">
+                                            {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                         </div>
-                                    ))}
+                                        {islevel6DropdownOpen && (
+                                            <div className="dropdown-options">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search category..."
+                                                    value={searchQueries.level6}
+                                                    onChange={(e) => handleSearchChange('level6', e.target.value)}
+                                                    className="dropdown-search-input"
+                                                    onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                                />
+                                                <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
+                                                    <span>Select category</span>
+                                                </div>
+                                                {filteredCategoriesLevel6?.map(level6 => (
+                                                    <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                                        <span>{level6.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                            </div>
                         </div>
                     )}
 
                     {view === 'variants' && (
                         <div className="variant-section">
-                            <h3>Product Variants</h3>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px' }}>
+                                <h3>Product Variants</h3>
+                                <button className='cls_addvariant'
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ position: 'relative', top: '20px', right: '20px', margin: 0, }}
+                                    onClick={handleAddVariantClick}>
+                                    Add Variant Option
+                                </button>
+                            </div>
                             <table className="variant-table">
                                 <thead>
                                     <tr>
@@ -490,8 +590,8 @@ const ProductDetail = ({categories}) => {
                                     {variantData.map((variant) => (
                                         <tr key={variant.sku_number}>
                                             <td>{variant.sku_number}</td>
-                                            <td>{variant.unfinished_price}</td>
-                                            <td>{variant.finished_price}</td>
+                                            <td>{variant.un_finished_price? `$${variant.un_finished_price}` : ''}</td>
+                                            <td>{variant.finished_price? `$${variant.finished_price}` : ''}</td>
                                             <td>
                                                 {variant.varient_option_list.map((option, index) => (
                                                     <div key={index}>{option.type_name}: {option.type_value}</div>
@@ -501,6 +601,120 @@ const ProductDetail = ({categories}) => {
                                     ))}
                                 </tbody>
                             </table>
+                            <Modal
+                                open={isPopupOpen}
+                                onClose={handleClosePopup}
+                                aria-labelledby="variant-modal-title"
+                                aria-describedby="variant-modal-description"
+                                className="variant_model_pdp"
+                            >
+                                <Box
+                                    sx={{
+                                        width: 450,
+                                        padding: 2,
+                                        margin: 'auto',
+                                        backgroundColor: 'white',
+                                        borderRadius: '8px',
+                                        top: '1%',
+                                        position: 'absolute',
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        boxShadow: 3,
+                                    }}
+                                >
+                                    <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
+                                    <form onSubmit={handleFormSubmit}>
+                                        {/* SKU Input */}
+                                        <TextField
+                                            fullWidth
+                                            name="sku"
+                                            label="SKU"
+                                            value={selectedVariants.sku}
+                                            onChange={handleVariantDetailChange}
+                                            margin="normal"
+                                            className='input_pdp'
+                                            size="small"
+                                            sx={{ marginBottom: 2 }}
+                                        />
+
+                                        {/* Unfinished Price Input */}
+                                        <TextField
+                                            fullWidth
+                                            type="number"
+                                            name="unfinishedPrice"
+                                            label="Unfinished Price"
+                                            value={selectedVariants.unfinishedPrice}
+                                            onChange={handleVariantDetailChange}
+                                            margin="small"
+                                            className='input_pdp'
+                                            size="small" // Smaller input size
+                                            sx={{ marginBottom: 2 }}
+                                        />
+
+                                        {/* Finished Price Input */}
+                                        <TextField
+                                            fullWidth
+                                            type="number"
+                                            name="finishedPrice"
+                                            label="Finished Price"
+                                            value={selectedVariants.finishedPrice}
+                                            onChange={handleVariantDetailChange}
+                                            margin="small"
+                                            className='input_pdp'
+                                            size="small"
+                                            sx={{ marginBottom: 2 }}
+                                        />
+
+                                        {/* Quantity Input */}
+                                        <TextField
+                                            fullWidth
+                                            type="number"
+                                            name="quantity"
+                                            className='input_pdp'
+                                            label="Quantity"
+                                            value={selectedVariants.quantity}
+                                            onChange={handleVariantDetailChange}
+                                            margin="small"
+                                            size="small"
+                                            sx={{ marginBottom: 2 }}
+                                        />
+
+                                        {/* Options Dropdowns */}
+                                        {variantOptions?.map((variant) => (
+                                            <div key={variant.type_id}>
+                                                <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                                                    <InputLabel id={`variant-${variant.type_id}`} >{variant.type_name}</InputLabel>
+                                                    <Select
+                                                        labelId={`variant-${variant.type_id}`}
+                                                        value={selectedVariants[variant.type_id] || ''}
+                                                        onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+                                                        label={variant.type_name}
+                                                        size="small"
+                                                        sx={{ padding: '8px' }} // Adjust padding
+                                                    >
+                                                        {variant.option_value_list?.map((option) => (
+                                                            <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                                                {option.type_value_name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </div>
+                                        ))}
+
+                                        {/* Submit Button */}
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{ width: '100%', marginTop: 2 }}
+                                        >
+                                            Save Variant
+                                        </Button>
+                                    </form>
+                                </Box>
+                            </Modal>
+
                         </div>
                     )}
 
@@ -509,7 +723,7 @@ const ProductDetail = ({categories}) => {
                             <h3>Pricing Details</h3>
                             <div className="form-group">
                                 <label htmlFor="msrp">MSRP</label>
-                                <input type="text" id="msrp" name="msrp" value={String(`$${formData.msrp}`|| '')} onChange={handleChange} required />
+                                <input type="text" id="msrp" name="msrp" value={String(`$${formData.msrp}` || '')} onChange={handleChange} required />
                             </div>
                         </div>
                     )}
@@ -539,8 +753,7 @@ const ProductDetail = ({categories}) => {
                             </div>
                         </div>
                     )}
-
-                    <button type="submit" className="save-button_pdp">Save</button>
+                    {view !== 'variants' && (<button type="submit" className="save-button_pdp" onClick={swapProductToCategory}>Save</button>)}
                 </div>
             </form>
         </div>

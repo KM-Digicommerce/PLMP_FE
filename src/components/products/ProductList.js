@@ -195,8 +195,8 @@ const ProductList = () => {
               <th className="msrpprice-column" onClick={() => handleSort("msrp")}>
                 MSRP Price {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
-              <th className="attributes-column" onClick={() => handleSort("attributes")}>
-                Attributes {sortColumn === "attributes" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              <th className="breadcrumb-column" onClick={() => handleSort("breadcrumb")}>
+               Breadcrumb {sortColumn === "breadcrumb" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
               <th className="upc_ean-column" onClick={() => handleSort("upc_ean")}>
                 UPC_EAN {sortColumn === "upc_ean" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
@@ -232,7 +232,7 @@ const ProductList = () => {
                 <td className="model-column">{item.model}</td>
                 <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
                 <td className="msrpprice-column"> {item.msrp ? `$${item.msrp}` : ''}</td>
-                <td className="attributes-column">{item.attributes}</td>
+                <td className="attributes-column">{item.breadcrumb}</td>
                 <td className="upc_ean-column">{item.upc_ean}</td>
               </tr>
             ))}
