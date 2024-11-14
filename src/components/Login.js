@@ -67,10 +67,10 @@ const Login = () => {
         alert('Password updated successfully');
         setShowForgotPassword(false);
         setOtpSent(false);
-      } else if (response.data.error === 'Invalid OTP') {
-        setOtpError('Invalid OTP. Please try again.');
-      } else if (response.data.error === 'OTP has expired') {
-        setOtpError('OTP has expired. Please request a new one.');
+      } else if (response.data.error === 'Invalid Verification Code') {
+        setOtpError('Invalid Verification Code. Please try again.');
+      } else if (response.data.error === 'Verification Code has expired') {
+        setOtpError('Code has expired. Please request a new one.');
       } else {
         setOtpError('An error occurred while resetting your password');
       }
@@ -80,7 +80,7 @@ const Login = () => {
     }
   };
 
-  // Handle email submission to send OTP
+  // Handle email submission to send Verification Code
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setEmailError('');
@@ -98,10 +98,10 @@ const Login = () => {
       if (response.data.status) {
         setOtpSent(true);
       } else {
-        setEmailError('Failed to send OTP, please try again');
+        setEmailError('Failed to send Verification Code, please try again');
       }
     } catch (err) {
-      setEmailError('An error occurred while sending OTP');
+      setEmailError('An error occurred while sending Verification Code');
       console.error(err);
     } finally {
       setLoadingEmail(false);
@@ -175,7 +175,7 @@ const Login = () => {
                     />
                   </div>
                   <button className="button" type="submit" disabled={loadingEmail}>
-                    {loadingEmail ? 'Sending...' : 'Send OTP'}
+                    {loadingEmail ? 'Sending...' : 'Send Verification Code'}
                   </button>
                   {emailError && <p className="error-message">{emailError}</p>}
                 </form>
@@ -185,7 +185,7 @@ const Login = () => {
                 <h3>Reset Your Password</h3>
                 <form onSubmit={handleForgotPasswordSubmit}>
                   <div className="one">
-                    <label htmlFor="otp">OTP</label>
+                    <label htmlFor="otp">Verification Code</label>
                     <input
                       type="text"
                       id="otp"

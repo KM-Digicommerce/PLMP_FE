@@ -151,33 +151,39 @@ const Sidebar = ({
         <FontAwesomeIcon icon={faUser} className="icon" />
         Variants
       </li>
-      <li
-           onMouseEnter={() => setShowImportOptions(true)}
-           onMouseLeave={() => {
-             if (!selectedFile) setShowImportOptions(false);
-           }}
-         >
-                  <FontAwesomeIcon icon={faFileImport} className="icon" />
-                  Import
-           {showImportOptions && (
-             <div className="upload-container">
-               <input
-                 type="file"
-                 id="file-input"
-                 style={{ display: 'none' }}
-                 ref={fileInputRef}
-                 onChange={handleFileChange}
-               />
-               <IconButton onClick={triggerFileInput} color="primary" aria-label="upload file">
-                 <UploadIcon />
-               </IconButton>
-               {selectedFile && <span className="file-name">{selectedFile.name}</span>}
-               <button onClick={handleUpload} disabled={loading} className='upload_btn'>
-                 {loading ? 'Uploading...' : 'Upload'}
-               </button>
-             </div>
-           )}
-         </li>
+         <li
+  onMouseEnter={() => setShowImportOptions(true)}
+  onMouseLeave={() => {
+    if (!selectedFile) setShowImportOptions(false);
+  }}
+>
+  <FontAwesomeIcon icon={faFileImport} className="icon" />
+  Import
+  {showImportOptions && (
+    <div className="upload-container">
+      {/* Download link for the sample file */}
+      <a href="/import_Sample.csv" download className="download-sample">
+        Download Sample File
+      </a>
+
+      <input
+        type="file"
+        id="file-input"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+      <IconButton onClick={triggerFileInput} color="primary" aria-label="upload file">
+        <UploadIcon />
+      </IconButton>
+      {selectedFile && <span className="file-name">{selectedFile.name}</span>}
+      <button onClick={handleUpload} disabled={loading} className='upload_btn'>
+        {loading ? 'Uploading...' : 'Upload'}
+      </button>
+    </div>
+  )}
+</li>
+
       <li onClick={handleExport}>
         <FontAwesomeIcon icon={faFileExport} className="icon" />
         Export

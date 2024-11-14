@@ -21,6 +21,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 const CategoriesTable = ({ categories, refreshCategories }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedCategoryIdForallprod, setSelectedCategoryIdForallprod] = useState('');
+  const [selectedCategorylevelForallprod, setSelectedCategorylevelForallprod] = useState('');
   const [selectedCategoryIdPopup, setSelectedCategoryIdPopup] = useState('');
   const [selectedLevel2Id, setSelectedLevel2Id] = useState('');
   const [selectedLevel2IdPopup, setSelectedLevel2IdPopup] = useState('');
@@ -34,14 +36,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   useEffect(() => {
     // Only fetch products if both selectedCategory and selectedLevel are set
     const fetchProducts = async () => {
-      if (selectedCategoryId) {
+      if (selectedCategoryIdForallprod) {
         try {
           const response = await axiosInstance.get(
             `${process.env.REACT_APP_IP}/obtainAllProductList/`,
             {
               params: {
-                category_id: selectedCategoryId
-                // level: selectedLevel
+                category_id: selectedCategoryIdForallprod,
+                level_name: selectedCategorylevelForallprod
               }
             }
           );
@@ -55,7 +57,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
     fetchProducts();
     // }, [selectedCategory, selectedLevel]);
-  }, [selectedCategoryId]);
+  }, [selectedCategoryIdForallprod]);
 
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
   const [selectedlevel4, setSelectedlevel4] = useState('');
@@ -187,6 +189,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     .flatMap(level4 => level4.level_four_category_list)
     .flatMap(level5 => level5.level_five_category_list);
 
+    const handleCategorySelectForVariants = async (id, category_level) => {
+      console.log('');
+      
+      setSelectedCategorylevelForallprod(category_level);
+      setSelectedCategoryIdForallprod(id);
+    };
   const handleCategorySelect = (e) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
@@ -730,7 +738,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select Category</span>
                   </div>
                   {filteredCategories.map(level1 => (
-                    <div className="dropdown-option" key={level1._id} onClick={() => handleCategorySelect(level1._id)} >
+                    <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}
+                    >
                       {editingCategoryId === level1._id ? (
                         <div>
                           {/* <input
@@ -787,7 +796,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel2?.map(level2 => (
-                    <div className="dropdown-option" key={level2._id} onClick={() => handleLevel2Select(level2._id)}>
+                    <div className="dropdown-option" key={level2._id} onClick={() => {handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2');}}>
                       <span>{level2.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level2._id, level2.name, 'level-2')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -832,7 +841,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel3?.map(level3 => (
-                    <div className="dropdown-option" key={level3._id} onClick={() => handleLevel3Select(level3._id)}>
+                    <div className="dropdown-option" key={level3._id} onClick={() => {handleLevel3Select(level3._id);handleCategorySelectForVariants(level3._id, 'level-3');}}>
                       <span>{level3.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level3._id, level3.name, 'level-3')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -877,7 +886,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel4?.map(level4 => (
-                    <div className="dropdown-option" key={level4._id} onClick={() => handlelevel4(level4._id)}>
+                    <div className="dropdown-option" key={level4._id} onClick={() =>{ handlelevel4(level4._id);handleCategorySelectForVariants(level4._id, 'level-4');}}>
                       <span>{level4.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level4._id, level4.name, 'level-4')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -922,7 +931,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel5?.map(level5 => (
-                    <div className="dropdown-option" key={level5._id} onClick={() => handlelevel5(level5._id)}>
+                    <div className="dropdown-option" key={level5._id} onClick={() =>{ handlelevel5(level5._id);handleCategorySelectForVariants(level5._id, 'level-5');}}>
                       <span>{level5.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level5._id, level5.name, 'level-5')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -966,7 +975,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel6?.map(level6 => (
-                    <div className="dropdown-option" key={level6._id} onClick={() => handlelevel6(level6._id)}>
+                    <div className="dropdown-option" key={level6._id} onClick={() => {handlelevel6(level6._id);handleCategorySelectForVariants(level6._id, 'level-6');}}>
                       <span>{level6.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level6._id, level6.name, 'level-6')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -1041,7 +1050,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </DialogContent>
         </Dialog>
       </div>
-      {levelTwoCategoryForVisible && (
+      {levelOneCategory && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
             <h3>Products</h3>
