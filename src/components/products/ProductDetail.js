@@ -85,15 +85,14 @@ const ProductDetail = ({ categories }) => {
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
     };
- const handleCategorySelectForVariants = async (id, category_name) => {
+    const handleCategorySelectForVariants = async (id, category_name) => {
         setCategoryId(id);
         setCategoryName(category_name);
         setSelectedCategoryForVariant(id);
     };
     useEffect(() => {
         handleCategorySelectForVariants();
-    }, []);
-    
+    }, []);   
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         setselectedLevel2Id('');
@@ -103,22 +102,21 @@ const ProductDetail = ({ categories }) => {
         setSelectedlevel6('');
         setIsCategoryDropdownOpen(false);
     };
-   
     const handleLevel2Select = (id) => {
         let level1Category;
         categories.category_list.some(level1 => {
             const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === id);
             if (foundLevel2) {
-              level1Category = level1;
-              return true;
+                level1Category = level1;
+                return true;
             }
             return false;
-          });
-          if (!level1Category) {
+        });
+        if (!level1Category) {
             console.error('Level 1 category not found for Level 2 category with ID:', id);
             return;
-          }
-          setSelectedCategoryId(level1Category._id);
+        }
+        setSelectedCategoryId(level1Category._id);
         setselectedLevel2Id(id);
         setSelectedLevel3Id('');
         setSelectedlevel4('');
@@ -130,25 +128,25 @@ const ProductDetail = ({ categories }) => {
     const handleLevel3Select = (id) => {
         let level1Category, level2Category;
 
-      categories.category_list.some(level1 => {
-        const foundLevel2 = level1.level_one_category_list.find(level2 =>
-          level2.level_two_category_list.some(level3 => level3._id === id)
-        );
+        categories.category_list.some(level1 => {
+            const foundLevel2 = level1.level_one_category_list.find(level2 =>
+                level2.level_two_category_list.some(level3 => level3._id === id)
+            );
 
-        if (foundLevel2) {
-          level1Category = level1;
-          level2Category = foundLevel2;
-          return true;
+            if (foundLevel2) {
+                level1Category = level1;
+                level2Category = foundLevel2;
+                return true;
+            }
+            return false;
+        });
+
+        if (!level2Category || !level1Category) {
+            console.error('Parent categories not found for selected Level 3 category with ID:', id);
+            return;
         }
-        return false;
-      });
-
-      if (!level2Category || !level1Category) {
-        console.error('Parent categories not found for selected Level 3 category with ID:', id);
-        return;
-      }
-      setSelectedCategoryId(level1Category._id);
-      setselectedLevel2Id(level2Category._id);
+        setSelectedCategoryId(level1Category._id);
+        setselectedLevel2Id(level2Category._id);
         setSelectedLevel3Id(id);
         setSelectedlevel4('');
         setSelectedlevel5('');
@@ -181,76 +179,83 @@ const ProductDetail = ({ categories }) => {
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
 
-        const fetchProductDetail = async () => {
-            try {
-                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
-                    id: productId,
-                });
+    const fetchProductDetail = async () => {
+        try {
+            const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
+                id: productId,
+            });
 
-                if (response.data && response.data.data) {
-                    const productObj = response.data.data.product_obj;
-                    const category_id = response.data.data.category_id;
-                    const category_name = response.data.data.category_name;
-                    setCategoryIdForVariant(category_id);
-                    if (category_name == 'level-1') {
-                        handleCategorySelect(category_id);
-                    }
-                    if (category_name == 'level-2') {
-                        handleLevel2Select(category_id);
-                    }
-                    if (category_name == 'level-3') {
-                        handleLevel3Select(category_id);
-                    }
-                    if (category_name == 'level-4') {
-                        handleLevelSelect('level-4',category_id);
-                    }
-                    if (category_name == 'level-5') {
-                        handleLevelSelect('level-5',category_id);
-                    }
-                    if (category_name == 'level-6') {
-                        handleLevelSelect('level-6',category_id);
-                    }
-                    setFormData(productObj);
-                    setOriginalData(productObj);
-                } else {
-                    setError('Product not found');
+            if (response.data && response.data.data) {
+                const productObj = response.data.data.product_obj;
+                const category_id = response.data.data.category_id;
+                const category_name = response.data.data.category_name;
+                setCategoryIdForVariant(category_id);
+                if (category_name == 'level-1') {
+                    handleCategorySelect(category_id);
                 }
-
-                const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
-                    product_id: productId,
-                });
-                if (variantResponse.data && variantResponse.data.data) {
-                    setVariantData(variantResponse.data.data || []);
+                if (category_name == 'level-2') {
+                    handleLevel2Select(category_id);
                 }
-            } catch (err) {
-                setError('Error fetching product details');
-            } finally {
-                setLoading(false);
+                if (category_name == 'level-3') {
+                    handleLevel3Select(category_id);
+                }
+                if (category_name == 'level-4') {
+                    handleLevelSelect('level-4', category_id);
+                }
+                if (category_name == 'level-5') {
+                    handleLevelSelect('level-5', category_id);
+                }
+                if (category_name == 'level-6') {
+                    handleLevelSelect('level-6', category_id);
+                }
+                setFormData(productObj);
+                setOriginalData(productObj);
+            } else {
+                setError('Product not found');
             }
-        };
-        useEffect(() => {
+
+            const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
+                product_id: productId,
+            });
+            if (variantResponse.data && variantResponse.data.data) {
+                setVariantData(variantResponse.data.data || []);
+            }
+        } catch (err) {
+            setError('Error fetching product details');
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
         if (productId) {
             fetchProductDetail();
         }
     }, [productId]);
     const fetchVariantDetail = async () => {
         try {
-        const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
-            product_id: productId,
-        });
-        if (variantResponse.data && variantResponse.data.data) {
-            setVariantData(variantResponse.data.data || []);
+            const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
+                product_id: productId,
+            });
+            if (variantResponse.data && variantResponse.data.data) {
+                setVariantData(variantResponse.data.data || []);
+            }
+        } catch (err) {
+            setError('Error fetching product details');
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        setError('Error fetching product details');
-    } finally {
-        setLoading(false);
-    }
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
+
+    useEffect(() => {
+        if (Array.isArray(formData.image) && formData.image.length > 0) {
+            setMainImage(formData.image[0]);
+        }
+    }, [formData.image]);    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -353,27 +358,27 @@ const ProductDetail = ({ categories }) => {
             ...prev,
             [typeId]: optionId,
         }));
-console.log(selectedVariants,'selectedVariants');
-console.log(typeId,'typeId');
-console.log(optionId,'optionId');
+        console.log(selectedVariants, 'selectedVariants');
+        console.log(typeId, 'typeId');
+        console.log(optionId, 'optionId');
     };
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
             const options = variantOptions
-            .map((variant) => {
-                const selectedOption = selectedVariants[variant.type_id];
-            
-                if (selectedOption) {
-                    return {
-                        option_name_id: variant.type_id,
-                        option_value_id: selectedOption,
-                    };
-                }
-                return null; 
-            })            
-            .filter((option) => option !== null); 
-            console.log(options,'options here');
+                .map((variant) => {
+                    const selectedOption = selectedVariants[variant.type_id];
+
+                    if (selectedOption) {
+                        return {
+                            option_name_id: variant.type_id,
+                            option_value_id: selectedOption,
+                        };
+                    }
+                    return null;
+                })
+                .filter((option) => option !== null);
+            console.log(options, 'options here');
             const res = await axiosInstance.post(`${process.env.REACT_APP_IP}/createAndAddVarient/`, {
                 product_id: productId,
                 varient_obj: {
@@ -381,20 +386,21 @@ console.log(optionId,'optionId');
                     un_finished_price: selectedVariants.unfinishedPrice,
                     finished_price: selectedVariants.finishedPrice,
                     quantity: selectedVariants.quantity,
-                    options: options, 
-                   
+                    options: options,
+
                 },
             });
             const resd = res.data.data.status;
-            console.log(resd,'resd');
-            if (resd  === true) {
+            console.log(resd, 'resd');
+            if (resd === true) {
                 alert('Sucessfully variants added!');
-                fetchVariantDetail();            }
+                fetchVariantDetail();
+            }
         } catch (err) {
             console.error('Error fetching variants:', err);
         }
         console.log(selectedVariants);
-        setIsPopupOpen(false); 
+        setIsPopupOpen(false);
     };
     const handleAddVariantClick = async () => {
         setIsPopupOpen(true);
@@ -407,6 +413,11 @@ console.log(optionId,'optionId');
     };
     const handleClosePopup = () => {
         setIsPopupOpen(false);
+    };
+
+
+    const handleThumbnailClick = (image) => {
+        setMainImage(image);
     };
     return (
         <div className="product-detail">
@@ -426,33 +437,51 @@ console.log(optionId,'optionId');
 
                     {view === 'productDetail' && (
                         <div className="product-info-section">
+
                             <div className="product-image-section">
-                                <img
-                                    src={formData.product_image || 'placeholder-image-url.jpg'}
-                                    alt="Product"
-                                    className="product-image"
-                                />
+                                <div className="main-product-image">
+                                    <img
+                                        src={mainImage}
+                                        alt="Main Product"
+                                        className="product-image-large"
+                                    />
+                                </div>
+
+                                <div className="thumbnail-section">
+                                    {Array.isArray(formData.image) &&
+                                        formData.image.map((image, index) => (
+                                            <img
+                                                key={index}
+                                                src={image}
+                                                alt={`Thumbnail ${index + 1}`}
+                                                className={`product-thumbnail ${mainImage === image ? "active-thumbnail" : ""
+                                                    }`}
+                                                onClick={() => handleThumbnailClick(image)}
+                                            />
+                                        ))}
+                                </div>
                             </div>
+
                             <div className="product-detail-section">
-                            <h3>Edit Product Details</h3>
-                            <div className="form-group">
-                                <label htmlFor="product_name">Product Name</label>
-                                <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name || ''} onChange={handleChange} required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="base_price">Base Price</label>
-                                <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="model">Model</label>
-                                <input type="text" id="model" name="model" className='input_pdps' value={String(formData.model || '')} onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="upc_ean">UPC_EAN</label>
-                                <input type="text" id="upc_ean" name="upc_ean" className='input_pdps'  value={String(formData.upc_ean || '')} onChange={handleChange}
-                                />
-                            </div>
+                                <h3>Edit Product Details</h3>
+                                <div className="form-group">
+                                    <label htmlFor="product_name">Product Name</label>
+                                    <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name ? formData.product_name.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="base_price">Base Price</label>
+                                    <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="model">Model</label>
+                                    <input type="text" id="model" name="model" className='input_pdps' value={String(formData.model || '')} onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="upc_ean">UPC_EAN</label>
+                                    <input type="text" id="upc_ean" name="upc_ean" className='input_pdps' value={String(formData.upc_ean || '')} onChange={handleChange}
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
@@ -719,7 +748,7 @@ console.log(optionId,'optionId');
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                        
+
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -729,11 +758,11 @@ console.log(optionId,'optionId');
                                             onChange={handleVariantDetailChange}
                                             margin="normal"
                                             className='input_pdp'
-                                            size="small" 
+                                            size="small"
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                       
+
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -747,7 +776,7 @@ console.log(optionId,'optionId');
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                    
+
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -761,7 +790,7 @@ console.log(optionId,'optionId');
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                      
+
                                         {variantOptions?.map((variant) => (
                                             <div key={variant.type_id}>
                                                 <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
@@ -772,7 +801,7 @@ console.log(optionId,'optionId');
                                                         onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
                                                         label={variant.type_name}
                                                         size="small"
-                                                        sx={{ padding: '8px' }} 
+                                                        sx={{ padding: '8px' }}
                                                     >
                                                         {variant.option_value_list?.map((option) => (
                                                             <MenuItem key={option.type_value_id} value={option.type_value_id}>
@@ -803,7 +832,7 @@ console.log(optionId,'optionId');
                             <h3>Pricing Details</h3>
                             <div className="form-group">
                                 <label htmlFor="msrp">MSRP</label>
-                                <input type="text" id="msrp" name="msrp" value={String(`$${formData.msrp}` || '')} onChange={handleChange} required />
+                                <input type="text" id="msrp" name="msrp" className='input_pdps' value={String(`$${formData.msrp}` || '')} onChange={handleChange} required />
                             </div>
                         </div>
                     )}
@@ -813,23 +842,23 @@ console.log(optionId,'optionId');
                             <h3>Other Product Details</h3>
                             <div className="form-group">
                                 <label htmlFor="key_features">Key Features</label>
-                                <input type="text" id="key_features" name="key_features" value={formData.key_features || ''} onChange={handleChange} />
+                                <input type="text" id="key_features" name="key_features" className='input_pdps' value={formData.key_features || ''} onChange={handleChange} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="features">Features</label>
-                                <input type="text" id="features" name="features" value={formData.features || ''} onChange={handleChange} />
+                                <input type="text" id="features" name="features" className='input_pdps' value={formData.features || ''} onChange={handleChange} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="short_description">Short Description</label>
-                                <input type="text" id="short_description" name="short_description" value={formData.short_description || ''} onChange={handleChange} />
+                                <input type="text" id="short_description" name="short_description" className='input_pdps' value={formData.short_description || ''} onChange={handleChange} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="long_description">Long Description</label>
-                                <input type="text" id="long_description" name="long_description" value={formData.long_description || ''} onChange={handleChange} />
+                                <input type="text" id="long_description" name="long_description" className='input_pdps' value={formData.long_description || ''} onChange={handleChange} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="tags">Tags</label>
-                                <input type="text" id="tags" name="tags" value={formData.tags || ''} onChange={handleChange} />
+                                <input type="text" id="tags" name="tags" className='input_pdps' value={formData.tags || ''} onChange={handleChange} />
                             </div>
                         </div>
                     )}
