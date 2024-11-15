@@ -61,9 +61,6 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 100%;
-  max-width: 700px;
-  /* margin-top: 1rem; */
 }
 
 .product-info-section h3, .taxonomy-section h3, .variant-section h3, .pricing-section h3, .other-details-section h3 {
@@ -74,7 +71,6 @@
   padding-bottom: 8px;
 }
 
-/* Form group styling */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -110,7 +106,6 @@
   background-color: #f1f1f1;
 }
 
-/* Save button styling */
 .save-button_pdp {
   padding: 12px 20px;
   background-color: #28a745;
@@ -123,6 +118,7 @@
   margin-top: 1.5rem;
   transition: background-color 0.2s ease;
   width: 14%;
+  float: right;
 }
 .save-button_pdp:hover {
   background-color: #218838;
@@ -139,6 +135,56 @@
 margin: 2px;
 }
 .input_pdp{
-  margin: 5px !important;
+  margin: 4px !important;
 }
-input[type="number"] { margin: 0;}
+.input_pdps{
+  margin: 0px !important;
+  width: 97% !important;
+}
+input[type="text"] {
+  margin-right: 10px !important;
+}
+input[type="number"] { margin: 0 !important;}
+.css-1y6tzp0-MuiFormControl-root {
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+.product-info-section {
+  display: flex;
+  gap: 20px;
+}
+
+.product-image-section {
+  flex: 1; 
+  max-width: 25%;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover; 
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.product-detail-section {
+  flex: 3; 
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
