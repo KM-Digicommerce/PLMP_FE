@@ -188,3 +188,48 @@ input[type="number"] { margin: 0 !important;}
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+.product-image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.main-product-image {
+  width: 80%; /* Adjust size as needed */
+  margin-bottom: 10px;
+}
+
+.product-image-large {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.thumbnail-section {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 13px 0px 0px;
+}
+
+.product-thumbnail {
+  width: 60px; /* Thumbnail size */
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-thumbnail:hover {
+  border-color: #007bff; /* Highlight color on hover */
+  transform: scale(1.1); /* Slight zoom effect */
+}
+
+.active-thumbnail {
+  border-color: #ff9900; /* Active thumbnail border color */
+  transform: scale(1.1); /* Slight zoom effect */
+}
