@@ -27,11 +27,10 @@ const ProductList = () => {
     if (sortColumn === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setSortColumn(column); 
+      setSortColumn(column);
       setSortOrder("asc");
     }
   };
- 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,7 +87,7 @@ const ProductList = () => {
     item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (!sortColumn) return 0; // No sorting if no column selected
+    if (!sortColumn) return 0; 
 
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
@@ -184,10 +183,18 @@ const ProductList = () => {
                   checked={selectedProducts.length === sortedProducts.length}
                 />
               </th>
+              <th className="checkbox-column" onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="mpn-column" onClick={() => handleSort("mpn")}>
+                MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
               <th className="product-column" onClick={() => handleSort("product_name")}> Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
-              <th className="model-column" onClick={() => handleSort("model")}>
-                Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              <th className="brand-column" onClick={() => handleSort("brand")}>
+                Brand {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              </th>
+              <th className="taxonomy-column" onClick={() => handleSort("taxonomy")}>
+              Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
               <th className="price-column" onClick={() => handleSort("base_price")}>
                 Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
@@ -195,8 +202,8 @@ const ProductList = () => {
               <th className="msrpprice-column" onClick={() => handleSort("msrp")}>
                 MSRP Price {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
-              <th className="breadcrumb-column" onClick={() => handleSort("breadcrumb")}>
-               Breadcrumb {sortColumn === "breadcrumb" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              <th className="model-column" onClick={() => handleSort("model")}>
+                Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
               <th className="upc_ean-column" onClick={() => handleSort("upc_ean")}>
                 UPC_EAN {sortColumn === "upc_ean" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
@@ -213,26 +220,28 @@ const ProductList = () => {
                     onChange={() => handleSelectProduct(item.product_id)}
                   />
                 </td>
+                <td className="checkbox-column"> {Array.isArray(item.image) ? (
+                  <img
+                    src={item.image[0]}
+                    alt={item.product_name}
+                    className="product-image-round"
+                  />
+                ) : (
+                  <img
+                    src={item.image}
+                    alt={item.product_name}
+                    className="product-image-round"
+                  />
+                )} </td>
+                <td className="mpn-column">{item.mpn}</td>
                 <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
-                  {Array.isArray(item.image) ? (
-                    <img
-                      src={item.image[0]}
-                      alt={item.product_name}
-                      className="product-image-round"
-                    />
-                  ) : (
-                    <img
-                      src={item.image}
-                      alt={item.product_name}
-                      className="product-image-round"
-                    />
-                  )}
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
-                <td className="model-column">{item.model}</td>
+                <td className="mpn-column">{item.brand}</td>
+                <td className="attributes-column">{item.breadcrumb}</td>
                 <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
                 <td className="msrpprice-column"> {item.msrp ? `$${item.msrp}` : ''}</td>
-                <td className="attributes-column">{item.breadcrumb}</td>
+                <td className="model-column">{item.model}</td>
                 <td className="upc_ean-column">{item.upc_ean}</td>
               </tr>
             ))}

@@ -239,8 +239,8 @@ const filteredOptions = Object.entries(selectedVariants)
                 `${process.env.REACT_APP_IP}/createProduct/`,
                 payload
             );
-            console.log(response.data.data,'response.data.status');
-            console.log(response.data.status,'response.data.status');
+            // console.log(response.data.data,'response.data.status');
+            // console.log(response.data.status,'response.data.status');
             if (response.data.data.status === true) {
                 alert('Product added successfully!');
                 setProductData({

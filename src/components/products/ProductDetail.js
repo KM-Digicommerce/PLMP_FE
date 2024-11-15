@@ -53,7 +53,6 @@ const ProductDetail = ({ categories }) => {
         level6: '',
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
-    //   console.log(categories,'categories');
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
@@ -86,7 +85,15 @@ const ProductDetail = ({ categories }) => {
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
     };
-
+ const handleCategorySelectForVariants = async (id, category_name) => {
+        setCategoryId(id);
+        setCategoryName(category_name);
+        setSelectedCategoryForVariant(id);
+    };
+    useEffect(() => {
+        handleCategorySelectForVariants();
+    }, []);
+    
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         setselectedLevel2Id('');
@@ -96,15 +103,22 @@ const ProductDetail = ({ categories }) => {
         setSelectedlevel6('');
         setIsCategoryDropdownOpen(false);
     };
-    const handleCategorySelectForVariants = async (id, category_name) => {
-        setCategoryId(id);
-        setCategoryName(category_name);
-        setSelectedCategoryForVariant(id);
-    };
-    useEffect(() => {
-        handleCategorySelectForVariants();
-    }, []);
+   
     const handleLevel2Select = (id) => {
+        let level1Category;
+        categories.category_list.some(level1 => {
+            const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === id);
+            if (foundLevel2) {
+              level1Category = level1;
+              return true;
+            }
+            return false;
+          });
+          if (!level1Category) {
+            console.error('Level 1 category not found for Level 2 category with ID:', id);
+            return;
+          }
+          setSelectedCategoryId(level1Category._id);
         setselectedLevel2Id(id);
         setSelectedLevel3Id('');
         setSelectedlevel4('');
@@ -114,6 +128,27 @@ const ProductDetail = ({ categories }) => {
     };
 
     const handleLevel3Select = (id) => {
+        let level1Category, level2Category;
+
+      categories.category_list.some(level1 => {
+        const foundLevel2 = level1.level_one_category_list.find(level2 =>
+          level2.level_two_category_list.some(level3 => level3._id === id)
+        );
+
+        if (foundLevel2) {
+          level1Category = level1;
+          level2Category = foundLevel2;
+          return true;
+        }
+        return false;
+      });
+
+      if (!level2Category || !level1Category) {
+        console.error('Parent categories not found for selected Level 3 category with ID:', id);
+        return;
+      }
+      setSelectedCategoryId(level1Category._id);
+      setselectedLevel2Id(level2Category._id);
         setSelectedLevel3Id(id);
         setSelectedlevel4('');
         setSelectedlevel5('');
@@ -136,9 +171,6 @@ const ProductDetail = ({ categories }) => {
                 break;
         }
     };
-    const [isLoading, setIsLoading] = useState(false);
-
-    //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
     const level3Categories = levelTwoCategoryForVisible ? levelTwoCategoryForVisible.level_two_category_list : [];
@@ -148,7 +180,7 @@ const ProductDetail = ({ categories }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    useEffect(() => {
+
         const fetchProductDetail = async () => {
             try {
                 const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
@@ -158,7 +190,26 @@ const ProductDetail = ({ categories }) => {
                 if (response.data && response.data.data) {
                     const productObj = response.data.data.product_obj;
                     const category_id = response.data.data.category_id;
+                    const category_name = response.data.data.category_name;
                     setCategoryIdForVariant(category_id);
+                    if (category_name == 'level-1') {
+                        handleCategorySelect(category_id);
+                    }
+                    if (category_name == 'level-2') {
+                        handleLevel2Select(category_id);
+                    }
+                    if (category_name == 'level-3') {
+                        handleLevel3Select(category_id);
+                    }
+                    if (category_name == 'level-4') {
+                        handleLevelSelect('level-4',category_id);
+                    }
+                    if (category_name == 'level-5') {
+                        handleLevelSelect('level-5',category_id);
+                    }
+                    if (category_name == 'level-6') {
+                        handleLevelSelect('level-6',category_id);
+                    }
                     setFormData(productObj);
                     setOriginalData(productObj);
                 } else {
@@ -177,12 +228,25 @@ const ProductDetail = ({ categories }) => {
                 setLoading(false);
             }
         };
-
+        useEffect(() => {
         if (productId) {
             fetchProductDetail();
         }
     }, [productId]);
-
+    const fetchVariantDetail = async () => {
+        try {
+        const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
+            product_id: productId,
+        });
+        if (variantResponse.data && variantResponse.data.data) {
+            setVariantData(variantResponse.data.data || []);
+        }
+    } catch (err) {
+        setError('Error fetching product details');
+    } finally {
+        setLoading(false);
+    }
+    };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -250,7 +314,6 @@ const ProductDetail = ({ categories }) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
-    // Handler for category dropdown selection
 
     const swapProductToCategory = async () => {
         if (categoryId) {
@@ -278,13 +341,6 @@ const ProductDetail = ({ categories }) => {
         }
     };
 
-    // const handleVariantDetailChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setSelectedVariants({
-    //         ...selectedVariants,
-    //         [name]: value
-    //     });
-    // };
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
         setSelectedVariants((prevVariants) => ({
@@ -292,42 +348,58 @@ const ProductDetail = ({ categories }) => {
             [name]: value,
         }));
     };
-    
-    const handleVariantChange = (typeId, value) => {
-        setSelectedVariants({
-            ...selectedVariants,
-            [typeId]: value
-        });
+    const handleVariantChange = (typeId, optionId) => {
+        setSelectedVariants((prev) => ({
+            ...prev,
+            [typeId]: optionId,
+        }));
+console.log(selectedVariants,'selectedVariants');
+console.log(typeId,'typeId');
+console.log(optionId,'optionId');
     };
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
+            const options = variantOptions
+            .map((variant) => {
+                const selectedOption = selectedVariants[variant.type_id];
+            
+                if (selectedOption) {
+                    return {
+                        option_name_id: variant.type_id,
+                        option_value_id: selectedOption,
+                    };
+                }
+                return null; 
+            })            
+            .filter((option) => option !== null); 
+            console.log(options,'options here');
             const res = await axiosInstance.post(`${process.env.REACT_APP_IP}/createAndAddVarient/`, {
                 product_id: productId,
-                // varient_obj: selectedVariants
                 varient_obj: {
                     sku_number: selectedVariants.sku,
                     un_finished_price: selectedVariants.unfinishedPrice,
                     finished_price: selectedVariants.finishedPrice,
                     quantity: selectedVariants.quantity,
-                    options:variantOptions.map((variant,option) => ({
-                        option_value_id: selectedVariants[option.type_value_id],
-                        option_name_id: selectedVariants[variant.type_id],
-                    }))
+                    options: options, 
+                   
                 },
             });
+            const resd = res.data.data.status;
+            console.log(resd,'resd');
+            if (resd  === true) {
+                alert('Sucessfully variants added!');
+                fetchVariantDetail();            }
         } catch (err) {
             console.error('Error fetching variants:', err);
         }
         console.log(selectedVariants);
-        setIsPopupOpen(false); // Close popup after submitting
+        setIsPopupOpen(false); 
     };
     const handleAddVariantClick = async () => {
         setIsPopupOpen(true);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
-            // console.log("Response 1", res.data.data);
-            // console.log("Response 2", res.data.data.varient_list);
             setVariantOptions(res.data.data.varient_list);
         } catch (err) {
             console.error('Error fetching variants:', err);
@@ -354,24 +426,33 @@ const ProductDetail = ({ categories }) => {
 
                     {view === 'productDetail' && (
                         <div className="product-info-section">
+                            <div className="product-image-section">
+                                <img
+                                    src={formData.product_image || 'placeholder-image-url.jpg'}
+                                    alt="Product"
+                                    className="product-image"
+                                />
+                            </div>
+                            <div className="product-detail-section">
                             <h3>Edit Product Details</h3>
                             <div className="form-group">
                                 <label htmlFor="product_name">Product Name</label>
-                                <input type="text" id="product_name" name="product_name" value={formData.product_name || ''} onChange={handleChange} required />
+                                <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name || ''} onChange={handleChange} required />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="base_price">Base Price</label>
-                                <input type="text" id="base_price" name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
+                                <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="model">Model</label>
-                                <input type="text" id="model" name="model" value={String(formData.model || '')} onChange={handleChange}
+                                <input type="text" id="model" name="model" className='input_pdps' value={String(formData.model || '')} onChange={handleChange}
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="upc_ean">UPC_EAN</label>
-                                <input type="text" id="upc_ean" name="upc_ean" value={String(formData.upc_ean || '')} onChange={handleChange}
+                                <input type="text" id="upc_ean" name="upc_ean" className='input_pdps'  value={String(formData.upc_ean || '')} onChange={handleChange}
                                 />
+                            </div>
                             </div>
                         </div>
                     )}
@@ -590,8 +671,8 @@ const ProductDetail = ({ categories }) => {
                                     {variantData.map((variant) => (
                                         <tr key={variant.sku_number}>
                                             <td>{variant.sku_number}</td>
-                                            <td>{variant.un_finished_price? `$${variant.un_finished_price}` : ''}</td>
-                                            <td>{variant.finished_price? `$${variant.finished_price}` : ''}</td>
+                                            <td>{variant.un_finished_price ? `$${variant.un_finished_price}` : ''}</td>
+                                            <td>{variant.finished_price ? `$${variant.finished_price}` : ''}</td>
                                             <td>
                                                 {variant.varient_option_list.map((option, index) => (
                                                     <div key={index}>{option.type_name}: {option.type_value}</div>
@@ -612,6 +693,8 @@ const ProductDetail = ({ categories }) => {
                                     sx={{
                                         width: 450,
                                         padding: 2,
+                                        maxHeight: '90vh',
+                                        overflowY: 'auto',
                                         margin: 'auto',
                                         backgroundColor: 'white',
                                         borderRadius: '8px',
@@ -624,7 +707,6 @@ const ProductDetail = ({ categories }) => {
                                 >
                                     <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
                                     <form onSubmit={handleFormSubmit}>
-                                        {/* SKU Input */}
                                         <TextField
                                             fullWidth
                                             name="sku"
@@ -637,7 +719,7 @@ const ProductDetail = ({ categories }) => {
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                        {/* Unfinished Price Input */}
+                                        
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -645,13 +727,13 @@ const ProductDetail = ({ categories }) => {
                                             label="Unfinished Price"
                                             value={selectedVariants.unfinishedPrice}
                                             onChange={handleVariantDetailChange}
-                                            margin="small"
+                                            margin="normal"
                                             className='input_pdp'
-                                            size="small" // Smaller input size
+                                            size="small" 
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                        {/* Finished Price Input */}
+                                       
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -659,13 +741,13 @@ const ProductDetail = ({ categories }) => {
                                             label="Finished Price"
                                             value={selectedVariants.finishedPrice}
                                             onChange={handleVariantDetailChange}
-                                            margin="small"
+                                            margin="normal"
                                             className='input_pdp'
                                             size="small"
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                        {/* Quantity Input */}
+                                    
                                         <TextField
                                             fullWidth
                                             type="number"
@@ -674,12 +756,12 @@ const ProductDetail = ({ categories }) => {
                                             label="Quantity"
                                             value={selectedVariants.quantity}
                                             onChange={handleVariantDetailChange}
-                                            margin="small"
+                                            margin="normal"
                                             size="small"
                                             sx={{ marginBottom: 2 }}
                                         />
 
-                                        {/* Options Dropdowns */}
+                                      
                                         {variantOptions?.map((variant) => (
                                             <div key={variant.type_id}>
                                                 <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
@@ -690,7 +772,7 @@ const ProductDetail = ({ categories }) => {
                                                         onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
                                                         label={variant.type_name}
                                                         size="small"
-                                                        sx={{ padding: '8px' }} // Adjust padding
+                                                        sx={{ padding: '8px' }} 
                                                     >
                                                         {variant.option_value_list?.map((option) => (
                                                             <MenuItem key={option.type_value_id} value={option.type_value_id}>
@@ -701,8 +783,6 @@ const ProductDetail = ({ categories }) => {
                                                 </FormControl>
                                             </div>
                                         ))}
-
-                                        {/* Submit Button */}
                                         <Button
                                             type="submit"
                                             variant="contained"

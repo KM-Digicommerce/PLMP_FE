@@ -16,6 +16,8 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import axiosInstance from '../../../utils/axiosConfig';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 const CategoriesTable = ({ categories, refreshCategories }) => {
@@ -32,9 +34,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQuerylist, setSearchQuerylist] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
+  const [searchPopupVisible, setSearchPopupVisible] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
+
 
   useEffect(() => {
-    // Only fetch products if both selectedCategory and selectedLevel are set
     const fetchProducts = async () => {
       if (selectedCategoryIdForallprod) {
         try {
@@ -56,7 +60,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     };
 
     fetchProducts();
-    // }, [selectedCategory, selectedLevel]);
   }, [selectedCategoryIdForallprod]);
 
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
@@ -88,14 +91,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  // console.log(filteredCategories, 'filteredCategories');
 
   const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
-  // console.log(levelOneCategory, 'levelOneCategory');
-
-  // const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
-  //   level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
-  // );
 
   const filteredCategoriesLevel2 = levelOneCategory
     ? levelOneCategory.level_one_category_list.filter(level2 =>
@@ -117,7 +114,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
       );
 
-  // Level 3 Selection (Select from independent options)
   const levelThreeCategory = levelTwoCategory
     ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)
     : null;
@@ -134,7 +130,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase())
       );
 
-  // Level 4 Selection (Select from independent options)
   const levelFourCategory = levelThreeCategory
     ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4)
     : null;
@@ -151,7 +146,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase())
       );
 
-  // Level 5 Selection (Select from independent options)
   const levelFiveCategory = levelFourCategory
     ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5)
     : null;
@@ -189,12 +183,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     .flatMap(level4 => level4.level_four_category_list)
     .flatMap(level5 => level5.level_five_category_list);
 
-    const handleCategorySelectForVariants = async (id, category_level) => {
-      console.log('');
-      
-      setSelectedCategorylevelForallprod(category_level);
-      setSelectedCategoryIdForallprod(id);
-    };
+  const handleCategorySelectForVariants = async (id, category_level) => {
+    setSelectedCategorylevelForallprod(category_level);
+    setSelectedCategoryIdForallprod(id);
+  };
   const handleCategorySelect = (e) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
@@ -218,7 +210,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setShowAddCategoryPopup(false);
     setShowAddLevel2Popup(false);
     setShowAddLevel3Popup(false);
-    // window.location.reload();
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
@@ -226,14 +217,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
     if (selectedValue && selectedValue !== 'add') {
       let level1Category;
-
-      // Traverse through Level 1 categories to find the corresponding Level 2 category
       categories.category_list.some(level1 => {
         const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
 
         if (foundLevel2) {
           level1Category = level1;
-          return true; // Stop further search once found
+          return true; 
         }
         return false;
       });
@@ -243,12 +232,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         return;
       }
 
-      // Set selected category IDs for Level 1 and Level 2
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(selectedValue);
       setSelectedLevel2IdPopup(selectedValue);
 
-      // Clear lower-level selections
       setSelectedLevel3Id('');
       setSelectedlevel4('');
       setSelectedlevel5('');
@@ -266,38 +253,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel2IdPopup(selectedValue);
     }
   };
-
-  //   const handleLevel2Select = (e) => {
-  //     const selectedValue = e;
-  //     console.log(e, 'selected category id');
-  //     if (selectedValue && selectedValue != 'add') {
-  //     const level1Category = categories.category_list.find(level1 =>
-  //       level1.level_one_category_list.some(level2 => level2._id === e)
-  //     );
-
-  //     if (!level1Category) {
-  //       console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-  //       return;
-  //     }
-  //     setSelectedCategoryId(level1Category._id);
-  //     setSelectedLevel2Id(selectedValue);
-  //     setSelectedLevel2IdPopup(selectedValue);
-  //     setSelectedLevel3Id('');
-  //     setSelectedlevel4('');
-  //     setSelectedlevel5('');
-  //     setSelectedlevel6('');
-  //     setIsLevel2DropdownOpen(false);
-  //     setIsLevel3DropdownOpen(false);
-  //   } else{ 
-  //     if (selectedValue === 'add') {
-  //     setShowAddLevel2Popup(true);
-  //   } else {
-  //     setShowAddLevel2Popup(false);
-  //   }
-  //   setSelectedLevel2Id(selectedValue);
-  //   setSelectedLevel2IdPopup(selectedValue);
-  // }
-  //   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
@@ -305,7 +260,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     if (selectedValue && selectedValue !== 'add') {
       let level1Category, level2Category;
 
-      // Traverse through Level 1 categories to find the corresponding Level 2 and Level 3 categories
       categories.category_list.some(level1 => {
         const foundLevel2 = level1.level_one_category_list.find(level2 =>
           level2.level_two_category_list.some(level3 => level3._id === selectedValue)
@@ -314,7 +268,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         if (foundLevel2) {
           level1Category = level1;
           level2Category = foundLevel2;
-          return true; // Stop further search once found
+          return true;
         }
         return false;
       });
@@ -323,14 +277,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
         return;
       }
-
-      // Set selected category IDs for Level 1, Level 2, and Level 3
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(selectedValue);
       setSelectedLevel3IdPopup(selectedValue);
 
-      // Clear lower-level selections
       setSelectedlevel4('');
       setSelectedlevel5('');
       setSelectedlevel6('');
@@ -346,48 +297,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel3IdPopup(selectedValue);
     }
   };
-
-  // const handleLevel3Select = (e) => {
-  //   const selectedValue = e;
-  //   console.log(e, 'selected category id');
-  //   if (selectedValue && selectedValue != 'add') {
-  //   // Find the corresponding parent Level 2 category
-  //   const level2Category = categories.category_list
-  //     .flatMap(level1 => level1.level_one_category_list)
-  //     .find(level2 => level2.level_two_category_list.find(level3 => level3._id === selectedValue));
-  //     console.log(level2Category, 'selected category id 2',level2Category._id);
-  //   if (!level2Category) {
-  //     console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-  //     return;
-  //   }
-  //   const level1Category = categories.category_list.find(level1 =>
-  //     level1.level_one_category_list.find(level2 => level2._id)
-  //   );
-  //   console.log(level1Category, 'selected category id 1',level1Category._id);
-  //   if (!level1Category) {
-  //     console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-  //     return;
-  //   }
-  //   setSelectedCategoryId(level1Category._id);
-  //   setSelectedLevel2Id(level2Category._id);  
-  //   setSelectedLevel3Id(selectedValue);
-  //   setSelectedLevel3IdPopup(selectedValue);
-  //   setSelectedlevel4('');
-  //   setSelectedlevel5('');
-  //   setSelectedlevel6('');
-
-
-  //   setIsLevel3DropdownOpen(false);
-  // } else{
-  //   if (selectedValue === 'add') {
-  //     setShowAddLevel3Popup(true);
-  //   } else {
-  //     setShowAddLevel3Popup(false);
-  //   }
-  //   setSelectedLevel3Id(selectedValue);
-  //   setSelectedLevel3IdPopup(selectedValue);
-  // }
-  // };
   const handlelevel4 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue != 'add') {
@@ -621,7 +530,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     Swal.fire({
       title: 'Edit Product Type',
       input: 'text',
-      inputValue: currentName, // current name will be pre-filled
+      inputValue: currentName,
       showCancelButton: true,
       confirmButtonText: 'Save',
       cancelButtonText: 'Cancel',
@@ -640,7 +549,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             category_name: category_name,
           });
 
-          await refreshCategories(); // Refresh categories after the update
+          await refreshCategories(); 
           console.log(result.status, 'result.status');
 
           if (result.status != false) {
@@ -672,16 +581,24 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     });
     return sortedProducts;
   };
+  const handleSearchClick = () => {
+    setSearchPopupVisible(true);
+    setSearchVisible(!searchVisible);
+
+  };
+  const handleClosePopup = () => {
+    setSearchPopupVisible(false);
+    setSearchQuerylist('');
+    setSuggestions([]);
+  };
+
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuerylist(query);
-
     if (query.length > 0) {
       const matchedSuggestions = products
         .map((product) => product.product_name)
-        .filter((name) => name.toLowerCase().includes(query.toLowerCase())); // Match anywhere in the product name
-
-
+        .filter((name) => name.toLowerCase().includes(query.toLowerCase()));
       console.log(matchedSuggestions, 'sortedProducts');
       setSuggestions(matchedSuggestions);
     } else {
@@ -732,7 +649,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()} 
                   />
                   <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
                     <span>Select Category</span>
@@ -769,7 +686,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               )}
             </div>
           </div>
-          {/* Section Dropdown */}
           {/* {level2Categories.length > 0 && ( */}
           {/* <> */}
           <div className='DropdownColumn'>
@@ -790,13 +706,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel2}
                     onChange={(e) => { setSearchQueryLevel2(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel2?.map(level2 => (
-                    <div className="dropdown-option" key={level2._id} onClick={() => {handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2');}}>
+                    <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                       <span>{level2.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level2._id, level2.name, 'level-2')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -814,7 +730,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </div>
           {/* </> */}
           {/* // )} */}
-          {/* Product Type Dropdown */}
+
           {/* {level3Categories.length > 0 && (
             <> */}
           <div className='DropdownColumn'>
@@ -835,13 +751,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel3}
                     onChange={(e) => { setSearchQueryLevel3(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel3?.map(level3 => (
-                    <div className="dropdown-option" key={level3._id} onClick={() => {handleLevel3Select(level3._id);handleCategorySelectForVariants(level3._id, 'level-3');}}>
+                    <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                       <span>{level3.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level3._id, level3.name, 'level-3')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -859,7 +775,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </div>
           {/* </>
           )} */}
-          {/* Level 4 Dropdown */}
           {/* {level4Categories.length > 0 && (
             <> */}
           <div className='DropdownColumn'>
@@ -880,13 +795,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel4}
                     onChange={(e) => { setSearchQueryLevel4(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel4('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel4?.map(level4 => (
-                    <div className="dropdown-option" key={level4._id} onClick={() =>{ handlelevel4(level4._id);handleCategorySelectForVariants(level4._id, 'level-4');}}>
+                    <div className="dropdown-option" key={level4._id} onClick={() => { handlelevel4(level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                       <span>{level4.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level4._id, level4.name, 'level-4')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -904,7 +819,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </div>
           {/* </>
           )} */}
-          {/* Level 5 Dropdown */}
           {/* {level5Categories.length > 0 && (
             <> */}
           <div className='DropdownColumn'>
@@ -925,13 +839,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel5}
                     onChange={(e) => { setSearchQueryLevel5(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()}  
                   />
                   <div className="dropdown-option" onClick={() => handlelevel5('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel5?.map(level5 => (
-                    <div className="dropdown-option" key={level5._id} onClick={() =>{ handlelevel5(level5._id);handleCategorySelectForVariants(level5._id, 'level-5');}}>
+                    <div className="dropdown-option" key={level5._id} onClick={() => { handlelevel5(level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                       <span>{level5.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level5._id, level5.name, 'level-5')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -947,8 +861,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           </div>
           {/* </>
     )} */}
-
-          {/* Level 6 Dropdown */}
           {/* {level6Categories.length > 0 && (
             <> */}
           <div className='DropdownColumn'>
@@ -969,13 +881,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel6}
                     onChange={(e) => { setSearchQueryLevel6(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  // Keeps dropdown open on input click
+                    onClick={(e) => e.stopPropagation()}  
                   />
                   <div className="dropdown-option" onClick={() => handlelevel6('')}>
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel6?.map(level6 => (
-                    <div className="dropdown-option" key={level6._id} onClick={() => {handlelevel6(level6._id);handleCategorySelectForVariants(level6._id, 'level-6');}}>
+                    <div className="dropdown-option" key={level6._id} onClick={() => { handlelevel6(level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                       <span>{level6.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level6._id, level6.name, 'level-6')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -1052,53 +964,73 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       </div>
       {levelOneCategory && (
         <div>
+         
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
             <h3>Products</h3>
-            <div style={{ position: 'relative', width: '100%' }}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuerylist}
-                onChange={handleSearchChange}
-                style={{ marginBottom: '10px', padding: '7px', width: '50%', fontSize: '15px' }}
-              />
-              {console.log("Rendering suggestions:", suggestions)}
-              {console.log("Rendering suggestions: 2", Array.isArray(suggestions))}
 
-              {suggestions.length > 0 && (<div
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {searchVisible && (
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuerylist}
+                  onChange={handleSearchChange}
+                  style={{
+                    marginRight: '10px',
+                    padding: '7px',
+                    fontSize: '15px',
+                    width: '500px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                  }}
+                />
+              )}
+            </div>
+
+            {searchVisible && suggestions.length > 0 && (
+              <div
                 style={{
                   position: 'absolute',
-                  top: '83%',
-                  left: '9px',
+                  top: '63%',
+                  left: '54%',
+                  transform: 'translateX(-50%)',
                   backgroundColor: 'white',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
                   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                   zIndex: 1000,
-                  width: '434px',
+                  width: '515px',
+                  maxHeight: '150px',
+                  overflowY: 'auto',
+                  marginTop: '5px',
                 }}
               >
-
-                {suggestions.map((suggestion) => (
+                {suggestions.map((suggestion, index) => (
                   <div
+                    key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className='suggest_cls'
+                    className="suggest_cls"
                     style={{
                       padding: '6px',
                       cursor: 'pointer',
                       fontSize: '15px',
-                      backgroundColor: 'white', // Alternating row color
+                      backgroundColor: 'white',
                     }}
                   >
                     {suggestion}
                   </div>
                 ))}
               </div>
-              )}
-            </div>
-            <h3 style={{ fontWeight: 'normal' }}>Total Products: {getFilteredAndSortedProducts().length}</h3>
-          </div>
+            )}
 
+            <h3 style={{ fontWeight: 'normal', marginLeft: '10px' }}>
+              <FontAwesomeIcon
+                icon={faSearch}
+                onClick={handleSearchClick}
+                style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
+              /> Total Products: {getFilteredAndSortedProducts().length}
+            </h3>
+          </div>
           <TableContainer
             component={Paper}
             sx={{ margin: '0px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
@@ -1106,6 +1038,22 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell
+                    align="left"
+                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => handleSort('image')}
+                  >
+                    Image
+                    {sortOrder.column === 'image' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => handleSort('mpn')}
+                  >
+                   MPN
+                    {sortOrder.column === 'mpn' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                  </TableCell>
                   <TableCell
                     align="left"
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
@@ -1117,9 +1065,25 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                   <TableCell
                     align="left"
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => handleSort('brand')}
+                  >
+                    Brand
+                    {sortOrder.column === 'brand' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => handleSort('taxonomy')}
+                  >
+                    Taxonomy
+                    {sortOrder.column === 'taxonomy' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => handleSort('price')}
                   >
-                    Price
+                    Base Price
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell
@@ -1133,53 +1097,42 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                   <TableCell
                     align="left"
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('breadcrumb')}
-                  >
-                    Breadcrumb
-                    {sortOrder.column === 'breadcrumb' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => handleSort('msrp')}
                   >
                     Msrp
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  {/* <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('tags')}
-                  >
-                    Tags
-                    {sortOrder.column === 'tags' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell> */}
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
                 {getFilteredAndSortedProducts().map((product) => (
                   <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}> 
-                    {Array.isArray(product.image) ? (
-                    <img
-                      src={product.image[0]}
-                      // alt={product.product_name}
-                      className="product-image-round"
-                    />
-                  ) : (
-                    <img
-                      src={product.image}
-                      // alt={product.product_name}
-                      className="product-image-round"
-                    />
-                  )}{product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
+                      <img
+                        src={product.image[0]}
+                        // alt={product.product_name}
+                        className="product-image-round"
+                      />
+                    ) : (
+                      <img
+                        src={product.image}
+                        // alt={product.product_name}
+                        className="product-image-round"
+                      />
+                    )}
+                    </TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn ? `$${product.mpn}` : ''}
+                    </TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>
+                      {product.product_name}</TableCell>
+                      <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
+                      <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{
                       product.msrp ? `$${product.msrp}` : ''}</TableCell>
-                    {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.tags}</TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
