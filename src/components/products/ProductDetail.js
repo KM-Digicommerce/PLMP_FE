@@ -26,6 +26,8 @@ const ProductDetail = ({ categories }) => {
 
     const [categoryIdForVariant, setCategoryIdForVariant] = useState('');
     const [categoryId, setCategoryId] = useState('');
+    const [categoryIds, setCategoryIds] = useState('');
+
     const [categoryName, setCategoryName] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedVariants, setSelectedVariants] = useState({
@@ -87,6 +89,7 @@ const ProductDetail = ({ categories }) => {
     };
     const handleCategorySelectForVariants = async (id, category_name) => {
         setCategoryId(id);
+        setCategoryIds(id);
         setCategoryName(category_name);
         setSelectedCategoryForVariant(id);
     };
@@ -189,24 +192,25 @@ const ProductDetail = ({ categories }) => {
                 const productObj = response.data.data.product_obj;
                 const category_id = response.data.data.category_id;
                 const category_name = response.data.data.category_name;
-                setCategoryIdForVariant(category_id);
-                if (category_name == 'level-1') {
-                    handleCategorySelect(category_id);
+                setCategoryIds(response.data.data.category_id);
+                setCategoryIdForVariant(response.data.data.category_id);
+                if (response.data.data.category_name == 'level-1') {
+                    handleCategorySelect(response.data.data.category_id);
                 }
-                if (category_name == 'level-2') {
-                    handleLevel2Select(category_id);
+                if (response.data.data.category_name == 'level-2') {
+                    handleLevel2Select(response.data.data.category_id);
                 }
-                if (category_name == 'level-3') {
-                    handleLevel3Select(category_id);
+                if (response.data.data.category_name == 'level-3') {
+                    handleLevel3Select(response.data.data.category_id);
                 }
-                if (category_name == 'level-4') {
-                    handleLevelSelect('level-4', category_id);
+                if (response.data.data.category_name == 'level-4') {
+                    handleLevelSelect('level-4', response.data.data.category_id);
                 }
-                if (category_name == 'level-5') {
-                    handleLevelSelect('level-5', category_id);
+                if (response.data.data.category_name == 'level-5') {
+                    handleLevelSelect('level-5', response.data.data.category_id);
                 }
-                if (category_name == 'level-6') {
-                    handleLevelSelect('level-6', category_id);
+                if (response.data.data.category_name == 'level-6') {
+                    handleLevelSelect('level-6', response.data.data.category_id);
                 }
                 setFormData(productObj);
                 setOriginalData(productObj);
@@ -302,10 +306,16 @@ const ProductDetail = ({ categories }) => {
                     title: 'Success!',
                     text: 'Product updated successfully!',
                     icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
-                });
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        container: 'swal-custom-container',
+                        popup: 'swal-custom-popup',
+                        title: 'swal-custom-title',
+                        confirmButton: 'swal-custom-confirm',
+                        cancelButton: 'swal-custom-cancel'
+                    }
+                })
+                setFormData('');
             } catch (err) {
                 alert('Error updating product');
             }
@@ -320,8 +330,8 @@ const ProductDetail = ({ categories }) => {
     if (error) return <p>{error}</p>;
 
 
-    const swapProductToCategory = async () => {
-        if (categoryId) {
+    const swapProductToCategory = async () => {        
+        if (categoryIds) {
             try {
                 const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {
                     product_id: productId,
@@ -332,7 +342,7 @@ const ProductDetail = ({ categories }) => {
 
                 if (response.status === 200) {
                     alert('Category updated successfully');
-                    setCategoryId('');
+                    setCategoryIds('');
                     setCategoryName('');
                 } else {
                     alert('Failed to update category');
@@ -341,7 +351,7 @@ const ProductDetail = ({ categories }) => {
                 console.error('Error updating category:', error);
                 alert('Error updating category');
             }
-        } else {
+        } else if(view === 'taxonomy') {
             alert('Please selected the category to updated');
         }
     };
@@ -470,7 +480,18 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="base_price">Base Price</label>
-                                    <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')} onChange={handleChange} required />
+                                    <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
+                                    //  onChange={handleChange} required
+                                     onChange={(e) => {
+                                        const inputValue = e.target.value.replace(/[^0-9.]/g, ''); 
+                                        handleChange({
+                                            target: {
+                                                name: 'base_price',
+                                                value: inputValue,
+                                            },
+                                        });
+                                    }}
+                                      />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="model">Model</label>
@@ -854,7 +875,20 @@ const ProductDetail = ({ categories }) => {
                             <h3>Pricing Details</h3>
                             <div className="form-group">
                                 <label htmlFor="msrp">MSRP</label>
-                                <input type="text" id="msrp" name="msrp" className='input_pdps' value={String(`$${formData.msrp}` || '')} onChange={handleChange} required />
+                                <input type="text" id="msrp" name="msrp" className='input_pdps' 
+                                value={String(`$${formData.msrp}` || '')} 
+                                // value={String`$${formData.msrp?.replace(/^\$/, '') || ''}`}
+                                // onChange={handleChange} required 
+                                onChange={(e) => {
+                                    const inputValue = e.target.value.replace(/[^0-9.]/g, ''); 
+                                    handleChange({
+                                        target: {
+                                            name: 'msrp',
+                                            value: inputValue,
+                                        },
+                                    });
+                                }}
+                                />
                             </div>
                         </div>
                     )}
