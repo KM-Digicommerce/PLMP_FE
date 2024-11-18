@@ -5,6 +5,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import axiosInstance from '../../../src/utils/axiosConfig';
 
@@ -22,6 +24,7 @@ const Sidebar = ({
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const showUploadErrorSwal = (message) => {
     Swal.fire({
@@ -29,6 +32,13 @@ const Sidebar = ({
       text: message,
       icon: 'error',
       confirmButtonText: 'OK',
+      customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm',
+        cancelButton: 'swal-custom-cancel'
+    }
     });
   };
 
@@ -39,6 +49,14 @@ const Sidebar = ({
       setShowImportOptions(true);
     }
   };
+  const handleImportClick = () => {
+    setShowImportModal(true);
+  };
+
+  const closeImportModal = () => {
+    setShowImportModal(false);
+    setSelectedFile(null);
+  };
 
   const triggerFileInput = () => {
     if (fileInputRef.current) {
@@ -47,6 +65,8 @@ const Sidebar = ({
   };
 
   const handleUpload = async () => {
+    setShowImportModal(false);
+    setSelectedFile(null);
     if (!selectedFile) {
       Swal.fire({
         text: 'Please select a file to upload.',
@@ -56,7 +76,7 @@ const Sidebar = ({
     }
 
     setShowImportOptions(false);
-    setLoading(true);
+    // setLoading(true);
 
     const formData = new FormData();
     formData.append('file', selectedFile);
@@ -76,6 +96,13 @@ const Sidebar = ({
           text: 'File uploaded successfully!',
           icon: 'success',
           confirmButtonText: 'OK',
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel'
+        }
         });
         setSelectedFile(null);
       }
@@ -129,6 +156,7 @@ const Sidebar = ({
   const toggleProductsSubmenu = () => {
     setShowProductsSubmenu(!showProductsSubmenu);
   };
+  
   return (
     <div className="sidebar">
     <ul className="topMenu">
@@ -151,7 +179,7 @@ const Sidebar = ({
         <FontAwesomeIcon icon={faUser} className="icon" />
         Variants
       </li>
-         <li
+         {/* <li
   onMouseEnter={() => setShowImportOptions(true)}
   onMouseLeave={() => {
     if (!selectedFile) setShowImportOptions(false);
@@ -161,7 +189,6 @@ const Sidebar = ({
   Import
   {showImportOptions && (
     <div className="upload-container">
-      {/* Download link for the sample file */}
       <a href="/import_Sample.csv" download className="download-sample">
         Download Sample File
       </a>
@@ -182,8 +209,10 @@ const Sidebar = ({
       </button>
     </div>
   )}
-</li>
-
+</li> */}
+<li onClick={handleImportClick}>
+          <FontAwesomeIcon icon={faFileImport} className="icon" /> Import
+        </li>
       <li onClick={handleExport}>
         <FontAwesomeIcon icon={faFileExport} className="icon" />
         Export
@@ -193,6 +222,41 @@ const Sidebar = ({
         Settings
       </li>
     </ul>
+    <Modal open={showImportModal} onClose={closeImportModal}>
+        <div className="import-modal">
+          <h2>Import File</h2>
+          <p>Upload a file to import data into the system.</p>
+          <a href="/import_Sample.csv" download className="download-sample">
+            Download Sample File
+          </a>
+          <input
+            type="file"
+            id="file-input"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
+          <div className="file-upload-section">
+            <Button
+              variant="contained"
+              color="primary"
+              className='selectFile_btn'
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+            >
+              Select File
+            </Button>
+            {selectedFile && <span className="file-name">{selectedFile.name}</span>}
+          </div>
+          <div className="actions">
+            <Button variant="contained" color="success" onClick={handleUpload} disabled={loading}>
+              Upload
+            </Button>
+            <Button variant="outlined" color="error" onClick={closeImportModal}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
   </div>
   );
 };
