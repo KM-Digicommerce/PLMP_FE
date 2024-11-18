@@ -46,9 +46,14 @@ const AddLevelSix = ({
             setSelectedLevel5Id('');
 
             await refreshCategories(); // Refresh the category list
-            Swal.fire('Success', 'Level 6 category added successfully!', 'success').then(() => {
-                // window.location.reload(); // Reload page to reflect changes
-            });
+            Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel',
+            },
+        }).then(() => { });  
         } catch (error) {
             console.error('Error adding level 6 category:', error);
             Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');

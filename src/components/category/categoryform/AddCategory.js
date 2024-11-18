@@ -21,9 +21,14 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
 
       // Call the refresh function to update the category list
       await refreshCategories(); // Ensure it's awaited for proper sequencing
-      Swal.fire('Success', 'Category added successfully!', 'success').then(() => {
-    })
-
+      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel',
+        },
+    }).then(() => { });    
       // Log the updated categories to verify the addition
       console.log('Updated Categories after addition:');
       const updatedCategories = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
