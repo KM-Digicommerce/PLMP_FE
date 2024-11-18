@@ -92,7 +92,7 @@ const ProductDetail = ({ categories }) => {
     };
     useEffect(() => {
         handleCategorySelectForVariants();
-    }, []);   
+    }, []);
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         setselectedLevel2Id('');
@@ -255,7 +255,7 @@ const ProductDetail = ({ categories }) => {
         if (Array.isArray(formData.image) && formData.image.length > 0) {
             setMainImage(formData.image[0]);
         }
-    }, [formData.image]);    
+    }, [formData.image]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -749,7 +749,7 @@ const ProductDetail = ({ categories }) => {
                                         />
 
 
-                                        <TextField
+                                        {/* <TextField
                                             fullWidth
                                             type="number"
                                             name="unfinishedPrice"
@@ -760,16 +760,38 @@ const ProductDetail = ({ categories }) => {
                                             className='input_pdp'
                                             size="small"
                                             sx={{ marginBottom: 2 }}
-                                        />
-
+                                        /> */}
 
                                         <TextField
                                             fullWidth
-                                            type="number"
+                                            type="text"
+                                            name="unfinishedPrice"
+                                            label="Unfinished Price"
+                                            value={selectedVariants.unfinishedPrice || ''}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (/^\d*\.?\d{0,2}$/.test(value)) {
+                                                    handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
+                                                }
+                                            }}
+                                            margin="normal"
+                                            className="input_pdp"
+                                            size="small"
+                                            sx={{ marginBottom: 2 }}
+                                        />
+
+                                        <TextField
+                                            fullWidth
+                                            type="text"
                                             name="finishedPrice"
                                             label="Finished Price"
                                             value={selectedVariants.finishedPrice}
-                                            onChange={handleVariantDetailChange}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (/^\d*\.?\d{0,2}$/.test(value)) {
+                                                    handleVariantDetailChange({ target: { name: 'finishedPrice', value } });
+                                                }
+                                            }}
                                             margin="normal"
                                             className='input_pdp'
                                             size="small"
