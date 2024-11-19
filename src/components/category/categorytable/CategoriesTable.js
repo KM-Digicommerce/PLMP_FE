@@ -36,7 +36,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
   const [searchPopupVisible, setSearchPopupVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
-
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -51,7 +51,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               }
             }
           );
-          // console.log(response.data.data.product_list, 'response.data.data');
           setProducts(response.data.data.product_list);
         } catch (error) {
           console.error('Error fetching product list:', error);
@@ -67,8 +66,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [selectedlevel5, setSelectedlevel5] = useState('');
   const [selectedlevel6, setSelectedlevel6] = useState('');
   const [showAddCategoryPopup, setShowAddCategoryPopup] = useState(false);
-  const [showAddLevel2Popup, setShowAddLevel2Popup] = useState(false); 
-  const [showAddProductTypePopup, setShowAddLevel3Popup] = useState(false); 
+  const [showAddLevel2Popup, setShowAddLevel2Popup] = useState(false);
+  const [showAddProductTypePopup, setShowAddLevel3Popup] = useState(false);
   const [showAddlevel4Popup, setShowAddlevel4Popup] = useState(false);
   const [showAddlevel5Popup, setShowAddlevel5Popup] = useState(false);
   const [showAddlevel6Popup, setShowAddlevel6Popup] = useState(false);
@@ -79,7 +78,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
   const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
   const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-  const [editingCategoryId, setEditingCategoryId] = useState(null); 
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryLevel2, setSearchQueryLevel2] = useState('');
@@ -187,6 +186,54 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedCategorylevelForallprod(category_level);
     setSelectedCategoryIdForallprod(id);
   };
+  const handleCloseConfirmation = () => {
+    if (isTyping) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You have unsaved changes. Are you sure you want to close without adding a category?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, close it",
+        cancelButtonText: "No, stay",
+         customClass: {
+          container: 'swal-custom-container',
+          popup: 'swal-custom-popup',
+          title: 'swal-custom-title',
+          confirmButton: 'swal-custom-confirm',
+          cancelButton: 'swal-custom-cancel'
+         }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setShowAddCategoryPopup(false);
+          setShowAddLevel2Popup(false);
+          setShowAddLevel3Popup(false);
+          setShowAddlevel4Popup(false);
+          setShowAddlevel5Popup(false);
+          setShowAddlevel6Popup(false);
+          setIsTyping(false);
+        }
+      });
+    } else {
+      setShowAddCategoryPopup(false);
+      setShowAddLevel2Popup(false);
+      setShowAddLevel3Popup(false);
+      setShowAddlevel4Popup(false);
+      setShowAddlevel5Popup(false);
+      setShowAddlevel6Popup(false);
+    }
+  };
+
+  const closeAddCategoryPopup = () => {
+    setIsTyping(false);
+    setShowAddCategoryPopup(false);
+    setShowAddLevel2Popup(false);
+    setShowAddLevel3Popup(false);
+    setShowAddlevel4Popup(false);
+    setShowAddlevel5Popup(false);
+    setShowAddlevel6Popup(false);
+  };
   const handleCategorySelect = (e) => {
     const selectedValue = e;
     setSelectedCategoryId(selectedValue);
@@ -198,6 +245,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSelectedlevel6('');
     if (selectedValue === 'add') {
       setShowAddCategoryPopup(true);
+      setSelectedCategoryId('');
     } else {
       setShowAddCategoryPopup(false);
     }
@@ -205,11 +253,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
     setSearchQuery('');
-  };
-  const closeAddCategoryPopup = () => {
-    setShowAddCategoryPopup(false);
-    setShowAddLevel2Popup(false);
-    setShowAddLevel3Popup(false);
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
@@ -222,7 +265,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
         if (foundLevel2) {
           level1Category = level1;
-          return true; 
+          return true;
         }
         return false;
       });
@@ -234,6 +277,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(selectedValue);
+      setSelectedCategoryIdPopup(level1Category._id);
       setSelectedLevel2IdPopup(selectedValue);
 
       setSelectedLevel3Id('');
@@ -249,22 +293,23 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } else {
         setShowAddLevel2Popup(false);
       }
-      setSelectedLevel2Id(selectedValue);
-      setSelectedLevel2IdPopup(selectedValue);
+      setSelectedLevel2Id('');
+      setSelectedLevel2IdPopup('');
+      setSelectedLevel3Id('');
+      setSelectedlevel4('');
+      setSelectedlevel5('');
+      setSelectedlevel6('');
     }
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
     console.log(e, 'selected category id');
-
     if (selectedValue && selectedValue !== 'add') {
       let level1Category, level2Category;
-
       categories.category_list.some(level1 => {
         const foundLevel2 = level1.level_one_category_list.find(level2 =>
           level2.level_two_category_list.some(level3 => level3._id === selectedValue)
         );
-
         if (foundLevel2) {
           level1Category = level1;
           level2Category = foundLevel2;
@@ -272,13 +317,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         }
         return false;
       });
-
       if (!level2Category || !level1Category) {
         console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
         return;
       }
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
       setSelectedLevel3Id(selectedValue);
       setSelectedLevel3IdPopup(selectedValue);
 
@@ -293,8 +339,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } else {
         setShowAddLevel3Popup(false);
       }
-      setSelectedLevel3Id(selectedValue);
-      setSelectedLevel3IdPopup(selectedValue);
+      setSelectedLevel3Id('');
+      setSelectedLevel3IdPopup('');
+      setSelectedlevel4('');
+      setSelectedlevel5('');
+      setSelectedlevel6('');
     }
   };
   const handlelevel4 = (e) => {
@@ -329,6 +378,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(level3Category._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
+      setSelectedLevel3IdPopup(level3Category._id);
 
       setSelectedlevel4(selectedValue);
       setSelectedLevel4IdPopup(selectedValue);
@@ -341,8 +393,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } else {
         setShowAddlevel4Popup(false);
       }
-      setSelectedlevel4(selectedValue);
-      setSelectedLevel4IdPopup(selectedValue);
+      setSelectedlevel4('');
+      setSelectedLevel4IdPopup('');
+      setSelectedlevel5('');
+      setSelectedlevel6('');
     }
   };
   const handlelevel5 = (e) => {
@@ -388,6 +442,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(level3Category._id);
       setSelectedlevel4(level4Category._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
+      setSelectedLevel3IdPopup(level3Category._id);
+      setSelectedLevel4IdPopup(level4Category._id);
 
       setSelectedlevel5(selectedValue);
       setSelectedLevel5IdPopup(selectedValue);
@@ -400,8 +458,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } else {
         setShowAddlevel5Popup(false);
       }
-      setSelectedlevel5(selectedValue);
-      setSelectedLevel5IdPopup(selectedValue);
+      setSelectedlevel5('');
+      setSelectedLevel5IdPopup('');
+      setSelectedlevel6('');
     }
   };
   const handlelevel6 = (e) => {
@@ -460,6 +519,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel3Id(level3Category._id);
       setSelectedlevel4(level4Category._id);
       setSelectedlevel5(level5Category._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
+      setSelectedLevel3IdPopup(level3Category._id);
+      setSelectedLevel4IdPopup(level4Category._id);
+      setSelectedLevel5IdPopup(level5Category._id);
+
       setSelectedlevel6(selectedValue);
       setIslevel6DropdownOpen(false);
     } else {
@@ -468,7 +533,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } else {
         setShowAddlevel6Popup(false);
       }
-      setSelectedlevel6(selectedValue);
+      setSelectedlevel6('');
     }
   };
 
@@ -549,7 +614,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             category_name: category_name,
           });
 
-          await refreshCategories(); 
+          await refreshCategories();
           console.log(result.status, 'result.status');
 
           if (result.status != false) {
@@ -586,11 +651,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSearchVisible(!searchVisible);
 
   };
-  const handleClosePopup = () => {
-    setSearchPopupVisible(false);
-    setSearchQuerylist('');
-    setSuggestions([]);
-  };
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -613,7 +673,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const sortedProducts = sortProducts(products);
 
   let sortedProductss = sortProducts(products);
-  console.log(sortedProductss, 'sortedProducts');
+  // console.log(sortedProductss, 'sortedProducts');
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
       product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
@@ -649,7 +709,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()} 
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
                     <span>Select Category</span>
@@ -839,7 +899,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel5}
                     onChange={(e) => { setSearchQueryLevel5(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel5('')}>
                     <span>Select category</span>
@@ -881,7 +941,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     value={searchQueryLevel6}
                     onChange={(e) => { setSearchQueryLevel6(e.target.value) }}
                     className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}  
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel6('')}>
                     <span>Select category</span>
@@ -904,67 +964,56 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           {/* </>
             )} */}
         </div>
-        <Dialog open={showAddCategoryPopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button">   <span className="close-icon">X</span></button>
+        <Dialog open={showAddCategoryPopup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"> <span className="close-icon">X</span></button>
           <DialogContent>
-            <AddCategory refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+            <AddCategory refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showAddLevel2Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
+        <Dialog open={showAddLevel2Popup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+            < AddLevelTwo selectedCategoryIdPopup={selectedCategoryIdPopup} categories={categories} refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showAddProductTypePopup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
+        <Dialog open={showAddProductTypePopup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
             < AddLevelThree selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+              selectedLevel2IdPopup={selectedLevel2IdPopup} categories={categories} refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showAddlevel4Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
+        <Dialog open={showAddlevel4Popup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            <AddLevelFour selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup}
-              selectedLevel3IdPopup={selectedLevel3IdPopup}
-              categories={categories}
-              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+            <AddLevelFour selectedCategoryIdPopup={selectedCategoryIdPopup} selectedLevel2IdPopup={selectedLevel2IdPopup} selectedLevel3IdPopup={selectedLevel3IdPopup} categories={categories}
+              refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showAddlevel5Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
+        <Dialog open={showAddlevel5Popup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup}
-              selectedLevel3IdPopup={selectedLevel3IdPopup}
-              selectedLevel4IdPopup={selectedLevel4IdPopup}
+            <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup} selectedLevel2IdPopup={selectedLevel2IdPopup} selectedLevel3IdPopup={selectedLevel3IdPopup} selectedLevel4IdPopup={selectedLevel4IdPopup}
               categories={categories}
-              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+              refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showAddlevel6Popup} onClose={closeAddCategoryPopup} fullWidth maxWidth="sm">
-          <button onClick={closeAddCategoryPopup} color="secondary" className="close-button"><span className="close-icon">X</span></button>
+        <Dialog open={showAddlevel6Popup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
+          <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            <AddLevelSix selectedCategoryIdPopup={selectedCategoryIdPopup}
-              selectedLevel2IdPopup={selectedLevel2IdPopup}
-              selectedLevel3IdPopup={selectedLevel3IdPopup}
-              selectedLevel4IdPopup={selectedLevel4IdPopup}
-              selectedLevel5IdPopup={selectedLevel5IdPopup}
-              categories={categories}
-              refreshCategories={refreshCategories} onCloseDialog={closeAddCategoryPopup} />
+            <AddLevelSix selectedCategoryIdPopup={selectedCategoryIdPopup} selectedLevel2IdPopup={selectedLevel2IdPopup} selectedLevel3IdPopup={selectedLevel3IdPopup} selectedLevel4IdPopup={selectedLevel4IdPopup} selectedLevel5IdPopup={selectedLevel5IdPopup} categories={categories}
+              refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
       </div>
       {levelOneCategory && (
         <div>
-         
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
             <h3>Products</h3>
 
@@ -1051,7 +1100,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => handleSort('mpn')}
                   >
-                   MPN
+                    MPN
                     {sortOrder.column === 'mpn' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell
@@ -1089,20 +1138,19 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                   <TableCell
                     align="left"
                     sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('model')}
-                  >
-                    Model
-                    {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => handleSort('msrp')}
                   >
                     Msrp
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  
+                  <TableCell
+                    align="left"
+                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => handleSort('model')}
+                  >
+                    Model
+                    {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -1126,13 +1174,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>
                       {product.product_name}</TableCell>
-                      <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
-                      <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
                     </TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{
-                      product.msrp ? `$${product.msrp}` : ''}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

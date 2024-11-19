@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import './ProductDetail.css'; // Importing CSS for styling
+import './ProductDetail.css';
 import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
 
 import axiosInstance from '../../../src/utils/axiosConfig';
@@ -314,7 +314,9 @@ const ProductDetail = ({ categories }) => {
                         confirmButton: 'swal-custom-confirm',
                         cancelButton: 'swal-custom-cancel'
                     }
-                })
+                }).then(() => {
+                    fetchProductDetail();
+                });
                 setFormData('');
             } catch (err) {
                 alert('Error updating product');
@@ -330,7 +332,7 @@ const ProductDetail = ({ categories }) => {
     if (error) return <p>{error}</p>;
 
 
-    const swapProductToCategory = async () => {        
+    const swapProductToCategory = async () => {
         if (categoryIds) {
             try {
                 const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {
@@ -351,7 +353,7 @@ const ProductDetail = ({ categories }) => {
                 console.error('Error updating category:', error);
                 alert('Error updating category');
             }
-        } else if(view === 'taxonomy') {
+        } else if (view === 'taxonomy') {
             alert('Please selected the category to updated');
         }
     };
@@ -475,28 +477,34 @@ const ProductDetail = ({ categories }) => {
                             <div className="product-detail-section">
                                 <h3>Edit Product Details</h3>
                                 <div className="form-group">
+                                    <label htmlFor="product_name">MPN</label>
+                                    <input type="text" id="product_name" className='input_pdps' name="product_name" value={String(formData.mpn || '')} onChange={handleChange} required />
+                                </div>
+                                <div className="form-group">
                                     <label htmlFor="product_name">Product Name</label>
                                     <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name ? formData.product_name.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
+                                    <label htmlFor="product_name">Brand</label>
+                                    <input type="text" id="product_name" className='input_pdps' name="product_name" value={String(formData.brand || '')} onChange={handleChange} required />
+                                </div>
+                                <div className="form-group">
                                     <label htmlFor="base_price">Base Price</label>
                                     <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
-                                    //  onChange={handleChange} required
-                                     onChange={(e) => {
-                                        const inputValue = e.target.value.replace(/[^0-9.]/g, ''); 
-                                        handleChange({
-                                            target: {
-                                                name: 'base_price',
-                                                value: inputValue,
-                                            },
-                                        });
-                                    }}
-                                      />
+                                        onChange={(e) => {
+                                            const inputValue = e.target.value.replace(/[^0-9.]/g, '');
+                                            handleChange({
+                                                target: {
+                                                    name: 'base_price',
+                                                    value: inputValue,
+                                                },
+                                            });
+                                        }}
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="model">Model</label>
-                                    <input type="text" id="model" name="model" className='input_pdps' value={String(formData.model || '')} onChange={handleChange}
-                                    />
+                                    <input type="text" id="model" className='input_pdps' name="model" value={formData.model ? formData.model.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="upc_ean">UPC_EAN</label>
@@ -875,19 +883,19 @@ const ProductDetail = ({ categories }) => {
                             <h3>Pricing Details</h3>
                             <div className="form-group">
                                 <label htmlFor="msrp">MSRP</label>
-                                <input type="text" id="msrp" name="msrp" className='input_pdps' 
-                                value={String(`$${formData.msrp}` || '')} 
-                                // value={String`$${formData.msrp?.replace(/^\$/, '') || ''}`}
-                                // onChange={handleChange} required 
-                                onChange={(e) => {
-                                    const inputValue = e.target.value.replace(/[^0-9.]/g, ''); 
-                                    handleChange({
-                                        target: {
-                                            name: 'msrp',
-                                            value: inputValue,
-                                        },
-                                    });
-                                }}
+                                <input type="text" id="msrp" name="msrp" className='input_pdps'
+                                    value={String(`$${formData.msrp}` || '')}
+                                    // value={String`$${formData.msrp?.replace(/^\$/, '') || ''}`}
+                                    // onChange={handleChange} required 
+                                    onChange={(e) => {
+                                        const inputValue = e.target.value.replace(/[^0-9.]/g, '');
+                                        handleChange({
+                                            target: {
+                                                name: 'msrp',
+                                                value: inputValue,
+                                            },
+                                        });
+                                    }}
                                 />
                             </div>
                         </div>
@@ -898,8 +906,32 @@ const ProductDetail = ({ categories }) => {
                             <h3>Other Product Details</h3>
                             <div className="form-group">
                                 <label htmlFor="key_features">Key Features</label>
-                                <input type="text" id="key_features" name="key_features" className='input_pdps' value={formData.key_features || ''} onChange={handleChange} />
+                                <textarea
+                                    id="key_features"
+                                    name="key_features"
+                                    className="input_pdps"
+                                    value={
+                                        formData.key_features
+                                            ?.split('\n')
+                                            .filter((feature) => feature.trim() !== '')
+                                            .map((feature) => `* ${feature.trim().replace(/^\*/, '')}`)
+                                            .join('\n') || ''
+                                    }
+                                    onChange={(e) => {
+                                        const updatedFeatures = e.target.value
+                                            .split('\n')
+                                            .map((line) => line.replace(/^\* */, '').trim())
+                                            .join('\n');
+                                        handleChange({
+                                            target: {
+                                                name: 'key_features',
+                                                value: updatedFeatures,
+                                            },
+                                        });
+                                    }}
+                                />
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="features">Features</label>
                                 <input type="text" id="features" name="features" className='input_pdps' value={formData.features || ''} onChange={handleChange} />
