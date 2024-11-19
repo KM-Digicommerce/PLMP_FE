@@ -238,7 +238,7 @@ const ProductList = () => {
                   <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
                 </td>
                 <td className="mpn-column">{item.brand}</td>
-                <td className="attributes-column">{item.breadcrumb}</td>
+                <td className="attributes-column">{item.category_name}</td>
                 <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
                 <td className="msrpprice-column"> {item.msrp ? `$${item.msrp}` : ''}</td>
                 <td className="model-column">{item.model}</td>
