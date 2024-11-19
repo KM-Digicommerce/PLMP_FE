@@ -5,22 +5,19 @@ import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
 const AddLevelSix = ({ 
-    selectedCategoryIdPopup, 
-    selectedLevel2IdPopup, 
-    selectedProductTypeIdPopup, 
-    selectedLevel4IdPopup, 
-    selectedLevel5IdPopup, 
-    categories, 
-    refreshCategories,
+    selectedCategoryIdPopup, selectedLevel2IdPopup, selectedLevel3IdPopup, selectedLevel4IdPopup, selectedLevel5IdPopup, categories, refreshCategories, setIsTyping,
     onCloseDialog
 }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
     const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
-    const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedProductTypeIdPopup || '');
+    const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedLevel3IdPopup || '');
     const [selectedLevel4Id, setSelectedLevel4Id] = useState(selectedLevel4IdPopup || '');
     const [selectedLevel5Id, setSelectedLevel5Id] = useState(selectedLevel5IdPopup || '');
     const [levelSixName, setLevelSixName] = useState('');
-
+    const handleInputChange = (e) => {
+        setLevelSixName(e.target.value);
+        setIsTyping(e.target.value.trim().length > 0); 
+      };
     const handleCategoryChange = (e) => {
         setSelectedCategoryId(e.target.value);
         setselectedLevel2Id('');
@@ -44,6 +41,7 @@ const AddLevelSix = ({
             setSelectedLevel3Id('');
             setSelectedLevel4Id('');
             setSelectedLevel5Id('');
+            setIsTyping(false);
 
             await refreshCategories(); // Refresh the category list
             Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
@@ -54,21 +52,21 @@ const AddLevelSix = ({
                 cancelButton: 'swal-custom-cancel',
             },
         }).then(() => { });  
+        onCloseDialog();
         } catch (error) {
             console.error('Error adding level 6 category:', error);
             Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');
         }
-        onCloseDialog();
     };
 
     useEffect(() => {
         // Resetting states when the props change
         setSelectedCategoryId(selectedCategoryIdPopup);
         setselectedLevel2Id(selectedLevel2IdPopup);
-        setSelectedLevel3Id(selectedProductTypeIdPopup);
+        setSelectedLevel3Id(selectedLevel3IdPopup);
         setSelectedLevel4Id(selectedLevel4IdPopup);
         setSelectedLevel5Id(selectedLevel5IdPopup);
-    }, [selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, selectedLevel4IdPopup, selectedLevel5IdPopup]);
+    }, [selectedCategoryIdPopup, selectedLevel2IdPopup, selectedLevel3IdPopup, selectedLevel4IdPopup, selectedLevel5IdPopup]);
 
     return (
         <div className="add-level-six">
@@ -140,7 +138,7 @@ const AddLevelSix = ({
                     type="text"
                     value={levelSixName}
                     className='add_category_input'
-                    onChange={(e) => setLevelSixName(e.target.value)}
+                    onChange={handleInputChange}
                     placeholder="Enter Level 6 name"
                     required
                 />

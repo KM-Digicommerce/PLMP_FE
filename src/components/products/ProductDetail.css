@@ -8,7 +8,6 @@
   align-items: flex-start;
 }
 
-/* Back button styling */
 .back-button {
   align-self: flex-start;
   margin-bottom: 1rem;
@@ -20,13 +19,13 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s ease;
-  /* width: 16%; */
+  text-align: justify;
+  width: 25%;
 }
 .back-button:hover {
   background-color: #0056b3;
 }
 
-/* Section button styling */
 .section-buttons {
   display: flex;
   gap: 1rem;
@@ -35,7 +34,7 @@
 }
 .section-buttons button {
   display: block;
-  padding: 4px 16px;
+  padding: 3px 10px 3px 6px;
   background-color: #323335;
   color: white;
   border: none;
@@ -44,7 +43,7 @@
   font-weight: bold;
   transition: background-color 0.2s ease;
   width: 100%;
-  
+  text-align: justify;  
 }
 .section-buttons button:hover {
   background-color: #706e6e94;

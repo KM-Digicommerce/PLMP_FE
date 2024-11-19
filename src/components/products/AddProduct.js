@@ -120,11 +120,8 @@ const AddProduct = (categories) => {
     const [isAddProductVisible, setIsAddProductVisible] = useState(false);  // Add this line
 
 useEffect(() => {
-  // Fetch the API response and store last_level_category IDs
   const fetchCategoryData = async () => {
     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-    console.log(res.data.data.last_level_category,'Response the check');
-    
     setLastLevelCategoryIds(res.data.data.last_level_category);
   };
   

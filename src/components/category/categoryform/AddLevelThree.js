@@ -4,7 +4,7 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories, onCloseDialog}) => {
+const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories,setIsTyping, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
   const [productTypeName, setProductTypeName] = useState('');
@@ -12,6 +12,10 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
   console.log(selectedLevel2Id,'selectedLevel2Id 1');
   console.log(categories,'categories 2');
   console.log(refreshCategories,'refreshCategories 3');
+  const handleInputChange = (e) => {
+    setProductTypeName(e.target.value);
+    setIsTyping(e.target.value.trim().length > 0); 
+  };
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
     setselectedLevel2Id(''); // Reset section selection when category changes
@@ -28,16 +32,22 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
       setProductTypeName('');
       setSelectedCategoryId('');
       setselectedLevel2Id('');
+      setIsTyping(false);
 
       await refreshCategories(); 
-      Swal.fire('Success', 'Product type added successfully!', 'success').then(() => {
-        // window.location.reload(); // Refresh the page to show updated data
-    })
-    } catch (error) {
-      console.error('Error adding product type:', error);
-      alert('Error adding product type. Please try again.');
-    }
+      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm',
+        cancelButton: 'swal-custom-cancel',
+    },
+}).then(() => {    })
     onCloseDialog();
+    } catch (error) {
+      console.error('Error adding level 3 Category:', error);
+      alert('Error adding level 3 Category. Please try again.');
+    }
   };
 
   return (
@@ -76,7 +86,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
           type="text"
           value={productTypeName}
           className='add_category_input'
-          onChange={(e) => setProductTypeName(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter category name"
           required
         />
