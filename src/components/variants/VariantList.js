@@ -30,6 +30,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         level6: '',
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
+    const [selectedCategoryLevelForVariant, setSelectedCategoryLevelForVariant] = useState('');
 
     const filteredCategories = categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
@@ -93,7 +94,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
       
       fetchCategoryData();
     }, []);
-    const handleCategorySelectForVariants = async (id) => {
+    const handleCategorySelectForVariants = async (id,level) => {
       const selectedIdString = String(id);
       const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
       if (isIdInLastLevel) {
@@ -103,6 +104,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
           setIsAddProductVisible(false);
       }
         setSelectedCategoryForVariant(id);
+        setSelectedCategoryLevelForVariant(level);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             // console.log('API Response: here', res.data.data); 
@@ -159,7 +161,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant) => {
+    const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant,selectedCategoryLevelForVariant) => {
         setIsLoading(true);
         setError(null);
         Swal.fire({
@@ -179,7 +181,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
                         name: result.value,
                         category_varient_id: category_varient_id,
-                        category_id: selectedCategoryForVariant
+                        category_id: selectedCategoryForVariant,
+                        category_name:selectedCategoryLevelForVariant
                     });
                     Swal.fire('Success', 'Variant added successfully!', 'success')
                     await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
@@ -283,7 +286,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select Category</span>
                                     </div>
                                     {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id); }}>
+                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id,'level-1'); }}>
                                             <span>{level1.name}</span>
                                         </div>
                                     ))}
@@ -313,7 +316,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id); }}>
+                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id,'level-2'); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -343,7 +346,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id); }}>
+                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id,'level31'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -373,7 +376,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id); }}>
+                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id,'level-4'); }}>
                                             <span>{level4.name}</span>
                                         </div>
                                     ))}
@@ -403,7 +406,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id); }}>
+                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id,'level-5'); }}>
                                             <span>{level5.name}</span>
                                         </div>
                                     ))}
@@ -433,7 +436,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id); }}>
+                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id,'level-6'); }}>
                                             <span>{level6.name}</span>
                                         </div>
                                     ))}
@@ -447,7 +450,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant);
+                        handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant,selectedCategoryLevelForVariant);
                     }}
                     className='addvariant_btn'
                     style={{

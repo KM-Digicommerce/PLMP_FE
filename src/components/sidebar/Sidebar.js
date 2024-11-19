@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import UploadIcon from '@mui/icons-material/Upload';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBox, faTags, faUser, faFileImport, faFileExport, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory } from '@fortawesome/free-solid-svg-icons';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -216,6 +216,10 @@ const Sidebar = ({
       <li onClick={handleExport}>
         <FontAwesomeIcon icon={faFileExport} className="icon" />
         Export
+      </li>
+      <li>
+        <FontAwesomeIcon icon={faHistory} className="icon" />
+        History
       </li>
       <li>
         <FontAwesomeIcon icon={faCog} className="icon" />

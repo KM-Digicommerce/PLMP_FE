@@ -4,15 +4,13 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories,onCloseDialog }) => {
+const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories, setIsTyping, onCloseDialog }) => {
   const [sectionName, setSectionName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
-
-  // console.log(selectedCategoryIdPopup,'selectedCategoryIdPopup');
-  // console.log(categories,'categories');
-  // console.log(refreshCategories,'refreshCategories');
-
-  
+  const handleInputChange = (e) => {
+    setSectionName(e.target.value);
+    setIsTyping(e.target.value.trim().length > 0); 
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,17 +22,22 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories,o
 
       setSectionName('');
       setSelectedCategoryId('');
-      
+      setIsTyping(false);
       // Refresh categories after adding a section
       await refreshCategories(); 
-      Swal.fire('Success', 'Section added successfully!', 'success').then(() => {
-        // window.location.reload(); // Refresh the page to show updated data
-    })
+      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm',
+        cancelButton: 'swal-custom-cancel',
+    },
+}).then(() => {    })
+onCloseDialog();
     } catch (error) {
-      console.error('Error adding section:', error);
-      alert('Error adding section. Please try again.');
+      console.error('Error adding level 2 Category:', error);
+      alert('Error adding level 2 Category. Please try again.');
     }
-    onCloseDialog();
   };
 
   return (
@@ -57,7 +60,7 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories,o
           type="text"
           value={sectionName}
           className='add_category_input'
-          onChange={(e) => setSectionName(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter category name"
           required
         />

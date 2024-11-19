@@ -4,12 +4,15 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, categories, refreshCategories, onCloseDialog}) => {
+const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedLevel3IdPopup, categories, refreshCategories,setIsTyping, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
-  const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedProductTypeIdPopup || '');
+  const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedLevel3IdPopup || '');
   const [levelFourName, setLevelFourName] = useState('');
-
+  const handleInputChange = (e) => {
+    setLevelFourName(e.target.value);
+    setIsTyping(e.target.value.trim().length > 0); 
+  };
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
     setselectedLevel2Id('');
@@ -28,6 +31,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
       setSelectedCategoryId('');
       setselectedLevel2Id('');
       setSelectedLevel3Id('');
+      setIsTyping(false);
 
       await refreshCategories();
       Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
@@ -38,11 +42,11 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         cancelButton: 'swal-custom-cancel',
     },
 }).then(() => { });  
+onCloseDialog();
     } catch (error) {
       console.error('Error adding level 4 category:', error);
       alert('Error adding level 4 category. Please try again.');
     }
-    onCloseDialog();
   };
 
   return (
@@ -59,7 +63,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         </select>
         {selectedCategoryId && (
           <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
-            <option value="">Select a Section</option>
+            <option value="">Select a Level 2 Category</option>
             {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.map((section) => (
@@ -71,7 +75,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         )}
         {selectedLevel2Id && (
           <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
-            <option value="">Select a Product Type</option>
+            <option value="">Select a Level 3 Category</option>
             {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
@@ -86,7 +90,7 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
           type="text"
           value={levelFourName}
           className='add_category_input'
-          onChange={(e) => setLevelFourName(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter Level 4 name"
           required
         />

@@ -4,13 +4,16 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedProductTypeIdPopup, selectedLevel4IdPopup, categories, refreshCategories, onCloseDialog}) => {
+const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selectedLevel3IdPopup, selectedLevel4IdPopup, categories, refreshCategories, setIsTyping, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');
   const [selectedLevel2Id, setselectedLevel2Id] = useState(selectedLevel2IdPopup || '');
-  const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedProductTypeIdPopup || '');
+  const [selectedLevel3Id, setSelectedLevel3Id] = useState(selectedLevel3IdPopup || '');
   const [selectedLevel4Id, setSelectedLevel4Id] = useState(selectedLevel4IdPopup || '');
   const [levelFiveName, setLevelFiveName] = useState('');
-
+  const handleInputChange = (e) => {
+    setLevelFiveName(e.target.value);
+    setIsTyping(e.target.value.trim().length > 0); 
+  };
   const handleCategoryChange = (e) => {
     setSelectedCategoryId(e.target.value);
     setselectedLevel2Id('');
@@ -31,7 +34,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
       setselectedLevel2Id('');
       setSelectedLevel3Id('');
       setSelectedLevel4Id('');
-
+      setIsTyping(false);
       await refreshCategories();
       Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
         container: 'swal-custom-container',
@@ -41,11 +44,11 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         cancelButton: 'swal-custom-cancel',
     },
 }).then(() => { });  
+onCloseDialog();
     } catch (error) {
       console.error('Error adding level 5 category:', error);
       alert('Error adding level 5 category. Please try again.');
     }
-    onCloseDialog();
   };
 
   return (
@@ -62,7 +65,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         </select>
         {selectedCategoryId && (
           <select value={selectedLevel2Id} onChange={(e) => setselectedLevel2Id(e.target.value)} required>
-            <option value="">Select a Section</option>
+            <option value="">Select a Level 2 Category</option>
             {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.map((section) => (
@@ -74,7 +77,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         )}
         {selectedLevel2Id && (
           <select value={selectedLevel3Id} onChange={(e) => setSelectedLevel3Id(e.target.value)} required>
-            <option value="">Select a Product Type</option>
+            <option value="">Select a Level 3 Category</option>
             {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
@@ -87,7 +90,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
         )}
         {selectedLevel3Id && (
           <select value={selectedLevel4Id} onChange={(e) => setSelectedLevel4Id(e.target.value)} required>
-            <option value="">Select a Level 4</option>
+            <option value="">Select a Level 4 Category</option>
             {categories.category_list
               .find((cat) => cat._id === selectedCategoryId)
               ?.level_one_category_list.find((sec) => sec._id === selectedLevel2Id)
@@ -103,7 +106,7 @@ const AddLevelFive = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
           type="text"
           value={levelFiveName}
           className='add_category_input'
-          onChange={(e) => setLevelFiveName(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter Level 5 name"
           required
         />

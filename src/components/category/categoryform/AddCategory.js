@@ -5,40 +5,54 @@ import './AddCategory.css';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../utils/axiosConfig';
 
-const AddCategory = ({ refreshCategories,onCloseDialog }) => {
+const AddCategory = ({ refreshCategories, onCloseDialog, setIsTyping }) => {
   const [categoryName, setCategoryName] = useState('');
 
+  const handleInputChange = (e) => {
+    setCategoryName(e.target.value);
+    setIsTyping(e.target.value.trim().length > 0);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory/`, {
+      const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory/`, {
         name: categoryName,
       });
-
-      // Clear input field
       setCategoryName('');
-
-      // Call the refresh function to update the category list
-      await refreshCategories(); // Ensure it's awaited for proper sequencing
-      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+      setIsTyping(false);
+      if (response.data.data.is_created === true) {
+        await refreshCategories();
+        Swal.fire({
+          title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
             container: 'swal-custom-container',
             popup: 'swal-custom-popup',
             title: 'swal-custom-title',
             confirmButton: 'swal-custom-confirm',
             cancelButton: 'swal-custom-cancel',
-        },
-    }).then(() => { });    
-      // Log the updated categories to verify the addition
-      console.log('Updated Categories after addition:');
-      const updatedCategories = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-      console.log(updatedCategories.data.data);
+          },
+        }).then(() => { });
+        const updatedCategories = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+        onCloseDialog();
+      }
+      else if (response.data.data.is_created === false) {
+        console.log('Npe', response.data.data.error);
+        Swal.fire({
+          title: response.data.data.error,
+          icon: "warning",
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel',
+          },
+        })
+      }
     } catch (error) {
       console.error('Error adding category:', error);
       alert('Error adding category. Please try again.');
-    }
-    onCloseDialog();
-  };
+    }  };
 
   return (
     <div className="add-category">
@@ -47,7 +61,7 @@ const AddCategory = ({ refreshCategories,onCloseDialog }) => {
         <input
           type="text"
           value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter category name"
           required
         />
