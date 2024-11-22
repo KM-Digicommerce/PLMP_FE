@@ -260,17 +260,9 @@ const ProductDetail = ({ categories }) => {
     const handleChange = (e) => {
         console.log('handle change', e.target);
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value, 
-        });
+        setFormData({ ...formData,[name]: value,  });
     };
     
-    // const handleChange = (e) => {
-    //     console.log('handle change', e.target);
-    //     const { name, value } = e.target;
-    //     setFormData({ ...formData, [name]: value });
-    // };
     const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
 
     useEffect(() => {
@@ -301,8 +293,6 @@ const ProductDetail = ({ categories }) => {
                 return;
             }
             try {
-                console.log(formData, 'formData');
-
                 const payload = {
                     id: formData.product_id || '',
                     update_obj: {
@@ -1090,7 +1080,7 @@ const ProductDetail = ({ categories }) => {
 
                         </div>
                     )}
-                    {view !== 'variants' && (<button type="submit" className="save-button_pdp" onClick={swapProductToCategory}>Save</button>)}
+                    {view !== 'variants' && (<button type="submit" className="save-button_pdp"   onClick={view === 'taxonomy' ? swapProductToCategory : undefined} >Save</button>)}
                 </div>
             </form>
         </div>

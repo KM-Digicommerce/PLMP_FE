@@ -13,10 +13,12 @@ import Paper from '@mui/material/Paper';
 const HistoryPage = () => {
   const [apiResponse, setApiResponse] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [activeButton, setActiveButton] = useState('');
 
   // Function to handle API calls
-  const handleApiCall = async (apiUrl) => {
+  const handleApiCall = async (apiUrl, buttonKey) => {
     setLoading(true);
+    setActiveButton(buttonKey);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/${apiUrl}`);
       setApiResponse(response.data);
@@ -40,6 +42,57 @@ const HistoryPage = () => {
     }
   };
 
+  const renderHeaders = () => {
+    if (activeButton === 'productLog' || activeButton === 'productVariantLog') {
+      return (
+        <>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>Product Name</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
+          <TableCell><strong>Log Date (EST)</strong></TableCell>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>Category ID</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Level</strong></TableCell>
+          <TableCell><strong>Category Name</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
+          <TableCell><strong>Log Date (EST)</strong></TableCell>
+        </>
+      );
+    }
+  };
+
+  const renderRows = () => {
+    return apiResponse.map((log, index) => (
+      <TableRow key={index}>
+        <TableCell>{log.user_name}</TableCell>
+        {activeButton === 'productLog' || activeButton === 'productVariantLog' ? (
+          <>
+            <TableCell>{log.product_name}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
+            <TableCell>{log.log_date_est}</TableCell>
+          </>
+        ) : (
+          <>
+            <TableCell>{log.category_id}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.level}</TableCell>
+            <TableCell>{log.category_name}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
+            <TableCell>{log.log_date_est}</TableCell>
+          </>
+        )}
+      </TableRow>
+    ));
+  };
+
   return (
     <div className="history-page" style={{ padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>History Logs</h2>
@@ -50,37 +103,37 @@ const HistoryPage = () => {
       >
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => handleApiCall('obtainCategoryLog')}
+          color={activeButton === 'categoryLog' ? 'secondary' : 'primary'}
+          onClick={() => handleApiCall('obtainCategoryLog', 'categoryLog')}
           disabled={loading}
-          style={{ borderRadius: '10px',width:'22%',padding:'10px',lineHeight:'20px' }}
+          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
         >
           Category Log
         </Button>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => handleApiCall('obtainCategoryVarientLog')}
+          color={activeButton === 'categoryVariantLog' ? 'secondary' : 'primary'}
+          onClick={() => handleApiCall('obtainCategoryVarientLog', 'categoryVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px',width:'22%',padding:'10px',lineHeight:'20px' }}
+          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
         >
           Category Variant Log
         </Button>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => handleApiCall('obtainProductLog')}
+          color={activeButton === 'productLog' ? 'secondary' : 'primary'}
+          onClick={() => handleApiCall('obtainProductLog', 'productLog')}
           disabled={loading}
-          style={{ borderRadius: '10px',width:'22%',padding:'10px',lineHeight:'20px' }}
+          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
         >
           Product Log
         </Button>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => handleApiCall('obtainProductVarientLog')}
+          color={activeButton === 'productVariantLog' ? 'secondary' : 'primary'}
+          onClick={() => handleApiCall('obtainProductVarientLog', 'productVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px',width:'22%',padding:'10px',lineHeight:'20px' }}
+          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
         >
           Product Variant Log
         </Button>
@@ -92,31 +145,9 @@ const HistoryPage = () => {
         <TableContainer component={Paper} style={{ marginTop: '20px' }}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell><strong>User Name</strong></TableCell>
-                <TableCell><strong>Category ID</strong></TableCell>
-                <TableCell><strong>Action</strong></TableCell>
-                <TableCell><strong>Level</strong></TableCell>
-                <TableCell><strong>Log Date</strong></TableCell>
-                <TableCell><strong>Category Name</strong></TableCell>
-                <TableCell><strong>Log Date (IST)</strong></TableCell>
-                <TableCell><strong>Log Date (EST)</strong></TableCell>
-              </TableRow>
+              <TableRow>{renderHeaders()}</TableRow>
             </TableHead>
-            <TableBody>
-              {apiResponse.map((log, index) => (
-                <TableRow key={index}>
-                  <TableCell>{log.user_name}</TableCell>
-                  <TableCell>{log.category_id}</TableCell>
-                  <TableCell>{log.action}</TableCell>
-                  <TableCell>{log.level}</TableCell>
-                  <TableCell>{log.log_date}</TableCell>
-                  <TableCell>{log.category_name}</TableCell>
-                  <TableCell>{log.log_date_ist}</TableCell>
-                  <TableCell>{log.log_date_est}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+            <TableBody>{renderRows()}</TableBody>
           </Table>
         </TableContainer>
       )}

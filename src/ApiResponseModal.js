@@ -29,7 +29,7 @@ let selectedFiles = localStorage.getItem('selectedFile');
           return {
             ...row,
             databaseOption: matchingValue,
-            isDisabled: true,
+            isDisabled: false,
             isMatched: true,
             isHighlighted: true,
           };
@@ -72,7 +72,7 @@ let selectedFiles = localStorage.getItem('selectedFile');
     const fieldData = {};
     mapping.forEach((row) => {
       if (row.databaseOption) {
-        fieldData[row.databaseOption] = row.columnHeader;
+        fieldData[row.columnHeader] = row.databaseOption;
       }
     });
 
