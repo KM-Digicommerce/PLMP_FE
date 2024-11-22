@@ -105,7 +105,11 @@
 }
 
 .swal-custom-confirm {
-  width: 40%;
+  width: 40% !important;
+}
+.swal-custom-confirm-value{
+  width: 100% !important;
+
 }
 .swal2-cancel {
 width:47%;
