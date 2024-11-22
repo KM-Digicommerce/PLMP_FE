@@ -110,7 +110,7 @@ onCloseDialog();
           placeholder="Enter Level 5 name"
           required
         />
-        <button type="submit">Add New Level 5</button>
+        <button type="submit">Add New Category</button>
       </form>
     </div>
   );

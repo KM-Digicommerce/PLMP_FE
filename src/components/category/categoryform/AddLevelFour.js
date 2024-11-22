@@ -94,7 +94,7 @@ onCloseDialog();
           placeholder="Enter Level 4 name"
           required
         />
-        <button type="submit">Add New Level 4</button>
+        <button type="submit">Add New Category</button>
       </form>
     </div>
   );

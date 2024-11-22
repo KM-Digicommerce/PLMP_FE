@@ -3,26 +3,20 @@ import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import axiosInstance from '../../../src/utils/axiosConfig';
+import { Margin } from '@mui/icons-material';
 
-
-
-// Simple Modal component
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange }) => {
-    // console.log(selectedCategoryId,'selectedCategoryId');
-
-    const [variantOptions, setVariantOptions] = useState([]);  // State to store variant options
-    const [selectedOption, setSelectedOption] = useState('');
+    const [variantOptions, setVariantOptions] = useState([]);
+    const [brand, setBrand] = useState([]);
+    const [brands, setBrands] = useState([]);
 
     useEffect(() => {
-        // Fetch variants only if modal is open and category ID is set
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
                 try {
                     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${selectedCategoryId}`);
-                    console.log("Response 1", res.data.data);
-                    console.log("Response 2", res.data.data.varient_list);
+                    // console.log("Response 2", res.data.data.varient_list);
                     setVariantOptions(res.data.data.varient_list);
-                    // setVariantOptions(res.data.data);  // Store fetched variant options
                 } catch (err) {
                     console.error('Error fetching variants:', err);
                 }
@@ -31,45 +25,145 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         }
     }, [isOpen, selectedCategoryId]);
 
-
+    useEffect(() => {
+        if (isOpen && selectedCategoryId) {
+            const fetchBrand = async () => {
+                try {
+                    const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+                    console.log("Response 2", res.data.data.brand_list);
+                    setBrand(res.data.data.brand_list);
+                } catch (err) {
+                    console.error('Error fetching variants:', err);
+                }
+            };
+            fetchBrand();
+        }
+    }, [isOpen, selectedCategoryId]);
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
                 <button onClick={onClose} className="close-btn">✕</button>
-                <h2>Add Product</h2>
+                <h2 style={{ margin: '0px' }}>Add Product</h2>
                 <div className="form-section">
-                    <h3>Basic Info</h3>
+                    <h3 style={{ margin: '6px' }}>Basic Info</h3>
                     <input type="text" name="model" placeholder="Model" value={productData.model} onChange={handleChange} />
                     <input type="text" name="mpn" placeholder="MPN" value={productData.mpn} onChange={handleChange} />
                     <input type="text" name="upc_ean" placeholder="UPC/EAN" value={productData.upc_ean} onChange={handleChange} />
                     <input type="text" name="breadcrumb" placeholder="Breadcrumb" value={productData.breadcrumb} onChange={handleChange} />
-                    <input type="text" name="brand_name" placeholder="Brand Name" value={productData.brand_name} onChange={handleChange} />
+    <select
+        id="brand-select"
+        name="brand_id"
+        value={productData.product_obj.brand_id || ''} 
+        onChange={handleChange} 
+        className="dropdown"
+        style={{width:'94%',margin: '6px 20px 6px 10px'}}
+    >
+        <option value="" >Select Brand</option>
+        {brand.map((item) => (
+            <option key={item._id} value={item.id}>
+                {item.name}
+            </option>
+        ))}
+    </select>
                     <input type="text" name="product_name" placeholder="Product Name" required value={productData.product_name} onChange={handleChange} />
                 </div>
 
                 <div className="form-section">
-                    <h3>Descriptions</h3>
+                    <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <textarea name="long_description" placeholder="Long Description" value={productData.long_description} onChange={handleChange} />
                     <textarea name="short_description" placeholder="Short Description" value={productData.short_description} onChange={handleChange} />
                 </div>
 
                 <div className="form-section">
-                    <h3>Pricing</h3>
-                    <input type="number" name="msrp" placeholder="MSRP" value={productData.msrp} onChange={handleChange} />
-                    <input type="number" name="base_price" placeholder="Base Price" value={productData.base_price} onChange={handleChange} />
+                    <h3 style={{ margin: '6px' }}>Pricing</h3>
+                    <div className="pricing-grid">
+                        <div className="pricing-field">
+                            <label htmlFor="base_price">Base</label>
+                            <input type="number" id="base_price" name="base_price" placeholder="Base" value={productData.base_price} onChange={handleChange} />
+                        </div>
+                        <div className="pricing-field">
+                            <label htmlFor="msrp">MSRP</label>
+                            <input type="number" id="msrp" name="msrp" placeholder="MSRP" value={productData.msrp} onChange={handleChange} />
+                        </div>
+                        <div className="pricing-field">
+                            <label htmlFor="discount_price">Discount</label>
+                            <input type="number" id="discount_price" name="discount_price" placeholder="Discount" value={productData.discount_price || ''} onChange={handleChange} />
+                        </div>
+                        <div className="pricing-field">
+                            <label htmlFor="dealer_price">Dealer</label>
+                            <input type="number" id="dealer_price" name="dealer_price" placeholder="Dealer" value={productData.dealer_price || ''} onChange={handleChange} />
+                        </div>
+                    </div>
                 </div>
 
                 <div className="form-section">
-                    <h3>Features & Attributes</h3>
+                    <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
                     <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
                     <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-                {/* Variant Section */}
                 <div className="form-section">
+                    <h3 style={{ margin: '6px' }}>Variant Details</h3>
+                    <div className="variant-scroll">
+                        <div className="variant-row">
+                            <div className="variant-field">
+                                <label htmlFor="sku">SKU</label>
+                                <input type="text" id="sku" name="sku" placeholder="SKU" value={selectedVariants.sku} onChange={handleVariantDetailChange} />
+                            </div>
+                            <div className="variant-field">
+                                <label htmlFor="unfinishedPrice">Unfinished Price</label>
+                                <input type="number" id="unfinishedPrice" name="unfinishedPrice" placeholder="Unfinished Price" value={selectedVariants.unfinishedPrice} onChange={handleVariantDetailChange} />
+                            </div>
+                            <div className="variant-field">
+                                <label htmlFor="finishedPrice">Finished Price</label>
+                                <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" value={selectedVariants.finishedPrice} onChange={handleVariantDetailChange} />
+                            </div>
+                            <div className="variant-field">
+                                <label htmlFor="quantity">Quantity</label>
+                                <input type="number" id="quantity" name="quantity" placeholder="Quantity" value={selectedVariants.quantity} onChange={handleVariantDetailChange} />
+                            </div>
+                            {variantOptions?.map((variant) => (
+                                <div className="variant-dropdown" key={variant.type_id}>
+                                    <label className="dropdown-label" htmlFor={`variant-${variant.type_id}`}>
+                                        {variant.type_name}
+                                    </label>
+                                    <FormControl fullWidth variant="outlined" className="dropdown-container">
+                                        <Select
+                                            labelId={`variant-${variant.type_id}`}
+                                            value={selectedVariants[variant.type_id] || ''}
+                                            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+                                            displayEmpty
+                                            className="styled-dropdown"
+                                            inputProps={{
+                                                style: {
+                                                    fontSize: '16px',
+                                                    padding: '8px',
+                                                },
+                                            }}
+                                        >
+                                            {/* Default placeholder */}
+                                            <MenuItem value="" disabled>
+                                                Select {variant.type_name}
+                                            </MenuItem>
+                                            {variant.option_value_list?.map((option) => (
+                                                <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                                    {option.type_value_name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                            ))}
+
+                        </div>
+                    </div>
+                </div>
+
+                {/* Variant Section */}
+                {/* <div className="form-section">
                     <h3>Variant Details</h3>
                     <input type="text" name="sku" placeholder="SKU"
                         value={selectedVariants.sku}
@@ -87,7 +181,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         value={selectedVariants.quantity}
                         onChange={handleVariantDetailChange}
                     />
-                    {/* Options Dropdown with border */}
                     {variantOptions?.map((variant) => (
                         <div key={variant.type_id}>
                             <FormControl fullWidth variant="outlined" sx={{ mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
@@ -107,7 +200,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             </FormControl>
                         </div>
                     ))}
-                </div>
+                </div> */}
 
                 <button onClick={onSave} className="save-button">Save Product</button>
             </div>
@@ -119,14 +212,14 @@ const AddProduct = (categories) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
     const [isAddProductVisible, setIsAddProductVisible] = useState(false);  // Add this line
 
-useEffect(() => {
-  const fetchCategoryData = async () => {
-    const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-    setLastLevelCategoryIds(res.data.data.last_level_category);
-  };
-  
-  fetchCategoryData();
-}, []);
+    useEffect(() => {
+        const fetchCategoryData = async () => {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+            setLastLevelCategoryIds(res.data.data.last_level_category);
+        };
+
+        fetchCategoryData();
+    }, []);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productData, setProductData] = useState({
@@ -137,7 +230,7 @@ useEffect(() => {
             mpn: '',
             upc_ean: '',
             breadcrumb: '',
-            brand_name: '',
+            brand_id: '',
             product_name: '',
             long_description: '',
             short_description: '',
@@ -164,8 +257,6 @@ useEffect(() => {
         finishedPrice: '',
         quantity: ''
     });
-
-    // Handles changes for SKU, Unfinished Price, and Finished Price
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
         setSelectedVariants((prev) => ({
@@ -183,23 +274,21 @@ useEffect(() => {
             }
         });
     };
-    // console.log(categories, 'categories');
-
     const handleVariantChange = (typeId, optionId) => {
         setSelectedVariants((prev) => ({
             ...prev,
             [typeId]: optionId,
         }));
-console.log(selectedVariants,'selectedVariants');
-console.log(typeId,'typeId');
-console.log(optionId,'optionId');
+        console.log(selectedVariants, 'selectedVariants');
+        console.log(typeId, 'typeId');
+        console.log(optionId, 'optionId');
 
-const filteredOptions = Object.entries(selectedVariants)
-.filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
-.map(([nameId, valueId]) => ({
-    option_name_id: nameId,
-    option_value_id: valueId
-}));
+        const filteredOptions = Object.entries(selectedVariants)
+            .filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
+            .map(([nameId, valueId]) => ({
+                option_name_id: nameId,
+                option_value_id: valueId
+            }));
         setProductData((prevData) => ({
             ...prevData,
             product_obj: {
@@ -207,7 +296,7 @@ const filteredOptions = Object.entries(selectedVariants)
                 varients: [
                     {
                         ...prevData.product_obj.varients[0],
-                            options:filteredOptions,
+                        options: filteredOptions,
                     }
                 ]
             }
@@ -223,7 +312,7 @@ const filteredOptions = Object.entries(selectedVariants)
                         sku_number: selectedVariants.sku,
                         un_finished_price: selectedVariants.unfinishedPrice,
                         finished_price: selectedVariants.finishedPrice,
-                        quantity:selectedVariants.quantity,
+                        quantity: selectedVariants.quantity,
                         options: variant.options.map(option => ({
                             option_name_id: option.option_name_id,
                             option_value_id: option.option_value_id
@@ -246,7 +335,7 @@ const filteredOptions = Object.entries(selectedVariants)
                         mpn: '',
                         upc_ean: '',
                         breadcrumb: '',
-                        brand_name: '',
+                        brand_id: '',
                         product_name: '',
                         long_description: '',
                         short_description: '',
@@ -308,29 +397,30 @@ const filteredOptions = Object.entries(selectedVariants)
     );
 
     const levelOneCategory = categories.categories.category_list.find(level1 => level1._id === selectedCategoryId);
-    const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
-        level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
+
+    const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
+    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)
     );
 
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
-    const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
-        level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
-    );
+
+    const filteredCategoriesLevel3 = levelTwoCategory
+        ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
+            level3.name.toLowerCase().includes(safeSearchQuery)
+        );
 
     const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
-    const filteredCategoriesLevel4 = levelThreeCategory?.level_three_category_list.filter(level4 =>
-        level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
-    );
+
+    const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
 
     const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
-    const filteredCategoriesLevel5 = levelFourCategory?.level_four_category_list.filter(level5 =>
-        level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
-    );
+
+    const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
 
     const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
-    const filteredCategoriesLevel6 = levelFiveCategory?.level_five_category_list.filter(level6 =>
-        level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
-    );
+
+    const filteredCategoriesLevel6 = levelFiveCategory
+        ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -340,7 +430,7 @@ const filteredOptions = Object.entries(selectedVariants)
         setSelectedCategoryId(id);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
-            console.log('API Response: here', res.data.data); // Log the API response
+            console.log('API Response: here', res.data.data);
             setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
@@ -354,8 +444,8 @@ const filteredOptions = Object.entries(selectedVariants)
     };
 
     const handleCategorySelectForVariants = async (id, category_level) => {
-        console.log(lastLevelCategoryIds.includes(id),'REsponse to set');
-        console.log(id,'ID');
+        console.log(lastLevelCategoryIds.includes(id), 'REsponse to set');
+        console.log(id, 'ID');
         const selectedIdString = String(id);
 
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
@@ -363,7 +453,7 @@ const filteredOptions = Object.entries(selectedVariants)
         if (isIdInLastLevel) {
             setIsAddProductVisible(true);
         }
-        else{
+        else {
             setIsAddProductVisible(false);
         }
 
@@ -388,35 +478,222 @@ const filteredOptions = Object.entries(selectedVariants)
         handleCategorySelectForVariants();
     }, []);
     const handleLevel2Select = (id) => {
-        setselectedLevel2Id(id);
-        setSelectedLevel3Id('');
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel2DropdownOpen(false);
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            let level1Category;
+            categories.categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
+
+                if (foundLevel2) {
+                    level1Category = level1;
+                    return true;
+                }
+                return false;
+            });
+
+            if (!level1Category) {
+                console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
+                return;
+            }
+
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(selectedValue);
+            setSelectedLevel3Id('');
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel2DropdownOpen(false);
+        }
+        else {
+            setselectedLevel2Id('');
+        }
     };
 
     const handleLevel3Select = (id) => {
-        setSelectedLevel3Id(id);
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel3DropdownOpen(false);
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            let level1Category, level2Category;
+            categories.categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.find(level2 =>
+                    level2.level_two_category_list.some(level3 => level3._id === selectedValue)
+                );
+                if (foundLevel2) {
+                    level1Category = level1;
+                    level2Category = foundLevel2;
+                    return true;
+                }
+                return false;
+            });
+            if (!level2Category || !level1Category) {
+                console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
+                return;
+            }
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(level2Category._id);
+            setSelectedLevel3Id(selectedValue);
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel3DropdownOpen(false);
+        }
+        else {
+            setSelectedLevel3Id('');
+        }
     };
 
     const handleLevelSelect = (level, id) => {
-        switch (level) {
-            case 4:
-                setSelectedlevel4(id);
-                break;
-            case 5:
-                setSelectedlevel5(id);
-                break;
-            case 6:
-                setSelectedlevel6(id);
-                break;
-            default:
-                break;
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            switch (level) {
+                case 4:
+                    const level3Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id === selectedValue);
+
+                    if (!level3Category) {
+                        console.error('Level 3 category not found for ID:', level3Category._id);
+                        return;
+                    }
+                    const level2Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
+
+                    if (!level2Category) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+                        return;
+                    }
+                    const level1Category = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1Category) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1Category._id);
+                    setselectedLevel2Id(level2Category._id);
+                    setSelectedLevel3Id(level3Category._id);
+                    setSelectedlevel4(selectedValue);
+                    break;
+                case 5:
+                    const level4Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .find(level4 => level4._id);
+
+                    if (!level4Category) {
+                        console.error('Level 4 category not found for ID:', level4Category._id);
+                        return;
+                    }
+                    const level3CategoryForLevel5 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id);
+
+                    if (!level3CategoryForLevel5) {
+                        console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
+                        return;
+                    }
+                    const level2CategoryForLevel5 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+
+                    if (!level2CategoryForLevel5) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
+                        return;
+                    }
+                    const level1CategoryForLevel5 = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1CategoryForLevel5) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1CategoryForLevel5._id);
+                    setselectedLevel2Id(level2CategoryForLevel5._id);
+                    setSelectedLevel3Id(level3CategoryForLevel5._id);
+                    setSelectedlevel4(level4Category._id);
+                    setSelectedlevel5(selectedValue);
+                    break;
+                case 6:
+                    const level5Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .flatMap(level4 => level4.level_four_category_list)
+                        .find(level5 => level5._id);
+
+                    if (!level5Category) {
+                        console.error('Level 5 category not found for ID:', level5Category._id);
+                        return;
+                    }
+
+                    const level4CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .find(level4 => level4._id);
+
+                    if (!level4CategoryForLevel6) {
+                        console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
+                        return;
+                    }
+                    const level3CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id);
+
+                    if (!level3CategoryForLevel6) {
+                        console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
+                        return;
+                    }
+                    const level2CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+
+                    if (!level2CategoryForLevel6) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
+                        return;
+                    }
+                    const level1CategoryForLevel6 = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1CategoryForLevel6) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1CategoryForLevel6._id);
+                    setselectedLevel2Id(level2CategoryForLevel6._id);
+                    setSelectedLevel3Id(level3CategoryForLevel6._id);
+                    setSelectedlevel4(level4CategoryForLevel6._id);
+                    setSelectedlevel5(level5Category._id);
+                    setSelectedlevel6(selectedValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            switch (level) {
+                case 4:
+                    setSelectedlevel4('');
+                    break;
+                case 5:
+                    setSelectedlevel5('');
+                    break;
+                case 6:
+                    setSelectedlevel6('');
+                    break;
+                default:
+                    break;
+            }
         }
     };
     const [isLoading, setIsLoading] = useState(false);

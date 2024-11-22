@@ -37,6 +37,7 @@ const ProductDetail = ({ categories }) => {
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
+    const [brand, setBrand] = useState([]);
 
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
@@ -224,6 +225,13 @@ const ProductDetail = ({ categories }) => {
             if (variantResponse.data && variantResponse.data.data) {
                 setVariantData(variantResponse.data.data || []);
             }
+            try {
+                const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+                console.log("Response 2", res.data.data.brand_list);
+                setBrand(res.data.data.brand_list);
+            } catch (err) {
+                console.error('Error fetching variants:', err);
+            }
         } catch (err) {
             setError('Error fetching product details');
         } finally {
@@ -250,9 +258,19 @@ const ProductDetail = ({ categories }) => {
         }
     };
     const handleChange = (e) => {
+        console.log('handle change', e.target);
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData({
+            ...formData,
+            [name]: value, 
+        });
     };
+    
+    // const handleChange = (e) => {
+    //     console.log('handle change', e.target);
+    //     const { name, value } = e.target;
+    //     setFormData({ ...formData, [name]: value });
+    // };
     const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
 
     useEffect(() => {
@@ -264,6 +282,8 @@ const ProductDetail = ({ categories }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (view !== 'taxonomy' && view !== 'variants') {
+            console.log('formdata',JSON.stringify(formData));
+            console.log('Originaldata',JSON.stringify(originalData));
             if (JSON.stringify(formData) === JSON.stringify(originalData)) {
                 Swal.fire({
                     title: 'Warning!',
@@ -290,6 +310,8 @@ const ProductDetail = ({ categories }) => {
                         url: formData.url,
                         base_price: formData.base_price,
                         breadcrumb: formData.breadcrumb,
+                        mpn: formData.mpn,
+                        brand_id: formData.brand_id,
                         tags: formData.tags,
                         key_features: formData.key_features,
                         msrp: formData.msrp,
@@ -427,7 +449,6 @@ const ProductDetail = ({ categories }) => {
         setIsPopupOpen(false);
     };
 
-
     const handleThumbnailClick = (image) => {
         setMainImage(image);
     };
@@ -477,17 +498,40 @@ const ProductDetail = ({ categories }) => {
                             <div className="product-detail-section">
                                 <h3>Edit Product Details</h3>
                                 <div className="form-group">
-                                    <label htmlFor="product_name">MPN</label>
-                                    <input type="text" id="product_name" className='input_pdps' name="product_name" value={String(formData.mpn || '')} onChange={handleChange} required />
+                                    <label htmlFor="mpn">MPN</label>
+                                    <input type="text" id="mpn" className='input_pdps' name="mpn" value={String(formData.mpn || '')} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="product_name">Product Name</label>
                                     <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name ? formData.product_name.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="product_name">Brand</label>
-                                    <input type="text" id="product_name" className='input_pdps' name="product_name" value={String(formData.brand || '')} onChange={handleChange} required />
+                                <label htmlFor="brand">Brand</label>
+                                    <select
+                                        id="brand-select"
+                                        name="brand_id"
+                                        value={String(formData.brand_id || '')} 
+                                        onChange={(e) => {
+                                            const selectedOption = brand.find(item => item.id === Number(e.target.value));
+                                            handleChange({
+                                                target: {
+                                                    name: 'brand_id',
+                                                    value: e.target.value,
+                                                    brand_name: selectedOption ? selectedOption.name : '',
+                                                }
+                                            });
+                                        }}
+                                        className="dropdown"
+                                        style={{ width: '100%', margin: '6px 4px 6px 2px' }}
+                                    >
+                                        {brand.map((item) => (
+                                            <option key={item.id} value={item.id}>
+                                                {item.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+                               
                                 <div className="form-group">
                                     <label htmlFor="base_price">Base Price</label>
                                     <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
@@ -934,20 +978,116 @@ const ProductDetail = ({ categories }) => {
 
                             <div className="form-group">
                                 <label htmlFor="features">Features</label>
-                                <input type="text" id="features" name="features" className='input_pdps' value={formData.features || ''} onChange={handleChange} />
+                                <textarea
+                                    id="features"
+                                    name="features"
+                                    className="input_pdps"
+                                    value={
+                                        formData.features
+                                            ?.split('\n')
+                                            .filter((feature) => feature.trim() !== '')
+                                            .map((feature) => `* ${feature.trim().replace(/^\*/, '')}`)
+                                            .join('\n') || ''
+                                    }
+                                    onChange={(e) => {
+                                        const updatedFeatures = e.target.value
+                                            .split('\n')
+                                            .map((line) => line.replace(/^\* */, '').trim())
+                                            .join('\n');
+                                        handleChange({
+                                            target: {
+                                                name: 'features',
+                                                value: updatedFeatures,
+                                            },
+                                        });
+                                    }}
+                                />
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="short_description">Short Description</label>
-                                <input type="text" id="short_description" name="short_description" className='input_pdps' value={formData.short_description || ''} onChange={handleChange} />
+                                <textarea
+                                    id="short_description"
+                                    name="short_description"
+                                    className="input_pdps"
+                                    value={
+                                        formData.short_description
+                                            ?.split('\n')
+                                            .filter((desc) => desc.trim() !== '')
+                                            .map((desc) => `* ${desc.trim().replace(/^\*/, '')}`)
+                                            .join('\n') || ''
+                                    }
+                                    onChange={(e) => {
+                                        const updatedDescription = e.target.value
+                                            .split('\n')
+                                            .map((line) => line.replace(/^\* */, '').trim())
+                                            .join('\n');
+                                        handleChange({
+                                            target: {
+                                                name: 'short_description',
+                                                value: updatedDescription,
+                                            },
+                                        });
+                                    }}
+                                />
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="long_description">Long Description</label>
-                                <input type="text" id="long_description" name="long_description" className='input_pdps' value={formData.long_description || ''} onChange={handleChange} />
+                                <textarea
+                                    id="long_description"
+                                    name="long_description"
+                                    className="input_pdps"
+                                    value={
+                                        formData.long_description
+                                            ?.split('\n')
+                                            .filter((desc) => desc.trim() !== '')
+                                            .map((desc) => `* ${desc.trim().replace(/^\*/, '')}`)
+                                            .join('\n') || ''
+                                    }
+                                    onChange={(e) => {
+                                        const updatedDescription = e.target.value
+                                            .split('\n')
+                                            .map((line) => line.replace(/^\* */, '').trim())
+                                            .join('\n');
+                                        handleChange({
+                                            target: {
+                                                name: 'long_description',
+                                                value: updatedDescription,
+                                            },
+                                        });
+                                    }}
+                                />
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="tags">Tags</label>
-                                <input type="text" id="tags" name="tags" className='input_pdps' value={formData.tags || ''} onChange={handleChange} />
+                                <textarea
+                                    id="tags"
+                                    name="tags"
+                                    className="input_pdps"
+                                    value={
+                                        formData.tags
+                                            ?.split('\n')
+                                            .filter((tag) => tag.trim() !== '')
+                                            .map((tag) => `* ${tag.trim().replace(/^\*/, '')}`)
+                                            .join('\n') || ''
+                                    }
+                                    onChange={(e) => {
+                                        const updatedTags = e.target.value
+                                            .split('\n')
+                                            .map((line) => line.replace(/^\* */, '').trim())
+                                            .join('\n');
+                                        handleChange({
+                                            target: {
+                                                name: 'tags',
+                                                value: updatedTags,
+                                            },
+                                        });
+                                    }}
+                                />
                             </div>
+
                         </div>
                     )}
                     {view !== 'variants' && (<button type="submit" className="save-button_pdp" onClick={swapProductToCategory}>Save</button>)}
