@@ -37,29 +37,25 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     );
 
     const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
-    const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
-        level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
-    );
 
-    const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
-    const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
-        level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
+    const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
+    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)
     );
+    const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
+    const filteredCategoriesLevel3 = levelTwoCategory
+        ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
+            level3.name.toLowerCase().includes(safeSearchQuery)
+        );
 
     const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
-    const filteredCategoriesLevel4 = levelThreeCategory?.level_three_category_list.filter(level4 =>
-        level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
-    );
+    const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
 
     const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
-    const filteredCategoriesLevel5 = levelFourCategory?.level_four_category_list.filter(level5 =>
-        level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
-    );
-
+    const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
     const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
-    const filteredCategoriesLevel6 = levelFiveCategory?.level_five_category_list.filter(level6 =>
-        level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
-    );
+    const filteredCategoriesLevel6 = levelFiveCategory
+        ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
+
 
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -82,27 +78,26 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setIsCategoryDropdownOpen(false);
     };
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
-    const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
+    const [isAddProductVisible, setIsAddProductVisible] = useState(false);
     useEffect(() => {
-      // Fetch the API response and store last_level_category IDs
-      const fetchCategoryData = async () => {
-        const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-        console.log(res.data.data.last_level_category,'Response the check');
-        
-        setLastLevelCategoryIds(res.data.data.last_level_category);
-      };
-      
-      fetchCategoryData();
+        // Fetch the API response and store last_level_category IDs
+        const fetchCategoryData = async () => {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+            // console.log(res.data.data.last_level_category,'Response the check');        
+            setLastLevelCategoryIds(res.data.data.last_level_category);
+        };
+
+        fetchCategoryData();
     }, []);
-    const handleCategorySelectForVariants = async (id,level) => {
-      const selectedIdString = String(id);
-      const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
-      if (isIdInLastLevel) {
-          setIsAddProductVisible(true);
-      }
-      else{
-          setIsAddProductVisible(false);
-      }
+    const handleCategorySelectForVariants = async (id, level) => {
+        const selectedIdString = String(id);
+        const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
+        if (isIdInLastLevel) {
+            setIsAddProductVisible(true);
+        }
+        else {
+            setIsAddProductVisible(false);
+        }
         setSelectedCategoryForVariant(id);
         setSelectedCategoryLevelForVariant(level);
         try {
@@ -117,35 +112,222 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         handleCategorySelectForVariants();
     }, []);
     const handleLevel2Select = (id) => {
-        setselectedLevel2Id(id);
-        setSelectedLevel3Id('');
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel2DropdownOpen(false);
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            let level1Category;
+            categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
+
+                if (foundLevel2) {
+                    level1Category = level1;
+                    return true;
+                }
+                return false;
+            });
+
+            if (!level1Category) {
+                console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
+                return;
+            }
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(selectedValue);
+            setSelectedLevel3Id('');
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel2DropdownOpen(false);
+        }
+        else {
+            setselectedLevel2Id('');
+        }
     };
 
     const handleLevel3Select = (id) => {
-        setSelectedLevel3Id(id);
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel3DropdownOpen(false);
+        const selectedValue = id;
+        console.log(selectedValue, 'selectedValue');
+        if (selectedValue !== '') {
+            let level1Category, level2Category;
+            categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.find(level2 =>
+                    level2.level_two_category_list.some(level3 => level3._id === selectedValue)
+                );
+                if (foundLevel2) {
+                    level1Category = level1;
+                    level2Category = foundLevel2;
+                    return true;
+                }
+                return false;
+            });
+            if (!level2Category || !level1Category) {
+                console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
+                return;
+            }
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(level2Category._id);
+            setSelectedLevel3Id(selectedValue);
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel3DropdownOpen(false);
+        }
+        else {
+            setSelectedLevel3Id('');
+        }
     };
 
     const handleLevelSelect = (level, id) => {
-        switch (level) {
-            case 4:
-                setSelectedlevel4(id);
-                break;
-            case 5:
-                setSelectedlevel5(id);
-                break;
-            case 6:
-                setSelectedlevel6(id);
-                break;
-            default:
-                break;
+        const selectedValue = id || '';
+        if (selectedValue !== '') {
+            switch (level) {
+                case 4:
+                    const level3Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id === selectedValue);
+
+                    if (!level3Category) {
+                        console.error('Level 3 category not found for ID:', level3Category._id);
+                        return;
+                    }
+                    const level2Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
+
+                    if (!level2Category) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
+                        return;
+                    }
+                    const level1Category = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1Category) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1Category._id);
+                    setselectedLevel2Id(level2Category._id);
+                    setSelectedLevel3Id(level3Category._id);
+                    setSelectedlevel4(selectedValue);
+                    break;
+                case 5:
+                    const level4Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .find(level4 => level4._id);
+
+                    if (!level4Category) {
+                        console.error('Level 4 category not found for ID:', level4Category._id);
+                        return;
+                    }
+                    const level3CategoryForLevel5 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id);
+
+                    if (!level3CategoryForLevel5) {
+                        console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
+                        return;
+                    }
+                    const level2CategoryForLevel5 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+
+                    if (!level2CategoryForLevel5) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
+                        return;
+                    }
+                    const level1CategoryForLevel5 = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1CategoryForLevel5) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1CategoryForLevel5._id);
+                    setselectedLevel2Id(level2CategoryForLevel5._id);
+                    setSelectedLevel3Id(level3CategoryForLevel5._id);
+                    setSelectedlevel4(level4Category._id);
+                    setSelectedlevel5(selectedValue);
+                    break;
+                case 6:
+                    const level5Category = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .flatMap(level4 => level4.level_four_category_list)
+                        .find(level5 => level5._id);
+
+                    if (!level5Category) {
+                        console.error('Level 5 category not found for ID:', level5Category._id);
+                        return;
+                    }
+
+                    const level4CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .flatMap(level3 => level3.level_three_category_list)
+                        .find(level4 => level4._id);
+
+                    if (!level4CategoryForLevel6) {
+                        console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
+                        return;
+                    }
+                    const level3CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .flatMap(level2 => level2.level_two_category_list)
+                        .find(level3 => level3._id);
+
+                    if (!level3CategoryForLevel6) {
+                        console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
+                        return;
+                    }
+                    const level2CategoryForLevel6 = categories.category_list
+                        .flatMap(level1 => level1.level_one_category_list)
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+
+                    if (!level2CategoryForLevel6) {
+                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
+                        return;
+                    }
+                    const level1CategoryForLevel6 = categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id)
+                    );
+
+                    if (!level1CategoryForLevel6) {
+                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
+                        return;
+                    }
+
+                    setSelectedCategoryId(level1CategoryForLevel6._id);
+                    setselectedLevel2Id(level2CategoryForLevel6._id);
+                    setSelectedLevel3Id(level3CategoryForLevel6._id);
+                    setSelectedlevel4(level4CategoryForLevel6._id);
+                    setSelectedlevel5(level5Category._id);
+                    setSelectedlevel6(selectedValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            switch (level) {
+                case 4:
+                    setSelectedlevel4('');
+                    break;
+                case 5:
+                    setSelectedlevel5('');
+                    break;
+                case 6:
+                    setSelectedlevel6('');
+                    break;
+                default:
+                    break;
+            }
         }
     };
     const [isLoading, setIsLoading] = useState(false);
@@ -161,7 +343,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant,selectedCategoryLevelForVariant) => {
+    const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         setIsLoading(true);
         setError(null);
         Swal.fire({
@@ -170,6 +352,13 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             showCancelButton: true,
             confirmButtonText: 'Save',
             cancelButtonText: 'Cancel',
+            customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel',
+            },
             inputValidator: (value) => {
                 if (!value) {
                     return 'You need to write something!';
@@ -182,11 +371,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                         name: result.value,
                         category_varient_id: category_varient_id,
                         category_id: selectedCategoryForVariant,
-                        category_name:selectedCategoryLevelForVariant
+                        category_name: selectedCategoryLevelForVariant
                     });
-                    Swal.fire('Success', 'Variant added successfully!', 'success')
-                    await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
-
+                    Swal.fire({ title: 'Success', text: 'Variant added successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+                    await handleCategorySelectForVariants();
                 } catch (err) {
                     console.error('Error adding variant:', err);
                     setError('Failed to add variant. Please try again.');
@@ -211,12 +399,12 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                 }
             },
             customClass: {
-              container: 'swal-custom-container',  
-              popup: 'swal-custom-popup',          
-              title: 'swal-custom-title',          
-              confirmButton: 'swal-custom-confirm',
-              cancelButton: 'swal-custom-cancel'   
-          }
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel'
+            }
         });
 
         if (typeValueName) {
@@ -232,9 +420,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                         option_id: typeId,
                     }
                 );
-                Swal.fire('Success', 'Variant value added successfully!', 'success')
-                await handleCategorySelectForVariants(); // Ensure it's awaited for proper sequencing
-                // Here you can update the state or fetch the updated data if needed
+                Swal.fire({ title: 'Success', text: 'Variant value added successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+                await handleCategorySelectForVariants(); 
 
             } catch (err) {
                 console.error('Error adding variant value:', err);
@@ -247,18 +434,18 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
     const filteredVariantList = variantList.length > 0
-      ? variantList.flatMap((variant) =>
-          variant.option_value_list
-            ? variant.option_value_list.filter((value) =>
-                value.type_value_name && 
-                value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            : []
+        ? variantList.flatMap((variant) =>
+            variant.option_value_list
+                ? variant.option_value_list.filter((value) =>
+                    value.type_value_name &&
+                    value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                : []
         )
-      : [];
-  
+        : [];
+
     const handleSearchChangeforVariants = (e) => {
-      setSearchQuery(e.target.value);
+        setSearchQuery(e.target.value);
     };
     return (
         <div>
@@ -286,7 +473,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select Category</span>
                                     </div>
                                     {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id,'level-1'); }}>
+                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
                                             <span>{level1.name}</span>
                                         </div>
                                     ))}
@@ -316,7 +503,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id,'level-2'); }}>
+                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -346,7 +533,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id,'level31'); }}>
+                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level31'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -376,7 +563,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id,'level-4'); }}>
+                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                             <span>{level4.name}</span>
                                         </div>
                                     ))}
@@ -406,7 +593,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id,'level-5'); }}>
+                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                             <span>{level5.name}</span>
                                         </div>
                                     ))}
@@ -436,7 +623,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id,'level-6'); }}>
+                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                             <span>{level6.name}</span>
                                         </div>
                                     ))}
@@ -446,11 +633,11 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     </div>
                 </div>
             </div>
-             {isAddProductVisible && (
+            {isAddProductVisible && (
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant,selectedCategoryLevelForVariant);
+                        handleAddVariant(variantsData.category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant);
                     }}
                     className='addvariant_btn'
                     style={{
@@ -462,54 +649,54 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {variantsData.varient_list && variantsData.varient_list.length > 0 && (
                 <div>
-                   
 
-{variantsData.varient_list && (
-  <div className="variant-container">
-    <div className="variant-header">
-      <span>Variants</span>
-    </div>
 
-{variantList.length > 0 && (
-      <div className="variant-container">
-        <div className="variant-option-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Option Type</th>
-                <th>Values</th>
-              </tr>
-            </thead>
-            <tbody>
-              {variantList.map((variant, index) => (
-                <tr key={index}>
-                  <td>{variant.type_name} <button
-                      onClick={() => handleAddVariantValue(variant.type_id)}
-                      className="add-variant-value-button"
-                    >+
-                    </button></td>
-                  <td>
-                    {variant.option_value_list.length > 0 ? (
-                      <ul className="option-value-list">
-                        {variant.option_value_list.map((value, valueIndex) => (
-                          <li key={valueIndex} className="option-value-item">
-                            {value.type_value_name}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span>No values available</span>
-                    )}
+                    {variantsData.varient_list && (
+                        <div className="variant-container">
+                            <div className="variant-header">
+                                <span>Variants</span>
+                            </div>
 
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                            {variantList.length > 0 && (
+                                <div className="variant-container">
+                                    <div className="variant-option-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Option Type</th>
+                                                    <th>Values</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {variantList.map((variant, index) => (
+                                                    <tr key={index}>
+                                                        <td>{variant.type_name} <button
+                                                            onClick={() => handleAddVariantValue(variant.type_id)}
+                                                            className="add-variant-value-button"
+                                                        >+
+                                                        </button></td>
+                                                        <td>
+                                                            {variant.option_value_list.length > 0 ? (
+                                                                <ul className="option-value-list">
+                                                                    {variant.option_value_list.map((value, valueIndex) => (
+                                                                        <li key={valueIndex} className="option-value-item">
+                                                                            {value.type_value_name}
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            ) : (
+                                                                <span>No values available</span>
+                                                            )}
 
-        {/* Search Bar for the second table */}
-        {/* <div className="search-bar">
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Search Bar for the second table */}
+                                    {/* <div className="search-bar">
           <input
             type="text"
             value={searchQuery}
@@ -520,8 +707,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
           />
         </div> */}
 
-        {/* Second table for displaying Variant, Price, and Available */}
-        {/* <div className="variant-table">
+                                    {/* Second table for displaying Variant, Price, and Available */}
+                                    {/* <div className="variant-table">
           <table>
             <thead>
               <tr>
@@ -541,10 +728,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             </tbody>
           </table>
         </div> */}
-      </div>
-    )}
-  </div>
-)}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                 </div>
             )}

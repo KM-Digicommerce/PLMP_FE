@@ -120,7 +120,63 @@
 .swal-custom-confirm {
   width: 100% !important;
 }
+.swal-custom-confirm-side{
+  width: 81%;
+  padding: 10px;
+  margin: 5px;}
 .selectFile_btn{
   width: 100%;
   padding: 5px !important;
+}
+/* Modal Styles */
+.response-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.response-content {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.response-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.json-viewer {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 10px;
 }

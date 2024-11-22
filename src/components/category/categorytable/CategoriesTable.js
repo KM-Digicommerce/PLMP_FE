@@ -599,6 +599,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       showCancelButton: true,
       confirmButtonText: 'Save',
       cancelButtonText: 'Cancel',
+      customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
       inputValidator: (value) => {
         if (!value) {
           return 'You need to write something!';
@@ -618,12 +619,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           console.log(result.status, 'result.status');
 
           if (result.status != false) {
-            Swal.fire('Updated!', 'Product type has been updated.', 'success');
+            Swal.fire({ title: 'Updated!', text: 'Product type has been updated.', icon: 'success', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
           }
         } catch (error) {
           console.error('Error updating product type:', error);
-          Swal.fire('Error!', 'There was an error updating the product type.', 'error');
-        }
+          Swal.fire({ title: 'Error!', text: 'There was an error updating the product type.', icon: 'error', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
+               }
       }
     });
   };
@@ -671,9 +672,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSuggestions([]);
   };
   const sortedProducts = sortProducts(products);
-
   let sortedProductss = sortProducts(products);
-  // console.log(sortedProductss, 'sortedProducts');
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
       product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
@@ -681,7 +680,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       product.tags.toLowerCase().includes(searchQuerylist.toLowerCase())
     );
   };
-
 
   return (
     <div className="CategoryMain">

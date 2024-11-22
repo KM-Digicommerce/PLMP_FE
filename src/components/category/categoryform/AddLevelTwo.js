@@ -42,7 +42,7 @@ onCloseDialog();
 
   return (
     <div className="add-section">
-      <p className="form-title">Add New Category</p>
+      <p className="form-title">Add Level 2 Category</p>
       <form onSubmit={handleSubmit}>
         <select 
           value={selectedCategoryId} 

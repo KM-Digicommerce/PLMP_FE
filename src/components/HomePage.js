@@ -11,6 +11,7 @@ import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
 import axiosInstance from '../utils/axiosConfig.js';
 import { useNavigate,useLocation } from 'react-router-dom';
+import HistoryPage from '../HistoryPage.js';
 
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -19,6 +20,8 @@ function HomePage() {
   const [showProductList, setShowProductList] = useState(false);
   const [showVariantsTable, setShowVariantsTable] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -91,6 +94,17 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handleHistoryClick = () => {
+    if (location.pathname.includes("product/")) { 
+      navigate("/HomePage");
+    }
+    setShowHistory(true);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   return (
     <div>
       <Header />
@@ -103,6 +117,7 @@ function HomePage() {
             OnAllVariantsClick={handleAllVariantsClick}
             OnAddProductClick={handleAddProductsClick}
             onDashboardClick={handleDashboardClick}
+            onHistoryClick={handleHistoryClick}
           />
         </div>
         <div className="right-container">
@@ -118,6 +133,8 @@ function HomePage() {
                 <VariantList categories={categoriesData} />
               ) : addProduct ? (
                 <AddProduct categories={categoriesData} />
+              ) : showHistory ? (
+                <HistoryPage  />
               ) : null (
               )
             } />

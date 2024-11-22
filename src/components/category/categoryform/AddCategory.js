@@ -56,7 +56,7 @@ const AddCategory = ({ refreshCategories, onCloseDialog, setIsTyping }) => {
 
   return (
     <div className="add-category">
-      <p className="form-title">Add New Category</p>
+      <p className="form-title">Add Level 1 Category</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
