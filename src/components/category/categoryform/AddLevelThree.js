@@ -52,7 +52,7 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
 
   return (
     <div className="add-product-type">
-      <p className="form-title">Add New Category</p>
+      <p className="form-title">Add Level 3 Category</p>
       <form onSubmit={handleSubmit}>
         <select 
           value={selectedCategoryId} 

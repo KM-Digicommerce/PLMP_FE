@@ -1,29 +1,20 @@
 .add-product-container {
     max-width: 178px;
-    /* margin: 0 auto; */
     padding: 20px;
-    /* border-radius: 8px; */
     float: right;
-    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff; */
 }
 input[type="text"] {
-    margin: 10px 20px 10px 10px;
+    margin: 6px 20px 6px 10px;
 }
 input[type="number"] {
     margin: 10px 20px 10px 10px;
 }
-.form-section {
-    margin-bottom: 20px;
-}
-
 .input-group {
     display: flex;
     justify-content: space-between;
 }
-
 .input-group input, .input-group textarea {
-    width: 48%; /* Adjust width as needed */
+    width: 48%; 
     padding: 10px 0px 10px 4px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -86,14 +77,15 @@ textarea {
 
 .close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 5px;
+    right: 1px;
     background: transparent;
     border: none;
     font-size: 20px;
     cursor: pointer;
     color: #4c4949;
     transition: color 0.3s;
+    text-align: right;
 }
 
 .close-btn:hover {
@@ -101,7 +93,7 @@ textarea {
 }
 
 .form-section {
-    margin-bottom: 15px; /* Space between sections */
+    margin-bottom: 10px; /* Space between sections */
 }
 
 input, textarea {
@@ -139,4 +131,134 @@ textarea {
 .save-button {
     background-color: #28a745;
     color: white;
+}
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    align-items: center;
+}
+
+.pricing-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-field label {
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.pricing-field input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.variant-scroll {
+    overflow-x: auto; /* Allows horizontal scrolling */
+    white-space: nowrap; /* Prevents wrapping */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.variant-row {
+    display: flex;
+    gap: 15px; /* Space between items */
+    align-items: center;
+}
+
+.variant-field {
+    min-width: 200px; /* Ensures fields have a minimum width */
+}
+
+.variant-field label {
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: bold;
+    display: block;
+}
+
+.variant-field input, .variant-field .MuiFormControl-root {
+    font-size: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 80%;
+    margin: 0px;
+}
+.variant-dropdown {
+    display: inline-block;
+    /* margin-top: 7px;
+    margin-bottom: 12px; */
+    min-width: 200px;
+}
+
+.dropdown-label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.dropdown-container {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+.styled-dropdown {
+    font-size: 16px;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); */
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.styled-dropdown:hover {
+    border-color: #007bff;
+}
+
+.MuiMenuItem-root {
+    font-size: 16px;
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+.MuiSelect-icon {
+    color: #007bff;
+}
+
+.styled-dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+}
+.add-variant-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-variant-btn:hover {
+    background-color: #0056b3;
+}
+.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    height: 4px !important;
+    padding: 0px 6px !important;
+}
+.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {
+    min-height: 18px;
+}
+.css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{
+    font-size: 12px !important;
 }

@@ -142,7 +142,7 @@ const AddLevelSix = ({
                     placeholder="Enter Level 6 name"
                     required
                 />
-                <button type="submit">Add New Level 6</button>
+                <button type="submit">Add New Category</button>
             </form>
         </div>
     );
