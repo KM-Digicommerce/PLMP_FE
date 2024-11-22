@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
-import Swal from 'sweetalert2';
 import axiosInstance from '../../../src/utils/axiosConfig';
 
 
@@ -13,13 +12,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [bulkEditData, setBulkEditData] = useState({
-    product_name: '',
-    BasePrice: '',
-    ManufacturerName: '',
-    tags: '',
-    Key_features: ''
-  });
+  // const [bulkEditData, setBulkEditData] = useState({  product_name: '',  BasePrice: '',  ManufacturerName: '',  tags: '',  Key_features: ''});
   const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");

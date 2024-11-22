@@ -34,7 +34,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQuerylist, setSearchQuerylist] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
-  const [searchPopupVisible, setSearchPopupVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -78,8 +77,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
   const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
   const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-  const [editingCategoryId, setEditingCategoryId] = useState(null);
-  const [newCategoryName, setNewCategoryName] = useState('');
+  // const [editingCategoryId, setEditingCategoryId] = useState(null);
+  // const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryLevel2, setSearchQueryLevel2] = useState('');
   const [searchQueryLevel3, setSearchQueryLevel3] = useState('');
@@ -181,6 +180,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     .flatMap(level3 => level3.level_three_category_list)
     .flatMap(level4 => level4.level_four_category_list)
     .flatMap(level5 => level5.level_five_category_list);
+console.log(level6Categories);
 
   const handleCategorySelectForVariants = async (id, category_level) => {
     setSelectedCategorylevelForallprod(category_level);
@@ -348,7 +348,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
-    if (selectedValue && selectedValue != 'add') {
+    if (selectedValue && selectedValue !== 'add') {
       const level3Category = categories.category_list
         .flatMap(level1 => level1.level_one_category_list)
         .flatMap(level2 => level2.level_two_category_list)
@@ -401,7 +401,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
-    if (selectedValue && selectedValue != 'add') {
+    if (selectedValue && selectedValue !== 'add') {
       const level4Category = categories.category_list
         .flatMap(level1 => level1.level_one_category_list)
         .flatMap(level2 => level2.level_two_category_list)
@@ -465,7 +465,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
-    if (selectedValue && selectedValue != 'add') {
+    if (selectedValue && selectedValue !== 'add') {
       const level5Category = categories.category_list
         .flatMap(level1 => level1.level_one_category_list)
         .flatMap(level2 => level2.level_two_category_list)
@@ -584,50 +584,50 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   // };
 
 
-  const handleCategoryNameChange = (e) => {
-    setNewCategoryName(e.target.value);
-  };
-  const cancelEdit = () => {
-    setEditingCategoryId(null);
-    setNewCategoryName('');
-  };
-  const handleEditProductType = (productTypeId, currentName, category_name) => {
-    Swal.fire({
-      title: 'Edit Product Type',
-      input: 'text',
-      inputValue: currentName,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      cancelButtonText: 'Cancel',
-      customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write something!';
-        }
-      }
-    }).then(async (result) => {
-      console.log(result, 'result');
-      if (result.isConfirmed) {
-        try {
-          await axiosInstance.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
-            id: productTypeId,
-            name: result.value,
-            category_name: category_name,
-          });
+  // const handleCategoryNameChange = (e) => {
+  //   setNewCategoryName(e.target.value);
+  // };
+  // const cancelEdit = () => {
+  //   setEditingCategoryId(null);
+  //   setNewCategoryName('');
+  // };
+  // const handleEditProductType = (productTypeId, currentName, category_name) => {
+  //   Swal.fire({
+  //     title: 'Edit Product Type',
+  //     input: 'text',
+  //     inputValue: currentName,
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Save',
+  //     cancelButtonText: 'Cancel',
+  //     customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
+  //     inputValidator: (value) => {
+  //       if (!value) {
+  //         return 'You need to write something!';
+  //       }
+  //     }
+  //   }).then(async (result) => {
+  //     console.log(result, 'result');
+  //     if (result.isConfirmed) {
+  //       try {
+  //         await axiosInstance.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
+  //           id: productTypeId,
+  //           name: result.value,
+  //           category_name: category_name,
+  //         });
 
-          await refreshCategories();
-          console.log(result.status, 'result.status');
+  //         await refreshCategories();
+  //         console.log(result.status, 'result.status');
 
-          if (result.status != false) {
-            Swal.fire({ title: 'Updated!', text: 'Product type has been updated.', icon: 'success', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
-          }
-        } catch (error) {
-          console.error('Error updating product type:', error);
-          Swal.fire({ title: 'Error!', text: 'There was an error updating the product type.', icon: 'error', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
-               }
-      }
-    });
-  };
+  //         if (result.status != false) {
+  //           Swal.fire({ title: 'Updated!', text: 'Product type has been updated.', icon: 'success', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
+  //         }
+  //       } catch (error) {
+  //         console.error('Error updating product type:', error);
+  //         Swal.fire({ title: 'Error!', text: 'There was an error updating the product type.', icon: 'error', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
+  //              }
+  //     }
+  //   });
+  // };
 
   const handleSort = (column) => {
     const direction = sortOrder.column === column && sortOrder.direction === 'asc' ? 'desc' : 'asc';
@@ -648,7 +648,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     return sortedProducts;
   };
   const handleSearchClick = () => {
-    setSearchPopupVisible(true);
+    // setSearchPopupVisible(true);
     setSearchVisible(!searchVisible);
 
   };
@@ -671,7 +671,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setSearchQuerylist(suggestion);
     setSuggestions([]);
   };
-  const sortedProducts = sortProducts(products);
+  // const sortedProducts = sortProducts(products);
   let sortedProductss = sortProducts(products);
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
@@ -715,7 +715,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                   {filteredCategories.map(level1 => (
                     <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}
                     >
-                      {editingCategoryId === level1._id ? (
+                      {/* {editingCategoryId === level1._id ? ( */}
                         <div>
                           {/* <input
                             type="text"
@@ -725,7 +725,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                           <button onClick={() => handleEditCategory(level1._id)}>Save</button>
                           <button onClick={cancelEdit}>Cancel</button> */}
                         </div>
-                      ) : (
+                      {/* ) : ( */}
                         <div>
                           <span>{level1.name}</span>
                           {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level1._id, level1.name, 'level-1')} />
@@ -734,7 +734,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                             handleDeleteCategory(level1._id,'level-1');
                           }} /> */}
                         </div>
-                      )}
+                      {/* // )} */}
                     </div>
                   ))}
                   {/* <div className="dropdown-option" >
@@ -1245,13 +1245,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
                       <img
                         src={product.image[0]}
-                        // alt={product.product_name}
+                        alt={product.product_name}
                         className="product-image-round"
                       />
                     ) : (
                       <img
                         src={product.image}
-                        // alt={product.product_name}
+                        alt={product.product_name}
                         className="product-image-round"
                       />
                     )}
