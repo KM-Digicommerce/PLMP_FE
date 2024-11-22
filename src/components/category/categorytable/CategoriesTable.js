@@ -1012,7 +1012,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       {levelOneCategory && (
         <div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
+          {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
             <h3>Products</h3>
 
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -1077,7 +1077,95 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                 style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
               /> Total Products: {getFilteredAndSortedProducts().length}
             </h3>
-          </div>
+          </div> */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
+  <h3>Products</h3>
+
+  <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+    {searchVisible && (
+      <div style={{ position: 'relative', width: '500px' }}>
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuerylist}
+          onChange={handleSearchChange}
+          style={{
+            marginRight: '10px',
+            padding: '7px 0px 7px 0px', // Extra padding for clear button
+            fontSize: '15px',
+            width: '100%',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+          }}
+        />
+        {searchQuerylist && (
+          <span
+            onClick={() => {
+              setSearchQuerylist('');
+              setSuggestions([]);
+            }}
+            style={{
+              position: 'absolute',
+              right: '0px',
+              top: '47%',
+              transform: 'translateY(-50%)',
+              cursor: 'pointer',
+              fontSize: '16px',
+              color: '#aaa',
+            }}
+          >
+            ✕
+          </span>
+        )}
+      </div>
+    )}
+  </div>
+
+  {searchVisible && suggestions.length > 0 && (
+    <div
+      style={{
+        position: 'absolute',
+        top: '63%',
+        left: '55%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'white',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000,
+        width: '500px',
+        maxHeight: '150px',
+        overflowY: 'auto',
+        marginTop: '5px',
+      }}
+    >
+      {suggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          onClick={() => handleSuggestionClick(suggestion)}
+          className="suggest_cls"
+          style={{
+            padding: '6px',
+            cursor: 'pointer',
+            fontSize: '15px',
+            backgroundColor: 'white',
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+
+  <h3 style={{ fontWeight: 'normal', marginLeft: '10px' }}>
+    <FontAwesomeIcon
+      icon={faSearch}
+      onClick={handleSearchClick}
+      style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
+    /> Total Products: {getFilteredAndSortedProducts().length}
+  </h3>
+</div>
+
           <TableContainer
             component={Paper}
             sx={{ margin: '0px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
