@@ -1,7 +1,6 @@
 // src/components/Login.js
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 const Login = () => {
@@ -18,7 +17,6 @@ const Login = () => {
   const [emailError, setEmailError] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
-  const navigate = useNavigate();
 
   // Handle login form submission
   const handleSubmit = async (e) => {
