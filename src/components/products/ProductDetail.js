@@ -355,7 +355,8 @@ const ProductDetail = ({ categories }) => {
                 console.log(response.status, 'response.status');
 
                 if (response.status === 200) {
-                    alert('Category updated successfully');
+                    Swal.fire({  title: 'Success!',  text: 'Category updated successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {      container: 'swal-custom-container',      popup: 'swal-custom-popup',      title: 'swal-custom-title',      confirmButton: 'swal-custom-confirm',      cancelButton: 'swal-custom-cancel'  }
+                    })
                     setCategoryIds('');
                     setCategoryName('');
                 } else {
@@ -417,7 +418,8 @@ const ProductDetail = ({ categories }) => {
             const resd = res.data.data.status;
             console.log(resd, 'resd');
             if (resd === true) {
-                alert('Sucessfully variants added!');
+                Swal.fire({ title: 'Success!', text: 'Sucessfully variants added!', icon: 'success', confirmButtonText: 'OK', customClass: {     container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel' }
+                })
                 fetchVariantDetail();
             }
         } catch (err) {
