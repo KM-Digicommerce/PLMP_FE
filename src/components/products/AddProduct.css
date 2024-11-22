@@ -86,6 +86,7 @@ textarea {
     color: #4c4949;
     transition: color 0.3s;
     text-align: right;
+    width: 6%;
 }
 
 .close-btn:hover {
