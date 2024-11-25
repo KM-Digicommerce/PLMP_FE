@@ -20,7 +20,7 @@ const Sidebar = ({
   onHistoryClick
 }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
-  const [showImportOptions, setShowImportOptions] = useState(false);
+  // const [showImportOptions, setShowImportOptions] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -51,7 +51,7 @@ const Sidebar = ({
     if (file) {
       setSelectedFile(file);
 
-      setShowImportOptions(true);
+      // setShowImportOptions(true);
     }
   };
   const handleImportClick = () => {
@@ -63,11 +63,11 @@ const Sidebar = ({
     setSelectedFile(null);
   };
 
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+  // const triggerFileInput = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
 
   const handleUpload = async () => {
     setShowImportModal(false);
@@ -86,7 +86,7 @@ const Sidebar = ({
       return;
     }
 
-    setShowImportOptions(false);
+    // setShowImportOptions(false);
     // setLoading(true);
 
     const formData = new FormData();
@@ -126,7 +126,7 @@ const Sidebar = ({
       setLoading(false);
     }
   };
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const handleExport = async () => {
     setLoading(true);
     try {

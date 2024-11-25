@@ -60,10 +60,13 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
     };
-
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
+            if (!id) {
+                id = selectedCategoryId;
+                setIsAddProductVisible(true);
+            }
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
@@ -99,6 +102,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setSelectedCategoryForVariant(id);
         setSelectedCategoryLevelForVariant(level);
         try {
+            if (!id) {
+                id = selectedCategoryId;
+                setIsAddProductVisible(true);
+            }
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             setVariantsData(res.data.data);
         } catch (err) {
@@ -329,7 +336,6 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     };
     // const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -351,12 +357,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             showCancelButton: true,
             confirmButtonText: 'Save',
             cancelButtonText: 'Cancel',
-            customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel',
+            customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel',
             },
             inputValidator: (value) => {
                 if (!value) {
@@ -397,12 +398,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     return 'You need to enter a value!';
                 }
             },
-            customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel'
+            customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel'
             }
         });
 
@@ -410,7 +406,6 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             try {
                 // setIsLoading(true);
                 setError(null);
-
                 // Make API call to add the new variant value
                  await axiosInstance.post(
                     `${process.env.REACT_APP_IP}/createValueForVarientName/`,
@@ -419,7 +414,6 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                         option_id: typeId,
                     }
                 );
-
                 Swal.fire({ title: 'Success', text: 'Variant value added successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-value', cancelButton: 'swal-custom-cancel',  },});
                 await handleCategorySelectForVariants(); 
 
