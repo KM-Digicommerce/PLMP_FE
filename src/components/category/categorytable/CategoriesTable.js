@@ -11,7 +11,6 @@ import AddLevelSix from '../categoryform/AddLevelSix';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-// import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -92,51 +91,31 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
   const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
 
-  const filteredCategoriesLevel2 = levelOneCategory
-    ? levelOneCategory.level_one_category_list.filter(level2 =>
-      level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
-    )
+  const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase()) )
     : categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 =>
       level2.name.toLowerCase().includes(searchQueryLevel2.toLowerCase())
     );
 
   const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
 
-  const filteredCategoriesLevel3 = levelTwoCategory
-    ? levelTwoCategory.level_two_category_list.filter(level3 =>
-      level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
+  const filteredCategoriesLevel3 = levelTwoCategory ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
     )
     : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 => level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase()));
 
-  const levelThreeCategory = levelTwoCategory
-    ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)
-    : null;
+  const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
 
 
-  const filteredCategoriesLevel4 = levelThreeCategory
-    ? levelThreeCategory.level_three_category_list.filter(level4 =>
-      level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase())
-    )
+  const filteredCategoriesLevel4 = levelThreeCategory? levelThreeCategory.level_three_category_list.filter(level4 =>  level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase()))
     : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 =>  level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase()));
 
-  const levelFourCategory = levelThreeCategory
-    ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4)
-    : null;
+  const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
 
-  const filteredCategoriesLevel5 = levelFourCategory
-    ? levelFourCategory.level_four_category_list.filter(level5 =>
-      level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase())
-    )
+  const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase()) )
     : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 =>  level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase()));
 
-  const levelFiveCategory = levelFourCategory
-    ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5)
-    : null;
+  const levelFiveCategory = levelFourCategory? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5): null;
 
-  const filteredCategoriesLevel6 = levelFiveCategory
-    ? levelFiveCategory.level_five_category_list.filter(level6 =>
-      level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase())
-    )
+  const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 =>  level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase()))
     : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 =>  level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase()));
 
   const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);
@@ -227,8 +206,6 @@ console.log(level6Categories);
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
-    console.log(e, 'selected category id');
-
     if (selectedValue && selectedValue !== 'add') {
       let level1Category;
       categories.category_list.some(level1 => {
@@ -250,12 +227,10 @@ console.log(level6Categories);
       setSelectedLevel2Id(selectedValue);
       setSelectedCategoryIdPopup(level1Category._id);
       setSelectedLevel2IdPopup(selectedValue);
-
       setSelectedLevel3Id('');
       setSelectedlevel4('');
       setSelectedlevel5('');
       setSelectedlevel6('');
-
       setIsLevel2DropdownOpen(false);
       setIsLevel3DropdownOpen(false);
     } else {
@@ -274,7 +249,6 @@ console.log(level6Categories);
   };
   const handleLevel3Select = (e) => {
     const selectedValue = e;
-    console.log(e, 'selected category id');
     if (selectedValue && selectedValue !== 'add') {
       let level1Category, level2Category;
       categories.category_list.some(level1 => {
@@ -298,11 +272,9 @@ console.log(level6Categories);
       setSelectedLevel2IdPopup(level2Category._id);
       setSelectedLevel3Id(selectedValue);
       setSelectedLevel3IdPopup(selectedValue);
-
       setSelectedlevel4('');
       setSelectedlevel5('');
       setSelectedlevel6('');
-
       setIsLevel3DropdownOpen(false);
     } else {
       if (selectedValue === 'add') {
@@ -340,14 +312,12 @@ console.log(level6Categories);
         console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
         return;
       }
-
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(level3Category._id);
       setSelectedCategoryIdPopup(level1Category._id);
       setSelectedLevel2IdPopup(level2Category._id);
       setSelectedLevel3IdPopup(level3Category._id);
-
       setSelectedlevel4(selectedValue);
       setSelectedLevel4IdPopup(selectedValue);
       setSelectedlevel5('');
@@ -394,7 +364,6 @@ console.log(level6Categories);
         console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
         return;
       }
-
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(level3Category._id);
@@ -403,11 +372,9 @@ console.log(level6Categories);
       setSelectedLevel2IdPopup(level2Category._id);
       setSelectedLevel3IdPopup(level3Category._id);
       setSelectedLevel4IdPopup(level4Category._id);
-
       setSelectedlevel5(selectedValue);
       setSelectedLevel5IdPopup(selectedValue);
       setSelectedlevel6('');
-
       setIslevel5DropdownOpen(false);
     } else {
       if (selectedValue === 'add') {
@@ -429,7 +396,6 @@ console.log(level6Categories);
         console.error('Level 5 category not found for ID:', level5Category._id);
         return;
       }
-
       const level4Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).find(level4 => level4._id);
 
       if (!level4Category) {
@@ -437,7 +403,6 @@ console.log(level6Categories);
         return;
       }
       const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id);
-
       if (!level3Category) {
         console.error('Level 3 category not found for ID:', level3Category._id);
         return;
@@ -448,15 +413,11 @@ console.log(level6Categories);
         console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
         return;
       }
-      const level1Category = categories.category_list.find(level1 =>
-        level1.level_one_category_list.some(level2 => level2._id)
-      );
-
+      const level1Category = categories.category_list.find(level1 =>level1.level_one_category_list.some(level2 => level2._id) );
       if (!level1Category) {
         console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
         return;
       }
-
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(level3Category._id);
@@ -467,7 +428,6 @@ console.log(level6Categories);
       setSelectedLevel3IdPopup(level3Category._id);
       setSelectedLevel4IdPopup(level4Category._id);
       setSelectedLevel5IdPopup(level5Category._id);
-
       setSelectedlevel6(selectedValue);
       setIslevel6DropdownOpen(false);
     } else {
@@ -581,11 +541,9 @@ console.log(level6Categories);
     const sortedProducts = [...products];
     sortedProducts.sort((a, b) => {
       if (a[sortOrder.column] < b[sortOrder.column]) {
-        return sortOrder.direction === 'asc' ? -1 : 1;
-      }
+        return sortOrder.direction === 'asc' ? -1 : 1; }
       if (a[sortOrder.column] > b[sortOrder.column]) {
-        return sortOrder.direction === 'asc' ? 1 : -1;
-      }
+        return sortOrder.direction === 'asc' ? 1 : -1; }
       return 0;
     });
     return sortedProducts;
@@ -593,17 +551,13 @@ console.log(level6Categories);
   const handleSearchClick = () => {
     // setSearchPopupVisible(true);
     setSearchVisible(!searchVisible);
-
   };
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuerylist(query);
     if (query.length > 0) {
-      const matchedSuggestions = products
-        .map((product) => product.product_name)
-        .filter((name) => name.toLowerCase().includes(query.toLowerCase()));
-      console.log(matchedSuggestions, 'sortedProducts');
+      const matchedSuggestions = products.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));
       setSuggestions(matchedSuggestions);
     } else {
       setSuggestions([]);
@@ -614,7 +568,6 @@ console.log(level6Categories);
     setSearchQuerylist(suggestion);
     setSuggestions([]);
   };
-  // const sortedProducts = sortProducts(products);
   let sortedProductss = sortProducts(products);
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
@@ -917,73 +870,6 @@ console.log(level6Categories);
       </div>
       {levelOneCategory && (
         <div>
-
-          {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
-            <h3>Products</h3>
-
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {searchVisible && (
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuerylist}
-                  onChange={handleSearchChange}
-                  style={{
-                    marginRight: '10px',
-                    padding: '7px',
-                    fontSize: '15px',
-                    width: '500px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                  }}
-                />
-              )}
-            </div>
-
-            {searchVisible && suggestions.length > 0 && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '63%',
-                  left: '54%',
-                  transform: 'translateX(-50%)',
-                  backgroundColor: 'white',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                  zIndex: 1000,
-                  width: '515px',
-                  maxHeight: '150px',
-                  overflowY: 'auto',
-                  marginTop: '5px',
-                }}
-              >
-                {suggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="suggest_cls"
-                    style={{
-                      padding: '6px',
-                      cursor: 'pointer',
-                      fontSize: '15px',
-                      backgroundColor: 'white',
-                    }}
-                  >
-                    {suggestion}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <h3 style={{ fontWeight: 'normal', marginLeft: '10px' }}>
-              <FontAwesomeIcon
-                icon={faSearch}
-                onClick={handleSearchClick}
-                style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
-              /> Total Products: {getFilteredAndSortedProducts().length}
-            </h3>
-          </div> */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
   <h3>Products</h3>
 
@@ -995,13 +881,7 @@ console.log(level6Categories);
           placeholder="Search products..."
           value={searchQuerylist}
           onChange={handleSearchChange}
-          style={{
-            marginRight: '10px',
-            padding: '7px 0px 7px 0px', // Extra padding for clear button
-            fontSize: '15px',
-            width: '100%',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
+          style={{ marginRight: '10px', padding: '7px 0px 7px 0px', fontSize: '15px', width: '100%', border: '1px solid #ddd', borderRadius: '4px',
           }}
         />
         {searchQuerylist && (
@@ -1049,66 +929,35 @@ console.log(level6Categories);
               <TableHead>
                 <TableRow>
                   <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('image')}
-                  >
+                    align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('image')} >
                     Image
                     {sortOrder.column === 'image' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('mpn')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('mpn')} >
                     MPN
                     {sortOrder.column === 'mpn' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('product_name')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('product_name')} >
                     Product Name
                     {sortOrder.column === 'product_name' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('brand')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('brand')} >
                     Brand
                     {sortOrder.column === 'brand' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('taxonomy')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('taxonomy')} >
                     Taxonomy
                     {sortOrder.column === 'taxonomy' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('price')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('price')} >
                     Base Price
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('msrp')}
-                  >
+                  <TableCell  align="left"  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}  onClick={() => handleSort('msrp')} >
                     Msrp
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}
-                    onClick={() => handleSort('model')}
-                  >
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('model')} >
                     Model
                     {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
@@ -1125,10 +974,8 @@ console.log(level6Categories);
                       />
                     )}
                     </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn ? `$${product.mpn}` : ''}
-                    </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>
-                      {product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
