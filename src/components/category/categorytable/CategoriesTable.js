@@ -974,10 +974,8 @@ console.log(level6Categories);
                       />
                     )}
                     </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn ? `$${product.mpn}` : ''}
-                    </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>
-                      {product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
