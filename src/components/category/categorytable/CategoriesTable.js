@@ -106,11 +106,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     ? levelTwoCategory.level_two_category_list.filter(level3 =>
       level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
     )
-    : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .filter(level3 =>
-        level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase())
-      );
+    : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 => level3.name.toLowerCase().includes(searchQueryLevel3.toLowerCase()));
 
   const levelThreeCategory = levelTwoCategory
     ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)
@@ -121,12 +117,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     ? levelThreeCategory.level_three_category_list.filter(level4 =>
       level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase())
     )
-    : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .filter(level4 =>
-        level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase())
-      );
+    : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 =>  level4.name.toLowerCase().includes(searchQueryLevel4.toLowerCase()));
 
   const levelFourCategory = levelThreeCategory
     ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4)
@@ -136,13 +127,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     ? levelFourCategory.level_four_category_list.filter(level5 =>
       level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase())
     )
-    : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .flatMap(level4 => level4.level_four_category_list)
-      .filter(level5 =>
-        level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase())
-      );
+    : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 =>  level5.name.toLowerCase().includes(searchQueryLevel5.toLowerCase()));
 
   const levelFiveCategory = levelFourCategory
     ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5)
@@ -152,14 +137,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     ? levelFiveCategory.level_five_category_list.filter(level6 =>
       level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase())
     )
-    : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .flatMap(level4 => level4.level_four_category_list)
-      .flatMap(level5 => level5.level_five_category_list)
-      .filter(level6 =>
-        level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase())
-      );
+    : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 =>  level6.name.toLowerCase().includes(searchQueryLevel6.toLowerCase()));
 
   const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list);
   const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -170,16 +148,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     .flatMap(level2 => level2.level_two_category_list)
     .flatMap(level3 => level3.level_three_category_list);
   const levelFourCategoryForVisible = level4Categories.find(level4 => level4._id === selectedlevel4);
-  const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-    .flatMap(level2 => level2.level_two_category_list)
-    .flatMap(level3 => level3.level_three_category_list)
-    .flatMap(level4 => level4.level_four_category_list);
+  const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list);
   const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
-  const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list)
-    .flatMap(level2 => level2.level_two_category_list)
-    .flatMap(level3 => level3.level_three_category_list)
-    .flatMap(level4 => level4.level_four_category_list)
-    .flatMap(level5 => level5.level_five_category_list);
+  const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list);
 console.log(level6Categories);
 
   const handleCategorySelectForVariants = async (id, category_level) => {
@@ -349,18 +320,13 @@ console.log(level6Categories);
   const handlelevel4 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level3Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .find(level3 => level3._id === selectedValue);
+      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id === selectedValue);
 
       if (!level3Category) {
         console.error('Level 3 category not found for ID:', level3Category._id);
         return;
       }
-      const level2Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
+      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
 
       if (!level2Category) {
         console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
@@ -402,28 +368,19 @@ console.log(level6Categories);
   const handlelevel5 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level4Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .flatMap(level3 => level3.level_three_category_list)
-        .find(level4 => level4._id);
+      const level4Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).find(level4 => level4._id);
 
       if (!level4Category) {
         console.error('Level 4 category not found for ID:', level4Category._id);
         return;
       }
-      const level3Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .find(level3 => level3._id);
+      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id);
 
       if (!level3Category) {
         console.error('Level 3 category not found for ID:', level3Category._id);
         return;
       }
-      const level2Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id));
 
       if (!level2Category) {
         console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
@@ -466,40 +423,26 @@ console.log(level6Categories);
   const handlelevel6 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level5Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .flatMap(level3 => level3.level_three_category_list)
-        .flatMap(level4 => level4.level_four_category_list)
-        .find(level5 => level5._id);
+      const level5Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).find(level5 => level5._id);
 
       if (!level5Category) {
         console.error('Level 5 category not found for ID:', level5Category._id);
         return;
       }
 
-      const level4Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .flatMap(level3 => level3.level_three_category_list)
-        .find(level4 => level4._id);
+      const level4Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).find(level4 => level4._id);
 
       if (!level4Category) {
         console.error('Level 4 category not found for ID:', level4Category._id);
         return;
       }
-      const level3Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .flatMap(level2 => level2.level_two_category_list)
-        .find(level3 => level3._id);
+      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id);
 
       if (!level3Category) {
         console.error('Level 3 category not found for ID:', level3Category._id);
         return;
       }
-      const level2Category = categories.category_list
-        .flatMap(level1 => level1.level_one_category_list)
-        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id));
 
       if (!level2Category) {
         console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
@@ -702,12 +645,7 @@ console.log(level6Categories);
               {isCategoryDropdownOpen && (
                 <div className="dropdown-options">
                   <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                    type="text" placeholder="Search category..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value) }} className="dropdown-search-input" onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
                     <span>Select Category</span>
@@ -758,13 +696,7 @@ console.log(level6Categories);
               </div>
               {isLevel2DropdownOpen && (
                 <div className="dropdown-options">
-                  <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQueryLevel2}
-                    onChange={(e) => { setSearchQueryLevel2(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                  <input type="text" placeholder="Search category..." value={searchQueryLevel2} onChange={(e) => { setSearchQueryLevel2(e.target.value) }} className="dropdown-search-input" onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                     <span>Select category</span>
@@ -803,13 +735,7 @@ console.log(level6Categories);
               </div>
               {isLevel3DropdownOpen && (
                 <div className="dropdown-options">
-                  <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQueryLevel3}
-                    onChange={(e) => { setSearchQueryLevel3(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                  <input  type="text"  placeholder="Search category..."  value={searchQueryLevel3}  onChange={(e) => { setSearchQueryLevel3(e.target.value) }}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                     <span>Select category</span>
@@ -847,13 +773,7 @@ console.log(level6Categories);
               </div>
               {islevel4DropdownOpen && (
                 <div className="dropdown-options">
-                  <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQueryLevel4}
-                    onChange={(e) => { setSearchQueryLevel4(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                  <input type="text" placeholder="Search category..." value={searchQueryLevel4} onChange={(e) => { setSearchQueryLevel4(e.target.value) }} className="dropdown-search-input" onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel4('')}>
                     <span>Select category</span>
@@ -891,13 +811,7 @@ console.log(level6Categories);
               </div>
               {islevel5DropdownOpen && (
                 <div className="dropdown-options">
-                  <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQueryLevel5}
-                    onChange={(e) => { setSearchQueryLevel5(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                  <input  type="text"  placeholder="Search category..."  value={searchQueryLevel5}  onChange={(e) => { setSearchQueryLevel5(e.target.value) }}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel5('')}>
                     <span>Select category</span>
@@ -933,13 +847,7 @@ console.log(level6Categories);
               </div>
               {islevel6DropdownOpen && (
                 <div className="dropdown-options">
-                  <input
-                    type="text"
-                    placeholder="Search category..."
-                    value={searchQueryLevel6}
-                    onChange={(e) => { setSearchQueryLevel6(e.target.value) }}
-                    className="dropdown-search-input"
-                    onClick={(e) => e.stopPropagation()}
+                  <input type="text" placeholder="Search category..." value={searchQueryLevel6} onChange={(e) => { setSearchQueryLevel6(e.target.value) }} className="dropdown-search-input" onClick={(e) => e.stopPropagation()}
                   />
                   <div className="dropdown-option" onClick={() => handlelevel6('')}>
                     <span>Select category</span>
@@ -995,9 +903,7 @@ console.log(level6Categories);
         <Dialog open={showAddlevel5Popup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
           <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"><span className="close-icon">X</span></button>
           <DialogContent>
-            <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup} selectedLevel2IdPopup={selectedLevel2IdPopup} selectedLevel3IdPopup={selectedLevel3IdPopup} selectedLevel4IdPopup={selectedLevel4IdPopup}
-              categories={categories}
-              refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
+            <AddLevelFive selectedCategoryIdPopup={selectedCategoryIdPopup} selectedLevel2IdPopup={selectedLevel2IdPopup} selectedLevel3IdPopup={selectedLevel3IdPopup} selectedLevel4IdPopup={selectedLevel4IdPopup} categories={categories} refreshCategories={refreshCategories} setIsTyping={setIsTyping} onCloseDialog={closeAddCategoryPopup} />
           </DialogContent>
         </Dialog>
 
@@ -1104,18 +1010,7 @@ console.log(level6Categories);
               setSearchQuerylist('');
               setSuggestions([]);
             }}
-            style={{
-              position: 'absolute',
-              right: '0px',
-              top: '47%',
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              fontSize: '16px',
-              color: '#aaa',
-            }}
-          >
-            ✕
-          </span>
+            style={{  position: 'absolute',  right: '0px',  top: '47%',  transform: 'translateY(-50%)',  cursor: 'pointer',  fontSize: '16px',  color: '#aaa', }}> ✕ </span>
         )}
       </div>
     )}
@@ -1123,33 +1018,13 @@ console.log(level6Categories);
 
   {searchVisible && suggestions.length > 0 && (
     <div
-      style={{
-        position: 'absolute',
-        top: '63%',
-        left: '55%',
-        transform: 'translateX(-50%)',
-        backgroundColor: 'white',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-        zIndex: 1000,
-        width: '500px',
-        maxHeight: '150px',
-        overflowY: 'auto',
-        marginTop: '5px',
-      }}
-    >
+      style={{ position: 'absolute', top: '63%', left: '55%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '500px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
       {suggestions.map((suggestion, index) => (
         <div
           key={index}
           onClick={() => handleSuggestionClick(suggestion)}
           className="suggest_cls"
-          style={{
-            padding: '6px',
-            cursor: 'pointer',
-            fontSize: '15px',
-            backgroundColor: 'white',
-          }}
+          style={{ padding: '6px', cursor: 'pointer', fontSize: '15px', backgroundColor: 'white', }}
         >
           {suggestion}
         </div>
@@ -1243,16 +1118,10 @@ console.log(level6Categories);
                 {getFilteredAndSortedProducts().map((product) => (
                   <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
-                      <img
-                        src={product.image[0]}
-                        alt={product.product_name}
-                        className="product-image-round"
+                      <img src={product.image[0]} alt={product.product_name} className="product-image-round"
                       />
                     ) : (
-                      <img
-                        src={product.image}
-                        alt={product.product_name}
-                        className="product-image-round"
+                      <img src={product.image} alt={product.product_name} className="product-image-round"
                       />
                     )}
                     </TableCell>

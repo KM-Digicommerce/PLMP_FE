@@ -1,6 +1,7 @@
 // src/components/Login.js
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 const Login = () => {
@@ -17,6 +18,7 @@ const Login = () => {
   const [emailError, setEmailError] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
+  const navigate = useNavigate();
 
   // Handle login form submission
   const handleSubmit = async (e) => {
@@ -32,7 +34,9 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('user_login_id', response.data.data.user_login_id);
-        window.location.href = '/HomePage';
+        // window.location.href = '/HomePage';
+        navigate("/HomePage");
+
       } else {
         setError('Login failed. Please check your credentials.');
       }
