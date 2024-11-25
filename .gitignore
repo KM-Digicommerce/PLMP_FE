@@ -23,10 +23,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.env
-<<<<<<< HEAD
+# .env
 package-lock.json
 package.json
-=======
->>>>>>> origin/devnew
-.env
+# .env
