@@ -18,7 +18,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
     const [variantsData, setVariantsData] = useState([]);
 
     const [searchQueries, setSearchQueries] = useState({
@@ -60,10 +60,13 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
     };
-
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
+            if (!id) {
+                id = selectedCategoryId;
+                setIsAddProductVisible(true);
+            }
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data); // Log the API response
             setVariantsData(res.data.data);
@@ -80,10 +83,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
     const [isAddProductVisible, setIsAddProductVisible] = useState(false);
     useEffect(() => {
-        // Fetch the API response and store last_level_category IDs
         const fetchCategoryData = async () => {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
-            // console.log(res.data.data.last_level_category,'Response the check');        
             setLastLevelCategoryIds(res.data.data.last_level_category);
         };
 
@@ -101,8 +102,11 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         setSelectedCategoryForVariant(id);
         setSelectedCategoryLevelForVariant(level);
         try {
+            if (!id) {
+                id = selectedCategoryId;
+                setIsAddProductVisible(true);
+            }
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
-            // console.log('API Response: here', res.data.data); 
             setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
@@ -330,9 +334,8 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             }
         }
     };
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -343,8 +346,10 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
+    console.log(level6Categories,'level6Categories');
+    
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
-        setIsLoading(true);
+        // setIsLoading(true);
         setError(null);
         Swal.fire({
             title: 'Add New Variant',
@@ -352,12 +357,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
             showCancelButton: true,
             confirmButtonText: 'Save',
             cancelButtonText: 'Cancel',
-            customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel',
+            customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel',
             },
             inputValidator: (value) => {
                 if (!value) {
@@ -367,7 +367,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
+                   await axiosInstance.post(`${process.env.REACT_APP_IP}/createVarientOption/`, {
                         name: result.value,
                         category_varient_id: category_varient_id,
                         category_id: selectedCategoryForVariant,
@@ -379,7 +379,7 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     console.error('Error adding variant:', err);
                     setError('Failed to add variant. Please try again.');
                 } finally {
-                    setIsLoading(false);
+                    // setIsLoading(false);
                 }
             }
         });
@@ -398,55 +398,50 @@ const VariantList = ({ categories, variants, refreshVariants }) => {
                     return 'You need to enter a value!';
                 }
             },
-            customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel'
+            customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel'
             }
         });
 
         if (typeValueName) {
             try {
-                setIsLoading(true);
+                // setIsLoading(true);
                 setError(null);
-
                 // Make API call to add the new variant value
-                const response = await axiosInstance.post(
+                 await axiosInstance.post(
                     `${process.env.REACT_APP_IP}/createValueForVarientName/`,
                     {
                         name: typeValueName,
                         option_id: typeId,
                     }
                 );
-                Swal.fire({ title: 'Success', text: 'Variant value added successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+                Swal.fire({ title: 'Success', text: 'Variant value added successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-value', cancelButton: 'swal-custom-cancel',  },});
                 await handleCategorySelectForVariants(); 
 
             } catch (err) {
                 console.error('Error adding variant value:', err);
                 setError('Failed to add variant value. Please try again.');
             } finally {
-                setIsLoading(false);
+                // setIsLoading(false);
             }
         }
     };
-    const [searchQuery, setSearchQuery] = useState('');
+    // const [searchQuery, setSearchQuery] = useState('');
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
-    const filteredVariantList = variantList.length > 0
-        ? variantList.flatMap((variant) =>
-            variant.option_value_list
-                ? variant.option_value_list.filter((value) =>
-                    value.type_value_name &&
-                    value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                : []
-        )
-        : [];
+    // const filteredVariantList = variantList.length > 0
+    //     ? variantList.flatMap((variant) =>
+    //         variant.option_value_list
+    //             ? variant.option_value_list.filter((value) =>
+    //                 value.type_value_name &&
+    //                 value.type_value_name.toLowerCase().includes(searchQuery.toLowerCase())
+    //             )
+    //             : []
+    //     )
+    //     : [];
+    //     console.log(filteredVariantList,'filteredVariantList');
 
-    const handleSearchChangeforVariants = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    // const handleSearchChangeforVariants = (e) => {
+    //     setSearchQuery(e.target.value);
+    // };
     return (
         <div>
             <h2 className='header_cls'>VariantList Schema!</h2>

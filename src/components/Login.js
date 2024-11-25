@@ -34,7 +34,9 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('user_login_id', response.data.data.user_login_id);
-        window.location.href = '/HomePage';
+        // window.location.href = '/HomePage';
+        navigate("/HomePage");
+
       } else {
         setError('Login failed. Please check your credentials.');
       }

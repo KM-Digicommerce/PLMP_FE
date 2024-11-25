@@ -45,7 +45,7 @@ const ProductDetail = ({ categories }) => {
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
 
     const [searchQueries, setSearchQueries] = useState({
         level1: '',
@@ -55,7 +55,7 @@ const ProductDetail = ({ categories }) => {
         level5: '',
         level6: '',
     });
-    const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
+    // const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
@@ -92,7 +92,7 @@ const ProductDetail = ({ categories }) => {
         setCategoryId(id);
         setCategoryIds(id);
         setCategoryName(category_name);
-        setSelectedCategoryForVariant(id);
+        // setSelectedCategoryForVariant(id);
     };
     useEffect(() => {
         handleCategorySelectForVariants();
@@ -182,6 +182,8 @@ const ProductDetail = ({ categories }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
+    console.log(level6Categories);
+    
 
     const fetchProductDetail = async () => {
         try {
@@ -191,26 +193,24 @@ const ProductDetail = ({ categories }) => {
 
             if (response.data && response.data.data) {
                 const productObj = response.data.data.product_obj;
-                const category_id = response.data.data.category_id;
-                const category_name = response.data.data.category_name;
                 setCategoryIds(response.data.data.category_id);
                 setCategoryIdForVariant(response.data.data.category_id);
-                if (response.data.data.category_name == 'level-1') {
+                if (response.data.data.category_name === 'level-1') {
                     handleCategorySelect(response.data.data.category_id);
                 }
-                if (response.data.data.category_name == 'level-2') {
+                if (response.data.data.category_name === 'level-2') {
                     handleLevel2Select(response.data.data.category_id);
                 }
-                if (response.data.data.category_name == 'level-3') {
+                if (response.data.data.category_name === 'level-3') {
                     handleLevel3Select(response.data.data.category_id);
                 }
-                if (response.data.data.category_name == 'level-4') {
+                if (response.data.data.category_name === 'level-4') {
                     handleLevelSelect('level-4', response.data.data.category_id);
                 }
-                if (response.data.data.category_name == 'level-5') {
+                if (response.data.data.category_name === 'level-5') {
                     handleLevelSelect('level-5', response.data.data.category_id);
                 }
-                if (response.data.data.category_name == 'level-6') {
+                if (response.data.data.category_name === 'level-6') {
                     handleLevelSelect('level-6', response.data.data.category_id);
                 }
                 setFormData(productObj);
