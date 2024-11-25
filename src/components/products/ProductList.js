@@ -194,7 +194,7 @@ const ProductList = () => {
                 Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
               <th className="msrpprice-column" onClick={() => handleSort("msrp")}>
-                MSRP Price {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                MSRP {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
               </th>
               <th className="model-column" onClick={() => handleSort("model")}>
                 Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
