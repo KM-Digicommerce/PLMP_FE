@@ -7,7 +7,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="" element={<Login />} />
+                <Route path="*" element={<Navigate to="" />} /> 
         {/* <Route path="/Login" element={<Login />} /> */}
         {/* <Route path="*" element={<Navigate to="/Login" />} />  */}
         {/* Redirect unmatched routes */}
