@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormControl } from '@mui/material';
 import axiosInstance from '../../../src/utils/axiosConfig';
-import { Margin } from '@mui/icons-material';
 
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
-    const [brands, setBrands] = useState([]);
 
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
@@ -379,8 +377,7 @@ const AddProduct = (categories) => {
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    const [data, setData] = useState([]);
-    const [variantsData, setVariantsData] = useState([]);
+    // const [variantsData, setVariantsData] = useState([]);
 
     const [searchQueries, setSearchQueries] = useState({
         level1: '',
@@ -431,7 +428,7 @@ const AddProduct = (categories) => {
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data);
-            setVariantsData(res.data.data);
+            // setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
         }
@@ -469,7 +466,7 @@ const AddProduct = (categories) => {
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             // console.log('API Response: here', res.data.data); // Log the API response
-            setVariantsData(res.data.data);
+            // setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
         }
@@ -696,8 +693,7 @@ const AddProduct = (categories) => {
             }
         }
     };
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+
 
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
@@ -709,6 +705,8 @@ const AddProduct = (categories) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
+    console.log(level6Categories);
+    
     return (
         <div>
             <h2 className='header_cls_prod'>Product Schema!</h2>
