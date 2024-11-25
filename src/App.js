@@ -10,6 +10,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/Login" element={<Login />} /> {/* Login Route */}
+        <Route path="" element={<Login />} /> {/* Login Route */}
         <Route path="/HomePage/*" element={<HomePage />} /> {/* HomePage Route */}
         {/* <Route path="/product/:productId" element={<ProductDetail />} /> */}
       </Routes>
