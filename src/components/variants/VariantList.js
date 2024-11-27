@@ -132,7 +132,6 @@ const VariantList = ({ categories }) => {
 
     const handleLevel3Select = (id) => {
         const selectedValue = id;
-        console.log(selectedValue, 'selectedValue');
         if (selectedValue !== '') {
             let level1Category, level2Category;
             categories.category_list.some(level1 => {
@@ -289,7 +288,6 @@ const VariantList = ({ categories }) => {
             }
         }
     };
-    // const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
@@ -302,7 +300,14 @@ const VariantList = ({ categories }) => {
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
     console.log(level6Categories,'level6Categories');
-    
+    const handleLevelClear = (e) => {
+        setSelectedCategoryId(e);
+        setSelectedLevel2Id(e);
+        setSelectedLevel3Id(e);
+        setSelectedlevel4(e);
+        setSelectedlevel5(e);
+        setSelectedlevel6(e);
+      }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         // setIsLoading(true);
         setError(null);
@@ -373,7 +378,10 @@ const VariantList = ({ categories }) => {
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
     return (
         <div>
+            <div className='CategoryTable-header'>
             <h2 className='header_cls'>VariantList Schema!</h2>
+            <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear categories</button>
+            </div>
             <div className='CategoryContainer'>
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
@@ -381,7 +389,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="categorySelect">Level 1:</label>
                         <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                             <div className="selected-category">
-                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isCategoryDropdownOpen && (
                                 <div className="dropdown-options">
@@ -411,7 +423,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="sectionSelect">Level 2:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isLevel2DropdownOpen && (
                                 <div className="dropdown-options">
@@ -441,7 +457,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="productTypeSelect">Level 3:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isLevel3DropdownOpen && (
                                 <div className="dropdown-options">
@@ -457,7 +477,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level31'); }}>
+                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -471,7 +491,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="level4Select">Level 4:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel4DropdownOpen && (
                                 <div className="dropdown-options">
@@ -501,7 +525,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="level5Select">Level 5:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel5DropdownOpen && (
                                 <div className="dropdown-options">
@@ -531,7 +559,11 @@ const VariantList = ({ categories }) => {
                         <label htmlFor="level6Select">Level 6:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+                                
+                                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel6DropdownOpen && (
                                 <div className="dropdown-options">
@@ -589,6 +621,7 @@ const VariantList = ({ categories }) => {
                                                 <tr>
                                                     <th>Option Type</th>
                                                     <th>Values</th>
+                                                    <th>Applicable Categories</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -613,6 +646,7 @@ const VariantList = ({ categories }) => {
                                                             )}
 
                                                         </td>
+                                                        <td>{variant.tagged_category_list} </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
