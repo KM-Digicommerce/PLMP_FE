@@ -50,21 +50,21 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <input type="text" name="mpn" placeholder="MPN" value={productData.mpn} onChange={handleChange} />
                     <input type="text" name="upc_ean" placeholder="UPC/EAN" value={productData.upc_ean} onChange={handleChange} />
                     <input type="text" name="breadcrumb" placeholder="Breadcrumb" value={productData.breadcrumb} onChange={handleChange} />
-    <select
-        id="brand-select"
-        name="brand_id"
-        value={productData.product_obj.brand_id || ''} 
-        onChange={handleChange} 
-        className="dropdown"
-        style={{width:'94%',margin: '6px 20px 6px 10px'}}
-    >
-        <option value="" >Select Brand</option>
-        {brand.map((item) => (
-            <option key={item._id} value={item.id}>
-                {item.name}
-            </option>
-        ))}
-    </select>
+                    <select
+                        id="brand-select"
+                        name="brand_id"
+                        value={productData.product_obj.brand_id || ''}
+                        onChange={handleChange}
+                        className="dropdown"
+                        style={{ width: '94%', margin: '6px 20px 6px 10px' }}
+                    >
+                        <option value="" >Select Brand</option>
+                        {brand.map((item) => (
+                            <option key={item._id} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
+                    </select>
                     <input type="text" name="product_name" placeholder="Product Name" required value={productData.product_name} onChange={handleChange} />
                 </div>
 
@@ -159,47 +159,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         </div>
                     </div>
                 </div>
-
-                {/* Variant Section */}
-                {/* <div className="form-section">
-                    <h3>Variant Details</h3>
-                    <input type="text" name="sku" placeholder="SKU"
-                        value={selectedVariants.sku}
-                        onChange={handleVariantDetailChange}
-                    />
-                    <input type="number" name="unfinishedPrice" placeholder="Unfinished Price"
-                        value={selectedVariants.unfinishedPrice}
-                        onChange={handleVariantDetailChange}
-                    />
-                    <input type="number" name="finishedPrice" placeholder="Finished Price"
-                        value={selectedVariants.finishedPrice}
-                        onChange={handleVariantDetailChange}
-                    />
-                    <input type="number" name="quantity" placeholder="Quantity"
-                        value={selectedVariants.quantity}
-                        onChange={handleVariantDetailChange}
-                    />
-                    {variantOptions?.map((variant) => (
-                        <div key={variant.type_id}>
-                            <FormControl fullWidth variant="outlined" sx={{ mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-                                <InputLabel id={`variant-${variant.type_id}`}>{variant.type_name}</InputLabel>
-                                <Select
-                                    labelId={`variant-${variant.type_id}`}
-                                    value={selectedVariants[variant.type_id] || ''}
-                                    onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-                                    label={variant.type_name}
-                                >
-                                    {variant.option_value_list?.map((option) => (
-                                        <MenuItem key={option.type_value_id} value={option.type_value_id}>
-                                            {option.type_value_name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
-                    ))}
-                </div> */}
-
                 <button onClick={onSave} className="save-button">Save Product</button>
             </div>
         </div>
@@ -422,7 +381,14 @@ const AddProduct = (categories) => {
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
     };
-
+    const handleLevelClear = (e) => {
+        setSelectedCategoryId(e);
+        setselectedLevel2Id(e);
+        setSelectedLevel3Id(e);
+        setSelectedlevel4(e);
+        setSelectedlevel5(e);
+        setSelectedlevel6(e);
+    }
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
@@ -693,8 +659,6 @@ const AddProduct = (categories) => {
             }
         }
     };
-
-
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -706,10 +670,13 @@ const AddProduct = (categories) => {
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
     console.log(level6Categories);
-    
+
     return (
         <div>
-            <h2 className='header_cls_prod'>Product Schema!</h2>
+            <div className='CategoryTable-header'>
+                <h2 className='header_cls_prod'>Product Schema!</h2>
+                <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear categories</button>
+            </div>
             <div className='CategoryContainer'>
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
@@ -717,7 +684,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="categorySelect">Level 1:</label>
                         <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                             <div className="selected-category">
-                                {selectedCategoryId ? categories.categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedCategoryId ? categories.categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isCategoryDropdownOpen && (
                                 <div className="dropdown-options">
@@ -747,7 +718,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="sectionSelect">Level 2:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isLevel2DropdownOpen && (
                                 <div className="dropdown-options">
@@ -777,7 +752,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="productTypeSelect">Level 3:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {isLevel3DropdownOpen && (
                                 <div className="dropdown-options">
@@ -807,7 +786,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="level4Select">Level 4:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel4DropdownOpen && (
                                 <div className="dropdown-options">
@@ -837,7 +820,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="level5Select">Level 5:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel5DropdownOpen && (
                                 <div className="dropdown-options">
@@ -867,7 +854,11 @@ const AddProduct = (categories) => {
                         <label htmlFor="level6Select">Level 6:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                             <div className="selected-category">
-                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}<ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
+                                <span className="dropdown-icons">
+
+                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                                </span>
                             </div>
                             {islevel6DropdownOpen && (
                                 <div className="dropdown-options">

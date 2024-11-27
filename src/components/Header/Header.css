@@ -1,14 +1,16 @@
-
-/* Header.css */
-
 /* Header.css */
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; 
+  z-index: 1000;
+  background-color: #000;
+  color: #f3f4f6;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 8px; 
-  background-color: rgb(26 26 26);
-  color: #f3f4f6;
+  padding: 9px 0px 9px 0px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 

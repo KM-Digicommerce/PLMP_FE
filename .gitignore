@@ -24,8 +24,10 @@ yarn-debug.log*
 yarn-error.log*
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+# .env
+>>>>>>> origin/devnew
 package-lock.json
 package.json
-=======
->>>>>>> origin/devnew
-.env
+# .env

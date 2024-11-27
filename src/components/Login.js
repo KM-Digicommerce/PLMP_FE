@@ -1,5 +1,3 @@
-// src/components/Login.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -34,9 +32,7 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('user_login_id', response.data.data.user_login_id);
-        // window.location.href = '/HomePage';
         navigate("/HomePage");
-
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -96,7 +92,6 @@ const Login = () => {
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_IP}/sendOtp/`, { email });
-      console.log(response);
       if (response.data.status) {
         setOtpSent(true);
       } else {
@@ -113,6 +108,11 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="login-container">
+          <img 
+            src="https://kmdigicommerce.com/wp-content/uploads/2024/08/KM-2048x1976.png" 
+            alt="KM Digi Commerce" 
+            className="logo" 
+          />
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="one">

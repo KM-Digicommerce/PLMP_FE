@@ -9,7 +9,7 @@
   .dashboard-title {
     text-align: center;
     color: #007bff;
-    margin-bottom: 20px;
+    margin: 0px 0px 18px 0px;
   }
   
   .stats-cards {
@@ -41,7 +41,7 @@
   
   .charts-section {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     justify-content: space-between;
   }
   
