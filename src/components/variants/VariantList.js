@@ -301,6 +301,7 @@ const VariantList = ({ categories }) => {
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
     console.log(level6Categories,'level6Categories');
     const handleLevelClear = (e) => {
+        handleCategorySelectForVariants();
         setSelectedCategoryId(e);
         setSelectedLevel2Id(e);
         setSelectedLevel3Id(e);

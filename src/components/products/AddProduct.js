@@ -1,10 +1,11 @@
+// src/components/products/AddProduct.js
 import React, { useState, useEffect } from 'react';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl } from '@mui/material';
 import axiosInstance from '../../../src/utils/axiosConfig';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
 
@@ -13,7 +14,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             const fetchVariants = async () => {
                 try {
                     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${selectedCategoryId}`);
-                    // console.log("Response 2", res.data.data.varient_list);
                     setVariantOptions(res.data.data.varient_list);
                 } catch (err) {
                     console.error('Error fetching variants:', err);
@@ -28,7 +28,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             const fetchBrand = async () => {
                 try {
                     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-                    console.log("Response 2", res.data.data.brand_list);
                     setBrand(res.data.data.brand_list);
                 } catch (err) {
                     console.error('Error fetching variants:', err);
@@ -103,7 +102,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-                <div className="form-section">
+                {/* <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Variant Details</h3>
                     <div className="variant-scroll">
                         <div className="variant-row">
@@ -142,7 +141,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                                 },
                                             }}
                                         >
-                                            {/* Default placeholder */}
                                             <MenuItem value="" disabled>
                                                 Select {variant.type_name}
                                             </MenuItem>
@@ -157,6 +155,68 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             ))}
 
                         </div>
+                    </div>
+                </div> */}
+                 <div className="form-section">
+                 <div className='CategoryTable-header'>
+                    <h3 style={{ margin: '6px' }}>Variant Details</h3>
+                    {/* Add Variant Button */}
+                    <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
+                </div>
+                    <div className="variant-scroll">
+                        {selectedVariants.map((variant, index) => (
+                            <div className="variant-row" key={index}>
+                                <div className="variant-field">
+                                    <label htmlFor="sku">SKU</label>
+                                    <input type="text" id="sku" name="sku" placeholder="SKU" value={variant.sku} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="unfinishedPrice">Unfinished Price</label>
+                                    <input type="number" id="unfinishedPrice" name="unfinishedPrice" placeholder="Unfinished Price" value={variant.unfinishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="finishedPrice">Finished Price</label>
+                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" value={variant.finishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="quantity">Quantity</label>
+                                    <input type="number" id="quantity" name="quantity" placeholder="Quantity" value={variant.quantity} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                </div>
+
+                                {/* Dynamic Variant Dropdowns */}
+                                {variantOptions?.map((variantOption) => (
+                                    <div className="variant-dropdown" key={variantOption.type_id}>
+                                        <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
+                                            {variantOption.type_name}
+                                        </label>
+                                        <FormControl fullWidth variant="outlined" className="dropdown-container">
+                                            <Select
+                                                labelId={`variant-${variantOption.type_id}`}
+                                                value={variant[variantOption.type_id] || ''} // Bind the value to the selected option
+                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)} // Handle the change
+                                                displayEmpty
+                                                className="styled-dropdown"
+                                                inputProps={{
+                                                    style: {
+                                                        fontSize: '16px',
+                                                        padding: '8px',
+                                                    },
+                                                }}
+                                            >
+                                                <MenuItem value="" disabled>Select {variantOption.type_name}</MenuItem>
+                                                {variantOption.option_value_list?.map((option) => (
+                                                    <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                                        {option.type_value_name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+  </div>
+))}
+
+
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <button onClick={onSave} className="save-button">Save Product</button>
@@ -208,18 +268,30 @@ const AddProduct = (categories) => {
             ]
         }
     });
-    const [selectedVariants, setSelectedVariants] = useState({
-        sku: '',
-        unfinishedPrice: '',
-        finishedPrice: '',
-        quantity: ''
-    });
-    const handleVariantDetailChange = (e) => {
+    const [selectedVariants, setSelectedVariants] = useState([{
+        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: []
+    }]);
+
+    const addVariantRow = () => {
+        setSelectedVariants(prevVariants => [
+            ...prevVariants,
+            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: [] }
+        ]);
+    };
+    // const handleVariantDetailChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setSelectedVariants((prev) => ({
+    //         ...prev,
+    //         [name]: value
+    //     }));
+    // };
+    const handleVariantDetailChange = (e, index) => {
         const { name, value } = e.target;
-        setSelectedVariants((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setSelectedVariants(prev => {
+            const updatedVariants = [...prev];
+            updatedVariants[index][name] = value;
+            return updatedVariants;
+        });
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -231,45 +303,73 @@ const AddProduct = (categories) => {
             }
         });
     };
-    const handleVariantChange = (typeId, optionId) => {
-        setSelectedVariants((prev) => ({
-            ...prev,
-            [typeId]: optionId,
-        }));
-        console.log(selectedVariants, 'selectedVariants');
-        console.log(typeId, 'typeId');
-        console.log(optionId, 'optionId');
+    const handleVariantChange = (typeId, optionId, index) => {
+        console.log(typeId,optionId,index,'typeID OPTIPN inxe');
+        
+        setSelectedVariants(prev => {
+          const updatedVariants = [...prev];
+          const updatedVariant = updatedVariants[index];
+          // Ensure the options array exists
+          if (!updatedVariant.options) {
+            updatedVariant.options = [];
+          } 
+          // Check if the option already exists, if so update it, otherwise add it
+          const optionIndex = updatedVariant.options.findIndex(option => option.option_name_id === typeId);
+          if (optionIndex !== -1) {
+            updatedVariant.options[optionIndex] = {
+              option_name_id: typeId,
+              option_value_id: optionId,
+            };
+          } else {
+            updatedVariant.options.push({
+              option_name_id: typeId,
+              option_value_id: optionId,
+            });
+          }
+          updatedVariant[typeId] = optionId;
+          return updatedVariants;
+        });
+      };
+    
+    // const handleVariantChange = (typeId, optionId) => {
+    //     setSelectedVariants((prev) => ({
+    //         ...prev,
+    //         [typeId]: optionId,
+    //     }));
+    //     console.log(selectedVariants, 'selectedVariants');
+    //     console.log(typeId, 'typeId');
+    //     console.log(optionId, 'optionId');
 
-        const filteredOptions = Object.entries(selectedVariants)
-            .filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
-            .map(([nameId, valueId]) => ({
-                option_name_id: nameId,
-                option_value_id: valueId
-            }));
-        setProductData((prevData) => ({
-            ...prevData,
-            product_obj: {
-                ...prevData.product_obj,
-                varients: [
-                    {
-                        ...prevData.product_obj.varients[0],
-                        options: filteredOptions,
-                    }
-                ]
-            }
+    //     const filteredOptions = Object.entries(selectedVariants)
+    //         .filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
+    //         .map(([nameId, valueId]) => ({
+    //             option_name_id: nameId,
+    //             option_value_id: valueId
+    //         }));
+    //     setProductData((prevData) => ({
+    //         ...prevData,
+    //         product_obj: {
+    //             ...prevData.product_obj,
+    //             varients: [
+    //                 {
+    //                     ...prevData.product_obj.varients[0],
+    //                     options: filteredOptions,
+    //                 }
+    //             ]
+    //         }
 
-        }));
-    };
+    //     }));
+    // };
     const handleSave = async () => {
         try {
             const payload = {
                 product_obj: {
                     ...productData.product_obj,
-                    varients: productData.product_obj.varients.map(variant => ({
-                        sku_number: selectedVariants.sku,
-                        un_finished_price: selectedVariants.unfinishedPrice,
-                        finished_price: selectedVariants.finishedPrice,
-                        quantity: selectedVariants.quantity,
+                    varients: selectedVariants.map(variant => ({
+                        sku_number: variant.sku,
+                        un_finished_price: variant.unfinishedPrice,
+                        finished_price: variant.finishedPrice,
+                        quantity: variant.quantity,
                         options: variant.options.map(option => ({
                             option_name_id: option.option_name_id,
                             option_value_id: option.option_value_id
@@ -278,13 +378,27 @@ const AddProduct = (categories) => {
                 }
             };
 
+            // const payload = {
+            //     product_obj: {
+            //         ...productData.product_obj,
+            //         varients: productData.product_obj.varients.map(variant => ({
+            //             sku_number: selectedVariants.sku,
+            //             un_finished_price: selectedVariants.unfinishedPrice,
+            //             finished_price: selectedVariants.finishedPrice,
+            //             quantity: selectedVariants.quantity,
+            //             options: variant.options.map(option => ({
+            //                 option_name_id: option.option_name_id,
+            //                 option_value_id: option.option_value_id
+            //             }))
+            //         }))
+            //     }
+            // };
+
             const response = await axiosInstance.post(
                 `${process.env.REACT_APP_IP}/createProduct/`,
                 payload
-            );
-            // console.log(response.data.data,'response.data.status');
-            // console.log(response.data.status,'response.data.status');
-            if (response.data.data.status === true) {
+            );            
+            if (response.data?.data?.status === true) {
                 alert('Product added successfully!');
                 setProductData({
                     product_obj: {
@@ -336,8 +450,6 @@ const AddProduct = (categories) => {
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    // const [variantsData, setVariantsData] = useState([]);
-
     const [searchQueries, setSearchQueries] = useState({
         level1: '',
         level2: '',
@@ -388,13 +500,13 @@ const AddProduct = (categories) => {
         setSelectedlevel4(e);
         setSelectedlevel5(e);
         setSelectedlevel6(e);
+        setIsAddProductVisible(false);
     }
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
             console.log('API Response: here', res.data.data);
-            // setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
         }
@@ -431,8 +543,6 @@ const AddProduct = (categories) => {
         }));
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
-            // console.log('API Response: here', res.data.data); // Log the API response
-            // setVariantsData(res.data.data);
         } catch (err) {
             console.log('ERROR', err);
         }
@@ -698,7 +808,7 @@ const AddProduct = (categories) => {
                                         value={searchQueries.level1}
                                         onChange={(e) => handleSearchChange('level1', e.target.value)}
                                         className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                        onClick={(e) => e.stopPropagation()}
                                     />
                                     <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
                                         <span>Select Category</span>
@@ -800,7 +910,7 @@ const AddProduct = (categories) => {
                                         value={searchQueries.level4}
                                         onChange={(e) => handleSearchChange('level4', e.target.value)}
                                         className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                        onClick={(e) => e.stopPropagation()}
                                     />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
                                         <span>Select category</span>
@@ -834,7 +944,7 @@ const AddProduct = (categories) => {
                                         value={searchQueries.level5}
                                         onChange={(e) => handleSearchChange('level5', e.target.value)}
                                         className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                        onClick={(e) => e.stopPropagation()}
                                     />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
                                         <span>Select category</span>
@@ -868,7 +978,7 @@ const AddProduct = (categories) => {
                                         value={searchQueries.level6}
                                         onChange={(e) => handleSearchChange('level6', e.target.value)}
                                         className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
+                                        onClick={(e) => e.stopPropagation()}
                                     />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
                                         <span>Select category</span>
@@ -894,10 +1004,10 @@ const AddProduct = (categories) => {
                         productData={productData}
                         handleChange={handleChange}
                         handleVariantChange={handleVariantChange}
-                        selectedCategoryId={selectedCategoryForVariant}  // Pass category ID to Modal
+                        selectedCategoryId={selectedCategoryForVariant}
                         selectedVariants={selectedVariants}
                         handleVariantDetailChange={handleVariantDetailChange}
-
+                        addVariantRow={addVariantRow}
                     />
                 </div>
             )}
