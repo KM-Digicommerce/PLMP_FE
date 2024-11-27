@@ -19,7 +19,7 @@
   font-weight: bold;
   transition: background-color 0.2s ease;
   text-align: justify;
-  width: 15%;
+  width: 14%;
   float: left;
 }
 .back-button:hover {
@@ -274,11 +274,11 @@ input[type="number"] {
 
 .categoryLevel {
   display: inline-block; 
-  padding: 10px 24px;
-  font-size: 12px; 
+  padding: 13px 24px;
+  font-size: 11px; 
   font-family: 'Arial', sans-serif; 
-  background: linear-gradient(135deg, #a9a8a6, #fafafa);
-    color: #4e4c4c;
+  background: linear-gradient(135deg, #979591, #fcf6f6);
+  color: #4e4c4c;
   border-radius: 20px; 
   margin: 0px 0 0 20px; 
   font-weight: 600; 
