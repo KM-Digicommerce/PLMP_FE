@@ -11,7 +11,9 @@ import AddLevelSix from '../categoryform/AddLevelSix';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+
 import { useNavigate } from 'react-router-dom';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -968,6 +970,7 @@ const handleLevelClear = (e) => {
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell  align="left"  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}  onClick={() => handleSort('msrp')} >
+
                     MSRP
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
