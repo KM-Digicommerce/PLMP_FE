@@ -12,6 +12,7 @@ import Dashboard from './dashboard/Dashboard';
 import axiosInstance from '../utils/axiosConfig.js';
 import { useNavigate,useLocation } from 'react-router-dom';
 import HistoryPage from '../HistoryPage.js';
+import BrandList from './brand/BrandList.js';
 
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -21,7 +22,7 @@ function HomePage() {
   const [showVariantsTable, setShowVariantsTable] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-
+  const [showBrand, setShowBrand] = useState(false);
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +40,7 @@ function HomePage() {
   }, []);
 
   const handleCategoriesClick = () => {
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowDashboard(false);
@@ -50,7 +51,7 @@ function HomePage() {
   };
 
   const handleAllProductsClick = () => {
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowDashboard(false);
@@ -63,7 +64,7 @@ function HomePage() {
 
   const handleAllVariantsClick = () => {
     console.log(location.pathname,'productId');
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowDashboard(false);
@@ -74,7 +75,7 @@ function HomePage() {
   };
 
   const handleAddProductsClick = () => {
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowDashboard(false);
@@ -85,7 +86,7 @@ function HomePage() {
   };
 
   const handleDashboardClick = () => {
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowDashboard(true);
@@ -95,10 +96,22 @@ function HomePage() {
     setAddProduct(false);
   };
   const handleHistoryClick = () => {
-    if (location.pathname.includes("product/")) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/HomePage");
     }
     setShowHistory(true);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
+  const handleBrandClick = () => {
+    if ( (location.pathname.includes("product/"))) { 
+      navigate("/HomePage/brand");
+    }
+    setShowBrand(true);
+    setShowHistory(false);
     setShowDashboard(false);
     setShowCategoriesTable(false);
     setShowProductList(false);
@@ -118,6 +131,7 @@ function HomePage() {
             OnAddProductClick={handleAddProductsClick}
             onDashboardClick={handleDashboardClick}
             onHistoryClick={handleHistoryClick}
+            onBrandClick={handleBrandClick}
           />
         </div>
         <div className="right-container">
@@ -135,11 +149,12 @@ function HomePage() {
                 <AddProduct categories={categoriesData} />
               ) : showHistory ? (
                 <HistoryPage  />
-              ) : null (
-              )
+              ) : null
             } />
             <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
+            <Route path="/brand" element={  showBrand ? ( <BrandList />):null} />
           </Routes>
+
         </div>
       </div>
     </div>
