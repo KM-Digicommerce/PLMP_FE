@@ -1,10 +1,8 @@
 // src\components\products\ProductList.js
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axiosInstance from '../../../src/utils/axiosConfig';
-
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);
@@ -12,7 +10,6 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  // const [bulkEditData, setBulkEditData] = useState({  product_name: '',  BasePrice: '',  ManufacturerName: '',  tags: '',  Key_features: ''});
   const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -46,15 +43,10 @@ const ProductList = () => {
     fetchData();
   }, []);
 
-
-
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/HomePage/product/${productId}`);
   };
-
-
-
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
@@ -90,37 +82,6 @@ const ProductList = () => {
     return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
   });
 
-  // const handleBulkEditChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setBulkEditData({ ...bulkEditData, [name]: value });
-  // };
-
-  // const handleBulkEditSubmit = async () => {
-  //   if (!bulkEditData.product_name && !bulkEditData.BasePrice && !bulkEditData.tags) {
-  //     Swal.fire('Please enter values to update!', '', 'warning');
-  //     return;
-  //   }
-  //   const updates = {
-  //     ids: selectedProducts,
-  //     update_obj: {
-  //       ...(bulkEditData.product_name && { product_name: bulkEditData.product_name }),
-  //       ...(bulkEditData.BasePrice && { BasePrice: bulkEditData.BasePrice }),
-  //       ...(bulkEditData.ManufacturerName && { ManufacturerName: bulkEditData.ManufacturerName }),
-  //       ...(bulkEditData.tags && { tags: bulkEditData.tags }),
-  //       ...(bulkEditData.Key_features && { Key_features: bulkEditData.Key_features }),
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
-  //     Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
-  //       window.location.reload();
-  //     });
-  //   } catch (err) {
-  //     Swal.fire('Error', 'Failed to apply bulk edit', 'error');
-  //   }
-  // };
-
   return (
     <div className="product-list">
 
@@ -133,35 +94,6 @@ const ProductList = () => {
           className="search-input"
         />
       </div>
-      {/* <div className="bulk-edit-panel">
-        <h3>Bulk Edit</h3>
-        <div className="bulk-edit-inputs">
-          <input
-            type="text"
-            name="product_name"
-            placeholder="Edit Product Name"
-            value={bulkEditData.product_name}
-            onChange={handleBulkEditChange}
-          />
-          <input
-            type="text"
-            name="BasePrice"
-            placeholder="Edit Base Price"
-            value={bulkEditData.BasePrice}
-            onChange={handleBulkEditChange}
-          />
-          <input
-            type="text"
-            name="tags"
-            placeholder="Edit Tags"
-            value={bulkEditData.tags}
-            onChange={handleBulkEditChange}
-          />
-          <button onClick={handleBulkEditSubmit} className="apply-bulk-edit-button">
-            Apply Changes
-          </button>
-        </div>
-      </div> */}
       {loading ? (
         <p>Loading products...</p>
       ) : error ? (
