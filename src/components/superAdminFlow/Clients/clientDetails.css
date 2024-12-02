@@ -57,11 +57,9 @@
 
 /* User details section */
 .user-details-section {
-  flex: 1; /* Fill available space */
-  margin: 0 auto; /* Center horizontally */
-  width: 100%;
   max-width: 1000px; /* Limit the width for better layout */
   overflow-y: auto; /* Scrollable for long lists */
+  height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;

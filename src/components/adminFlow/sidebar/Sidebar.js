@@ -134,13 +134,23 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
           className={activeSection === 'import' ? 'active' : ''}>
           <FontAwesomeIcon icon={faFileImport} className="icon" /> Import
         </li>
-        {showResponseModal && (
-        <ApiResponseModal
-         showResponseModal={showResponseModal}
-         setShowResponseModal={setShowResponseModal}
-         apiResponse={apiResponse}
-         selectedFilepath={selectedFile ? selectedFile.name : ''}
-        />
+        {loading ? (
+        // <div className="loading-spinner-container">
+        //   <CircularProgress size={50} />
+        //   <span>Loading...</span>
+        // </div>
+        <div className="loading-spinner-container-sidebar">
+        <div className="loading-spinner"></div>
+      </div>
+      ) : (
+        showResponseModal && (
+          <ApiResponseModal
+            showResponseModal={showResponseModal}
+            setShowResponseModal={setShowResponseModal}
+            apiResponse={apiResponse}
+            selectedFilepath={selectedFile ? selectedFile.name : ""}
+          />
+        )
       )}
         <li onClick={() => { OnExportClick(); handleSectionClick('export'); }}
           className={activeSection === 'export' ? 'active' : ''}>
@@ -192,7 +202,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
               variant="contained"
               color="success"
               onClick={handleUpload}
-              disabled={loading}
+              // disabled={loading}
               startIcon={loading && <CircularProgress size={20} color="inherit" />}
             >
               {loading ? 'Uploading...' : 'Upload'}

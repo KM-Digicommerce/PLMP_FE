@@ -138,6 +138,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQueryLevel5, setSearchQueryLevel5] = useState('');
   const [searchQueryLevel6, setSearchQueryLevel6] = useState('');
 
+  if (!categories.category_list) {
+    return (
+      <div className="superAdmin-error-message">
+        <p>Error loading Categories data. Please try again later.</p>
+      </div>
+    );
+  }
   const filteredCategories = categories.category_list.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -514,7 +521,7 @@ const handleLevelClear = (e) => {
   }
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate(`/HomePage/product/${productId}`);
+    navigate(`/Admin/product/${productId}`);
   };
 
   // Delete Category API Call

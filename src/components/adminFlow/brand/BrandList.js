@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../../utils/axiosConfig';
 import Swal from 'sweetalert2';
-import './BrandList.css'; // Add a CSS file for styling
+import './BrandList.css';
 
 const BrandList = () => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchBrands = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
       setBrands(response.data.data.brand_list || []);
     } catch (error) {
@@ -59,7 +59,13 @@ const BrandList = () => {
   useEffect(() => {
     fetchBrands();
   }, []);
-
+  if (!brands) {
+    return (
+      <div className="superAdmin-error-message">
+        <p>Error loading brand data. Please try again later.</p>
+      </div>
+    );
+  }
   return (
     <div className="brand-page">
       <div className="brand-header">

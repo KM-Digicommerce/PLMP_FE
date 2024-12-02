@@ -45,6 +45,13 @@ function HomePage() {
     fetchCategories();
   }, []);
 
+  if (!categoriesData) {
+    return (
+      <div className="superAdmin-error-message">
+        <p>Error loading dashboard data. Please try again later.</p>
+      </div>
+    );
+  }
   const handleCategoriesClick = () => {
     if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
       navigate("/Admin");
@@ -57,7 +64,7 @@ function HomePage() {
   };
 
   const handleAllProductsClick = () => {
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
       navigate("/Admin");
     }
     setShowDashboard(false);
@@ -138,7 +145,7 @@ function HomePage() {
     setAddProduct(false);
   };
   const handleImportClick = () => {
-    if ( (location.pathname.includes("product/"))) { 
+    if ((location.pathname.includes("product/"))) { 
       navigate("/Admin/Import");
     }
     setShowImport(true);
