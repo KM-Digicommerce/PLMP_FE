@@ -12,8 +12,8 @@ import {
   Legend,
 } from 'chart.js';
 import './Dashboard.css';
-import axiosInstance from '../../../src/utils/axiosConfig';
-import Unauthorized from '../Unauthorized';
+import axiosInstance from '../../../../src/utils/axiosConfig';
+import Unauthorized from '../../Unauthorized';
 
 ChartJS.register(
   CategoryScale,

@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import axiosInstance from '../../../utils/axiosConfig';
+import axiosInstance from '../../../../utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -643,19 +643,14 @@ const handleLevelClear = (e) => {
   };
   let sortedProductss = '';
   if (products) {
-    sortedProductss = sortProducts(products)
+    sortedProductss = sortProducts(products);
+    // console.log('HEre youyr respsn products', products);
   }
   else if (responseData) {
-    sortedProductss = responseData;
+    sortedProductss = sortProducts(responseData);
+    // console.log('HEre youyr respsn responseData', responseData);
   }
-  // sortedProductss = sortProducts(products.length > 0 ? products : responseData);
-console.log('HEre youyr respsn products', products);
-console.log('HEre youyr respsn responseData', responseData);
-console.log('sortedProductss',sortedProductss);
-
-
-  // let sortedProductss = sortProducts(products) || sortProducts(responseData);
-
+// console.log('sortedProductss',sortedProductss);
 
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
@@ -961,7 +956,7 @@ console.log('sortedProductss',sortedProductss);
       </div>
       {levelOneCategory && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0px' }}>
   <h3>Products</h3>
   <div className="sort-container">
         <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
@@ -995,7 +990,7 @@ console.log('sortedProductss',sortedProductss);
 
   {searchVisible && suggestions.length > 0 && (
     <div
-      style={{ position: 'absolute', top: '63%', left: '55%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '500px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
+      style={{ position: 'absolute', top: '68%', left: '61.5%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '504px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
       {suggestions.map((suggestion, index) => (
         <div
           key={index}

@@ -1,0 +1,90 @@
+/* Main container for the entire dashboard */
+.superAdmin-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center;
+  background-color: #f4f7fb; /* Light background */
+  height: 100vh;
+  padding: 20px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  margin-top: 30px; /* Ensure some margin at the top */
+}
+
+/* Styling for the dashboard title */
+.superAdmin-dashboard-title {
+  font-size: 2.5rem; /* Large title */
+  font-weight: bold;
+  color: #2c3e50; /* Dark color for the title */
+  margin-bottom: 30px; /* Space between title and cards */
+  letter-spacing: 1px;
+}
+
+/* Styling for the loading spinner container */
+.superAdmin-loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Spinner animation */
+.superAdmin-loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Styling for the error message */
+.superAdmin-error-message {
+  color: red;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+/* Styling for the cards container */
+.superAdmin-dashboard-cards {
+  display: flex;
+  justify-content: center;  /* Align the cards centrally */
+  gap: 20px;  /* Create a gap between the cards */
+  width: 100%;
+  max-width: 900px;
+  margin-top: 30px; /* Space between the title and the cards */
+}
+
+/* Styling for individual cards */
+.superAdmin-card {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 45%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.superAdmin-card:hover {
+  transform: translateY(-10px); /* Hover effect */
+}
+
+/* Card headings */
+.superAdmin-card h3 {
+  color: #34495e; /* Darker color for headings */
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+/* Card numbers (values) */
+.superAdmin-card p {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #3498db; /* Blue color for values */
+}

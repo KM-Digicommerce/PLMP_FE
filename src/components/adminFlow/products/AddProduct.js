@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl } from '@mui/material';
-import axiosInstance from '../../../src/utils/axiosConfig';
+import axiosInstance from '../../../../src/utils/axiosConfig';
 import Swal from 'sweetalert2';
 
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow }) => {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './AddCategory.css'; // Assuming you have a CSS file for styling
 import Swal from 'sweetalert2';
-import axiosInstance from '../../../utils/axiosConfig';
+import axiosInstance from '../../../../utils/axiosConfig';
 
 const AddLevelSix = ({ 
     selectedCategoryIdPopup, selectedLevel2IdPopup, selectedLevel3IdPopup, selectedLevel4IdPopup, selectedLevel5IdPopup, categories, refreshCategories, setIsTyping,

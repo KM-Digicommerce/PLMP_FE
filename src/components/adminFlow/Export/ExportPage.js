@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ExportPage.css';
-import axiosInstance from '../../utils/axiosConfig';
+import axiosInstance from '../../../utils/axiosConfig';
 import Swal from 'sweetalert2';
 // import CircularProgress from '@mui/material/CircularProgress';
 // import Button from '@mui/material/Button';

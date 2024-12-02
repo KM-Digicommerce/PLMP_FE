@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import './ProductDetail.css';
 import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
 
-import axiosInstance from '../../../src/utils/axiosConfig';
+import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 
 const ProductDetail = ({ categories }) => {
