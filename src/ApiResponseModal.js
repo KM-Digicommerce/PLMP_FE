@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "./utils/axiosConfig";
 import "./ModalStyles.css";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const ApiResponseModal = ({
   showResponseModal,
@@ -9,7 +10,8 @@ const ApiResponseModal = ({
   selectedFilepath,
 }) => {
   const [mapping, setMapping] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set to true initially
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -25,14 +27,16 @@ const ApiResponseModal = ({
 
   useEffect(() => {
     if (apiResponse?.extract_list) {
+     
       const initialMapping = apiResponse.extract_list.map((item) => ({
         columnHeader: item,
         databaseOption: databaseList[item] || "",
       }));
       setMapping(initialMapping);
     }
+    setLoading(false);
   }, [apiResponse]);
-
+  
   const handleDragStart = (item, index, source) => {
     setDraggedItem(item);
     setDraggedIndex(index);
@@ -57,10 +61,8 @@ const ApiResponseModal = ({
     const updatedMapping = [...mapping];
 
     if (draggedSource === "databaseOptions") {
-      // Assign dragged item from database options
       updatedMapping[targetIndex].databaseOption = draggedItem;
     } else if (draggedSource === "mapToWhere") {
-      // Swap values within mapToWhere
       const temp = updatedMapping[targetIndex].databaseOption;
       updatedMapping[targetIndex].databaseOption = draggedItem;
       updatedMapping[draggedIndex].databaseOption = temp;
@@ -96,6 +98,7 @@ const ApiResponseModal = ({
           },
         }
       );
+      
       setShowResponseModal(false);
     } catch (err) {
       console.error("API Error:", err);
@@ -104,27 +107,73 @@ const ApiResponseModal = ({
       setLoading(false);
     }
   };
-
-  const isHighlighted = (value) =>
+  
+  const isMatched = (value) =>
     draggedItem && value && draggedItem === value;
 
+  const isUnmatched = (value) =>
+    draggedItem && value && draggedItem !== value && value !== "";
+    if (showResponseModal && loading) {
+     console.log('Inside If loading');
+     
+     return (
+       <div className="loading-spinner-container">
+         <div className="loading-spinner"></div>
+       </div>
+     );
+   }
   return (
     <>
+    
       {showResponseModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Mapping</h2>
-              <button onClick={() => setShowResponseModal(false)} className="btn_close_map">
+              <h2>Field Mapping</h2>
+              <button onClick={() => setShowResponseModal(false)} className="btn-close">
                 X
               </button>
             </div>
             <div className="modal-body">
-              {error && <div className="error-message">{error}</div>}
+            {loading ? (
+                <div className="loading-spinner-container">
+                  <CircularProgress size={50} />
+                  <span>Processing...</span>
+                </div>
+              ) : (
+              // {error && <div className="error-message">{error}</div>}
               <div className="modal-content-box">
-                <div className="database-options">
-                  <h3>Database Options</h3>
-                  <div
+                <div className="table-container">
+                  <table className="styled-table">
+                    <thead>
+                      <tr>
+                        <th>Your Column Header</th>
+                        <th>Map to Where</th>
+                        <th>Unmatched values</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mapping.map((row, index) => (
+                        <tr key={index}>
+                          <td>{row.columnHeader}</td>
+                          <td
+                            onDrop={() => handleDropMapToWhere(index)}
+                            onDragOver={(e) => e.preventDefault()}
+                            className={`map-to-where-cell ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
+                          >
+                            <div
+                              className={`draggable-item ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
+                              draggable={!!row.databaseOption}
+                              onDragStart={() =>
+                                row.databaseOption &&
+                                handleDragStart(row.databaseOption, index, "mapToWhere")
+                              }
+                            >
+                              {row.databaseOption || "Drop here"}
+                            </div>
+                          </td>
+                          <td>
+                          <div
                     className="options-list"
                     onDrop={handleDropDatabaseOption}
                     onDragOver={(e) => e.preventDefault()}
@@ -134,7 +183,7 @@ const ApiResponseModal = ({
                       .map((option, index) => (
                         <div
                           key={index}
-                          className={`draggable-item ${isHighlighted(option) ? "highlighted" : ""}`}
+                          className={`draggable-item ${isMatched(option) ? "matched" : ""} ${isUnmatched(option) ? "unmatched" : ""}`}
                           draggable
                           onDragStart={() => handleDragStart(option, null, "databaseOptions")}
                         >
@@ -142,46 +191,25 @@ const ApiResponseModal = ({
                         </div>
                       ))}
                   </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Your Column Header</th>
-                      <th>Map to Where</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mapping.map((row, index) => (
-                      <tr key={index}>
-                        <td>{row.columnHeader}</td>
-                        <td
-                          onDrop={() => handleDropMapToWhere(index)}
-                          onDragOver={(e) => e.preventDefault()}
-                          className="map-to-where-cell"
-                        >
-                          <div
-                            className={`draggable-item ${isHighlighted(row.databaseOption) ? "highlighted" : ""}`}
-                            draggable={!!row.databaseOption}
-                            onDragStart={() =>
-                              row.databaseOption &&
-                              handleDragStart(row.databaseOption, index, "mapToWhere")
-                            }
-                          >
-                            {row.databaseOption || "Drop here"}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {/* <div className="database-options">
+                  <h3>Unmatched values</h3>
+                 
+                </div> */}
               </div>
+              )}
             </div>
             <div className="modal-footer">
-              <button onClick={handleSubmit} disabled={loading}>
+              <button className="btn-submit" onClick={handleSubmit} disabled={loading}>
                 {loading ? "Saving..." : "Save Mapping"}
               </button>
-              <button onClick={() => setShowResponseModal(false)}>Close</button>
+              <button className="btn-close-down" onClick={() => setShowResponseModal(false)}>Close</button>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import Sidebar from './sidebar/Sidebar';
 import ProductList from './products/ProductList';
 import ProductDetail from './products/ProductDetail';
 import Header from './Header/Header';
+import Footer from './Footer/Footer.js';
 import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
@@ -13,6 +14,7 @@ import axiosInstance from '../utils/axiosConfig.js';
 import { useNavigate,useLocation } from 'react-router-dom';
 import HistoryPage from '../HistoryPage.js';
 import BrandList from './brand/BrandList.js';
+import ExportPage from './Export/ExportPage.js';
 
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -23,6 +25,7 @@ function HomePage() {
   const [addProduct, setAddProduct] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showBrand, setShowBrand] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -118,6 +121,19 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handleExportClick = () => {
+    if ( (location.pathname.includes("product/"))) { 
+      navigate("/HomePage/Export");
+    }
+    setShowExport(true);
+    setShowBrand(false);
+    setShowHistory(false);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   return (
     <div>
       <Header />
@@ -132,6 +148,7 @@ function HomePage() {
             onDashboardClick={handleDashboardClick}
             onHistoryClick={handleHistoryClick}
             onBrandClick={handleBrandClick}
+            OnExportClick={handleExportClick}
           />
         </div>
         <div className="right-container">
@@ -153,10 +170,13 @@ function HomePage() {
             } />
             <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
             <Route path="/brand" element={  showBrand ? ( <BrandList />):null} />
+            <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
+
           </Routes>
 
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

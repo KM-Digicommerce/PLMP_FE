@@ -182,14 +182,8 @@ const ProductDetail = ({ categories }) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    console.log(level6Categories);
-    const handleLevelClear = (e) => {
-        setSelectedCategoryId(e);
-        setselectedLevel2Id(e);
-        setSelectedLevel3Id(e);
-        setSelectedlevel4(e);
-        setSelectedlevel5(e);
-        setSelectedlevel6(e);
+    if (!level6Categories) {
+        console.log(level6Categories);
     }
     const fetchProductDetail = async () => {
         try {
@@ -234,7 +228,7 @@ const ProductDetail = ({ categories }) => {
             }
             try {
                 const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-                console.log("Response 2", res.data.data.brand_list);
+                // console.log("Response 2", res.data.data.brand_list);
                 setBrand(res.data.data.brand_list);
             } catch (err) {
                 console.error('Error fetching variants:', err);
@@ -270,7 +264,6 @@ const ProductDetail = ({ categories }) => {
         setFormData({ ...formData, [name]: value, });
     };
     const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
-
     useEffect(() => {
         if (Array.isArray(formData.image) && formData.image.length > 0) {
             setMainImage(formData.image[0]);
@@ -439,6 +432,16 @@ const ProductDetail = ({ categories }) => {
     const handleThumbnailClick = (image) => {
         setMainImage(image);
     };
+    const handleScrollNext = () => {
+        const container = document.querySelector(".thumbnail-section");
+        container.scrollLeft += 120; // Adjust scroll distance
+      };
+      
+      const handleScrollPrev = () => {
+        const container = document.querySelector(".thumbnail-section");
+        container.scrollLeft -= 120; // Adjust scroll distance
+      };
+      
     return (
         <div>
             <div className='section_container'>
@@ -451,9 +454,6 @@ const ProductDetail = ({ categories }) => {
                         <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'pricing active' : 'pricing'}>Pricing</button>
                         <button onClick={() => setView('otherDetails')} className={view === 'otherDetails' ? 'otherDetails active' : 'otherDetails'}>Other Details</button>
                     </div>
-                    {categoryLevel && (
-                        <span className='categoryLevel'>{categoryLevel}</span>
-                    )}
                 </div>
             </div>
             <div className="product-detail">
@@ -471,24 +471,48 @@ const ProductDetail = ({ categories }) => {
                                             className="product-image-large"
                                         />
                                     </div>
-
-                                    <div className="thumbnail-section">
-                                        {Array.isArray(formData.image) &&
-                                            formData.image.map((image, index) => (
-                                                <img
-                                                    key={index}
-                                                    src={image}
-                                                    alt={`Thumbnail ${index + 1}`}
-                                                    className={`product-thumbnail ${mainImage === image ? "active-thumbnail" : ""
-                                                        }`}
-                                                    onClick={() => handleThumbnailClick(image)}
-                                                />
-                                            ))}
+                                    <div className="thumbnail-container">
+                                        {formData.image.length > 3 && (
+                                            <button
+                                                className="thumbnail-scroll-btn prev-btn"
+                                                onClick={handleScrollPrev}
+                                            >
+                                                &lt;
+                                            </button>
+                                        )}
+                                        <div className="thumbnail-section">
+                                            {Array.isArray(formData.image) &&
+                                                formData.image.map((image, index) => (
+                                                    <img
+                                                        key={index}
+                                                        src={image}
+                                                        alt={`Thumbnail ${index + 1}`}
+                                                        className={`product-thumbnail ${mainImage === image ? "active-thumbnail" : ""
+                                                            }`}
+                                                        onClick={() => handleThumbnailClick(image)}
+                                                    />
+                                                ))}
+                                        </div>
+                                        {formData.image.length > 3 && (
+                                            <button
+                                                className="thumbnail-scroll-btn next-btn"
+                                                onClick={handleScrollNext}
+                                            >
+                                                &gt;
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
 
+
+
                                 <div className="product-detail-section">
+                                <div className="CategoryTable-header-edit">
                                     <h3>Edit Product Details</h3>
+                                    {categoryLevel && (
+                        <span className='categoryLevel'>{categoryLevel}</span>
+                    )}
+                    </div>
                                     <div className="form-group">
                                         <label htmlFor="mpn">MPN</label>
                                         <input type="text" id="mpn" className='input_pdps' name="mpn" value={String(formData.mpn || '')} onChange={handleChange} required />
@@ -553,10 +577,7 @@ const ProductDetail = ({ categories }) => {
 
                         {view === 'taxonomy' && (
                             <div className="taxonomy-section">
-                                <div className='CategoryTable-header-tax'>
                                     <h3>Taxonomy</h3>
-                                    <button className='clear_cat_btn_tax' onClick={() => handleLevelClear('')} >Clear categories</button>
-                                </div>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
                                     <div className='DropdownColumn'>
@@ -566,21 +587,22 @@ const ProductDetail = ({ categories }) => {
                                                 {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'} 
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
-                                            {isCategoryDropdownOpen && (
-                                                <div className="dropdown-options">
+                                            {!isCategoryDropdownOpen && (
+                                                <div className="dropdown-options" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level1}
                                                         onChange={(e) => handleSearchChange('level1', e.target.value)}
+                                                        disabled
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleCategorySelect('')}>
                                                         <span>Select Category</span>
                                                     </div>
                                                     {filteredCategories.map(level1 => (
-                                                        <div className="dropdown-option" key={level1._id || ''} onClick={() => {
+                                                        <div className=" dropdown-option-disabled" key={level1._id || ''} onClick={() => {
                                                             handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1');
                                                         }} >
                                                             <span>{level1.name}</span>
@@ -600,7 +622,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel2DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -609,11 +631,11 @@ const ProductDetail = ({ categories }) => {
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevel2Select('')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel2?.map(level2 => (
-                                                        <div className="dropdown-option" key={level2._id || ''} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                                        <div className=" dropdown-option-disabled" key={level2._id || ''} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                                             <span>{level2.name}</span>
                                                         </div>
                                                     ))}
@@ -631,7 +653,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel3DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -640,11 +662,11 @@ const ProductDetail = ({ categories }) => {
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevel3Select('')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel3?.map(level3 => (
-                                                        <div className="dropdown-option" key={level3._id || ''} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                                        <div className=" dropdown-option-disabled" key={level3._id || ''} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                                             <span>{level3.name}</span>
                                                         </div>
                                                     ))}
@@ -671,11 +693,11 @@ const ProductDetail = ({ categories }) => {
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(4, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel4?.map(level4 => (
-                                                        <div className="dropdown-option" key={level4._id || ''} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                                        <div className=" dropdown-option-disabled" key={level4._id || ''} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                                             <span>{level4.name}</span>
                                                         </div>
                                                     ))}
@@ -702,11 +724,11 @@ const ProductDetail = ({ categories }) => {
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(5, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel5?.map(level5 => (
-                                                        <div className="dropdown-option" key={level5._id || ''} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                                        <div className=" dropdown-option-disabled" key={level5._id || ''} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                                             <span>{level5.name}</span>
                                                         </div>
                                                     ))}
@@ -733,11 +755,11 @@ const ProductDetail = ({ categories }) => {
                                                         className="dropdown-search-input"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
+                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(6, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel6?.map(level6 => (
-                                                        <div className="dropdown-option" key={level6._id || ''} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                                        <div className=" dropdown-option-disabled" key={level6._id || ''} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                                             <span>{level6.name}</span>
                                                         </div>
                                                     ))}
@@ -1064,7 +1086,15 @@ const ProductDetail = ({ categories }) => {
 
                             </div>
                         )}
-                        {view !== 'variants' && (<button type="submit" className="save-button_pdp" onClick={view === 'taxonomy' ? swapProductToCategory : undefined} >Save</button>)}
+{view !== 'variants' && view !== 'taxonomy' && (
+  <button
+    type="submit"
+    className="save-button_pdp"
+    onClick={view === 'taxonomy' ? swapProductToCategory : undefined}
+  >
+    Save
+  </button>
+)}
                     </div>
                 </form>
             </div>
