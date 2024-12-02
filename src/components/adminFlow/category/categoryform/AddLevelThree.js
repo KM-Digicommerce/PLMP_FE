@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
-import axiosInstance from '../../../utils/axiosConfig';
+import axiosInstance from '../../../../utils/axiosConfig';
 
 const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, categories, refreshCategories,setIsTyping, onCloseDialog}) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(selectedCategoryIdPopup || '');

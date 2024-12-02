@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import './AddCategory.css';
 import Swal from 'sweetalert2';
-import axiosInstance from '../../../utils/axiosConfig';
+import axiosInstance from '../../../../utils/axiosConfig';
 
 const AddCategory = ({ refreshCategories, onCloseDialog, setIsTyping }) => {
   const [categoryName, setCategoryName] = useState('');

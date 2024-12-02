@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../utils/axiosConfig';
+import axiosInstance from '../../../utils/axiosConfig';
 import Swal from 'sweetalert2';
 
 const BrandList = () => {

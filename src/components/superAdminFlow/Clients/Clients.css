@@ -1,0 +1,194 @@
+/* clients Component Styling */
+.client-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f4f7fb;  /* Light background */
+  padding: 40px 20px;
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh; /* Ensure container fills the page */
+}
+
+.client-heading {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center; /* Ensure the heading is centered */
+}
+
+.client-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;  /* Center the client cards horizontally */
+  width: 100%;
+  max-width: 1200px;
+}
+
+.client-item {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  width: 300px;  /* Card width */
+  text-align: center; /* Center text within the card */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.client-item:hover {
+  transform: translateY(-10px); /* Hover effect */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+.client-item h3 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.client-item p {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+/* client image styles */
+.client-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.client-image {
+  width: 120px;  /* Size of the image */
+  height: 120px;  /* Size of the image */
+  border-radius: 50%; /* Circular image */
+  object-fit: cover; /* Ensure image is scaled to cover its container */
+  border: 4px solid #fff; /* White border around the image */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Add client button */
+.add-client-btn {
+  background-color: #0e8bff;
+  color: #fff;
+  padding: 8px 16px; /* Reduced padding */
+  font-size: 1rem; /* Smaller font size */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 80px;
+  transition: background-color 0.3s ease;
+}
+
+.add-client-btn:hover {
+  background-color: #2ecc71;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 30px; /* Increased padding for more space */
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  max-width: 90%; /* Responsive width */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.client-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Added space between form elements */
+  width: 100%; /* Full width for form */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Added gap for better spacing */
+}
+
+.form-group label {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  font-weight: 500; /* Slightly lighter weight */
+}
+
+.form-group input {
+  padding: 12px 16px; /* Increased padding for better input space */
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #0e8bff; /* Focus effect for inputs */
+}
+
+/* Submit and Cancel Button Styling */
+.submit-btn, .cancel-btn {
+  padding: 10px 20px; /* Increased padding for buttons */
+  font-size: 1.1rem; /* Slightly bigger font size for readability */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+  background-color: #27ae60;
+  color: #fff;
+}
+
+.cancel-btn {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background-color: #2ecc71;
+}
+
+.cancel-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Dialog Styles */
+.MuiDialog-root .MuiPaper-root {
+  border-radius: 12px; /* Rounded corners for dialog */
+  padding: 30px; /* Added padding for the dialog content */
+}
+
+.MuiDialogActions-root {
+  display: flex;
+  justify-content: flex-end; /* Right align the buttons */
+}
+
+.MuiButton-root {
+  font-size: 1rem;
+  padding: 10px 20px;
+}
+
+.MuiDialogTitle-root {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+

@@ -1,0 +1,51 @@
+/* Sidebar styling */
+.sidebar {
+  background-color: #f4f4f4;
+  color: #333;
+  position: fixed;
+  top: 52px;
+  left: 0;
+  width: 200px;
+  height: calc(100vh - 60px);
+  padding: 4px;
+  font-family: Arial, sans-serif;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.topMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topMenu li {
+  padding: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+  margin-bottom: 4px;
+}
+
+.topMenu li:hover {
+  background-color: #b4b3b3;
+  color: #000;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+/* Active section styling */
+.sidebar .active {
+  background-color: #000;
+  color: white;
+}
+
+.sidebar .subMenu .active {
+  background-color: #000;
+  color: white;
+}

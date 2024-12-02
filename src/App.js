@@ -1,18 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Login'; // Import your Login component
-import HomePage from './components/HomePage'; // Import your HomePage component
-
+import Login from './components/Login';
+import AdminHomePage from './components/adminFlow/HomePage'; 
+import SuperAdminHomePage from './components/superAdminFlow/SuperAdminHomePage'; 
+// import SuperAdminDashboard from './components/superAdminFlow/super-admin-dashboard/SuperAdminDashboard';
+// import Dashboard from './components/adminFlow//dashboard/Dashboard';
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="" element={<Login />} />
-                <Route path="*" element={<Navigate to="" />} /> 
-        {/* <Route path="/Login" element={<Login />} /> */}
-        {/* <Route path="*" element={<Navigate to="/Login" />} />  */}
-        {/* Redirect unmatched routes */}
-        <Route path="/HomePage/*" element={<HomePage />} /> {/* HomePage Route */}
+                <Route path="*" element={<Navigate to="" />} />
+        <Route path="/Admin/*" element={<AdminHomePage />} />
+        <Route path="/SuperAdmin/*" element={<SuperAdminHomePage />} /> 
       </Routes>
     </Router>
   );

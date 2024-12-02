@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
 import './Sidebar.css';
-import ApiResponseModal from '../../ApiResponseModal';
+import ApiResponseModal from '../../../ApiResponseModal';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns  } from '@fortawesome/free-solid-svg-icons';
 import Modal from '@mui/material/Modal';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import axiosInstance from '../../../src/utils/axiosConfig';
+import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick}) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -94,6 +94,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     else if (section === 'export' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
       navigate('/HomePage/export'); 
     }
+    else if (section === 'import' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
+      navigate('/HomePage/import'); 
+    }
   };
   return (
     <div className="sidebar">
@@ -127,16 +130,18 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             </ul>
           )}
         </li>
-        <li onClick={handleImportClick}
+        <li onClick={() => { OnImportClick();handleImportClick(); handleSectionClick('import'); }}
           className={activeSection === 'import' ? 'active' : ''}>
           <FontAwesomeIcon icon={faFileImport} className="icon" /> Import
         </li>
+        {showResponseModal && (
         <ApiResponseModal
          showResponseModal={showResponseModal}
          setShowResponseModal={setShowResponseModal}
          apiResponse={apiResponse}
          selectedFilepath={selectedFile ? selectedFile.name : ''}
         />
+      )}
         <li onClick={() => { OnExportClick(); handleSectionClick('export'); }}
           className={activeSection === 'export' ? 'active' : ''}>
           <FontAwesomeIcon icon={faFileExport} className="icon" />

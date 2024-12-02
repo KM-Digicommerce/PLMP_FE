@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
-import axiosInstance from '../../../src/utils/axiosConfig';
+import axiosInstance from '../../../../src/utils/axiosConfig';
 
 const VariantList = ({ categories }) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');

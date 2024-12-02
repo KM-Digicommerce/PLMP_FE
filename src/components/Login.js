@@ -32,7 +32,10 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('user_login_id', response.data.data.user_login_id);
-        navigate("/HomePage");
+        if (response.data.data.user_role == "admin"){
+        navigate("/Admin");}
+        else if (response.data.data.user_role == "super-admin"){
+        navigate("/SuperAdmin");}
       } else {
         setError('Login failed. Please check your credentials.');
       }

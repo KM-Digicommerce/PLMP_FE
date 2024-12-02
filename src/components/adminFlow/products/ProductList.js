@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
-import axiosInstance from '../../../src/utils/axiosConfig';
+import axiosInstance from '../../../../src/utils/axiosConfig';
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);

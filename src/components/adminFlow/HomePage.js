@@ -4,17 +4,19 @@ import './HomePage.css';
 import Sidebar from './sidebar/Sidebar';
 import ProductList from './products/ProductList';
 import ProductDetail from './products/ProductDetail';
-import Header from './Header/Header';
-import Footer from './Footer/Footer.js';
+import Header from '../Header/Header.js';
+import Footer from '../Footer/Footer.js';
 import CategoriesTable from './category/categorytable/CategoriesTable';
 import VariantList from './variants/VariantList';
 import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
-import axiosInstance from '../utils/axiosConfig.js';
+import axiosInstance from '../../utils/axiosConfig.js';
 import { useNavigate,useLocation } from 'react-router-dom';
-import HistoryPage from '../HistoryPage.js';
+import HistoryPage from '../../HistoryPage.js';
 import BrandList from './brand/BrandList.js';
 import ExportPage from './Export/ExportPage.js';
+import ApiResponseModal from '../../ApiResponseModal.js';
+
 
 function HomePage() {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -26,6 +28,7 @@ function HomePage() {
   const [showHistory, setShowHistory] = useState(false);
   const [showBrand, setShowBrand] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -134,6 +137,20 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handleImportClick = () => {
+    if ( (location.pathname.includes("product/"))) { 
+      navigate("/HomePage/Import");
+    }
+    setShowImport(true);
+    setShowExport(false);
+    setShowBrand(false);
+    setShowHistory(false);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   return (
     <div>
       <Header />
@@ -149,6 +166,7 @@ function HomePage() {
             onHistoryClick={handleHistoryClick}
             onBrandClick={handleBrandClick}
             OnExportClick={handleExportClick}
+            OnImportClick={handleImportClick}
           />
         </div>
         <div className="right-container">
@@ -171,7 +189,7 @@ function HomePage() {
             <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
             <Route path="/brand" element={  showBrand ? ( <BrandList />):null} />
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
-
+            <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
           </Routes>
 
         </div>

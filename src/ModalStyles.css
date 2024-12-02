@@ -16,9 +16,9 @@
     border-radius: 8px;
     padding: 7px 0px 0px 20px;
     width: 60%;
-    max-height: 86%;
+    max-height: 80% !important;
     overflow-y: auto;
-    top: 14px;
+    top: 18px;
 }
 
 .modal-header {
@@ -32,6 +32,7 @@
 .modal-header h2 {
   font-size: 1.5rem;
   color: #333;
+  margin: 0px;
 }
 
 .btn-close-down {
