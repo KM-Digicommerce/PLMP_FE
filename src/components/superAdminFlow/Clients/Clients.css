@@ -114,19 +114,19 @@
   width: 100%; /* Full width for form */
 }
 
-.form-group {
+.client-form-group {
   display: flex;
   flex-direction: column;
   gap: 20px; /* Added gap for better spacing */
 }
 
-.form-group label {
+.client-form-group label {
   font-size: 1.1rem;
   color: #2c3e50;
   font-weight: 500; /* Slightly lighter weight */
 }
 
-.form-group input {
+.client-form-group input {
   padding: 12px 16px; /* Increased padding for better input space */
   font-size: 1rem;
   border-radius: 5px;
@@ -135,7 +135,7 @@
   transition: border-color 0.3s ease;
 }
 
-.form-group input:focus {
+.client-form-group input:focus {
   border-color: #0e8bff; /* Focus effect for inputs */
 }
 

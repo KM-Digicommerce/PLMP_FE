@@ -130,7 +130,7 @@
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  margin-top: 1.5rem;
+  margin-top: 14px;
   transition: background-color 0.2s ease;
   width: 12%;
   float: right;
@@ -355,5 +355,8 @@ input[type="number"] {
   cursor: not-allowed; /* Change cursor to show it's disabled */
 }
 .dropdown-option-disabled {
-  display: none; /* Prevent dropdown from opening */
+  display: none;
+}
+.dropdown-options-disabled{
+  display: none; 
 }

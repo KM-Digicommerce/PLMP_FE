@@ -76,7 +76,14 @@ function Dashboard() {
       </div>
     );
   }
-
+  if (!dashboardData) {
+    return (
+      <div className="superAdmin-error-message">
+        <p>Error loading dashboard data. Please try again later.</p>
+      </div>
+    );
+  }
+  
   const variantData = {
     labels: dashboardData.varent_list.map(item => item.type_name),
     datasets: [

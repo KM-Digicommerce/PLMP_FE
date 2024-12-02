@@ -330,7 +330,7 @@ const ProductDetail = ({ categories }) => {
     };
 
     const handleBackClick = () => {
-        navigate('/Homepage');
+        navigate('/Admin');
     };
 
     if (loading) return <p>Loading...</p>;
@@ -588,7 +588,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {!isCategoryDropdownOpen && (
-                                                <div className="dropdown-options" aria-disabled="true">
+                                                <div className="dropdown-options-disabled" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -622,7 +622,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel2DropdownOpen && (
-                                                <div className="dropdown-options" aria-disabled="true">
+                                                <div className="dropdown-options-disabled" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -653,7 +653,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel3DropdownOpen && (
-                                                <div className="dropdown-options" aria-disabled="true">
+                                                <div className="dropdown-options-disabled" aria-disabled="true">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -684,7 +684,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel4DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options-disabled">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -715,7 +715,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel5DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options-disabled">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -746,7 +746,7 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel6DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options-disabled">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."

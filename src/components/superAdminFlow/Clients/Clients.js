@@ -121,7 +121,7 @@ const Client = () => {
         <DialogTitle>Add New Client</DialogTitle>
         <DialogContent>
           <form className="client-form" onSubmit={handleFormSubmit}>
-            <div className="form-group">
+            <div className="client-form-group">
               <TextField
                 label="Client Name"
                 variant="outlined"

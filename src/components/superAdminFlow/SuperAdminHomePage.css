@@ -1,4 +1,9 @@
 /* Container for the entire homepage, takes full height */
+.superadmin-main-container{
+  display: flex;
+  margin-top: 52px;
+}
+
 .superadmin-homepage-container {
   display: flex;
   flex-direction: column;
@@ -56,4 +61,16 @@
   color: white;
   padding: 20px;
   text-align: center;
+}
+.superadmin-right-container{
+background-color: #f2f2f2;
+  width: 100%;
+  padding: 5px;
+  height: calc(130vh - 46px);
+    overflow: auto;
+  margin-bottom: 23px;
+}
+.superadmin-sidebar-container{
+  min-width: 208px;
+    width: 10%;
 }

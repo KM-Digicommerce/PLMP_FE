@@ -31,7 +31,7 @@ const VariantList = ({ categories }) => {
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
     const [selectedCategoryLevelForVariant, setSelectedCategoryLevelForVariant] = useState('');
-
+   
     const filteredCategories = categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );

@@ -19,13 +19,14 @@ const ApiResponseModal = ({
 
   const databaseOptions = apiResponse?.Database_options || [];
   const databaseList = apiResponse?.Database_list || {};
-
+ 
   if (selectedFilepath) {
     localStorage.setItem("selectedFile", selectedFilepath);
   }
   const selectedFiles = localStorage.getItem("selectedFile");
 
   useEffect(() => {
+    
     if (apiResponse?.extract_list) {
      
       const initialMapping = apiResponse.extract_list.map((item) => ({
@@ -36,7 +37,14 @@ const ApiResponseModal = ({
     }
     setLoading(false);
   }, [apiResponse]);
-  
+  if (loading) {
+    console.log('Inside If loading');
+    return (
+      <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
   const handleDragStart = (item, index, source) => {
     setDraggedItem(item);
     setDraggedIndex(index);
@@ -113,15 +121,7 @@ const ApiResponseModal = ({
 
   const isUnmatched = (value) =>
     draggedItem && value && draggedItem !== value && value !== "";
-    if (showResponseModal && loading) {
-     console.log('Inside If loading');
-     
-     return (
-       <div className="loading-spinner-container">
-         <div className="loading-spinner"></div>
-       </div>
-     );
-   }
+  
   return (
     <>
     

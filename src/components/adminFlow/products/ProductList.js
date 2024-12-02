@@ -60,7 +60,7 @@ const ProductList = () => {
 
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate(`/HomePage/product/${productId}`);
+    navigate(`/Admin/product/${productId}`);
   };
 
   const handleSelectAll = (event) => {
