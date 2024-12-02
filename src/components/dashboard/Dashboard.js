@@ -31,13 +31,16 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
 
-
   const options = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
       },
+    },
+    animation: {
+      duration: 1500, // Duration for the chart animation
+      easing: 'easeInOutQuad',
     },
   };
 
@@ -67,7 +70,11 @@ function Dashboard() {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+      </div>
+    );
   }
 
   const variantData = {
@@ -76,8 +83,16 @@ function Dashboard() {
       {
         label: 'Option Value Count',
         data: dashboardData.varent_list.map(item => item.option_value_count),
-        backgroundColor: '#0156B7',
-        borderWidth: 1,
+        backgroundColor: 'rgba(38, 198, 218, 0.7)',
+        borderColor: 'rgba(38, 198, 218, 1)',
+        borderWidth: 2,
+      },
+      {
+        label: 'Option Value Count 2',
+        data: dashboardData.varent_list.map(item => item.option_value_count + 5),
+        backgroundColor: 'rgba(255, 159, 64, 0.7)',
+        borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 2,
       },
     ],
   };
@@ -88,8 +103,16 @@ function Dashboard() {
       {
         label: 'Projects/Products Count',
         data: Object.values(dashboardData.category_project_dict),
-        backgroundColor: '#0156B7',
-        borderWidth: 1,
+        backgroundColor: '#4caf50',
+        borderColor: '#4caf50',
+        borderWidth: 2,
+      },
+      {
+        label: 'Another Data',
+        data: Object.values(dashboardData.category_project_dict).map(val => val + 10),
+        backgroundColor: '#36A2EB',
+        borderColor: '#36A2EB',
+        borderWidth: 2,
       },
     ],
   };
@@ -99,20 +122,19 @@ function Dashboard() {
       <h2 className="dashboard-title">Dashboard Overview</h2>
 
       <div className="stats-cards">
-        {/* Stats Cards with dynamic data */}
-        <div className="card">
+        <div className="card card-blue">
           <h3>Total Products</h3>
           <p>{dashboardData.total_product}</p>
         </div>
-        <div className="card">
+        <div className="card card-green">
           <h3>Total Brands</h3>
           <p>{dashboardData.total_brand}</p>
         </div>
-        <div className="card">
+        <div className="card card-yellow">
           <h3>Total End Level Categories</h3>
           <p>{dashboardData.total_last_level_category}</p>
         </div>
-        <div className="card">
+        <div className="card card-orange">
           <h3>Total Parent Level Categories</h3>
           <p>{dashboardData.total_parent_level_category}</p>
         </div>

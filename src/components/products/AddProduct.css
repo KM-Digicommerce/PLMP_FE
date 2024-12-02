@@ -87,6 +87,7 @@ textarea {
     transition: color 0.3s;
     text-align: right;
     width: 6%;
+    padding: 5px 10px 5px 10px;
 }
 
 .close-btn:hover {
@@ -262,4 +263,12 @@ textarea {
 }
 .css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{
     font-size: 12px !important;
+}
+.add-variant-button{
+    margin: 3px 0px 3px 0px;
+    width: 18%;
+}
+.required {
+    color: red;
+    font-weight: bold;
 }

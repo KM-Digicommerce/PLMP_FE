@@ -11,6 +11,9 @@ import AddLevelSix from '../categoryform/AddLevelSix';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+
+import { useNavigate } from 'react-router-dom';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -35,6 +38,10 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
   const [searchVisible, setSearchVisible] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const navigate = useNavigate();
+  const [sortOption, setSortOption] = useState(''); // default value to 'newest'
+  const [loading, setLoading] = useState(true);
+  const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -50,6 +57,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             }
           );
           setProducts(response.data.data.product_list);
+
         } catch (error) {
           console.error('Error fetching product list:', error);
         }
@@ -59,6 +67,51 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     fetchProducts();
   }, [selectedCategoryIdForallprod]);
 
+  const handleSortChange = async (event) => {
+    const selectedOption = event.target.value;
+    console.log(selectedOption,'sort');
+    
+    if (selectedOption !== '' ) {
+      setProducts('');
+      setSortOption(selectedOption);
+    const filter = selectedOption === 'newest' ? true : false;
+    fetchData(filter);
+    }
+    else{
+      setSortOption('');
+    }
+    
+  };
+
+  const fetchData = async (filter) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
+       
+        params: {
+          category_id: selectedCategoryIdForallprod,
+          level_name: selectedCategorylevelForallprod,
+          filter
+        }       });
+
+      if (response.data && response.data.data && response.data.data.product_list) {
+        setResponseData(response.data.data.product_list);
+        // setProducts('');
+      } else {
+        alert("Unexpected response structure");
+      }
+    } catch (err) {
+      // setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(true); // By default, load newest products
+  }, []);
+
+  const [clearBtn, setShowclearBtn] = useState(false);
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
   const [selectedlevel4, setSelectedlevel4] = useState('');
   const [selectedlevel5, setSelectedlevel5] = useState('');
@@ -130,9 +183,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list);
   const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
   const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list);
-console.log(level6Categories);
-
+  if (!level6Categories) {
+    console.log(level6Categories);
+}
   const handleCategorySelectForVariants = async (id, category_level) => {
+    setShowclearBtn(true);
     setSelectedCategorylevelForallprod(category_level);
     setSelectedCategoryIdForallprod(id);
   };
@@ -439,10 +494,28 @@ console.log(level6Categories);
       setSelectedlevel6('');
     }
   };
-
+const handleLevelClear = (e) => {
+  setSelectedCategoryId(e);
+  setSelectedLevel2Id(e);
+  setSelectedLevel3Id(e);
+  setSelectedlevel4(e);
+  setSelectedlevel5(e);
+  setSelectedlevel6(e);
+  setShowclearBtn(false);
+  setIsCategoryDropdownOpen(false);
+  setIsLevel2DropdownOpen(false);
+  setIsLevel3DropdownOpen(false);
+  setIslevel4DropdownOpen(false);
+  setIslevel5DropdownOpen(false);
+  setIslevel6DropdownOpen(false);
+}
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
     return <div>No categories available</div>;
   }
+  const handleProductSelect = (productId) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/HomePage/product/${productId}`);
+  };
 
   // Delete Category API Call
   // const handleDeleteCategory = async (categoryId, category_name) => {
@@ -568,7 +641,22 @@ console.log(level6Categories);
     setSearchQuerylist(suggestion);
     setSuggestions([]);
   };
-  let sortedProductss = sortProducts(products);
+  let sortedProductss = '';
+  if (products) {
+    sortedProductss = sortProducts(products)
+  }
+  else if (responseData) {
+    sortedProductss = responseData;
+  }
+  // sortedProductss = sortProducts(products.length > 0 ? products : responseData);
+console.log('HEre youyr respsn products', products);
+console.log('HEre youyr respsn responseData', responseData);
+console.log('sortedProductss',sortedProductss);
+
+
+  // let sortedProductss = sortProducts(products) || sortProducts(responseData);
+
+
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
       product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
@@ -583,6 +671,9 @@ console.log(level6Categories);
         <h3>Categories</h3>
       </div>
       <div className='CategoryContainer'>
+      {clearBtn && (
+      <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
+      )}
         <div className='DropdownsContainer'>
           <div className='DropdownColumn'>
             <label htmlFor="categorySelect">Level 1: </label>
@@ -604,7 +695,7 @@ console.log(level6Categories);
                     <span>Select Category</span>
                   </div>
                   {filteredCategories.map(level1 => (
-                    <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}
+                    <div className="dropdown-option" onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}
                     >
                       {/* {editingCategoryId === level1._id ? ( */}
                         <div>
@@ -655,7 +746,7 @@ console.log(level6Categories);
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel2?.map(level2 => (
-                    <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                    <div className="dropdown-option"  onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                       <span>{level2.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level2._id, level2.name, 'level-2')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -694,7 +785,7 @@ console.log(level6Categories);
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel3?.map(level3 => (
-                    <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                    <div className="dropdown-option" onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                       <span>{level3.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level3._id, level3.name, 'level-3')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -732,7 +823,7 @@ console.log(level6Categories);
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel4?.map(level4 => (
-                    <div className="dropdown-option" key={level4._id} onClick={() => { handlelevel4(level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                    <div className="dropdown-option"  onClick={() => { handlelevel4(level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                       <span>{level4.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level4._id, level4.name, 'level-4')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -770,7 +861,7 @@ console.log(level6Categories);
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel5?.map(level5 => (
-                    <div className="dropdown-option" key={level5._id} onClick={() => { handlelevel5(level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                    <div className="dropdown-option"  onClick={() => { handlelevel5(level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                       <span>{level5.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level5._id, level5.name, 'level-5')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -806,7 +897,7 @@ console.log(level6Categories);
                     <span>Select category</span>
                   </div>
                   {filteredCategoriesLevel6?.map(level6 => (
-                    <div className="dropdown-option" key={level6._id} onClick={() => { handlelevel6(level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                    <div className="dropdown-option" onClick={() => { handlelevel6(level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                       <span>{level6.name}</span>
                       {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level6._id, level6.name, 'level-6')} />
                           <DeleteOutlinedIcon onClick={(e) => {
@@ -872,7 +963,13 @@ console.log(level6Categories);
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
   <h3>Products</h3>
-
+  <div className="sort-container">
+        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
+        <option value="">Sort by Products</option>
+          <option value="newest">Newest Products</option>
+          <option value="oldest">Oldest Products</option>
+        </select>
+      </div>
   <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
     {searchVisible && (
       <div style={{ position: 'relative', width: '500px' }}>
@@ -954,7 +1051,8 @@ console.log(level6Categories);
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell  align="left"  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}  onClick={() => handleSort('msrp')} >
-                    Msrp
+
+                    MSRP
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('model')} >
@@ -965,7 +1063,7 @@ console.log(level6Categories);
               </TableHead>
               <TableBody>
                 {getFilteredAndSortedProducts().map((product) => (
-                  <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
                       <img src={product.image[0]} alt={product.product_name} className="product-image-round"
                       />
@@ -975,7 +1073,7 @@ console.log(level6Categories);
                     )}
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} className="product-cell" >{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}

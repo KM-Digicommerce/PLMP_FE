@@ -70,18 +70,20 @@ tr:hover .action-buttons {
 
 .CategoryContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: space-evenly;
+  align-items: end;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    padding: 10px;
-    border-radius: 9px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 9px;
+  align-content: center;
+  flex-direction: column;
 }
 
 .DropdownsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; 
+    gap: 15px; 
     margin: 10px;
 }
 
@@ -212,11 +214,9 @@ tr:hover .action-buttons {
   cursor: pointer;
 }
 
-.editButton:hover {
-  background-color: rgb(47, 158, 233); /* Darker red on hover */
-}
+.editButton:hover { background-color: rgb(47, 158, 233);}
 .btn_newcategory,.btn_new_section,.btn_producttype{
-  margin-left: 10px; /* Space between name and delete button */
+  margin-left: 10px;
   background-color: rgb(15, 182, 84);
   color: white;
   border: none;
@@ -224,31 +224,14 @@ tr:hover .action-buttons {
   border-radius: 4px;
   cursor: pointer;
 }
-.btn_newcategory:hover, .btn_new_section:hover,.btn_producttype:hover {
-  background-color: rgb(158, 224, 108); /* Darker red on hover */
-}
-.close_btn{
-  float: right;
-}
-.dropdown-search-input{
-  margin-left: 1px !important;
-}
-.close-button { position: absolute; top: 10px;    right: 10px;  min-width: 30px;   padding: 5px 10px; font-size: 18px;   border-radius: 50%; background-color: transparent;  color: #6366f1;  border: none; cursor: pointer; transition: background-color 0.3s ease; width: 8%;
-}
-
-.close-button:hover {
-  background-color: rgba(0, 0, 0, 0.1); 
-}
-
-.close-button .close-icon {
-  font-weight: bold;
-}
-.close-button:hover .close-icon {
-  color: #ff0000; }
-.add_category_input{
-  width: 96%;
-  margin: 10px 0px 20px 0px !important;
-}
+.btn_newcategory:hover, .btn_new_section:hover,.btn_producttype:hover {background-color: rgb(158, 224, 108);}
+.close_btn{ float: right;}
+.dropdown-search-input{margin-left: 1px !important;}
+.close-button { position: absolute; top: 10px;    right: 10px;  min-width: 30px;   padding: 5px 10px; font-size: 18px;   border-radius: 50%; background-color: transparent;  color: #6366f1;  border: none; cursor: pointer; transition: background-color 0.3s ease; width: 8%;}
+.close-button:hover {  background-color: rgba(0, 0, 0, 0.1); }
+.close-button .close-icon { font-weight: bold;}
+.close-button:hover .close-icon {color: #ff0000; }
+.add_category_input{ width: 96%; margin: 10px 0px 20px 0px !important;}
 .suggestions-container {
   position: absolute;
   top: 100%;
@@ -260,15 +243,9 @@ tr:hover .action-buttons {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
-
-.suggestion-item {
-  padding: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: #f9f9f9;
-}
-
+.suggestion-item { padding: 10px; cursor: pointer; font-size: 16px; background-color: #f9f9f9;}
 .suggestion-item:nth-child(even) {  background-color: white;}
 .suggestion-item:hover {  background-color: #f0f0f0;}
 .swal2-container {  z-index: 1500 !important; }
 .swal2-popup { z-index: 1501 !important; }
+.clear_cat_btn{ background: rgb(145, 146, 146); color: white; border: none; cursor: pointer; margin: 0px 5px 0px 5px; border-radius: 5px; width: 12%; float: right; padding: 5px 5px 5px 5px;}

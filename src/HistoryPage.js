@@ -21,7 +21,7 @@ const HistoryPage = () => {
     setActiveButton(buttonKey);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/${apiUrl}`);
-      setApiResponse(response.data);
+      setApiResponse(response.data.data.result); 
     } catch (error) {
       console.error(`Error fetching data from ${apiUrl}:`, error);
       Swal.fire({
@@ -50,7 +50,16 @@ const HistoryPage = () => {
           <TableCell><strong>Product Name</strong></TableCell>
           <TableCell><strong>Action</strong></TableCell>
           <TableCell><strong>Log Date</strong></TableCell>
-          <TableCell><strong>Log Date (EST)</strong></TableCell>
+        </>
+      );
+    } else if (activeButton === 'priceLog') {
+      return (
+        <>
+          <TableCell><strong>Price Name</strong></TableCell>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>Product Name</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
         </>
       );
     } else {
@@ -62,7 +71,6 @@ const HistoryPage = () => {
           <TableCell><strong>Level</strong></TableCell>
           <TableCell><strong>Category Name</strong></TableCell>
           <TableCell><strong>Log Date</strong></TableCell>
-          <TableCell><strong>Log Date (EST)</strong></TableCell>
         </>
       );
     }
@@ -71,22 +79,29 @@ const HistoryPage = () => {
   const renderRows = () => {
     return apiResponse.map((log, index) => (
       <TableRow key={index}>
-        <TableCell>{log.user_name}</TableCell>
-        {activeButton === 'productLog' || activeButton === 'productVariantLog' ? (
+        {activeButton === 'priceLog' ? (
           <>
+            <TableCell>{log['price name']}</TableCell>
+            <TableCell>{log.user_name}</TableCell>
             <TableCell>{log.product_name}</TableCell>
             <TableCell>{log.action}</TableCell>
             <TableCell>{log.log_date}</TableCell>
-            <TableCell>{log.log_date_est}</TableCell>
+          </>
+        ) : activeButton === 'productLog' || activeButton === 'productVariantLog' ? (
+          <>
+            <TableCell>{log.user_name}</TableCell>
+            <TableCell>{log.product_name}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
           </>
         ) : (
           <>
+            <TableCell>{log.user_name}</TableCell>
             <TableCell>{log.category_id}</TableCell>
             <TableCell>{log.action}</TableCell>
             <TableCell>{log.level}</TableCell>
             <TableCell>{log.category_name}</TableCell>
             <TableCell>{log.log_date}</TableCell>
-            <TableCell>{log.log_date_est}</TableCell>
           </>
         )}
       </TableRow>
@@ -104,38 +119,47 @@ const HistoryPage = () => {
         <Button
           variant="contained"
           color={activeButton === 'categoryLog' ? 'secondary' : 'primary'}
-          onClick={() => handleApiCall('obtainCategoryLog', 'categoryLog')}
+          onClick={() => handleApiCall('obtainCategoryLog/', 'categoryLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
+          style={{ borderRadius: '10px', width: '16%', padding: '10px', lineHeight: '20px' }}
         >
           Category Log
         </Button>
         <Button
           variant="contained"
           color={activeButton === 'categoryVariantLog' ? 'secondary' : 'primary'}
-          onClick={() => handleApiCall('obtainCategoryVarientLog', 'categoryVariantLog')}
+          onClick={() => handleApiCall('obtainCategoryVarientLog/', 'categoryVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
+          style={{ borderRadius: '10px', width: '21%', padding: '10px', lineHeight: '20px' }}
         >
           Category Variant Log
         </Button>
         <Button
           variant="contained"
           color={activeButton === 'productLog' ? 'secondary' : 'primary'}
-          onClick={() => handleApiCall('obtainProductLog', 'productLog')}
+          onClick={() => handleApiCall('obtainProductLog/', 'productLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
+          style={{ borderRadius: '10px', width: '18%', padding: '10px', lineHeight: '20px' }}
         >
           Product Log
         </Button>
         <Button
           variant="contained"
           color={activeButton === 'productVariantLog' ? 'secondary' : 'primary'}
-          onClick={() => handleApiCall('obtainProductVarientLog', 'productVariantLog')}
+          onClick={() => handleApiCall('obtainProductVarientLog/', 'productVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '22%', padding: '10px', lineHeight: '20px' }}
+          style={{ borderRadius: '10px', width: '21%', padding: '10px', lineHeight: '20px' }}
         >
           Product Variant Log
+        </Button>
+        <Button
+          variant="contained"
+          color={activeButton === 'priceLog' ? 'secondary' : 'primary'}
+          onClick={() => handleApiCall('obtainPriceLog/', 'priceLog')}
+          disabled={loading}
+          style={{ borderRadius: '10px', width: '16%', padding: '10px', lineHeight: '20px' }}
+        >
+          Price Log
         </Button>
       </div>
 
