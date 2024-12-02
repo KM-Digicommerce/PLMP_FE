@@ -88,14 +88,14 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   };
   const handleSectionClick = (section) => {
     setActiveSection(section);
-    if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
-      navigate('/HomePage/brand'); 
+    if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/brand'); 
     }
-    else if (section === 'export' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
-      navigate('/HomePage/export'); 
+    else if (section === 'export' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/export'); 
     }
-    else if (section === 'import' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
-      navigate('/HomePage/import'); 
+    else if (section === 'import' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/import'); 
     }
   };
   return (

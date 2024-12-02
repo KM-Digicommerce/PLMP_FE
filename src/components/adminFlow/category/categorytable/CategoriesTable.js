@@ -990,7 +990,7 @@ const handleLevelClear = (e) => {
 
   {searchVisible && suggestions.length > 0 && (
     <div
-      style={{ position: 'absolute', top: '68%', left: '61.5%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '504px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
+      style={{ position: 'absolute', top: '61%', left: '61.7%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '500px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
       {suggestions.map((suggestion, index) => (
         <div
           key={index}
