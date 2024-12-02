@@ -11,7 +11,7 @@ const VariantList = ({ categories }) => {
     const [selectedlevel4, setSelectedlevel4] = useState('');
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
-
+    const [clearBtn, setShowclearBtn] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -82,6 +82,9 @@ const VariantList = ({ categories }) => {
     const handleCategorySelectForVariants = async (id, level) => {
         const selectedIdString = String(id);
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
+        if (id && level) {
+            setShowclearBtn(true);
+        }
         if (isIdInLastLevel) {
             setIsAddProductVisible(true);
         }
@@ -308,6 +311,13 @@ const VariantList = ({ categories }) => {
         setSelectedlevel4(e);
         setSelectedlevel5(e);
         setSelectedlevel6(e);
+        setShowclearBtn(false);
+        setIsCategoryDropdownOpen(false);
+        setIsLevel2DropdownOpen(false);
+        setIsLevel3DropdownOpen(false);
+        setIslevel4DropdownOpen(false);
+        setIslevel5DropdownOpen(false);
+        setIslevel6DropdownOpen(false);
       }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         // setIsLoading(true);
@@ -381,9 +391,11 @@ const VariantList = ({ categories }) => {
         <div>
             <div className='CategoryTable-header'>
             <h2 className='header_cls'>VariantList Schema!</h2>
-            <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear categories</button>
             </div>
             <div className='CategoryContainer'>
+            {clearBtn && (
+      <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
+      )}
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
                     <div className='DropdownColumn'>

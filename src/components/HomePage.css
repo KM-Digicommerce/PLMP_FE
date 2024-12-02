@@ -18,8 +18,9 @@ body{
   background-color: #f2f2f2;
   width: 100%;
   padding: 5px;
-  height: calc(100vh - 62px); /* Default height */
+  height: calc(108vh - 46px);
   overflow: auto;
+  margin-bottom: 23px;
 }
 
 .button {

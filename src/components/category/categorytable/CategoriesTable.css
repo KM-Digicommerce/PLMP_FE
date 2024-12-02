@@ -70,18 +70,20 @@ tr:hover .action-buttons {
 
 .CategoryContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: space-evenly;
+  align-items: end;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    padding: 10px;
-    border-radius: 9px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 9px;
+  align-content: center;
+  flex-direction: column;
 }
 
 .DropdownsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; 
+    gap: 15px; 
     margin: 10px;
 }
 
@@ -246,4 +248,4 @@ tr:hover .action-buttons {
 .suggestion-item:hover {  background-color: #f0f0f0;}
 .swal2-container {  z-index: 1500 !important; }
 .swal2-popup { z-index: 1501 !important; }
-.clear_cat_btn{ background: rgb(145, 146, 146); color: white; border: none; width: 12%; cursor: pointer; margin: 20px 5px 10px 5px; border-radius: 5px; float: right; font-size: 14px;}
+.clear_cat_btn{ background: rgb(145, 146, 146); color: white; border: none; cursor: pointer; margin: 0px 5px 0px 5px; border-radius: 5px; width: 12%; float: right; padding: 5px 5px 5px 5px;}

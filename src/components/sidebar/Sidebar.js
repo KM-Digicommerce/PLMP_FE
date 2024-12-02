@@ -8,8 +8,9 @@ import Modal from '@mui/material/Modal';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import axiosInstance from '../../../src/utils/axiosConfig';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick}) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -54,6 +55,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       });
       return;
     }
+    setLoading(true);
     const formData = new FormData();
     formData.append('file', selectedFile);
     try {
@@ -80,42 +82,17 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       setLoading(false);
     }
   };
-  const handleExport = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/exportAll/`, {
-        responseType: 'blob',
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'products.xlsx');
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      Swal.fire({ title: 'Success!', text: 'File exported successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
-        }
-      });
-    } catch (error) {
-      console.error('Error exporting data:', error);
-      Swal.fire({ title: 'Export Failed', text: 'An error occurred while exporting the data.', icon: 'error', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',
-        },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  
   const toggleProductsSubmenu = () => {
     setShowProductsSubmenu(!showProductsSubmenu);
   };
   const handleSectionClick = (section) => {
     setActiveSection(section);
-    console.log('Outside If',location.pathname);
-
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
-      console.log('Inside If');
       navigate('/HomePage/brand'); 
+    }
+    else if (section === 'export' && ((location.pathname.includes("product/")) || (location.pathname.includes("/HomePage")) ) ) {
+      navigate('/HomePage/export'); 
     }
   };
   return (
@@ -131,7 +108,12 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         <li onClick={() => { onBrandClick(); handleSectionClick('brand'); }}
           className={activeSection === 'brand' ? 'active' : ''}>
           <FontAwesomeIcon icon={faStore} className="icon" />
-          brand
+          Brand
+        </li>
+        <li  onClick={() => { OnAllVariantsClick(); handleSectionClick('variants'); }}
+          className={activeSection === 'variants' ? 'active' : ''}>
+          <FontAwesomeIcon icon={faUser} className="icon" />
+          Variants
         </li>
         <li onClick={() => {toggleProductsSubmenu(); handleSectionClick('products');}} className={`productsMenu ${activeSection === 'products' ? 'active' : ''}`}>
           <FontAwesomeIcon icon={faBox} className="icon" />
@@ -145,22 +127,17 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             </ul>
           )}
         </li>
-        <li  onClick={() => { OnAllVariantsClick(); handleSectionClick('variants'); }}
-          className={activeSection === 'variants' ? 'active' : ''}>
-          <FontAwesomeIcon icon={faUser} className="icon" />
-          Variants
-        </li>
         <li onClick={handleImportClick}
           className={activeSection === 'import' ? 'active' : ''}>
           <FontAwesomeIcon icon={faFileImport} className="icon" /> Import
         </li>
         <ApiResponseModal
-          showResponseModal={showResponseModal}
-          setShowResponseModal={setShowResponseModal}
-          apiResponse={apiResponse}
-          selectedFilepath={selectedFilepath}
+         showResponseModal={showResponseModal}
+         setShowResponseModal={setShowResponseModal}
+         apiResponse={apiResponse}
+         selectedFilepath={selectedFile ? selectedFile.name : ''}
         />
-        <li  onClick={handleExport}
+        <li onClick={() => { OnExportClick(); handleSectionClick('export'); }}
           className={activeSection === 'export' ? 'active' : ''}>
           <FontAwesomeIcon icon={faFileExport} className="icon" />
           Export
@@ -206,8 +183,14 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             {selectedFile && <span className="file-name">{selectedFile.name}</span>}
           </div>
           <div className="actions">
-            <Button variant="contained" color="success" onClick={handleUpload} disabled={loading}>
-              Upload
+          <Button
+              variant="contained"
+              color="success"
+              onClick={handleUpload}
+              disabled={loading}
+              startIcon={loading && <CircularProgress size={20} color="inherit" />}
+            >
+              {loading ? 'Uploading...' : 'Upload'}
             </Button>
             <Button variant="outlined" color="error" onClick={closeImportModal}>
               Cancel

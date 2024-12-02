@@ -1,10 +1,7 @@
-// src\components\products\ProductList.js
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axiosInstance from '../../../src/utils/axiosConfig';
-
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);
@@ -12,10 +9,11 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  // const [bulkEditData, setBulkEditData] = useState({  product_name: '',  BasePrice: '',  ManufacturerName: '',  tags: '',  Key_features: ''});
   const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOption, setSortOption] = useState(''); // default value to 'newest'
+
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -25,36 +23,45 @@ const ProductList = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`);
+  const handleSortChange = async (event) => {
+    const selectedOption = event.target.value;
+    if (selectedOption) {
+      setSortOption(selectedOption);
+    const filter = selectedOption === 'newest' ? true : false;
+    fetchData(filter);
+    }
+      else{
+        setSortOption('');
+      }    
+  };
 
-        if (response.data && response.data.data && response.data.data.product_list) {
-          setResponseData(response.data.data.product_list);
-        } else {
-          alert("Unexpected response structure");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchData = async (filter) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
+        params: { filter }
+      });
+
+      if (response.data && response.data.data && response.data.data.product_list) {
+        setResponseData(response.data.data.product_list);
+      } else {
+        alert("Unexpected response structure");
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchData(true); // By default, load newest products
   }, []);
-
-
 
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/HomePage/product/${productId}`);
   };
-
-
-
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
@@ -81,7 +88,7 @@ const ProductList = () => {
     item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (!sortColumn) return 0; 
+    if (!sortColumn) return 0;
 
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
@@ -90,40 +97,8 @@ const ProductList = () => {
     return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
   });
 
-  // const handleBulkEditChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setBulkEditData({ ...bulkEditData, [name]: value });
-  // };
-
-  // const handleBulkEditSubmit = async () => {
-  //   if (!bulkEditData.product_name && !bulkEditData.BasePrice && !bulkEditData.tags) {
-  //     Swal.fire('Please enter values to update!', '', 'warning');
-  //     return;
-  //   }
-  //   const updates = {
-  //     ids: selectedProducts,
-  //     update_obj: {
-  //       ...(bulkEditData.product_name && { product_name: bulkEditData.product_name }),
-  //       ...(bulkEditData.BasePrice && { BasePrice: bulkEditData.BasePrice }),
-  //       ...(bulkEditData.ManufacturerName && { ManufacturerName: bulkEditData.ManufacturerName }),
-  //       ...(bulkEditData.tags && { tags: bulkEditData.tags }),
-  //       ...(bulkEditData.Key_features && { Key_features: bulkEditData.Key_features }),
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await axios.put(`${process.env.REACT_APP_IP}/productBulkUpdate/`, updates);
-  //     Swal.fire('Success', 'Bulk edit applied successfully', 'success').then(() => {
-  //       window.location.reload();
-  //     });
-  //   } catch (err) {
-  //     Swal.fire('Error', 'Failed to apply bulk edit', 'error');
-  //   }
-  // };
-
   return (
     <div className="product-list">
-
       <div className="search-container">
         <input
           type="text"
@@ -133,35 +108,14 @@ const ProductList = () => {
           className="search-input"
         />
       </div>
-      {/* <div className="bulk-edit-panel">
-        <h3>Bulk Edit</h3>
-        <div className="bulk-edit-inputs">
-          <input
-            type="text"
-            name="product_name"
-            placeholder="Edit Product Name"
-            value={bulkEditData.product_name}
-            onChange={handleBulkEditChange}
-          />
-          <input
-            type="text"
-            name="BasePrice"
-            placeholder="Edit Base Price"
-            value={bulkEditData.BasePrice}
-            onChange={handleBulkEditChange}
-          />
-          <input
-            type="text"
-            name="tags"
-            placeholder="Edit Tags"
-            value={bulkEditData.tags}
-            onChange={handleBulkEditChange}
-          />
-          <button onClick={handleBulkEditSubmit} className="apply-bulk-edit-button">
-            Apply Changes
-          </button>
-        </div>
-      </div> */}
+      <div className="sort-container">
+        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
+        <option value="">Sort by Products</option>
+          <option value="newest">Newest Products</option>
+          <option value="oldest">Oldest Products</option>
+        </select>
+      </div>
+
       {loading ? (
         <p>Loading products...</p>
       ) : error ? (
@@ -177,31 +131,14 @@ const ProductList = () => {
                   checked={selectedProducts.length === sortedProducts.length}
                 />
               </th>
-              <th className="checkbox-column" onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="mpn-column" onClick={() => handleSort("mpn")}>
-                MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="product-column" onClick={() => handleSort("product_name")}> Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="brand-column" onClick={() => handleSort("brand")}>
-                Brand {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="taxonomy-column" onClick={() => handleSort("taxonomy")}>
-              Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="price-column" onClick={() => handleSort("base_price")}>
-                Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="msrpprice-column" onClick={() => handleSort("msrp")}>
-                MSRP {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              <th className="model-column" onClick={() => handleSort("model")}>
-                Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th>
-              {/* <th className="upc_ean-column" onClick={() => handleSort("upc_ean")}>
-                UPC_EAN {sortColumn === "upc_ean" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-              </th> */}
+              <th className="checkbox-column" onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="mpn-column" onClick={() => handleSort("mpn")}>MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="product-column" onClick={() => handleSort("product_name")}>Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="brand-column" onClick={() => handleSort("brand")}>Brand {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="taxonomy-column" onClick={() => handleSort("taxonomy")}>Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="price-column" onClick={() => handleSort("base_price")}>Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="msrpprice-column" onClick={() => handleSort("msrp")}>MSRP {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="model-column" onClick={() => handleSort("model")}>Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
             </tr>
           </thead>
           <tbody>
@@ -214,29 +151,30 @@ const ProductList = () => {
                     onChange={() => handleSelectProduct(item.product_id)}
                   />
                 </td>
-                <td className="checkbox-column"> {Array.isArray(item.image) ? (
-                  <img
-                    src={item.image[0]}
-                    alt={item.product_name}
-                    className="product-image-round"
-                  />
-                ) : (
-                  <img
-                    src={item.image}
-                    alt={item.product_name}
-                    className="product-image-round"
-                  />
-                )} </td>
+                <td className="checkbox-column">
+                  {Array.isArray(item.image) ? (
+                    <img
+                      src={item.image[0]}
+                      alt={item.product_name}
+                      className="product-image-round"
+                    />
+                  ) : (
+                    <img
+                      src={item.image}
+                      alt={item.product_name}
+                      className="product-image-round"
+                    />
+                  )}
+                </td>
                 <td className="mpn-column">{item.mpn}</td>
                 <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
-                  <span className="product-name" onClick={() => handleProductSelect(item.product_id)}>{item.product_name}</span>
+                  <span className="product-name">{item.product_name}</span>
                 </td>
                 <td className="mpn-column">{item.brand}</td>
                 <td className="attributes-column">{item.category_name}</td>
                 <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
-                <td className="msrpprice-column"> {item.msrp ? `$${item.msrp}` : ''}</td>
+                <td className="msrpprice-column">{item.msrp ? `$${item.msrp}` : ''}</td>
                 <td className="model-column">{item.model}</td>
-                {/* <td className="upc_ean-column">{item.upc_ean}</td> */}
               </tr>
             ))}
           </tbody>

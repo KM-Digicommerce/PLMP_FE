@@ -39,6 +39,9 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchVisible, setSearchVisible] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const navigate = useNavigate();
+  const [sortOption, setSortOption] = useState(''); // default value to 'newest'
+  const [loading, setLoading] = useState(true);
+  const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -54,6 +57,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             }
           );
           setProducts(response.data.data.product_list);
+
         } catch (error) {
           console.error('Error fetching product list:', error);
         }
@@ -63,6 +67,51 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     fetchProducts();
   }, [selectedCategoryIdForallprod]);
 
+  const handleSortChange = async (event) => {
+    const selectedOption = event.target.value;
+    console.log(selectedOption,'sort');
+    
+    if (selectedOption !== '' ) {
+      setProducts('');
+      setSortOption(selectedOption);
+    const filter = selectedOption === 'newest' ? true : false;
+    fetchData(filter);
+    }
+    else{
+      setSortOption('');
+    }
+    
+  };
+
+  const fetchData = async (filter) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
+       
+        params: {
+          category_id: selectedCategoryIdForallprod,
+          level_name: selectedCategorylevelForallprod,
+          filter
+        }       });
+
+      if (response.data && response.data.data && response.data.data.product_list) {
+        setResponseData(response.data.data.product_list);
+        // setProducts('');
+      } else {
+        alert("Unexpected response structure");
+      }
+    } catch (err) {
+      // setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(true); // By default, load newest products
+  }, []);
+
+  const [clearBtn, setShowclearBtn] = useState(false);
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
   const [selectedlevel4, setSelectedlevel4] = useState('');
   const [selectedlevel5, setSelectedlevel5] = useState('');
@@ -134,9 +183,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list);
   const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
   const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list);
-console.log(level6Categories);
-
+  if (!level6Categories) {
+    console.log(level6Categories);
+}
   const handleCategorySelectForVariants = async (id, category_level) => {
+    setShowclearBtn(true);
     setSelectedCategorylevelForallprod(category_level);
     setSelectedCategoryIdForallprod(id);
   };
@@ -450,6 +501,13 @@ const handleLevelClear = (e) => {
   setSelectedlevel4(e);
   setSelectedlevel5(e);
   setSelectedlevel6(e);
+  setShowclearBtn(false);
+  setIsCategoryDropdownOpen(false);
+  setIsLevel2DropdownOpen(false);
+  setIsLevel3DropdownOpen(false);
+  setIslevel4DropdownOpen(false);
+  setIslevel5DropdownOpen(false);
+  setIslevel6DropdownOpen(false);
 }
   if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
     return <div>No categories available</div>;
@@ -583,7 +641,22 @@ const handleLevelClear = (e) => {
     setSearchQuerylist(suggestion);
     setSuggestions([]);
   };
-  let sortedProductss = sortProducts(products);
+  let sortedProductss = '';
+  if (products) {
+    sortedProductss = sortProducts(products)
+  }
+  else if (responseData) {
+    sortedProductss = responseData;
+  }
+  // sortedProductss = sortProducts(products.length > 0 ? products : responseData);
+console.log('HEre youyr respsn products', products);
+console.log('HEre youyr respsn responseData', responseData);
+console.log('sortedProductss',sortedProductss);
+
+
+  // let sortedProductss = sortProducts(products) || sortProducts(responseData);
+
+
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
       product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
@@ -596,9 +669,11 @@ const handleLevelClear = (e) => {
     <div className="CategoryMain">
       <div className="CategoryTable-header">
         <h3>Categories</h3>
-        <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear categories</button>
       </div>
       <div className='CategoryContainer'>
+      {clearBtn && (
+      <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
+      )}
         <div className='DropdownsContainer'>
           <div className='DropdownColumn'>
             <label htmlFor="categorySelect">Level 1: </label>
@@ -888,7 +963,13 @@ const handleLevelClear = (e) => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0px' }}>
   <h3>Products</h3>
-
+  <div className="sort-container">
+        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
+        <option value="">Sort by Products</option>
+          <option value="newest">Newest Products</option>
+          <option value="oldest">Oldest Products</option>
+        </select>
+      </div>
   <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
     {searchVisible && (
       <div style={{ position: 'relative', width: '500px' }}>

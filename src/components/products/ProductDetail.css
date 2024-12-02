@@ -72,8 +72,9 @@
   padding: 20px;
 }
 
-.product-info-section h3,
+/* .product-info-section h3, */
 .variant-section h3,
+.taxonomy-section h3,
 .pricing-section h3,
 .other-details-section h3 {
   font-size: 1rem;
@@ -234,13 +235,6 @@ input[type="number"] {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.thumbnail-section {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  padding: 17px 13px 0px 0px;
-}
-
 .product-thumbnail {
   width: 60px;
   height: 60px;
@@ -253,12 +247,10 @@ input[type="number"] {
 
 .product-thumbnail:hover {
   border-color: #007bff;
-  transform: scale(1.1);
 }
 
 .active-thumbnail {
   border-color: #ff9900;
-  transform: scale(1.1);
 }
 
 .section_sidebar {
@@ -274,13 +266,13 @@ input[type="number"] {
 
 .categoryLevel {
   display: inline-block; 
-  padding: 13px 24px;
+  padding: 10px 18px;
   font-size: 11px; 
   font-family: 'Arial', sans-serif; 
   background: linear-gradient(135deg, #979591, #fcf6f6);
   color: #4e4c4c;
   border-radius: 20px; 
-  margin: 0px 0 0 20px; 
+  margin: 10px 0 0 0px;
   font-weight: 600; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
   text-transform: capitalize;
@@ -297,8 +289,71 @@ input[type="number"] {
     float: right;
     font-size: 14px;
 }
-.CategoryTable-header-tax{
+.CategoryTable-header-edit {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   border-bottom: 2px solid #007bff;
+  margin-bottom: 15px;
+
+}
+.thumbnail-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.thumbnail-scroll-btn {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 55%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.thumbnail-scroll-btn:hover {
+  background-color: #bbb;
+}
+
+.thumbnail-section {
+  justify-content: flex-start;
+  padding: 16px 23px 8px 23px;
+  display: flex;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  gap: 8px;
+  width: 118px; /* Adjust this width based on layout */
+}
+
+.thumbnail-section::-webkit-scrollbar {
+  display: none;
+}
+.prev-btn {
+  left: -8px;
+}
+
+.next-btn {
+  right: -25px;
+}
+.dropdown-options[aria-disabled="true"] {
+  pointer-events: none; /* Prevent any interactions */
+  opacity: 0.6; /* Add visual indication of being disabled */
+}
+
+.dropdown-disabled {
+  cursor: not-allowed; /* Change cursor to show it's disabled */
+}
+.dropdown-option-disabled {
+  display: none; /* Prevent dropdown from opening */
 }

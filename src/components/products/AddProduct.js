@@ -4,6 +4,7 @@ import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl } from '@mui/material';
 import axiosInstance from '../../../src/utils/axiosConfig';
+import Swal from 'sweetalert2';
 
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow }) => {
     const [variantOptions, setVariantOptions] = useState([]);
@@ -45,13 +46,19 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <h2 style={{ margin: '0px' }}>Add Product</h2>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Basic Info</h3>
-                    <input type="text" name="model" placeholder="Model" value={productData.model} onChange={handleChange} />
-                    <input type="text" name="mpn" placeholder="MPN" value={productData.mpn} onChange={handleChange} />
-                    <input type="text" name="upc_ean" placeholder="UPC/EAN" value={productData.upc_ean} onChange={handleChange} />
-                    <input type="text" name="breadcrumb" placeholder="Breadcrumb" value={productData.breadcrumb} onChange={handleChange} />
+                     <label htmlFor="model">Model <span className="required">*</span></label>
+                    <input type="text" name="model" placeholder="" required value={productData.model} onChange={handleChange} />
+                    <label htmlFor="mpn">MPN <span className="required">*</span></label>
+                    <input type="text" name="mpn" placeholder="" required value={productData.mpn} onChange={handleChange} />
+                    <label htmlFor="upc_ean">UPC/EAN <span className="required">*</span></label>
+                    <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange} />
+                    <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
+                    <input type="text" name="breadcrumb" placeholder="" required value={productData.breadcrumb} onChange={handleChange} />
+                    <label htmlFor="brand-select">Brand <span className="required">*</span></label>
                     <select
                         id="brand-select"
                         name="brand_id"
+                        required 
                         value={productData.product_obj.brand_id || ''}
                         onChange={handleChange}
                         className="dropdown"
@@ -64,33 +71,36 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             </option>
                         ))}
                     </select>
-                    <input type="text" name="product_name" placeholder="Product Name" required value={productData.product_name} onChange={handleChange} />
+                    <label htmlFor="product_name">Product Name <span className="required">*</span></label>
+                    <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange} />
                 </div>
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
-                    <textarea name="long_description" placeholder="Long Description" value={productData.long_description} onChange={handleChange} />
-                    <textarea name="short_description" placeholder="Short Description" value={productData.short_description} onChange={handleChange} />
+                    <label htmlFor="long_description">Long Description <span className="required">*</span></label>
+                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    <label htmlFor="short_description">Short Description <span className="required">*</span></label>
+                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
                 </div>
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
                     <div className="pricing-grid">
                         <div className="pricing-field">
-                            <label htmlFor="base_price">Base</label>
-                            <input type="number" id="base_price" name="base_price" placeholder="Base" value={productData.base_price} onChange={handleChange} />
+                        <label htmlFor="base_price">Base <span className="required">*</span></label>
+                            <input type="number" id="base_price" name="base_price" required placeholder="Base" value={productData.base_price} onChange={handleChange} />
                         </div>
                         <div className="pricing-field">
-                            <label htmlFor="msrp">MSRP</label>
-                            <input type="number" id="msrp" name="msrp" placeholder="MSRP" value={productData.msrp} onChange={handleChange} />
+                        <label htmlFor="msrp">MSRP <span className="required">*</span></label>
+                            <input type="number" id="msrp" name="msrp" placeholder="MSRP" required value={productData.msrp} onChange={handleChange} />
                         </div>
                         <div className="pricing-field">
-                            <label htmlFor="discount_price">Discount</label>
-                            <input type="number" id="discount_price" name="discount_price" placeholder="Discount" value={productData.discount_price || ''} onChange={handleChange} />
+                        <label htmlFor="discount_price">Discount <span className="required">*</span></label>
+                            <input type="number" id="discount_price" name="discount_price" placeholder="Discount" required value={productData.discount_price || ''} onChange={handleChange} />
                         </div>
                         <div className="pricing-field">
-                            <label htmlFor="dealer_price">Dealer</label>
-                            <input type="number" id="dealer_price" name="dealer_price" placeholder="Dealer" value={productData.dealer_price || ''} onChange={handleChange} />
+                        <label htmlFor="dealer_price">Dealer <span className="required">*</span></label>
+                            <input type="number" id="dealer_price" name="dealer_price" placeholder="Dealer" required value={productData.dealer_price || ''} onChange={handleChange} />
                         </div>
                     </div>
                 </div>
@@ -102,88 +112,34 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-                {/* <div className="form-section">
-                    <h3 style={{ margin: '6px' }}>Variant Details</h3>
-                    <div className="variant-scroll">
-                        <div className="variant-row">
-                            <div className="variant-field">
-                                <label htmlFor="sku">SKU</label>
-                                <input type="text" id="sku" name="sku" placeholder="SKU" value={selectedVariants.sku} onChange={handleVariantDetailChange} />
-                            </div>
-                            <div className="variant-field">
-                                <label htmlFor="unfinishedPrice">Unfinished Price</label>
-                                <input type="number" id="unfinishedPrice" name="unfinishedPrice" placeholder="Unfinished Price" value={selectedVariants.unfinishedPrice} onChange={handleVariantDetailChange} />
-                            </div>
-                            <div className="variant-field">
-                                <label htmlFor="finishedPrice">Finished Price</label>
-                                <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" value={selectedVariants.finishedPrice} onChange={handleVariantDetailChange} />
-                            </div>
-                            <div className="variant-field">
-                                <label htmlFor="quantity">Quantity</label>
-                                <input type="number" id="quantity" name="quantity" placeholder="Quantity" value={selectedVariants.quantity} onChange={handleVariantDetailChange} />
-                            </div>
-                            {variantOptions?.map((variant) => (
-                                <div className="variant-dropdown" key={variant.type_id}>
-                                    <label className="dropdown-label" htmlFor={`variant-${variant.type_id}`}>
-                                        {variant.type_name}
-                                    </label>
-                                    <FormControl fullWidth variant="outlined" className="dropdown-container">
-                                        <Select
-                                            labelId={`variant-${variant.type_id}`}
-                                            value={selectedVariants[variant.type_id] || ''}
-                                            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-                                            displayEmpty
-                                            className="styled-dropdown"
-                                            inputProps={{
-                                                style: {
-                                                    fontSize: '16px',
-                                                    padding: '8px',
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value="" disabled>
-                                                Select {variant.type_name}
-                                            </MenuItem>
-                                            {variant.option_value_list?.map((option) => (
-                                                <MenuItem key={option.type_value_id} value={option.type_value_id}>
-                                                    {option.type_value_name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </div>
-                            ))}
-
-                        </div>
-                    </div>
-                </div> */}
                  <div className="form-section">
                  <div className='CategoryTable-header'>
                     <h3 style={{ margin: '6px' }}>Variant Details</h3>
-                    {/* Add Variant Button */}
                     <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
                 </div>
                     <div className="variant-scroll">
                         {selectedVariants.map((variant, index) => (
                             <div className="variant-row" key={index}>
                                 <div className="variant-field">
-                                    <label htmlFor="sku">SKU</label>
-                                    <input type="text" id="sku" name="sku" placeholder="SKU" value={variant.sku} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                <label htmlFor="sku">SKU <span className="required">*</span></label>
+                                    <input type="text" id="sku" name="sku" placeholder="SKU" required value={variant.sku} onChange={(e) => handleVariantDetailChange(e, index)} />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="unfinishedPrice">Unfinished Price</label>
                                     <input type="number" id="unfinishedPrice" name="unfinishedPrice" placeholder="Unfinished Price" value={variant.unfinishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
                                 </div>
                                 <div className="variant-field">
-                                    <label htmlFor="finishedPrice">Finished Price</label>
-                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" value={variant.finishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
+                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" required value={variant.finishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
                                 </div>
                                 <div className="variant-field">
-                                    <label htmlFor="quantity">Quantity</label>
-                                    <input type="number" id="quantity" name="quantity" placeholder="Quantity" value={variant.quantity} onChange={(e) => handleVariantDetailChange(e, index)} />
+                                <label htmlFor="quantity">Quantity <span className="required">*</span></label>
+                                    <input type="number" id="quantity" name="quantity" placeholder="Quantity" required value={variant.quantity} onChange={(e) => handleVariantDetailChange(e, index)} />
                                 </div>
-
-                                {/* Dynamic Variant Dropdowns */}
+                                <div className="variant-field">
+                                    <label htmlFor="totalPrice">Total Price</label>
+                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
+                                </div>
                                 {variantOptions?.map((variantOption) => (
                                     <div className="variant-dropdown" key={variantOption.type_id}>
                                         <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
@@ -192,8 +148,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         <FormControl fullWidth variant="outlined" className="dropdown-container">
                                             <Select
                                                 labelId={`variant-${variantOption.type_id}`}
-                                                value={variant[variantOption.type_id] || ''} // Bind the value to the selected option
-                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)} // Handle the change
+                                                value={variant[variantOption.type_id] || ''} 
+                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)}
                                                 displayEmpty
                                                 className="styled-dropdown"
                                                 inputProps={{
@@ -219,7 +175,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         ))}
                     </div>
                 </div>
-                <button onClick={onSave} className="save-button">Save Product</button>
+                <button onClick={onSave} className="save-button">Add Product</button>
             </div>
         </div>
     );
@@ -227,7 +183,9 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
 
 const AddProduct = (categories) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
-    const [isAddProductVisible, setIsAddProductVisible] = useState(false);  // Add this line
+    const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
+    const [clearBtn, setShowclearBtn] = useState(false);
+
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -268,28 +226,37 @@ const AddProduct = (categories) => {
             ]
         }
     });
+    // const [selectedVariants, setSelectedVariants] = useState([{
+    //     sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: []
+    // }]);
     const [selectedVariants, setSelectedVariants] = useState([{
-        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: []
+        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, options: []
     }]);
 
+    // const addVariantRow = () => {
+    //     setSelectedVariants(prevVariants => [
+    //         ...prevVariants,
+    //         { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: [] }
+    //     ]);
+    // };
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
             ...prevVariants,
-            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: [] }
+            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0, options: [] }
         ]);
     };
-    // const handleVariantDetailChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setSelectedVariants((prev) => ({
-    //         ...prev,
-    //         [name]: value
-    //     }));
-    // };
     const handleVariantDetailChange = (e, index) => {
         const { name, value } = e.target;
         setSelectedVariants(prev => {
             const updatedVariants = [...prev];
             updatedVariants[index][name] = value;
+            if (name === 'basePrice' || name === 'finishedPrice') {
+                console.log(updatedVariants[index],'updatedVariants[index]');
+                console.log(productData.product_obj.base_price,'updatedVariants[index].basePrice');
+                console.log(updatedVariants[index].totalPrice,'updatedVariants[index].totalPrice');
+
+                updatedVariants[index].totalPrice = parseFloat(productData.product_obj.base_price || 0) + parseFloat(updatedVariants[index].finishedPrice || 0);
+            }
             return updatedVariants;
         });
     };
@@ -303,17 +270,13 @@ const AddProduct = (categories) => {
             }
         });
     };
-    const handleVariantChange = (typeId, optionId, index) => {
-        console.log(typeId,optionId,index,'typeID OPTIPN inxe');
-        
+    const handleVariantChange = (typeId, optionId, index) => {        
         setSelectedVariants(prev => {
           const updatedVariants = [...prev];
           const updatedVariant = updatedVariants[index];
-          // Ensure the options array exists
           if (!updatedVariant.options) {
             updatedVariant.options = [];
           } 
-          // Check if the option already exists, if so update it, otherwise add it
           const optionIndex = updatedVariant.options.findIndex(option => option.option_name_id === typeId);
           if (optionIndex !== -1) {
             updatedVariant.options[optionIndex] = {
@@ -327,6 +290,7 @@ const AddProduct = (categories) => {
             });
           }
           updatedVariant[typeId] = optionId;
+          updatedVariant.totalPrice = (parseFloat(productData.base_price) || 0) + (parseFloat(updatedVariant.finishedPrice) || 0);
           return updatedVariants;
         });
       };
@@ -361,6 +325,20 @@ const AddProduct = (categories) => {
     //     }));
     // };
     const handleSave = async () => {
+        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.breadcrumb || 
+            !productData.product_obj.brand_id || !productData.product_obj.product_name || 
+            !productData.product_obj.short_description || !productData.product_obj.base_price || !productData.product_obj.msrp) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+    
+        const invalidVariants = selectedVariants.some(variant => 
+            !variant.sku || !variant.finishedPrice || !variant.quantity
+        );
+        if (invalidVariants) {
+            alert("Please fill in all required fields for variants.");
+            return;
+        }
         try {
             const payload = {
                 product_obj: {
@@ -370,6 +348,7 @@ const AddProduct = (categories) => {
                         un_finished_price: variant.unfinishedPrice,
                         finished_price: variant.finishedPrice,
                         quantity: variant.quantity,
+                        total_price: variant.totalPrice,
                         options: variant.options.map(option => ({
                             option_name_id: option.option_name_id,
                             option_value_id: option.option_value_id
@@ -377,46 +356,22 @@ const AddProduct = (categories) => {
                     }))
                 }
             };
-
-            // const payload = {
-            //     product_obj: {
-            //         ...productData.product_obj,
-            //         varients: productData.product_obj.varients.map(variant => ({
-            //             sku_number: selectedVariants.sku,
-            //             un_finished_price: selectedVariants.unfinishedPrice,
-            //             finished_price: selectedVariants.finishedPrice,
-            //             quantity: selectedVariants.quantity,
-            //             options: variant.options.map(option => ({
-            //                 option_name_id: option.option_name_id,
-            //                 option_value_id: option.option_value_id
-            //             }))
-            //         }))
-            //     }
-            // };
-
             const response = await axiosInstance.post(
                 `${process.env.REACT_APP_IP}/createProduct/`,
                 payload
             );            
             if (response.data?.data?.status === true) {
-                alert('Product added successfully!');
+                Swal.fire({
+                    title: 'Success', text: 'Product added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
+                      container: 'swal-custom-container',
+                      popup: 'swal-custom-popup',
+                      title: 'swal-custom-title',
+                      confirmButton: 'swal-custom-confirm',
+                      cancelButton: 'swal-custom-cancel',
+                    },
+                  })
                 setProductData({
-                    product_obj: {
-                        model: '',
-                        mpn: '',
-                        upc_ean: '',
-                        breadcrumb: '',
-                        brand_id: '',
-                        product_name: '',
-                        long_description: '',
-                        short_description: '',
-                        features: '',
-                        attributes: '',
-                        tags: '',
-                        msrp: '',
-                        base_price: '',
-                        key_features: '',
-                        varients: [{
+                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '', varients: [{
                             sku_number: '',
                             finished_price: '',
                             un_finished_price: '',
@@ -501,6 +456,13 @@ const AddProduct = (categories) => {
         setSelectedlevel5(e);
         setSelectedlevel6(e);
         setIsAddProductVisible(false);
+        setShowclearBtn(false);
+        setIsCategoryDropdownOpen(false);
+        setIsLevel2DropdownOpen(false);
+        setIsLevel3DropdownOpen(false);
+        setIslevel4DropdownOpen(false);
+        setIslevel5DropdownOpen(false);
+        setIslevel6DropdownOpen(false);
     }
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
@@ -522,7 +484,9 @@ const AddProduct = (categories) => {
         console.log(lastLevelCategoryIds.includes(id), 'REsponse to set');
         console.log(id, 'ID');
         const selectedIdString = String(id);
-
+        if (id && category_level) {
+            setShowclearBtn(true);
+        }
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
 
         if (isIdInLastLevel) {
@@ -779,15 +743,18 @@ const AddProduct = (categories) => {
     const level5Categories = levelFourCategoryForVisible ? levelFourCategoryForVisible.level_four_category_list : [];
     const levelFiveCategoryForVisible = level5Categories.find(level5 => level5._id === selectedlevel5);
     const level6Categories = levelFiveCategoryForVisible ? levelFiveCategoryForVisible.level_five_category_list : [];
-    console.log(level6Categories);
-
+    if (!level6Categories) {
+        console.log(level6Categories);
+    }
     return (
         <div>
             <div className='CategoryTable-header'>
                 <h2 className='header_cls_prod'>Product Schema!</h2>
-                <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear categories</button>
             </div>
             <div className='CategoryContainer'>
+            {clearBtn && (
+      <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
+      )}
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
                     <div className='DropdownColumn'>
