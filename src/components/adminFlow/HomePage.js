@@ -47,7 +47,7 @@ function HomePage() {
 
   const handleCategoriesClick = () => {
     if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+      navigate("/Admin");
     }
     setShowDashboard(false);
     setShowCategoriesTable(true);
@@ -58,7 +58,7 @@ function HomePage() {
 
   const handleAllProductsClick = () => {
     if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+      navigate("/Admin");
     }
     setShowDashboard(false);
     setShowCategoriesTable(false);
@@ -70,8 +70,8 @@ function HomePage() {
 
   const handleAllVariantsClick = () => {
     console.log(location.pathname,'productId');
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
+      navigate("/Admin");
     }
     setShowDashboard(false);
     setShowCategoriesTable(false);
@@ -81,8 +81,8 @@ function HomePage() {
   };
 
   const handleAddProductsClick = () => {
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
+      navigate("/Admin");
     }
     setShowDashboard(false);
     setShowCategoriesTable(false);
@@ -92,8 +92,8 @@ function HomePage() {
   };
 
   const handleDashboardClick = () => {
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
+      navigate("/Admin");
     }
     setShowDashboard(true);
     setShowCategoriesTable(false);
@@ -102,8 +102,8 @@ function HomePage() {
     setAddProduct(false);
   };
   const handleHistoryClick = () => {
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
-      navigate("/HomePage");
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
+      navigate("/Admin");
     }
     setShowHistory(true);
     setShowDashboard(false);
@@ -114,7 +114,7 @@ function HomePage() {
   };
   const handleBrandClick = () => {
     if ( (location.pathname.includes("product/"))) { 
-      navigate("/HomePage/brand");
+      navigate("/Admin/brand");
     }
     setShowBrand(true);
     setShowHistory(false);
@@ -126,7 +126,7 @@ function HomePage() {
   };
   const handleExportClick = () => {
     if ( (location.pathname.includes("product/"))) { 
-      navigate("/HomePage/Export");
+      navigate("/Admin/Export");
     }
     setShowExport(true);
     setShowBrand(false);
@@ -139,7 +139,7 @@ function HomePage() {
   };
   const handleImportClick = () => {
     if ( (location.pathname.includes("product/"))) { 
-      navigate("/HomePage/Import");
+      navigate("/Admin/Import");
     }
     setShowImport(true);
     setShowExport(false);

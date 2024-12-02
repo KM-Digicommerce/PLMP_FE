@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../../utils/axiosConfig';
 import Swal from 'sweetalert2';
+import './BrandList.css'; // Add a CSS file for styling
 
 const BrandList = () => {
   const [brands, setBrands] = useState([]);
@@ -11,8 +12,6 @@ const BrandList = () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
       setBrands(response.data.data.brand_list || []);
-      console.log('Response',response.data.data.brand_list);
-      
     } catch (error) {
       console.error('Error fetching brands:', error);
       Swal.fire({
@@ -37,9 +36,7 @@ const BrandList = () => {
 
     if (brandName) {
       try {
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, {
-          name: brandName,
-        });
+        await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
         Swal.fire({
           title: 'Success!',
           text: 'Brand added successfully!',
@@ -65,18 +62,31 @@ const BrandList = () => {
 
   return (
     <div className="brand-page">
-      <h1>Brand Management</h1>
-      <button className="add-brand-btn" onClick={handleAddBrand}>
-        Add Brand
-      </button>
+      <div className="brand-header">
+        <h1>Brand Management</h1>
+        <button className="add-brand-btn" onClick={handleAddBrand}>
+          Add Brand
+        </button>
+      </div>
       {loading ? (
         <p>Loading brands...</p>
       ) : (
-        <ul>
-          {brands.map((brand) => (
-            <li key={brand.id}>{brand.name}</li>
-          ))}
-        </ul>
+        <table className="brand-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Brand Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {brands.map((brand) => (
+              <tr key={brand.id}>
+                <td>{brand.id}</td>
+                <td>{brand.name}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
