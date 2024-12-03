@@ -17,7 +17,9 @@ const Header = () => {
   useEffect(() => {
     const fetchobtainClientNameData = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainClientName/`);
+        const response = axiosInstance.get(`${process.env.REACT_APP_IP}/obtainClientName/`);
+        console.log(response.data.data);
+        
         if (response.data) {  setfetchobtainClientNameData(response.data.data); }
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -31,11 +33,11 @@ const Header = () => {
       <div className="header-left">
         <div className="logo-container">
           <img 
-            src={fetchobtainClientNameData.logo} 
+            // src={fetchobtainClientNameData.logo} 
             alt="Logo" 
             className="logo-image"
           />
-          <div className="logo">{fetchobtainClientNameData.name}</div>
+          {/* <div className="logo">{fetchobtainClientNameData.name}</div> */}
         </div>
       </div>
       <div className="header-right">
