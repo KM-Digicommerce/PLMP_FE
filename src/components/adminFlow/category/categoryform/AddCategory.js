@@ -32,7 +32,7 @@ const AddCategory = ({ refreshCategories, onCloseDialog, setIsTyping }) => {
             cancelButton: 'swal-custom-cancel',
           },
         }).then(() => { });
-        const updatedCategories = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+        await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
         onCloseDialog();
       }
       else if (response.data.data.is_created === false) {

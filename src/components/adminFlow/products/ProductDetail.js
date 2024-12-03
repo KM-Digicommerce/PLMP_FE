@@ -60,7 +60,7 @@ const ProductDetail = ({ categories }) => {
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
 
-    const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
+    const levelOneCategory =  categories?.category_list?.find(level1 => level1._id === selectedCategoryId);
     const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
         level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
     );
@@ -130,9 +130,11 @@ const ProductDetail = ({ categories }) => {
     };
 
     const handleLevel3Select = (id) => {
-        let level1Category, level2Category;
+        let level1Category='';
+        let level2Category='';
+console.log(id,'id ');
 
-        categories.category_list.some(level1 => {
+        categories?.category_list?.some(level1 => {
             const foundLevel2 = level1.level_one_category_list.find(level2 =>
                 level2.level_two_category_list.some(level3 => level3._id === id)
             );
@@ -185,11 +187,13 @@ const ProductDetail = ({ categories }) => {
     if (!level6Categories) {
         console.log(level6Categories);
     }
-    const fetchProductDetail = async () => {
+    const fetchProductDetail = async (productId) => {
         try {
             const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
                 id: productId,
             });
+            console.log(response,'response');
+            
             if (response.data && response.data.data) {
                 const productCategory = response.data.data.category_level;
                 const productObj = response.data.data.product_obj;
@@ -223,25 +227,29 @@ const ProductDetail = ({ categories }) => {
             const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
                 product_id: productId,
             });
+            console.log("variantResponse", variantResponse);
+
             if (variantResponse.data && variantResponse.data.data) {
                 setVariantData(variantResponse.data.data || []);
             }
             try {
                 const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-                // console.log("Response 2", res.data.data.brand_list);
+                console.log("Response 2", res.data.data.brand_list);
                 setBrand(res.data.data.brand_list);
             } catch (err) {
                 console.error('Error fetching variants:', err);
             }
         } catch (err) {
-            setError('Error fetching product details');
+            console.log(err,'err');
+            
+            setError('Error fetching product details 1');
         } finally {
             setLoading(false);
         }
     };
     useEffect(() => {
         if (productId) {
-            fetchProductDetail();
+            fetchProductDetail(productId);
         }
     }, [productId]);
     const fetchVariantDetail = async () => {
@@ -253,7 +261,7 @@ const ProductDetail = ({ categories }) => {
                 setVariantData(variantResponse.data.data || []);
             }
         } catch (err) {
-            setError('Error fetching product details');
+            setError('Error fetching product details 2');
         } finally {
             setLoading(false);
         }
@@ -320,7 +328,7 @@ const ProductDetail = ({ categories }) => {
                         cancelButton: 'swal-custom-cancel'
                     }
                 }).then(() => {
-                    fetchProductDetail();
+                    fetchProductDetail(productId);
                 });
                 setFormData('');
             } catch (err) {
@@ -472,14 +480,16 @@ const ProductDetail = ({ categories }) => {
                                         />
                                     </div>
                                     <div className="thumbnail-container">
-                                        {formData.image.length > 3 && (
+                                    {formData.image && (
+                                        formData.image.length > 3 && (
                                             <button
                                                 className="thumbnail-scroll-btn prev-btn"
                                                 onClick={handleScrollPrev}
                                             >
                                                 &lt;
                                             </button>
-                                        )}
+                                        )
+                                       )}
                                         <div className="thumbnail-section">
                                             {Array.isArray(formData.image) &&
                                                 formData.image.map((image, index) => (
@@ -493,14 +503,16 @@ const ProductDetail = ({ categories }) => {
                                                     />
                                                 ))}
                                         </div>
-                                        {formData.image.length > 3 && (
+                                        {formData.image && (
+                                        formData.image.length > 3 && (
                                             <button
                                                 className="thumbnail-scroll-btn next-btn"
                                                 onClick={handleScrollNext}
                                             >
                                                 &gt;
                                             </button>
-                                        )}
+                                        )
+                                    )}
                                     </div>
                                 </div>
 
@@ -789,6 +801,7 @@ const ProductDetail = ({ categories }) => {
                                             <th>Variant SKU</th>
                                             <th>Unfinished Price</th>
                                             <th>Finished Price</th>
+                                            <th>Total Price</th>
                                             <th>Options</th>
                                         </tr>
                                     </thead>
@@ -798,6 +811,8 @@ const ProductDetail = ({ categories }) => {
                                                 <td>{variant.sku_number}</td>
                                                 <td>{variant.un_finished_price ? `$${variant.un_finished_price}` : ''}</td>
                                                 <td>{variant.finished_price ? `$${variant.finished_price}` : ''}</td>
+                                                <td>{variant.total_price ? `$${variant.total_price}` : ''}</td>
+
                                                 <td>
                                                     {variant.varient_option_list.map((option, index) => (
                                                         <div key={index}>{option.type_name}: {option.type_value}</div>
@@ -843,21 +858,6 @@ const ProductDetail = ({ categories }) => {
                                                 size="small"
                                                 sx={{ marginBottom: 2 }}
                                             />
-
-
-                                            {/* <TextField
-                                            fullWidth
-                                            type="number"
-                                            name="unfinishedPrice"
-                                            label="Unfinished Price"
-                                            value={selectedVariants.unfinishedPrice}
-                                            onChange={handleVariantDetailChange}
-                                            margin="normal"
-                                            className='input_pdp'
-                                            size="small"
-                                            sx={{ marginBottom: 2 }}
-                                        /> */}
-
                                             <TextField
                                                 fullWidth
                                                 type="text"

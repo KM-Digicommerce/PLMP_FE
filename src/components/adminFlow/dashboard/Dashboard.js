@@ -149,7 +149,7 @@ function Dashboard() {
 
       <div className="charts-section">
         <div className="chart-card">
-          <h3>Varient-Options Count</h3>
+          <h3>Variant-Options Count</h3>
           <Line data={variantData} options={options} />
         </div>
 

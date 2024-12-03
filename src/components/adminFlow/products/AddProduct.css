@@ -136,7 +136,7 @@ textarea {
 }
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     align-items: center;
 }
@@ -159,8 +159,8 @@ textarea {
     border-radius: 4px;
 }
 .variant-scroll {
-    overflow-x: auto; /* Allows horizontal scrolling */
-    white-space: nowrap; /* Prevents wrapping */
+    overflow-x: auto; 
+    white-space: nowrap; 
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -168,12 +168,12 @@ textarea {
 
 .variant-row {
     display: flex;
-    gap: 15px; /* Space between items */
+    gap: 15px; 
     align-items: center;
 }
 
 .variant-field {
-    min-width: 200px; /* Ensures fields have a minimum width */
+    min-width: 200px; 
 }
 
 .variant-field label {
@@ -193,8 +193,6 @@ textarea {
 }
 .variant-dropdown {
     display: inline-block;
-    /* margin-top: 7px;
-    margin-bottom: 12px; */
     min-width: 200px;
 }
 
@@ -217,7 +215,6 @@ textarea {
     border: none;
     padding: 8px;
     border-radius: 4px;
-    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); */
     background-color: white;
     transition: all 0.2s ease-in-out;
 }
@@ -271,4 +268,22 @@ textarea {
 .required {
     color: red;
     font-weight: bold;
+}
+.remove-variant-icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
+    color: red;
+}
+
+.remove-variant-icon-button:hover i {
+    color: darkred; /* Change color on hover */
+}
+.icon-trash{
+margin: 0;
 }

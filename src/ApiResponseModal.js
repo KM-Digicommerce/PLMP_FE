@@ -10,25 +10,23 @@ const ApiResponseModal = ({
   selectedFilepath,
 }) => {
   const [mapping, setMapping] = useState([]);
-  const [loading, setLoading] = useState(true); // Set to true initially
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [draggedSource, setDraggedSource] = useState(null);
+  const [allMapped, setAllMapped] = useState(false); // Track if all values are mapped
 
   const databaseOptions = apiResponse?.Database_options || [];
-  const databaseList = apiResponse?.Database_list || {};
- 
+  const databaseList = apiResponse?.Database_list || [];
+
   if (selectedFilepath) {
     localStorage.setItem("selectedFile", selectedFilepath);
   }
   const selectedFiles = localStorage.getItem("selectedFile");
 
   useEffect(() => {
-    
     if (apiResponse?.extract_list) {
-     
       const initialMapping = apiResponse.extract_list.map((item) => ({
         columnHeader: item,
         databaseOption: databaseList[item] || "",
@@ -37,11 +35,18 @@ const ApiResponseModal = ({
     }
     setLoading(false);
   }, [apiResponse]);
+
+  useEffect(() => {
+    // Check if all unmatched values are mapped
+    const allMappedValues = mapping.every(row => row.databaseOption !== "");
+    setAllMapped(allMappedValues);
+  }, [mapping]);
+
   if (loading) {
-    console.log('Inside If loading');
     return (
       <div className="loading-spinner-container">
-        <div className="loading-spinner"></div>
+        <CircularProgress size={50} />
+        <span>Processing...</span>
       </div>
     );
   }
@@ -106,7 +111,6 @@ const ApiResponseModal = ({
           },
         }
       );
-      
       setShowResponseModal(false);
     } catch (err) {
       console.error("API Error:", err);
@@ -115,19 +119,15 @@ const ApiResponseModal = ({
       setLoading(false);
     }
   };
-  
-  const isMatched = (value) =>
-    draggedItem && value && draggedItem === value;
 
-  const isUnmatched = (value) =>
-    draggedItem && value && draggedItem !== value && value !== "";
-  
+  const isMatched = (value) => draggedItem && value && draggedItem === value;
+  const isUnmatched = (value) => draggedItem && value && draggedItem !== value && value !== "";
+
   return (
     <>
-    
       {showResponseModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content-import">
             <div className="modal-header">
               <h2>Field Mapping</h2>
               <button onClick={() => setShowResponseModal(false)} className="btn-close">
@@ -135,74 +135,72 @@ const ApiResponseModal = ({
               </button>
             </div>
             <div className="modal-body">
-            {loading ? (
+              {loading ? (
                 <div className="loading-spinner-container">
                   <CircularProgress size={50} />
                   <span>Processing...</span>
                 </div>
               ) : (
-              // {error && <div className="error-message">{error}</div>}
-              <div className="modal-content-box">
-                <div className="table-container">
-                  <table className="styled-table">
-                    <thead>
-                      <tr>
-                        <th>Your Column Header</th>
-                        <th>Map to Where</th>
-                        <th>Unmatched values</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mapping.map((row, index) => (
-                        <tr key={index}>
-                          <td>{row.columnHeader}</td>
-                          <td
-                            onDrop={() => handleDropMapToWhere(index)}
-                            onDragOver={(e) => e.preventDefault()}
-                            className={`map-to-where-cell ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
-                          >
-                            <div
-                              className={`draggable-item ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
-                              draggable={!!row.databaseOption}
-                              onDragStart={() =>
-                                row.databaseOption &&
-                                handleDragStart(row.databaseOption, index, "mapToWhere")
-                              }
-                            >
-                              {row.databaseOption || "Drop here"}
-                            </div>
-                          </td>
-                          <td>
-                          <div
-                    className="options-list"
-                    onDrop={handleDropDatabaseOption}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    {databaseOptions
-                      .filter((option) => !mapping.some((row) => row.databaseOption === option))
-                      .map((option, index) => (
-                        <div
-                          key={index}
-                          className={`draggable-item ${isMatched(option) ? "matched" : ""} ${isUnmatched(option) ? "unmatched" : ""}`}
-                          draggable
-                          onDragStart={() => handleDragStart(option, null, "databaseOptions")}
-                        >
-                          {option}
-                        </div>
-                      ))}
-                  </div>
-                          </td>
+                <div className="modal-content-box">
+                  <div className="table-container">
+                    <table className="styled-table">
+                      <thead>
+                        <tr>
+                          <th>Your Column Header</th>
+                          <th>Map to Where</th>
+                          <th>Unmatched values</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+  {mapping.map((row, index) => (
+    <tr key={index}>
+      <td>{row.columnHeader}</td>
+      <td
+        onDrop={() => handleDropMapToWhere(index)}
+        onDragOver={(e) => e.preventDefault()}
+        className={`map-to-where-cell ${allMapped || isMatched(row.databaseOption) ? "" : "highlight"} ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
+      >
+        <div
+          className={`draggable-item ${isMatched(row.databaseOption) ? "matched" : ""} ${isUnmatched(row.databaseOption) ? "unmatched" : ""}`}
+          draggable={!!row.databaseOption}
+          onDragStart={() =>
+            row.databaseOption &&
+            handleDragStart(row.databaseOption, index, "mapToWhere")
+          }
+        >
+          {row.databaseOption || "Drop here"}
+        </div>
+      </td>
+      {/* Display unmatched values only in the first row */}
+      {index === 0 ? (
+        <td rowSpan={mapping.length}>
+          <div
+            className="options-list"
+            onDrop={handleDropDatabaseOption}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            {databaseOptions
+              .filter((option) => !mapping.some((row) => row.databaseOption === option))
+              .map((option, i) => (
+                <div
+                  key={i}
+                  className={`draggable-item ${isMatched(option) ? "matched" : ""} ${isUnmatched(option) ? "unmatched" : ""}`}
+                  draggable
+                  onDragStart={() => handleDragStart(option, null, "databaseOptions")}
+                >
+                  {option}
                 </div>
+              ))}
+          </div>
+        </td>
+      ) : null}
+    </tr>
+  ))}
+</tbody>
 
-                {/* <div className="database-options">
-                  <h3>Unmatched values</h3>
-                 
-                </div> */}
-              </div>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
             <div className="modal-footer">

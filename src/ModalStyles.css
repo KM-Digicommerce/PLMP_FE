@@ -11,12 +11,13 @@
   z-index: 1000;
 }
 
-.modal-content {
+.modal-content-import {
   background-color: #fff;
     border-radius: 8px;
-    padding: 7px 0px 0px 20px;
-    width: 60%;
-    max-height: 80% !important;
+    padding: 14px 20px 14px 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 86% !important;
     overflow-y: auto;
     top: 18px;
 }
@@ -54,7 +55,7 @@
     width: 6%;
   }
 .modal-body {
-  padding-top: 10px;
+  padding-top: 2px;
 }
 
 .error-message {
@@ -82,7 +83,7 @@
 
 .styled-table th,
 .styled-table td {
-  padding: 12px;
+  padding: 5px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
@@ -126,7 +127,7 @@ h3 {
 
 .draggable-item {
   background-color: #e0e0e0;
-  padding: 8px;
+  padding: 5px;
   border-radius: 5px;
   cursor: move;
   text-align: center;

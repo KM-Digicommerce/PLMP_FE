@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
+  const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -85,6 +86,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   
   const toggleProductsSubmenu = () => {
     setShowProductsSubmenu(!showProductsSubmenu);
+  };
+  const toggleSettingsSubmenu = () => {
+    setShowSettingsSubmenu(!showSettingsSubmenu);
   };
   const handleSectionClick = (section) => {
     setActiveSection(section);
@@ -162,14 +166,17 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
           <FontAwesomeIcon icon={faHistory} className="icon" />
           History
         </li>
-
-        <li>
-          <FontAwesomeIcon icon={faCog} className="icon" />
-          Settings
-        </li>
-        <li>
-          <FontAwesomeIcon icon={faUser} className="icon" />
-          User's
+        <li onClick={() => {toggleSettingsSubmenu(); handleSectionClick('setting');}} className={`productsMenu ${activeSection === 'setting' ? 'active' : ''}`}>
+        <FontAwesomeIcon icon={faCog} className="icon" />
+        Settings
+          {showSettingsSubmenu && (
+            <ul className="subMenu">
+              <li onClick={() => { handleSectionClick('settings'); }}
+                className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
+              <li onClick={() => { handleSectionClick('users'); }}
+                className={activeSection === 'users' ? 'active' : ''}>User's</li>
+            </ul>
+          )}
         </li>
       </ul>
       <Modal open={showImportModal} onClose={closeImportModal}>
