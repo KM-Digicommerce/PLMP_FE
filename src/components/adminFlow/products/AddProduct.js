@@ -11,6 +11,51 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
+    const [breadcrumbs, setBreadcrumbs] = useState('');
+
+    const handleAddBrand = async () => {
+        const { value: brandName } = await Swal.fire({
+          title: 'Add New Brand',
+          input: 'text',
+          inputLabel: 'Brand Name',
+          inputPlaceholder: 'Enter the brand name',
+          showCancelButton: true,
+        });
+    
+        if (brandName) {
+          try {
+            await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
+            Swal.fire({
+              title: 'Success!',
+              text: 'Brand added successfully!',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel',
+              },
+            });
+          } catch (error) {
+            console.error('Error adding brand:', error);
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to add brand.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel',
+              },
+            });
+          }
+        }
+      };
 
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
@@ -33,12 +78,12 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
                     setBrand(res.data.data.brand_list);
                     try {
-                        const responae = await axiosInstance.post(`${process.env.REACT_APP_IP}/categoryLevelForChildCategory/`,{
+                        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/categoryLevelForChildCategory/`,{
                             category_level: selectedCategoryLevel,
                             category_id: selectedCategoryId,
                           });
-                       console.log(responae,'responae');
-                       
+                       console.log(response.data.data.category_name,'responae');
+                       setBreadcrumbs(response.data.data.category_name);
                     } catch (err) {
                         console.error('Error fetching variants:', err);
                     }
@@ -65,8 +110,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <label htmlFor="upc_ean">UPC/EAN <span className="required">*</span></label>
                     <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange} />
                     <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
-                    <input type="text" name="breadcrumb" placeholder="" required value={productData.breadcrumb} onChange={handleChange} />
-                    <label htmlFor="brand-select">Brand <span className="required">*</span></label>
+                    <input type="text" name="breadcrumb" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
+                    {/* <label htmlFor="brand-select">Brand <span className="required">*</span></label>
                     <select
                         id="brand-select"
                         name="brand_id"
@@ -82,7 +127,42 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 {item.name}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
+  <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
+    Brand <span className="required">*</span>
+  </label>
+  <button 
+    type="button" 
+    onClick={handleAddBrand} // Function to handle the "Add Brand" action
+    style={{
+      marginLeft: 'auto',
+      backgroundColor: '#007bff', 
+      color: '#fff', 
+      border: 'none', 
+      padding: '5px 10px', 
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }}
+  >
+    Add Brand
+  </button>
+<select
+  id="brand-select"
+  name="brand_id"
+  required
+  value={productData.product_obj.brand_id || ''}
+  onChange={handleChange}
+  className="dropdown"
+  style={{ width: '94%', margin: '6px 20px 6px 10px' }}
+>
+  <option value="">Select Brand</option>
+  {brand.map((item) => (
+    <option key={item._id} value={item.id}>
+      {item.name}
+    </option>
+  ))}
+</select>
+
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
                     <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange} />
                 </div>
@@ -510,7 +590,7 @@ const AddProduct = (categories) => {
     //     }));
     // };
     const handleSave = async () => {
-        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.breadcrumb || 
+        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean|| 
             !productData.product_obj.brand_id || !productData.product_obj.product_name || 
             !productData.product_obj.short_description || !productData.product_obj.base_price || !productData.product_obj.msrp) {
             alert("Please fill in all required fields.");

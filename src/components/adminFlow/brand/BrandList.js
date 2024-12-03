@@ -39,13 +39,6 @@ const BrandList = () => {
       inputLabel: 'Brand Name',
       inputPlaceholder: 'Enter the brand name',
       showCancelButton: true,
-      customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm',
-        cancelButton: 'swal-custom-cancel',
-      },
     });
 
     if (brandName) {
