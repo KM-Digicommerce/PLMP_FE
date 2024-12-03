@@ -19,7 +19,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import axiosInstance from '../../../../utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch,faSort } from '@fortawesome/free-solid-svg-icons';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 const CategoriesTable = ({ categories, refreshCategories }) => {
@@ -37,6 +37,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [sortOrder, setSortOrder] = useState({ column: 'product_name', direction: 'asc' });
   const [searchVisible, setSearchVisible] = useState(false);
+  const [sortVisible, setSortVisible] = useState(false);
+
   const [isTyping, setIsTyping] = useState(false);
   const navigate = useNavigate();
   const [sortOption, setSortOption] = useState(''); // default value to 'newest'
@@ -354,25 +356,31 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handlelevel4 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id === selectedValue);
+      let level1Category, level2Category, level3Category;
+      categories.category_list.some(level1 => {
+          const foundLevel2 = level1.level_one_category_list.find(level2 => 
+              level2.level_two_category_list.some(level3 => 
+                  level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+              )
+          );
+          if (foundLevel2) {
+              const foundLevel3 = foundLevel2.level_two_category_list.find(level3 => 
+                  level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+              );
+              
+              if (foundLevel3) {
+                  level1Category = level1;
+                  level2Category = foundLevel2;
+                  level3Category = foundLevel3;
+                  return true;
+              }
+          }
+          return false;
+      });
 
-      if (!level3Category) {
-        console.error('Level 3 category not found for ID:', level3Category._id);
-        return;
-      }
-      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
-
-      if (!level2Category) {
-        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-        return;
-      }
-      const level1Category = categories.category_list.find(level1 =>
-        level1.level_one_category_list.some(level2 => level2._id)
-      );
-
-      if (!level1Category) {
-        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-        return;
+      if (!level1Category || !level2Category || !level3Category) {
+          console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
+          return;
       }
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
@@ -400,39 +408,51 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handlelevel5 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level4Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).find(level4 => level4._id);
+      const level4Category = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .flatMap(level2 => level2.level_two_category_list)
+      .flatMap(level3 => level3.level_three_category_list)
+      .find(level4 => level4._id === selectedValue);
 
-      if (!level4Category) {
-        console.error('Level 4 category not found for ID:', level4Category._id);
-        return;
-      }
-      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id);
+  if (!level4Category) {
+      console.error('Level 4 category not found for ID:', selectedValue);
+      return;
+  }
 
-      if (!level3Category) {
-        console.error('Level 3 category not found for ID:', level3Category._id);
-        return;
-      }
-      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+  const level3CategoryForLevel5 = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .flatMap(level2 => level2.level_two_category_list)
+      .find(level3 => level3._id === level4Category.level_three_category_id);
 
-      if (!level2Category) {
-        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-        return;
-      }
-      const level1Category = categories.category_list.find(level1 =>
-        level1.level_one_category_list.some(level2 => level2._id)
-      );
+  if (!level3CategoryForLevel5) {
+      console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
+      return;
+  }
 
-      if (!level1Category) {
-        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-        return;
-      }
-      setSelectedCategoryId(level1Category._id);
-      setSelectedLevel2Id(level2Category._id);
-      setSelectedLevel3Id(level3Category._id);
+  const level2CategoryForLevel5 = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel5._id));
+
+  if (!level2CategoryForLevel5) {
+      console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
+      return;
+  }
+
+  const level1CategoryForLevel5 = categories.category_list.find(level1 =>
+      level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel5._id)
+  );
+
+  if (!level1CategoryForLevel5) {
+      console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
+      return;
+  }
+      setSelectedCategoryId(level1CategoryForLevel5._id);
+      setSelectedLevel2Id(level2CategoryForLevel5._id);
+      setSelectedLevel3Id(level3CategoryForLevel5._id);
       setSelectedlevel4(level4Category._id);
-      setSelectedCategoryIdPopup(level1Category._id);
-      setSelectedLevel2IdPopup(level2Category._id);
-      setSelectedLevel3IdPopup(level3Category._id);
+      setSelectedCategoryIdPopup(level1CategoryForLevel5._id);
+      setSelectedLevel2IdPopup(level2CategoryForLevel5._id);
+      setSelectedLevel3IdPopup(level3CategoryForLevel5._id);
       setSelectedLevel4IdPopup(level4Category._id);
       setSelectedlevel5(selectedValue);
       setSelectedLevel5IdPopup(selectedValue);
@@ -452,43 +472,65 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handlelevel6 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level5Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).find(level5 => level5._id);
+      const level5Category = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .flatMap(level2 => level2.level_two_category_list)
+      .flatMap(level3 => level3.level_three_category_list)
+      .flatMap(level4 => level4.level_four_category_list)
+      .find(level5 => level5._id === selectedValue);
 
-      if (!level5Category) {
-        console.error('Level 5 category not found for ID:', level5Category._id);
-        return;
-      }
-      const level4Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).find(level4 => level4._id);
+  if (!level5Category) {
+      console.error('Level 5 category not found for ID:', selectedValue);
+      return;
+  }
 
-      if (!level4Category) {
-        console.error('Level 4 category not found for ID:', level4Category._id);
-        return;
-      }
-      const level3Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).find(level3 => level3._id);
-      if (!level3Category) {
-        console.error('Level 3 category not found for ID:', level3Category._id);
-        return;
-      }
-      const level2Category = categories.category_list.flatMap(level1 => level1.level_one_category_list).find(level2 => level2.level_two_category_list.some(level3 => level3._id));
+  const level4CategoryForLevel6 = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .flatMap(level2 => level2.level_two_category_list)
+      .flatMap(level3 => level3.level_three_category_list)
+      .find(level4 => level4._id === level5Category.level_four_category_id);
 
-      if (!level2Category) {
-        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-        return;
-      }
-      const level1Category = categories.category_list.find(level1 =>level1.level_one_category_list.some(level2 => level2._id) );
-      if (!level1Category) {
-        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-        return;
-      }
-      setSelectedCategoryId(level1Category._id);
-      setSelectedLevel2Id(level2Category._id);
-      setSelectedLevel3Id(level3Category._id);
-      setSelectedlevel4(level4Category._id);
+  if (!level4CategoryForLevel6) {
+      console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
+      return;
+  }
+
+  const level3CategoryForLevel6 = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .flatMap(level2 => level2.level_two_category_list)
+      .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
+
+  if (!level3CategoryForLevel6) {
+      console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
+      return;
+  }
+
+  const level2CategoryForLevel6 = categories.category_list
+      .flatMap(level1 => level1.level_one_category_list)
+      .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel6._id));
+
+  if (!level2CategoryForLevel6) {
+      console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
+      return;
+  }
+
+  const level1CategoryForLevel6 = categories.category_list.find(level1 =>
+      level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel6._id)
+  );
+
+  if (!level1CategoryForLevel6) {
+      console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
+      return;
+  }
+      setSelectedCategoryId(level1CategoryForLevel6._id);
+      setSelectedLevel2Id(level3CategoryForLevel6._id);
+      setSelectedLevel3Id(level3CategoryForLevel6._id);
+      setSelectedlevel4(level4CategoryForLevel6._id);
       setSelectedlevel5(level5Category._id);
-      setSelectedCategoryIdPopup(level1Category._id);
-      setSelectedLevel2IdPopup(level2Category._id);
-      setSelectedLevel3IdPopup(level3Category._id);
-      setSelectedLevel4IdPopup(level4Category._id);
+      setSelectedCategoryIdPopup(level1CategoryForLevel6._id);
+      setSelectedLevel2IdPopup(level2CategoryForLevel6._id);
+      setSelectedLevel3IdPopup(level3CategoryForLevel6._id);
+      setSelectedLevel4IdPopup(level4CategoryForLevel6._id);
       setSelectedLevel5IdPopup(level5Category._id);
       setSelectedlevel6(selectedValue);
       setIslevel6DropdownOpen(false);
@@ -516,9 +558,9 @@ const handleLevelClear = (e) => {
   setIslevel5DropdownOpen(false);
   setIslevel6DropdownOpen(false);
 }
-  if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
-    return <div>No categories available</div>;
-  }
+  // if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
+  //   return <div>No categories available</div>;
+  // }
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/Admin/product/${productId}`);
@@ -630,7 +672,18 @@ const handleLevelClear = (e) => {
   };
   const handleSearchClick = () => {
     // setSearchPopupVisible(true);
+    console.log(!searchVisible);
     setSearchVisible(!searchVisible);
+    if (sortVisible) {
+      setSortVisible(!sortVisible);
+    }
+  };
+  const handleSortClick = () => {
+    // setSearchPopupVisible(true);
+    setSortVisible(!sortVisible);
+    if (searchVisible) {
+      setSearchVisible(!searchVisible);
+    }
   };
 
   const handleSearchChange = (event) => {
@@ -965,14 +1018,17 @@ const handleLevelClear = (e) => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0px' }}>
   <h3>Products</h3>
-  <div className="sort-container">
-        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
+ 
+  <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+  {sortVisible && (
+  <div className="sort-container"  style={{ position: 'relative' }} >
+        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown" style={{  position: 'absolute', minWidth: '350px',  transform: 'translateY(-50%)',  cursor: 'pointer',  fontSize: '15px',  color: '#aaa', }} >
         <option value="">Sort by Products</option>
           <option value="newest">Newest Products</option>
           <option value="oldest">Oldest Products</option>
         </select>
       </div>
-  <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+  )}
     {searchVisible && (
       <div style={{ position: 'relative', width: '500px' }}>
         <input
@@ -1016,7 +1072,11 @@ const handleLevelClear = (e) => {
       icon={faSearch}
       onClick={handleSearchClick}
       style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
-    /> Total Products: {getFilteredAndSortedProducts().length}
+    /> <FontAwesomeIcon
+    icon={faSort}   onClick={handleSortClick}     style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
+
+  />
+  Total Products: {getFilteredAndSortedProducts().length}
   </h3>
 </div>
 

@@ -53,7 +53,7 @@ function HomePage() {
     );
   }
   const handleCategoriesClick = () => {
-    if ((location.pathname.includes("product/")) || (location.pathname.includes("HomePage/"))) { 
+    if ((location.pathname.includes("product/")) || (location.pathname.includes("Admin/"))) { 
       navigate("/Admin");
     }
     setShowDashboard(false);
@@ -133,7 +133,7 @@ function HomePage() {
   };
   const handleExportClick = () => {
     if ( (location.pathname.includes("product/"))) { 
-      navigate("/Admin/Export");
+      navigate("/Admin/export");
     }
     setShowExport(true);
     setShowBrand(false);
@@ -146,7 +146,7 @@ function HomePage() {
   };
   const handleImportClick = () => {
     if ((location.pathname.includes("product/"))) { 
-      navigate("/Admin/Import");
+      navigate("/Admin/import");
     }
     setShowImport(true);
     setShowExport(false);

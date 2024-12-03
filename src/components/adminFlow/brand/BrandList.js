@@ -19,6 +19,13 @@ const BrandList = () => {
         text: 'Failed to fetch brands.',
         icon: 'error',
         confirmButtonText: 'OK',
+        customClass: {
+          container: 'swal-custom-container',
+          popup: 'swal-custom-popup',
+          title: 'swal-custom-title',
+          confirmButton: 'swal-custom-confirm',
+          cancelButton: 'swal-custom-cancel',
+        },
       });
     } finally {
       setLoading(false);
@@ -32,6 +39,13 @@ const BrandList = () => {
       inputLabel: 'Brand Name',
       inputPlaceholder: 'Enter the brand name',
       showCancelButton: true,
+      customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm',
+        cancelButton: 'swal-custom-cancel',
+      },
     });
 
     if (brandName) {
@@ -42,6 +56,13 @@ const BrandList = () => {
           text: 'Brand added successfully!',
           icon: 'success',
           confirmButtonText: 'OK',
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel',
+          },
         });
         fetchBrands(); // Refresh brand list
       } catch (error) {
@@ -51,6 +72,13 @@ const BrandList = () => {
           text: 'Failed to add brand.',
           icon: 'error',
           confirmButtonText: 'OK',
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel',
+          },
         });
       }
     }

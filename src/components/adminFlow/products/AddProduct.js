@@ -5,8 +5,10 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import { Select, MenuItem, FormControl } from '@mui/material';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
 
@@ -30,6 +32,16 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 try {
                     const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
                     setBrand(res.data.data.brand_list);
+                    try {
+                        const responae = await axiosInstance.post(`${process.env.REACT_APP_IP}/categoryLevelForChildCategory/`,{
+                            category_level: selectedCategoryLevel,
+                            category_id: selectedCategoryId,
+                          });
+                       console.log(responae,'responae');
+                       
+                    } catch (err) {
+                        console.error('Error fetching variants:', err);
+                    }
                 } catch (err) {
                     console.error('Error fetching variants:', err);
                 }
@@ -84,26 +96,60 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 </div>
 
                 <div className="form-section">
-                    <h3 style={{ margin: '6px' }}>Pricing</h3>
-                    <div className="pricing-grid">
-                        <div className="pricing-field">
-                        <label htmlFor="base_price">Base <span className="required">*</span></label>
-                            <input type="number" id="base_price" name="base_price" required placeholder="Base" value={productData.base_price} onChange={handleChange} />
-                        </div>
-                        <div className="pricing-field">
-                        <label htmlFor="msrp">MSRP <span className="required">*</span></label>
-                            <input type="number" id="msrp" name="msrp" placeholder="MSRP" required value={productData.msrp} onChange={handleChange} />
-                        </div>
-                        <div className="pricing-field">
-                        <label htmlFor="discount_price">Discount <span className="required">*</span></label>
-                            <input type="number" id="discount_price" name="discount_price" placeholder="Discount" required value={productData.discount_price || ''} onChange={handleChange} />
-                        </div>
-                        <div className="pricing-field">
-                        <label htmlFor="dealer_price">Dealer <span className="required">*</span></label>
-                            <input type="number" id="dealer_price" name="dealer_price" placeholder="Dealer" required value={productData.dealer_price || ''} onChange={handleChange} />
-                        </div>
-                    </div>
-                </div>
+    <h3 style={{ margin: '6px' }}>Pricing</h3>
+    <div className="pricing-grid">
+        <div className="pricing-field">
+            <label htmlFor="base_price">Base <span className="required">*</span></label>
+            <input
+                type="number"
+                id="base_price"
+                name="base_price"
+                required
+                placeholder="Base"
+                value={productData.base_price}
+                onChange={(e) => {
+                    handleChange(e, 'base_price'); // Pass the event and field name
+                    handleDecimalInput(e, 'base_price');
+                }}
+                onBlur={(e) => handleDecimalBlur(e, 'base_price')}
+            />
+        </div>
+        <div className="pricing-field">
+            <label htmlFor="msrp">MSRP <span className="required">*</span></label>
+            <input
+                type="number"
+                id="msrp"
+                name="msrp"
+                required
+                placeholder="MSRP"
+                value={productData.msrp}
+                onChange={(e) => {
+                    handleChange(e, 'msrp'); // Pass the event and field name
+                    handleDecimalInput(e, 'msrp');
+                }}
+                onBlur={(e) => handleDecimalBlur(e, 'msrp')}
+            />
+        </div>
+        <div className="pricing-field">
+            <label htmlFor="discount_price">Discount <span className="required">*</span></label>
+            <input
+                type="number"
+                id="discount_price"
+                name="discount_price"
+                required
+                placeholder="Discount"
+                value={productData.discount_price || ''}
+                onChange={(e) => {
+                    handleChange(e, 'discount_price'); // Pass the event and field name
+                    handleDecimalInput(e, 'discount_price');
+                }}
+                onBlur={(e) => handleDecimalBlur(e, 'discount_price')}
+            />
+        </div>
+    </div>
+</div>
+
+
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
@@ -112,7 +158,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-                 <div className="form-section">
+                 {/* <div className="form-section">
                  <div className='CategoryTable-header'>
                     <h3 style={{ margin: '6px' }}>Variant Details</h3>
                     <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
@@ -174,7 +220,113 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             </div>
                         ))}
                     </div>
+                </div> */}
+                <div className="form-section">
+                    <div className="CategoryTable-header">
+                        <h3 style={{ margin: '6px' }}>Variant Details</h3>
+                        <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
+                    </div>
+                    <div className="variant-scroll">
+                        {selectedVariants.map((variant, index) => (
+                            <div className="variant-row" key={index}>
+                                {index > 0 && (
+                                    <button
+                                        className="remove-variant-icon-button"
+                                        onClick={() => removeVariantRow(index)}
+                                        aria-label="Remove Variant"
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} className="icon-trash" />
+                                    </button>
+                                )}
+
+                                <div className="variant-field">
+                                    <label htmlFor="sku">SKU <span className="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        id="sku"
+                                        name="sku"
+                                        placeholder="SKU"
+                                        required
+                                        value={variant.sku}
+                                        onChange={(e) => handleVariantDetailChange(e, index)}
+                                    />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="unfinishedPrice">Unfinished Price</label>
+                                    <input
+                                        type="number"
+                                        id="unfinishedPrice"
+                                        name="unfinishedPrice"
+                                        placeholder="Unfinished Price"
+                                        value={variant.unfinishedPrice}
+                                        onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}
+                                        onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}
+                                    />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
+                                    <input
+                                        type="number"
+                                        id="finishedPrice"
+                                        name="finishedPrice"
+                                        placeholder="Finished Price"
+                                        required
+                                        value={variant.finishedPrice}
+                                        onChange={(e) => { handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'finishedPrice', index)}}
+                                        onBlur={(e) => handleVariantDecimalBlur(e, 'finishedPrice', index)}
+                                    />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="quantity">Quantity <span className="required">*</span></label>
+                                    <input
+                                        type="number"
+                                        id="quantity"
+                                        name="quantity"
+                                        placeholder="Quantity"
+                                        required
+                                        value={variant.quantity}
+                                        onChange={(e) => handleVariantDetailChange(e, index)}
+                                    />
+                                </div>
+                                <div className="variant-field">
+                                    <label htmlFor="totalPrice">Total Price</label>
+                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
+                                </div>
+                                {variantOptions?.map((variantOption) => (
+                                    <div className="variant-dropdown" key={variantOption.type_id}>
+                                        <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
+                                            {variantOption.type_name}
+                                        </label>
+                                        <FormControl fullWidth variant="outlined" className="dropdown-container">
+                                            <Select
+                                                labelId={`variant-${variantOption.type_id}`}
+                                                value={variant[variantOption.type_id] || ''}
+                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)}
+                                                displayEmpty
+                                                className="styled-dropdown"
+                                                inputProps={{
+                                                    style: {
+                                                        fontSize: '16px',
+                                                        padding: '8px',
+                                                    },
+                                                }}
+                                            >
+                                                <MenuItem value="" disabled>Select {variantOption.type_name}</MenuItem>
+                                                {variantOption.option_value_list?.map((option) => (
+                                                    <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                                        {option.type_value_name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
+
+
                 <button onClick={onSave} className="save-button">Add Product</button>
             </div>
         </div>
@@ -245,6 +397,39 @@ const AddProduct = (categories) => {
             { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0, options: [] }
         ]);
     };
+    const removeVariantRow = (indexToRemove) => {
+        setSelectedVariants((prevVariants) =>
+            prevVariants.filter((_, index) => index !== indexToRemove)
+        );
+    };
+    const handleDecimalInput = (e, fieldName) => {
+        const value = e.target.value;
+        if (/^\d*(\.\d{0,2})?$/.test(value)) {
+          setProductData((prevData) => ({
+            ...prevData,
+            [fieldName]: value,
+          }));   } };
+
+      const handleDecimalBlur = (e, fieldName) => {
+        const value = parseFloat(e.target.value).toFixed(2);
+        setProductData((prevData) => ({
+          ...prevData,
+          [fieldName]: isNaN(value) ? '' : value,   })); };
+
+      const handleVariantDecimalInput = (e, fieldName, index) => {
+        const value = e.target.value;
+        if (/^\d*(\.\d{0,2})?$/.test(value)) {
+          const updatedVariants = [...selectedVariants];
+          updatedVariants[index][fieldName] = value;
+          setSelectedVariants(updatedVariants);  } };
+      
+      const handleVariantDecimalBlur = (e, fieldName, index) => {
+        const value = parseFloat(e.target.value).toFixed(2);
+        const updatedVariants = [...selectedVariants];
+        updatedVariants[index][fieldName] = isNaN(value) ? '' : value;
+        setSelectedVariants(updatedVariants);
+      };
+      
     const handleVariantDetailChange = (e, index) => {
         const { name, value } = e.target;
         setSelectedVariants(prev => {
@@ -414,6 +599,7 @@ const AddProduct = (categories) => {
         level6: '',
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
+    const [selectedCategoryLevel, setSelectedCategoryLevel] = useState('');
 
     const filteredCategories = categories.categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
@@ -427,6 +613,7 @@ const AddProduct = (categories) => {
 
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
 
+    
     const filteredCategoriesLevel3 = levelTwoCategory
         ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
             level3.name.toLowerCase().includes(safeSearchQuery)
@@ -484,6 +671,7 @@ const AddProduct = (categories) => {
         console.log(lastLevelCategoryIds.includes(id), 'REsponse to set');
         console.log(id, 'ID');
         const selectedIdString = String(id);
+        setSelectedCategoryLevel(category_level);
         if (id && category_level) {
             setShowclearBtn(true);
         }
@@ -579,133 +767,147 @@ const AddProduct = (categories) => {
     };
 
     const handleLevelSelect = (level, id) => {
-        const selectedValue = id;
+        const selectedValue = id || '';
+        console.log(selectedValue, 'selectedValue');
+        
         if (selectedValue !== '') {
             switch (level) {
                 case 4:
-                    const level3Category = categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .find(level3 => level3._id === selectedValue);
-
-                    if (!level3Category) {
-                        console.error('Level 3 category not found for ID:', level3Category._id);
+                    let level1Category, level2Category, level3Category;
+                    categories.categories.category_list.some(level1 => {
+                        const foundLevel2 = level1.level_one_category_list.find(level2 => 
+                            level2.level_two_category_list.some(level3 => 
+                                level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+                            )
+                        );
+                        if (foundLevel2) {
+                            const foundLevel3 = foundLevel2.level_two_category_list.find(level3 => 
+                                level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+                            );
+                            
+                            if (foundLevel3) {
+                                level1Category = level1;
+                                level2Category = foundLevel2;
+                                level3Category = foundLevel3;
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+    
+                    if (!level1Category || !level2Category || !level3Category) {
+                        console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
                         return;
                     }
-                    const level2Category = categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === selectedValue));
-
-                    if (!level2Category) {
-                        console.error('Level 2 category not found for Level 3 category with ID:', level2Category._id);
-                        return;
-                    }
-                    const level1Category = categories.category_list.find(level1 =>
-                        level1.level_one_category_list.some(level2 => level2._id)
-                    );
-
-                    if (!level1Category) {
-                        console.error('Level 1 category not found for Level 2 category with ID:', level1Category._id);
-                        return;
-                    }
-
+    
+                    // Set the selected categories and reset lower levels
                     setSelectedCategoryId(level1Category._id);
                     setselectedLevel2Id(level2Category._id);
                     setSelectedLevel3Id(level3Category._id);
                     setSelectedlevel4(selectedValue);
+                    setSelectedlevel5('');
+                    setSelectedlevel6('');
                     break;
+    
                 case 5:
-                    const level4Category = categories.category_list
+                    const level4Category = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
                         .flatMap(level3 => level3.level_three_category_list)
-                        .find(level4 => level4._id);
-
+                        .find(level4 => level4._id === selectedValue);
+    
                     if (!level4Category) {
-                        console.error('Level 4 category not found for ID:', level4Category._id);
+                        console.error('Level 4 category not found for ID:', selectedValue);
                         return;
                     }
-                    const level3CategoryForLevel5 = categories.category_list
+    
+                    const level3CategoryForLevel5 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
-                        .find(level3 => level3._id);
-
+                        .find(level3 => level3._id === level4Category.level_three_category_id);
+    
                     if (!level3CategoryForLevel5) {
                         console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
                         return;
                     }
-                    const level2CategoryForLevel5 = categories.category_list
+    
+                    const level2CategoryForLevel5 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
-                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
-
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel5._id));
+    
                     if (!level2CategoryForLevel5) {
                         console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
                         return;
                     }
-                    const level1CategoryForLevel5 = categories.category_list.find(level1 =>
-                        level1.level_one_category_list.some(level2 => level2._id)
+    
+                    const level1CategoryForLevel5 = categories.categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel5._id)
                     );
-
+    
                     if (!level1CategoryForLevel5) {
                         console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
                         return;
                     }
-
+    
                     setSelectedCategoryId(level1CategoryForLevel5._id);
                     setselectedLevel2Id(level2CategoryForLevel5._id);
                     setSelectedLevel3Id(level3CategoryForLevel5._id);
                     setSelectedlevel4(level4Category._id);
                     setSelectedlevel5(selectedValue);
                     break;
+    
                 case 6:
-                    const level5Category = categories.category_list
+                    const level5Category = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
                         .flatMap(level3 => level3.level_three_category_list)
                         .flatMap(level4 => level4.level_four_category_list)
-                        .find(level5 => level5._id);
-
+                        .find(level5 => level5._id === selectedValue);
+    
                     if (!level5Category) {
-                        console.error('Level 5 category not found for ID:', level5Category._id);
+                        console.error('Level 5 category not found for ID:', selectedValue);
                         return;
                     }
-
-                    const level4CategoryForLevel6 = categories.category_list
+    
+                    const level4CategoryForLevel6 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
                         .flatMap(level3 => level3.level_three_category_list)
-                        .find(level4 => level4._id);
-
+                        .find(level4 => level4._id === level5Category.level_four_category_id);
+    
                     if (!level4CategoryForLevel6) {
                         console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
                         return;
                     }
-                    const level3CategoryForLevel6 = categories.category_list
+    
+                    const level3CategoryForLevel6 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
-                        .find(level3 => level3._id);
-
+                        .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
+    
                     if (!level3CategoryForLevel6) {
                         console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
                         return;
                     }
-                    const level2CategoryForLevel6 = categories.category_list
+    
+                    const level2CategoryForLevel6 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
-                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id));
-
+                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel6._id));
+    
                     if (!level2CategoryForLevel6) {
                         console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
                         return;
                     }
-                    const level1CategoryForLevel6 = categories.category_list.find(level1 =>
-                        level1.level_one_category_list.some(level2 => level2._id)
+    
+                    const level1CategoryForLevel6 = categories.categories.category_list.find(level1 =>
+                        level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel6._id)
                     );
-
+    
                     if (!level1CategoryForLevel6) {
                         console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
                         return;
                     }
-
+    
                     setSelectedCategoryId(level1CategoryForLevel6._id);
                     setselectedLevel2Id(level2CategoryForLevel6._id);
                     setSelectedLevel3Id(level3CategoryForLevel6._id);
@@ -713,11 +915,11 @@ const AddProduct = (categories) => {
                     setSelectedlevel5(level5Category._id);
                     setSelectedlevel6(selectedValue);
                     break;
+                
                 default:
                     break;
             }
-        }
-        else {
+        } else {
             switch (level) {
                 case 4:
                     setSelectedlevel4('');
@@ -733,6 +935,7 @@ const AddProduct = (categories) => {
             }
         }
     };
+    
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -975,6 +1178,12 @@ const AddProduct = (categories) => {
                         selectedVariants={selectedVariants}
                         handleVariantDetailChange={handleVariantDetailChange}
                         addVariantRow={addVariantRow}
+                        removeVariantRow={removeVariantRow}
+                        handleDecimalBlur={handleDecimalBlur}
+                        handleDecimalInput={handleDecimalInput}
+                        handleVariantDecimalInput={handleVariantDecimalInput}
+                        handleVariantDecimalBlur={handleVariantDecimalBlur}
+                        selectedCategoryLevel={selectedCategoryLevel}
                     />
                 </div>
             )}
