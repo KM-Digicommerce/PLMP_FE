@@ -13,49 +13,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
 
-    const handleAddBrand = async () => {
-        const { value: brandName } = await Swal.fire({
-          title: 'Add New Brand',
-          input: 'text',
-          inputLabel: 'Brand Name',
-          inputPlaceholder: 'Enter the brand name',
-          showCancelButton: true,
-        });
-    
-        if (brandName) {
-          try {
-            await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
-            Swal.fire({
-              title: 'Success!',
-              text: 'Brand added successfully!',
-              icon: 'success',
-              confirmButtonText: 'OK',
-              customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel',
-              },
-            });
-          } catch (error) {
-            console.error('Error adding brand:', error);
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to add brand.',
-              icon: 'error',
-              confirmButtonText: 'OK',
-              customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel',
-              },
-            });
-          }
-        }
-      };
+  
 
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
@@ -70,27 +28,50 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             fetchVariants();
         }
     }, [isOpen, selectedCategoryId]);
-
+    const handleAddBrand = async () => {
+        const { value: brandName } = await Swal.fire({
+          title: 'Add New Brand',
+          input: 'text',
+          inputLabel: 'Brand Name',
+          inputPlaceholder: 'Enter the brand name',
+          showCancelButton: true,
+        });
+    
+        if (brandName) {
+          try {
+            await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
+            Swal.fire({  title: 'Success!',  text: 'Brand added successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {    container: 'swal-custom-container',    popup: 'swal-custom-popup',    title: 'swal-custom-title',    confirmButton: 'swal-custom-confirm',    cancelButton: 'swal-custom-cancel',
+              },
+            });
+            fetchBrand();
+          } catch (error) {
+            console.error('Error adding brand:', error);
+            Swal.fire({ title: 'Error', text: 'Failed to add brand.', icon: 'error', confirmButtonText: 'OK', customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel',
+              },
+            });
+          }
+        }
+      };
+      const fetchBrand = async () => {
+        try {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+            setBrand(res.data.data.brand_list);
+            try {
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/categoryLevelForChildCategory/`,{
+                    category_level: selectedCategoryLevel,
+                    category_id: selectedCategoryId,
+                  });
+               console.log(response.data.data.category_name,'responae');
+               setBreadcrumbs(response.data.data.category_name);
+            } catch (err) {
+                console.error('Error fetching variants:', err);
+            }
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
+    };
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
-            const fetchBrand = async () => {
-                try {
-                    const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-                    setBrand(res.data.data.brand_list);
-                    try {
-                        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/categoryLevelForChildCategory/`,{
-                            category_level: selectedCategoryLevel,
-                            category_id: selectedCategoryId,
-                          });
-                       console.log(response.data.data.category_name,'responae');
-                       setBreadcrumbs(response.data.data.category_name);
-                    } catch (err) {
-                        console.error('Error fetching variants:', err);
-                    }
-                } catch (err) {
-                    console.error('Error fetching variants:', err);
-                }
-            };
             fetchBrand();
         }
     }, [isOpen, selectedCategoryId]);
@@ -128,40 +109,40 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             </option>
                         ))}
                     </select> */}
-  <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
-    Brand <span className="required">*</span>
-  </label>
-  <button 
-    type="button" 
-    onClick={handleAddBrand} // Function to handle the "Add Brand" action
-    style={{
-      marginLeft: 'auto',
-      backgroundColor: '#007bff', 
-      color: '#fff', 
-      border: 'none', 
-      padding: '5px 10px', 
-      borderRadius: '4px',
-      cursor: 'pointer'
-    }}
-  >
-    Add Brand
-  </button>
-<select
-  id="brand-select"
-  name="brand_id"
-  required
-  value={productData.product_obj.brand_id || ''}
-  onChange={handleChange}
-  className="dropdown"
-  style={{ width: '94%', margin: '6px 20px 6px 10px' }}
->
-  <option value="">Select Brand</option>
-  {brand.map((item) => (
-    <option key={item._id} value={item.id}>
-      {item.name}
-    </option>
-  ))}
-</select>
+                    <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
+                        Brand <span className="required">*</span>
+                    </label>
+                    <button
+                        type="button"
+                        onClick={handleAddBrand} // Function to handle the "Add Brand" action
+                        style={{
+                            marginLeft: 'auto',
+                            backgroundColor: '#007bff',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '5px 10px',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Add Brand
+                    </button>
+                    <select
+                        id="brand-select"
+                        name="brand_id"
+                        required
+                        value={productData.product_obj.brand_id || ''}
+                        onChange={handleChange}
+                        className="dropdown"
+                        style={{ width: '94%', margin: '6px 20px 6px 10px' }}
+                    >
+                        <option value="">Select Brand</option>
+                        {brand.map((item) => (
+                            <option key={item._id} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
+                    </select>
 
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
                     <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange} />
@@ -516,10 +497,9 @@ const AddProduct = (categories) => {
             const updatedVariants = [...prev];
             updatedVariants[index][name] = value;
             if (name === 'basePrice' || name === 'finishedPrice') {
-                console.log(updatedVariants[index],'updatedVariants[index]');
-                console.log(productData.product_obj.base_price,'updatedVariants[index].basePrice');
-                console.log(updatedVariants[index].totalPrice,'updatedVariants[index].totalPrice');
-
+                // console.log(updatedVariants[index],'updatedVariants[index]');
+                // console.log(productData.product_obj.base_price,'updatedVariants[index].basePrice');
+                // console.log(updatedVariants[index].totalPrice,'updatedVariants[index].totalPrice');
                 updatedVariants[index].totalPrice = parseFloat(productData.product_obj.base_price || 0) + parseFloat(updatedVariants[index].finishedPrice || 0);
             }
             return updatedVariants;

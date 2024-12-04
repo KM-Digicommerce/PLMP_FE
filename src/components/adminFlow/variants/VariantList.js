@@ -80,16 +80,13 @@ const VariantList = ({ categories }) => {
         fetchCategoryData();
     }, []);
     const handleCategorySelectForVariants = async (id, level) => {
-        const selectedIdString = String(id);
+        const selectedIdString = String(id);        
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
         if (id && level) {
             setShowclearBtn(true);
-        }
+        }                
         if (isIdInLastLevel) {
             setIsAddProductVisible(true);
-        }
-        else {
-            setIsAddProductVisible(false);
         }
         setSelectedCategoryForVariant(id);
         setSelectedCategoryLevelForVariant(level);
@@ -358,6 +355,7 @@ const VariantList = ({ categories }) => {
         setSelectedlevel5(e);
         setSelectedlevel6(e);
         setShowclearBtn(false);
+        setIsAddProductVisible(false);
         setIsCategoryDropdownOpen(false);
         setIsLevel2DropdownOpen(false);
         setIsLevel3DropdownOpen(false);
@@ -676,9 +674,9 @@ const VariantList = ({ categories }) => {
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>Option Type</th>
-                                                    <th>Values</th>
-                                                    <th>Applicable Categories</th>
+                                                    <th style={{ width: '14%' }}>Option Type</th>
+                                                    <th style={{ width: '46%' }}>Values</th>
+                                                    <th style={{ width: '40%' }}>Applicable Categories</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

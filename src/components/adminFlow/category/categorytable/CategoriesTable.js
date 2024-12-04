@@ -1021,7 +1021,7 @@ const handleLevelClear = (e) => {
  
   <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
   {sortVisible && (
-  <div className="sort-container"  style={{ position: 'relative' }} >
+  <div className="sort-container"  style={{ position: 'relative',width: '538px', bottom: '10px' }} >
         <select onChange={handleSortChange} value={sortOption} className="sort-dropdown" style={{  position: 'absolute', minWidth: '350px',  transform: 'translateY(-50%)',  cursor: 'pointer',  fontSize: '15px',  color: '#aaa', }} >
         <option value="">Sort by Products</option>
           <option value="newest">Newest Products</option>

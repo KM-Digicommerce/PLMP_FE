@@ -9,6 +9,7 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
+import { LinearProgress } from '@mui/material';
 
 const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
@@ -23,6 +24,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   const [activeSection, setActiveSection] = useState('dashboard');
   const navigate = useNavigate();
   const location = useLocation();
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const showUploadErrorSwal = (message) => {
     Swal.fire({title: 'Upload Failed',text: message,icon: 'error',confirmButtonText: 'OK',customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
@@ -43,11 +45,12 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   const closeImportModal = () => {
     setShowImportModal(false);
     setSelectedFile(null);
+    setUploadProgress(0);
+    navigate('/Admin'); 
+    window.location.reload();
   };
 
   const handleUpload = async () => {
-    setShowImportModal(false);
-    setSelectedFile(null);
     if (!selectedFile) {
       Swal.fire({
         text: 'Please select a file to upload.',
@@ -57,6 +60,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       return;
     }
     setLoading(true);
+    setUploadProgress(0);
     const formData = new FormData();
     formData.append('file', selectedFile);
     try {
@@ -64,12 +68,17 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(progress);
+        },
       });
       setSelectedFilepath(response.data.data.file_path);
       if (response.data && response.data.data.status === false) {
         setApiResponse(response.data.data);
         setShowResponseModal(true);
-        // showUploadErrorSwal(response.data.message || 'Failed to upload the file.');
+        setShowImportModal(false);
+        setSelectedFile(null);
       } else {
         Swal.fire({ title: 'Success!', text: 'File uploaded successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
           }
@@ -81,6 +90,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       showUploadErrorSwal('An error occurred while uploading the file.');
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
   
@@ -143,9 +153,14 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         //   <CircularProgress size={50} />
         //   <span>Loading...</span>
         // </div>
-        <div className="loading-spinner-container-sidebar">
-        <div className="loading-spinner"></div>
-      </div>
+        <Modal open={showImportModal} onClose={closeImportModal}>
+        <div className="import-modal">
+                  <div style={{ marginTop: '10px' }}>
+                      <LinearProgress variant="determinate" value={uploadProgress} />
+                      <p style={{ textAlign: 'center', marginTop: '5px' }}>{uploadProgress}%</p>
+                    </div>
+                    </div>
+                    </Modal>
       ) : (
         showResponseModal && (
           <ApiResponseModal
@@ -218,6 +233,12 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
               Cancel
             </Button>
           </div>
+          {loading && (
+            <div style={{ marginTop: '10px' }}>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <p style={{ textAlign: 'center', marginTop: '5px' }}>{uploadProgress}%</p>
+            </div>
+          )}
         </div>
       </Modal>
     </div>

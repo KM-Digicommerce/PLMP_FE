@@ -1,0 +1,5 @@
+/* CSS */
+.arrow:hover {
+    transform: translateX(3px);
+    cursor: pointer;
+  }

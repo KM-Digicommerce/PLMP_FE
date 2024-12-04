@@ -300,7 +300,6 @@ input[type="number"] {
 .thumbnail-container {
   display: flex;
   align-items: center;
-  position: relative;
 }
 
 .thumbnail-scroll-btn {
@@ -316,9 +315,7 @@ input[type="number"] {
   align-items: center;
   font-size: 12px;
   transition: background-color 0.3s ease;
-  position: absolute;
   top: 55%;
-  transform: translateY(-50%);
   z-index: 2;
 }
 
@@ -328,19 +325,20 @@ input[type="number"] {
 
 .thumbnail-section {
   justify-content: flex-start;
-  padding: 16px 23px 8px 23px;
+  padding: 16px 8px 8px 8px;
   display: flex;
   overflow-x: scroll;
   scroll-behavior: smooth;
-  gap: 8px;
-  width: 118px; /* Adjust this width based on layout */
+  gap: 10px;
+  width: 100px; 
+  background: #fafafa;
 }
 
 .thumbnail-section::-webkit-scrollbar {
   display: none;
 }
 .prev-btn {
-  left: -8px;
+  left: -27px;
 }
 
 .next-btn {
