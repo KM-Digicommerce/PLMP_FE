@@ -478,7 +478,7 @@ console.log(id,'id ');
                                     </div>
                                     <div className="thumbnail-container">
                                     {formData.image && (
-                                        formData.image.length > 3 && (
+                                        formData.image.length > 2 && (
                                             <span
                                                 className="thumbnail-scroll-btn prev-btn"
                                                 onClick={handleScrollPrev}
@@ -501,7 +501,7 @@ console.log(id,'id ');
                                                 ))}
                                         </div>
                                         {formData.image && (
-                                        formData.image.length > 3 && (
+                                        formData.image.length > 2 && (
                                             <span
                                                 className="thumbnail-scroll-btn next-btn"
                                                 onClick={handleScrollNext}
