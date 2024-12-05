@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "./utils/axiosConfig";
 import "./ModalStyles.css";
 import CircularProgress from '@mui/material/CircularProgress';
+import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 
 const ApiResponseModal = ({
   showResponseModal,
@@ -16,6 +18,8 @@ const ApiResponseModal = ({
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [draggedSource, setDraggedSource] = useState(null);
   const [allMapped, setAllMapped] = useState(false); // Track if all values are mapped
+  const navigate = useNavigate();
+  const [toDashboard,setToDashboard] =useState(false);
 
   const databaseOptions = apiResponse?.Database_options || [];
   const databaseList = apiResponse?.Database_list || [];
@@ -85,7 +89,10 @@ const ApiResponseModal = ({
     setDraggedItem(null);
     setDraggedSource(null);
   };
-
+const handleDashboard = async () =>{
+    navigate('/Admin'); 
+    window.location.reload();
+}
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
@@ -111,6 +118,12 @@ const ApiResponseModal = ({
           },
         }
       );
+      if (response.data) {
+        Swal.fire({ title: 'Success!', text: 'File uploaded successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+          }
+        }).then(() => {  navigate('/Admin'); window.location.reload();});
+           
+      }
       setShowResponseModal(false);
     } catch (err) {
       console.error("API Error:", err);
@@ -130,7 +143,7 @@ const ApiResponseModal = ({
           <div className="modal-content-import">
             <div className="modal-header">
               <h2>Field Mapping</h2>
-              <button onClick={() => setShowResponseModal(false)} className="btn-close">
+              <button onClick={() => {setShowResponseModal(false);handleDashboard(true);}} className="btn-close">
                 X
               </button>
             </div>
@@ -207,7 +220,7 @@ const ApiResponseModal = ({
               <button className="btn-submit" onClick={handleSubmit} disabled={loading}>
                 {loading ? "Saving..." : "Save Mapping"}
               </button>
-              <button className="btn-close-down" onClick={() => setShowResponseModal(false)}>Close</button>
+              <button className="btn-close-down" onClick={() => {setShowResponseModal(false);handleDashboard(true);}}>Close</button>
             </div>
           </div>
         </div>

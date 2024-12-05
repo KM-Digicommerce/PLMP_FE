@@ -45,8 +45,6 @@ const ProductDetail = ({ categories }) => {
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    // const [data, setData] = useState([]);
-
     const [searchQueries, setSearchQueries] = useState({
         level1: '',
         level2: '',
@@ -55,7 +53,6 @@ const ProductDetail = ({ categories }) => {
         level5: '',
         level6: '',
     });
-    // const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
@@ -482,12 +479,12 @@ console.log(id,'id ');
                                     <div className="thumbnail-container">
                                     {formData.image && (
                                         formData.image.length > 3 && (
-                                            <button
+                                            <span
                                                 className="thumbnail-scroll-btn prev-btn"
                                                 onClick={handleScrollPrev}
                                             >
                                                 &lt;
-                                            </button>
+                                            </span>
                                         )
                                        )}
                                         <div className="thumbnail-section">
@@ -505,19 +502,16 @@ console.log(id,'id ');
                                         </div>
                                         {formData.image && (
                                         formData.image.length > 3 && (
-                                            <button
+                                            <span
                                                 className="thumbnail-scroll-btn next-btn"
                                                 onClick={handleScrollNext}
                                             >
                                                 &gt;
-                                            </button>
+                                            </span>
                                         )
                                     )}
                                     </div>
                                 </div>
-
-
-
                                 <div className="product-detail-section">
                                 <div className="CategoryTable-header-edit">
                                     <h3>Edit Product Details</h3>
@@ -830,82 +824,33 @@ console.log(id,'id ');
                                     className="variant_model_pdp"
                                 >
                                     <Box
-                                        sx={{
-                                            width: 450,
-                                            padding: 2,
-                                            maxHeight: '90vh',
-                                            overflowY: 'auto',
-                                            margin: 'auto',
-                                            backgroundColor: 'white',
-                                            borderRadius: '8px',
-                                            top: '1%',
-                                            position: 'absolute',
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            boxShadow: 3,
+                                        sx={{ width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
                                         }}
                                     >
                                         <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
                                         <form onSubmit={handleFormSubmit}>
-                                            <TextField
-                                                fullWidth
-                                                name="sku"
-                                                label="SKU"
-                                                value={selectedVariants.sku}
-                                                onChange={handleVariantDetailChange}
-                                                margin="normal"
-                                                className='input_pdp'
-                                                size="small"
-                                                sx={{ marginBottom: 2 }}
+                                            <TextField fullWidth name="sku" label="SKU" value={selectedVariants.sku} onChange={handleVariantDetailChange} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
-                                            <TextField
-                                                fullWidth
-                                                type="text"
-                                                name="unfinishedPrice"
-                                                label="Unfinished Price"
-                                                value={selectedVariants.unfinishedPrice || ''}
+                                            <TextField fullWidth type="text" name="unfinishedPrice" label="Unfinished Price" value={selectedVariants.unfinishedPrice || ''}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
                                                         handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
                                                     }
-                                                }}
-                                                margin="normal"
-                                                className="input_pdp"
-                                                size="small"
-                                                sx={{ marginBottom: 2 }}
+                                                }} margin="normal" className="input_pdp" size="small" sx={{ marginBottom: 2 }}
                                             />
 
-                                            <TextField
-                                                fullWidth
-                                                type="text"
-                                                name="finishedPrice"
-                                                label="Finished Price"
-                                                value={selectedVariants.finishedPrice}
+                                            <TextField fullWidth type="text" name="finishedPrice" label="Finished Price" value={selectedVariants.finishedPrice}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
                                                         handleVariantDetailChange({ target: { name: 'finishedPrice', value } });
                                                     }
-                                                }}
-                                                margin="normal"
-                                                className='input_pdp'
-                                                size="small"
-                                                sx={{ marginBottom: 2 }}
+                                                }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
 
 
-                                            <TextField
-                                                fullWidth
-                                                type="number"
-                                                name="quantity"
-                                                className='input_pdp'
-                                                label="Quantity"
-                                                value={selectedVariants.quantity}
-                                                onChange={handleVariantDetailChange}
-                                                margin="normal"
-                                                size="small"
-                                                sx={{ marginBottom: 2 }}
+                                            <TextField  fullWidth  type="number"  name="quantity"  className='input_pdp'  label="Quantity"  value={selectedVariants.quantity}  onChange={handleVariantDetailChange}  margin="normal"  size="small"  sx={{ marginBottom: 2 }}
                                             />
 
 
@@ -930,11 +875,7 @@ console.log(id,'id ');
                                                     </FormControl>
                                                 </div>
                                             ))}
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                color="primary"
-                                                sx={{ width: '100%', marginTop: 2 }}
+                                            <Button  type="submit"  variant="contained"    color="primary"  sx={{ width: '100%', marginTop: 2 }}
                                             >
                                                 Save Variant
                                             </Button>
@@ -952,7 +893,6 @@ console.log(id,'id ');
                                     <label htmlFor="msrp">MSRP</label>
                                     <input type="text" id="msrp" name="msrp" className='input_pdps'
                                         value={String(`$${formData.msrp}` || '')}
-                                        // value={String`$${formData.msrp?.replace(/^\$/, '') || ''}`}
                                         // onChange={handleChange} required 
                                         onChange={(e) => {
                                             const inputValue = e.target.value.replace(/[^0-9.]/g, '');

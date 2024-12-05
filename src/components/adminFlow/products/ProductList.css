@@ -60,7 +60,6 @@ vertical-align: middle;
 }
 
 .search-container {
-margin: 20px 0;
 display: flex;
 justify-content: space-evenly;
 }
@@ -142,7 +141,6 @@ border: 1px solid #ccc;
 .sort-container {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 15px;
 }
 
 .sort-dropdown {

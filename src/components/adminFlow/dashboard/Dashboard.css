@@ -31,16 +31,25 @@
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reduced shadow */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
 }
 
 .card:hover {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
   transform: translateY(-8px); /* Reduced hover effect */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Reduced hover shadow */
 }
 
 .card h3 {
   font-size: 16px;
-  color: #444;
+  color: #fcfbfb;
 }
 
 .card p {
@@ -51,23 +60,22 @@
 }
 
 .card-blue {
-  background: #70ebff;
-  color: #fff;
+  background-image: linear-gradient(to right, #2f4256 0%, #26D0CE 51%, #34495e 100%);
+      color: #fff;
 }
-
 .card-green {
-  background: #70ebff;
-  color: #fff;
+  background-image: linear-gradient(to right, #2f4256 0%, #26D0CE 51%, #34495e 100%);
+    color: #fff;
 }
 
 .card-yellow {
-  background: #70ebff;
-  color: #333;
+  background-image: linear-gradient(to right, #2f4256 0%, #26D0CE 51%, #34495e 100%);
+    color: #333;
 }
 
 .card-orange {
-  background: #70ebff;
-  color: #fff;
+  background-image: linear-gradient(to right, #2f4256 0%, #26D0CE 51%, #34495e 100%);
+    color: #fff;
 }
 
 /* Charts section */
@@ -78,17 +86,26 @@
 }
 
 .chart-card {
-  background: #fff;
+  background-image: linear-gradient(to right, #6a9ba0 0%, #26D0CE 51%, #2d89e5 100%);
   padding: 20px; /* Reduced padding */
   border-radius: 10px; /* Reduced border-radius */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;            
+  box-shadow: 0 0 20px #eee;
+  text-transform: uppercase;
 }
-
+.chart-card:hover{
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-8px); /* Reduced hover effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Reduced hover shadow */
+}
 .chart-card h3 {
-  font-size: 1.5rem; /* Reduced font size */
+  font-size:20px; /* Reduced font size */
   font-weight: 500;
   margin-bottom: 15px; /* Reduced margin-bottom */
-  color: #444;
+  color: #ffffff;
 }
 
 /* Loading spinner */

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from './utils/axiosConfig';
+import axiosInstance from '../../../utils/axiosConfig';
 import Swal from 'sweetalert2';
 import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
@@ -9,19 +9,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import './HistoryPages.css';
 
 const HistoryPage = () => {
   const [apiResponse, setApiResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeButton, setActiveButton] = useState('');
 
-  // Function to handle API calls
   const handleApiCall = async (apiUrl, buttonKey) => {
     setLoading(true);
     setActiveButton(buttonKey);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/${apiUrl}`);
-      setApiResponse(response.data.data.result); 
+      setApiResponse(response.data.data.result);
     } catch (error) {
       console.error(`Error fetching data from ${apiUrl}:`, error);
       Swal.fire({
@@ -29,13 +29,6 @@ const HistoryPage = () => {
         text: 'An error occurred while fetching data.',
         icon: 'error',
         confirmButtonText: 'OK',
-        customClass: {
-          container: 'swal-custom-container',
-          popup: 'swal-custom-popup',
-          title: 'swal-custom-title',
-          confirmButton: 'swal-custom-confirm',
-          cancelButton: 'swal-custom-cancel',
-        },
       });
     } finally {
       setLoading(false);
@@ -43,37 +36,49 @@ const HistoryPage = () => {
   };
 
   const renderHeaders = () => {
-    if (activeButton === 'productLog' || activeButton === 'productVariantLog') {
-      return (
-        <>
-          <TableCell><strong>User Name</strong></TableCell>
-          <TableCell><strong>Product Name</strong></TableCell>
-          <TableCell><strong>Action</strong></TableCell>
-          <TableCell><strong>Log Date</strong></TableCell>
-        </>
-      );
-    } else if (activeButton === 'priceLog') {
+    if (activeButton === 'priceLog') {
       return (
         <>
           <TableCell><strong>Price Name</strong></TableCell>
           <TableCell><strong>User Name</strong></TableCell>
           <TableCell><strong>Product Name</strong></TableCell>
           <TableCell><strong>Action</strong></TableCell>
-          <TableCell><strong>Log Date</strong></TableCell>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <TableCell><strong>User Name</strong></TableCell>
-          <TableCell><strong>Category ID</strong></TableCell>
-          <TableCell><strong>Action</strong></TableCell>
-          <TableCell><strong>Level</strong></TableCell>
-          <TableCell><strong>Category Name</strong></TableCell>
+          <TableCell><strong>Update Price</strong></TableCell>
           <TableCell><strong>Log Date</strong></TableCell>
         </>
       );
     }
+    if (activeButton === 'productLog') {
+      return (
+        <>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>Product Name</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
+        </>
+      );
+    }
+    if (activeButton === 'productVariantLog') {
+      return (
+        <>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>SKU Number</strong></TableCell>
+          <TableCell><strong>Product Name</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
+        </>
+      );
+    }
+    return (
+      <>
+        <TableCell><strong>User Name</strong></TableCell>
+        <TableCell><strong>Category ID</strong></TableCell>
+        <TableCell><strong>Action</strong></TableCell>
+        <TableCell><strong>Level</strong></TableCell>
+        <TableCell><strong>Category Name</strong></TableCell>
+        <TableCell><strong>Log Date</strong></TableCell>
+      </>
+    );
   };
 
   const renderRows = () => {
@@ -85,11 +90,41 @@ const HistoryPage = () => {
             <TableCell>{log.user_name}</TableCell>
             <TableCell>{log.product_name}</TableCell>
             <TableCell>{log.action}</TableCell>
+            <TableCell>
+              {log.previous_price && log.current_price ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {log.previous_price}
+                  <span
+                    style={{
+                      margin: '0 6px',
+                      color: '#007BFF',
+                      fontWeight: 'bold',
+                      transition: 'transform 0.3s ease',
+                      display: 'inline-block',
+                    }}
+                    className="arrow"
+                  >
+                    →
+                  </span>
+                  {log.current_price}
+                </span>
+              ) : (
+                log.current_price || 'N/A'
+              )}
+            </TableCell>
             <TableCell>{log.log_date}</TableCell>
           </>
-        ) : activeButton === 'productLog' || activeButton === 'productVariantLog' ? (
+        ) : activeButton === 'productLog' ? (
           <>
             <TableCell>{log.user_name}</TableCell>
+            <TableCell>{log.product_name}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
+          </>
+        ) : activeButton === 'productVariantLog' ? (
+          <>
+            <TableCell>{log.user_name}</TableCell>
+            <TableCell>{log.sku_number}</TableCell>
             <TableCell>{log.product_name}</TableCell>
             <TableCell>{log.action}</TableCell>
             <TableCell>{log.log_date}</TableCell>
@@ -97,7 +132,7 @@ const HistoryPage = () => {
         ) : (
           <>
             <TableCell>{log.user_name}</TableCell>
-            <TableCell>{log.category_id}</TableCell>
+            <TableCell>{log.category_number}</TableCell>
             <TableCell>{log.action}</TableCell>
             <TableCell>{log.level}</TableCell>
             <TableCell>{log.category_name}</TableCell>
@@ -109,55 +144,82 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className="history-page" style={{ padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>History Logs</h2>
+    <div className="history-page" style={{ paddingTop: '90px', maxWidth: '1200px', margin: 'auto' }}>
+      <h2
+        style={{
+          textAlign: 'center',
+          marginBottom: '20px',
+          position: 'fixed',
+          top: '33px',
+          width: '84%',
+          background: '#fff',
+          zIndex: 10,
+          padding: '10px 0',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        History Logs
+      </h2>
 
       <div
         className="buttons-container"
-        style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          marginBottom: '1.5rem',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          position: 'fixed',
+          top: '100px',
+          width: '84%',
+          background: '#fff',
+          zIndex: 10,
+          padding: '10px 0',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        }}
       >
         <Button
           variant="contained"
+          style={{ width: '14%' }}
           color={activeButton === 'categoryLog' ? 'secondary' : 'primary'}
           onClick={() => handleApiCall('obtainCategoryLog/', 'categoryLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '16%', padding: '10px', lineHeight: '20px' }}
         >
           Category Log
         </Button>
         <Button
           variant="contained"
+          style={{ width: '22%' }}
           color={activeButton === 'categoryVariantLog' ? 'secondary' : 'primary'}
           onClick={() => handleApiCall('obtainCategoryVarientLog/', 'categoryVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '21%', padding: '10px', lineHeight: '20px' }}
         >
           Category Variant Log
         </Button>
         <Button
           variant="contained"
+          style={{ width: '16%' }}
           color={activeButton === 'productLog' ? 'secondary' : 'primary'}
           onClick={() => handleApiCall('obtainProductLog/', 'productLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '18%', padding: '10px', lineHeight: '20px' }}
         >
           Product Log
         </Button>
         <Button
           variant="contained"
+          style={{ width: '21%' }}
           color={activeButton === 'productVariantLog' ? 'secondary' : 'primary'}
           onClick={() => handleApiCall('obtainProductVarientLog/', 'productVariantLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '21%', padding: '10px', lineHeight: '20px' }}
         >
           Product Variant Log
         </Button>
         <Button
           variant="contained"
+          style={{ width: '13%' }}
           color={activeButton === 'priceLog' ? 'secondary' : 'primary'}
           onClick={() => handleApiCall('obtainPriceLog/', 'priceLog')}
           disabled={loading}
-          style={{ borderRadius: '10px', width: '16%', padding: '10px', lineHeight: '20px' }}
         >
           Price Log
         </Button>

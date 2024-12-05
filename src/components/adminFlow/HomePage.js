@@ -12,7 +12,7 @@ import AddProduct from './products/AddProduct';
 import Dashboard from './dashboard/Dashboard';
 import axiosInstance from '../../utils/axiosConfig.js';
 import { useNavigate,useLocation } from 'react-router-dom';
-import HistoryPage from '../../HistoryPage.js';
+import HistoryPage from './History/HistoryPage.js';
 import BrandList from './brand/BrandList.js';
 import ExportPage from './Export/ExportPage.js';
 import ApiResponseModal from '../../ApiResponseModal.js';

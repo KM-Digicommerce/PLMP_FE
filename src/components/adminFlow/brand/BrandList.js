@@ -80,6 +80,7 @@ const BrandList = () => {
   useEffect(() => {
     fetchBrands();
   }, []);
+
   if (!brands) {
     return (
       <div className="superAdmin-error-message">
@@ -87,6 +88,7 @@ const BrandList = () => {
       </div>
     );
   }
+
   return (
     <div className="brand-page">
       <div className="brand-header">
@@ -98,22 +100,21 @@ const BrandList = () => {
       {loading ? (
         <p>Loading brands...</p>
       ) : (
-        <table className="brand-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Brand Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {brands.map((brand) => (
-              <tr key={brand.id}>
-                <td>{brand.id}</td>
-                <td>{brand.name}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="brand-cards-container">
+          {brands.map((brand) => (
+            <div key={brand.id} className="brand-card">
+              <div className="brand-logo">
+                <img
+                  src={brand.logo || 'https://img.freepik.com/free-vector/creative-furniture-store-logo_23-2148455884.jpg?semt=ais_hybrid'} // Fallback to default logo if not available
+                  alt={`${brand.name} Logo`}
+                  className="brand-logo-image"
+                />
+              </div>
+              <h3 className="brand-name">{brand.name}</h3>
+              <p className="brand-id">ID: {brand.brand_number}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

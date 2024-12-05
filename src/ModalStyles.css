@@ -17,9 +17,9 @@
     padding: 14px 20px 14px 20px;
     width: 90%;
     max-width: 600px;
-    max-height: 86% !important;
+    max-height: 82% !important;
     overflow-y: auto;
-    top: 18px;
+    margin-top: 30px;
 }
 
 .modal-header {
