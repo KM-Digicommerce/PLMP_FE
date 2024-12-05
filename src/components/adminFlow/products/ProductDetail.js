@@ -424,6 +424,12 @@ console.log(id,'id ');
         setIsPopupOpen(false);
     };
     const handleAddVariantClick = async () => {
+        setSelectedVariants({
+            sku: '',
+            unfinishedPrice: '',
+            finishedPrice: '',
+            quantity: '',
+        });
         setIsPopupOpen(true);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
