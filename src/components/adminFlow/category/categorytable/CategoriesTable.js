@@ -1137,7 +1137,7 @@ const handleLevelClear = (e) => {
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} className="product-cell" >{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.breadcrumb}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.category_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell>
