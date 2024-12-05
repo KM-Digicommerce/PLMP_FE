@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
 import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
-
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 
@@ -34,6 +33,7 @@ const ProductDetail = ({ categories }) => {
         sku_number: '',
         unfinishedPrice: '',
         finishedPrice: '',
+        totalPrice:0,
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
@@ -385,6 +385,7 @@ console.log(id,'id ');
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
+            const totalPrice = parseFloat(formData.base_price || 0) + parseFloat(selectedVariants.finishedPrice || 0);            
             const options = variantOptions
                 .map((variant) => {
                     const selectedOption = selectedVariants[variant.type_id];
@@ -404,6 +405,7 @@ console.log(id,'id ');
                     sku_number: selectedVariants.sku,
                     un_finished_price: selectedVariants.unfinishedPrice,
                     finished_price: selectedVariants.finishedPrice,
+                    total_price: totalPrice, 
                     quantity: selectedVariants.quantity,
                     options: options,
 
@@ -422,6 +424,12 @@ console.log(id,'id ');
         setIsPopupOpen(false);
     };
     const handleAddVariantClick = async () => {
+        setSelectedVariants({
+            sku: '',
+            unfinishedPrice: '',
+            finishedPrice: '',
+            quantity: '',
+        });
         setIsPopupOpen(true);
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
@@ -848,8 +856,6 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
-
-
                                             <TextField  fullWidth  type="number"  name="quantity"  className='input_pdp'  label="Quantity"  value={selectedVariants.quantity}  onChange={handleVariantDetailChange}  margin="normal"  size="small"  sx={{ marginBottom: 2 }}
                                             />
 

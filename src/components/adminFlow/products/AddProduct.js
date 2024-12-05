@@ -92,23 +92,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange} />
                     <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
                     <input type="text" name="breadcrumb" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
-                    {/* <label htmlFor="brand-select">Brand <span className="required">*</span></label>
-                    <select
-                        id="brand-select"
-                        name="brand_id"
-                        required 
-                        value={productData.product_obj.brand_id || ''}
-                        onChange={handleChange}
-                        className="dropdown"
-                        style={{ width: '94%', margin: '6px 20px 6px 10px' }}
-                    >
-                        <option value="" >Select Brand</option>
-                        {brand.map((item) => (
-                            <option key={item._id} value={item.id}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select> */}
                     <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
                         Brand <span className="required">*</span>
                     </label>
@@ -219,69 +202,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-                 {/* <div className="form-section">
-                 <div className='CategoryTable-header'>
-                    <h3 style={{ margin: '6px' }}>Variant Details</h3>
-                    <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
-                </div>
-                    <div className="variant-scroll">
-                        {selectedVariants.map((variant, index) => (
-                            <div className="variant-row" key={index}>
-                                <div className="variant-field">
-                                <label htmlFor="sku">SKU <span className="required">*</span></label>
-                                    <input type="text" id="sku" name="sku" placeholder="SKU" required value={variant.sku} onChange={(e) => handleVariantDetailChange(e, index)} />
-                                </div>
-                                <div className="variant-field">
-                                    <label htmlFor="unfinishedPrice">Unfinished Price</label>
-                                    <input type="number" id="unfinishedPrice" name="unfinishedPrice" placeholder="Unfinished Price" value={variant.unfinishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
-                                </div>
-                                <div className="variant-field">
-                                <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
-                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" required value={variant.finishedPrice} onChange={(e) => handleVariantDetailChange(e, index)} />
-                                </div>
-                                <div className="variant-field">
-                                <label htmlFor="quantity">Quantity <span className="required">*</span></label>
-                                    <input type="number" id="quantity" name="quantity" placeholder="Quantity" required value={variant.quantity} onChange={(e) => handleVariantDetailChange(e, index)} />
-                                </div>
-                                <div className="variant-field">
-                                    <label htmlFor="totalPrice">Total Price</label>
-                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
-                                </div>
-                                {variantOptions?.map((variantOption) => (
-                                    <div className="variant-dropdown" key={variantOption.type_id}>
-                                        <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
-                                            {variantOption.type_name}
-                                        </label>
-                                        <FormControl fullWidth variant="outlined" className="dropdown-container">
-                                            <Select
-                                                labelId={`variant-${variantOption.type_id}`}
-                                                value={variant[variantOption.type_id] || ''} 
-                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)}
-                                                displayEmpty
-                                                className="styled-dropdown"
-                                                inputProps={{
-                                                    style: {
-                                                        fontSize: '16px',
-                                                        padding: '8px',
-                                                    },
-                                                }}
-                                            >
-                                                <MenuItem value="" disabled>Select {variantOption.type_name}</MenuItem>
-                                                {variantOption.option_value_list?.map((option) => (
-                                                    <MenuItem key={option.type_value_id} value={option.type_value_id}>
-                                                        {option.type_value_name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-  </div>
-))}
-
-
-                            </div>
-                        ))}
-                    </div>
-                </div> */}
                 <div className="form-section">
                     <div className="CategoryTable-header">
                         <h3 style={{ margin: '6px' }}>Variant Details</h3>
@@ -540,35 +460,6 @@ const AddProduct = (categories) => {
         });
       };
     
-    // const handleVariantChange = (typeId, optionId) => {
-    //     setSelectedVariants((prev) => ({
-    //         ...prev,
-    //         [typeId]: optionId,
-    //     }));
-    //     console.log(selectedVariants, 'selectedVariants');
-    //     console.log(typeId, 'typeId');
-    //     console.log(optionId, 'optionId');
-
-    //     const filteredOptions = Object.entries(selectedVariants)
-    //         .filter(([nameId]) => !['sku', 'unfinishedPrice', 'finishedPrice', 'quantity'].includes(nameId))
-    //         .map(([nameId, valueId]) => ({
-    //             option_name_id: nameId,
-    //             option_value_id: valueId
-    //         }));
-    //     setProductData((prevData) => ({
-    //         ...prevData,
-    //         product_obj: {
-    //             ...prevData.product_obj,
-    //             varients: [
-    //                 {
-    //                     ...prevData.product_obj.varients[0],
-    //                     options: filteredOptions,
-    //                 }
-    //             ]
-    //         }
-
-    //     }));
-    // };
     const handleSave = async () => {
         if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean|| 
             !productData.product_obj.brand_id || !productData.product_obj.product_name || 
