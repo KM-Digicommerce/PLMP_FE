@@ -69,6 +69,18 @@ const HistoryPage = () => {
         </>
       );
     }
+    if (activeButton === 'categoryVariantLog') {
+      return (
+        <>
+          <TableCell><strong>User Name</strong></TableCell>
+          <TableCell><strong>Variant option name</strong></TableCell>
+          <TableCell><strong>Action</strong></TableCell>
+          <TableCell><strong>Level</strong></TableCell>
+          <TableCell><strong>Category Name</strong></TableCell>
+          <TableCell><strong>Log Date</strong></TableCell>
+        </>
+      );
+    }
     return (
       <>
         <TableCell><strong>User Name</strong></TableCell>
@@ -132,7 +144,7 @@ const HistoryPage = () => {
         ) : (
           <>
             <TableCell>{log.user_name}</TableCell>
-            <TableCell>{log.category_number}</TableCell>
+            <TableCell>{log.varient_option_name}</TableCell>
             <TableCell>{log.action}</TableCell>
             <TableCell>{log.level}</TableCell>
             <TableCell>{log.category_name}</TableCell>

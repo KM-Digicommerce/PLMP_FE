@@ -207,7 +207,7 @@ input[type="number"] {  margin: 0 !important;}
   background-color: #bbb;
 }
 
-.thumbnail-section {  justify-content: flex-start;  padding: 16px 8px 8px 8px;  display: flex;  overflow-x: scroll;  scroll-behavior: smooth;  gap: 10px;  width: 100px;   background: #fafafa;}
+.thumbnail-section {  justify-content: flex-start;  padding: 16px 8px 8px 8px;  display: flex;  overflow-x: scroll;  scroll-behavior: smooth;  gap: 10px;  width: 135px;   background: #fafafa;}
 
 .thumbnail-section::-webkit-scrollbar {
   display: none;
