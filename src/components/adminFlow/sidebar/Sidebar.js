@@ -101,6 +101,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     setShowSettingsSubmenu(!showSettingsSubmenu);
   };
   const handleSectionClick = (section) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/brand'); 
