@@ -435,7 +435,7 @@ const VariantList = ({ categories }) => {
     return (
         <div>
             <div className='CategoryTable-header'>
-            <h2 className='header_cls'>VariantList Schema!</h2>
+            <h2 className='header_cls'>Variants Schema</h2>
             </div>
             <div className='CategoryContainer'>
             {clearBtn && (

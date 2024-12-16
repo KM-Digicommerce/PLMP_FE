@@ -723,7 +723,7 @@ const handleLevelClear = (e) => {
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
-        <h3>Categories</h3>
+        <h2>Category Schema</h2>
       </div>
       <div className='CategoryContainer'>
       {clearBtn && (

@@ -69,46 +69,72 @@ const PriceComponent = () => {
     fetchBrands();
     fetchCategories();
   }, []);
-  const handleCategorySelect = (category) => {
-    if (!selectedCategories.some(selectedCategory => selectedCategory.id === category.id)) {
-      setSelectedCategories(prevSelectedCategories => [...prevSelectedCategories, category]);
-      // setSelectedCategoryIds(prevSelectedCategoryIds => [
-      //   ...prevSelectedCategoryIds, category.id
-      // ]);
-      // if (selectedCategoryIds.length === 0) {
-      //   console.log('Inside IF length 0');
-      //   setSelectedCategoryIds([category.id]);
-      // }
-      // console.log(selectedCategoryIds,'selectedCategoryIds');
-
-      setSelectedCategoryIds((prevSelectedCategoryIds) => {
-        if (prevSelectedCategoryIds.length === 0) {
-          const newCategoryIds = [category.id];
-          fetchPriceTableData(newCategoryIds); 
-          return newCategoryIds;
-        } else {
-          const newCategoryIds = [...prevSelectedCategoryIds, category.id];
-          fetchPriceTableData(newCategoryIds); 
-          return newCategoryIds;
+  
+  const handleCategorySelect = (e) => {
+    const categoryId = e.target.value;
+    if (categoryId === "all") {
+        const allCategoryIds = categories.map(cat => cat.id); 
+        setSelectedCategories([{ name: "Apply all category" }]); 
+        setSelectedCategoryIds(allCategoryIds);
+        fetchPriceTableData(allCategoryIds); 
+    } else {
+        const category = categories.find(category => category.id === categoryId);
+        const allCategoryIds = selectedCategories.map(cat => cat.name); 
+        if (allCategoryIds[0] === "Apply all category") {
+          setSelectedCategories([]); 
+          setSelectedCategoryIds([]);
         }
-      });
+        if (category) {
+          if (!selectedCategories.some(selectedCategory => selectedCategory.id === category.id)) {
+            setSelectedCategories(prevSelectedCategories => [...prevSelectedCategories, category]);
+            setSelectedCategoryIds((prevSelectedCategoryIds) => {
+              if (prevSelectedCategoryIds.length === 0) {
+                const newCategoryIds = [category.id];
+                fetchPriceTableData(newCategoryIds); 
+                return newCategoryIds;
+              } else {
+                const newCategoryIds = [...prevSelectedCategoryIds, category.id];
+                fetchPriceTableData(newCategoryIds); 
+                return newCategoryIds;
+              }
+            });
+          }
+        }
     }
-  };
+};
+
   const handleCategoryRemove = (categoryId) => {
+    if (categoryId === "all") {
+      setSelectedCategories([]);
+      setSelectedCategoryIds([]);
+      fetchPriceTableData([]); 
+  } else {
+
     setSelectedCategories((prevSelectedCategories) =>
       prevSelectedCategories.filter((category) => category.id !== categoryId)
     );
     setSelectedCategoryIds((prevSelectedCategoryIds) => {
       const newCategoryIds = prevSelectedCategoryIds.filter((id) => id !== categoryId);
-      fetchPriceTableData(newCategoryIds); // Fetch updated price table data
-      return newCategoryIds; // Update the state with the new list
+      fetchPriceTableData(newCategoryIds); 
+      return newCategoryIds; 
     });
+  }
   };
 
   const handleBrandSelect = (brand) => {
     setSelectedBrandId(brand.id)
     setSelectedBrand(brand);
+    if (selectedBrandId.length === 0) {
+      fetchPriceTableData(brand.id); 
+    }
   };
+  useEffect(() => {
+    if (selectedBrandId && selectedBrandId !== '') {
+        console.log('Brand selected:', selectedBrand);
+        fetchPriceTableData(); // Fetch price table data whenever selectedBrandId changes
+    }
+}, [selectedBrandId]); // Runs when selectedBrandId changes
+
 
   const handleBrandRemove = () => {
     setSelectedBrand(null);
@@ -160,7 +186,9 @@ const PriceComponent = () => {
     }
   };
   const fetchPriceTableData = async (categoryIdList) => {    
-    if (categoryIdList && selectedBrand) { 
+    // if (selectedBrandId) { 
+    //   console.log("Inside IF API");
+      
     try {
         setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, { category_id_list: categoryIdList, brand_id: selectedBrandId}); 
@@ -174,11 +202,11 @@ const PriceComponent = () => {
     } finally {
         setLoading(false);
     }
-  }
+  // }
 };
   return (
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'25px'}}>
-      <h1>Pricing Schema!</h1>
+      <h1>Pricing Schema</h1>
       <div
         style={{ display: "block", justifyContent: "flex-start", marginBottom: "20px", }}
       >
@@ -204,7 +232,7 @@ const PriceComponent = () => {
                     style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} >
                     {selectedBrand.name}
                     <span
-                      style={{  marginLeft: '5px',  cursor: 'pointer',  color: 'red'}}
+                      style={{  marginLeft: '5px',  cursor: 'pointer',  color: '#bfbfbf'}}
                       onClick={handleBrandRemove}  >X </span>
                   </span>
                 </div>
@@ -218,8 +246,9 @@ const PriceComponent = () => {
             <p>Loading...</p>
           ) : (
             <div>
-              <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block" }} onChange={(e) => handleCategorySelect(categories.find(category => category.id === e.target.value))}>
+              <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block" }}onChange={handleCategorySelect} >
                 <option value="">Select a category</option>
+                <option value="all">Apply all category</option>
                 {categories.map((category) => (
                   <option value={category.id}>
                     {category.name}
@@ -232,7 +261,7 @@ const PriceComponent = () => {
                   <span
                     style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} >
                     {category.name}
-                    <span style={{  marginLeft: '5px', cursor: 'pointer', color: 'red', }}
+                    <span style={{  marginLeft: '5px', cursor: 'pointer', color: '#bfbfbf', }}
                       onClick={() => handleCategoryRemove(category.id)} > X </span>
                   </span>
                 ))
@@ -246,7 +275,7 @@ const PriceComponent = () => {
           <div style={{ margin: '0px 0px 0px 20px', display: "inline-block" ,width:'10%'}}>
             <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} />
           </div>
-          <span style={{ padding: '0px 1px 0px 12px', cursor: 'pointer', color: 'red' }} > X </span>
+          <span style={{ padding: '0px 0px 0px 21px', cursor: 'pointer', color: '#bfbfbf' }} > X </span>
           <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
             <select value={priceOption} onChange={handlePriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block" }}>
               <option value="finished_price">Finished Wholesale Price</option>

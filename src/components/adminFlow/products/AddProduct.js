@@ -8,13 +8,10 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
-
-  
-
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
@@ -28,6 +25,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             fetchVariants();
         }
     }, [isOpen, selectedCategoryId]);
+    
     const handleAddBrand = async () => {
         const { value: brandName } = await Swal.fire({
           title: 'Add New Brand',
@@ -98,27 +96,10 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <button
                         type="button"
                         onClick={handleAddBrand} // Function to handle the "Add Brand" action
-                        style={{
-                            marginLeft: 'auto',
-                            backgroundColor: '#007bff',
-                            color: '#fff',
-                            border: 'none',
-                            padding: '5px 10px',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
+                        style={{ marginLeft: 'auto', backgroundColor: '#007bff', color: '#fff', border: 'none', width:'15%', padding: '8px 8px', borderRadius: '4px', cursor: 'pointer' }} >
                         Add Brand
                     </button>
-                    <select
-                        id="brand-select"
-                        name="brand_id"
-                        required
-                        value={productData.product_obj.brand_id || ''}
-                        onChange={handleChange}
-                        className="dropdown"
-                        style={{ width: '94%', margin: '6px 20px 6px 10px' }}
-                    >
+                    <select  id="brand-select"  name="brand_id"  required  value={productData.product_obj.brand_id || ''}  onChange={handleChange}  className="dropdown"  style={{ width: '94%', margin: '6px 20px 6px 10px' }} >
                         <option value="">Select Brand</option>
                         {brand.map((item) => (
                             <option key={item._id} value={item.id}>
@@ -133,7 +114,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <div className="CategoryTable-header">
                         <h3 style={{ margin: '6px' }}>Variant and Price Details</h3>
-                        <button onClick={addVariantRow} className="apply-rule-button">Apply Rule</button>
+                        <span className="apply-rule-button">${RetailPrice || 0}</span>
                         <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
                     </div>
                     <div className="variant-scroll">
@@ -178,7 +159,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="totalPrice">Retail Price</label>
-                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
+                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.retailPrice} readOnly />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="quantity">Quantity <span className="required">*</span></label>
@@ -319,6 +300,10 @@ const AddProduct = (categories) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
     const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
     const [clearBtn, setShowclearBtn] = useState(false);
+    const [RetailPrice, setShowRetailPrice] = useState([0]);
+    const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
+
+
 
 
     useEffect(() => {
@@ -360,23 +345,14 @@ const AddProduct = (categories) => {
             ]
         }
     });
-    // const [selectedVariants, setSelectedVariants] = useState([{
-    //     sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: []
-    // }]);
     const [selectedVariants, setSelectedVariants] = useState([{
-        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, options: []
+        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, retailPrice:0, options: []
     }]);
 
-    // const addVariantRow = () => {
-    //     setSelectedVariants(prevVariants => [
-    //         ...prevVariants,
-    //         { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', options: [] }
-    //     ]);
-    // };
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
             ...prevVariants,
-            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0, options: [] }
+            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0,retailPrice:0, options: [] }
         ]);
     };
     const removeVariantRow = (indexToRemove) => {
@@ -417,17 +393,31 @@ const AddProduct = (categories) => {
         setSelectedVariants(prev => {
             const updatedVariants = [...prev];
             updatedVariants[index][name] = value;
-            if (name === 'basePrice' || name === 'finishedPrice') {
-                // console.log(updatedVariants[index],'updatedVariants[index]');
-                // console.log(productData.product_obj.base_price,'updatedVariants[index].basePrice');
-                // console.log(updatedVariants[index].totalPrice,'updatedVariants[index].totalPrice');
-                updatedVariants[index].totalPrice = parseFloat(productData.product_obj.base_price || 0) + parseFloat(updatedVariants[index].finishedPrice || 0);
+            if (RetailPriceOption === 'finished_price' && name === 'finishedPrice') {
+                updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].finishedPrice || 0);
+            }
+            else if (RetailPriceOption === 'unfinished_price' && name === 'finishedPrice') {
+                updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].unfinishedPrice || 0);
             }
             return updatedVariants;
         });
     };
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target;
+        try {
+            const payload = {
+              category_id: selectedCategoryForVariant,
+              brand_id: value,
+            };
+              const response =  await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRetailBrandPrice/`, payload );
+              console.log(response.data.data.price, 'Response');  
+              setShowRetailPrice(response.data.data.price); 
+              setShowRetailPriceOption(response.data.data.price_option);
+        }
+        catch (error) {
+              console.error("Error sending brand and category name:", error);
+              Swal.fire({  title: "Error",  text: "An error occurred while sending brand and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+            }
         setProductData({
             ...productData,
             product_obj: {
@@ -456,7 +446,12 @@ const AddProduct = (categories) => {
             });
           }
           updatedVariant[typeId] = optionId;
-          updatedVariant.totalPrice = (parseFloat(productData.base_price) || 0) + (parseFloat(updatedVariant.finishedPrice) || 0);
+        if (RetailPriceOption === 'finished_price') {
+            updatedVariant.retailPrice = RetailPrice * (parseFloat(updatedVariant.finishedPrice) || 0);
+        }
+        else if (RetailPriceOption === 'unfinished_price') {
+            updatedVariant.retailPrice = RetailPrice * (parseFloat(updatedVariant.unfinishedPrice) || 0);
+        }
           return updatedVariants;
         });
       };
@@ -487,6 +482,7 @@ const AddProduct = (categories) => {
                         finished_price: variant.finishedPrice,
                         quantity: variant.quantity,
                         total_price: variant.totalPrice,
+                        retail_price: variant.retailPrice,
                         options: variant.options.map(option => ({
                             option_name_id: option.option_name_id,
                             option_value_id: option.option_value_id
@@ -621,8 +617,6 @@ const AddProduct = (categories) => {
     };
 
     const handleCategorySelectForVariants = async (id, category_level) => {
-        console.log(lastLevelCategoryIds.includes(id), 'REsponse to set');
-        console.log(id, 'ID');
         const selectedIdString = String(id);
         setSelectedCategoryLevel(category_level);
         if (id && category_level) {
@@ -905,7 +899,7 @@ const AddProduct = (categories) => {
     return (
         <div>
             <div className='CategoryTable-header'>
-                <h2 className='header_cls_prod'>Product Schema!</h2>
+                <h2 className='header_cls_prod'>Products Schema</h2>
             </div>
             <div className='CategoryContainer'>
             {clearBtn && (
@@ -1137,6 +1131,7 @@ const AddProduct = (categories) => {
                         handleVariantDecimalInput={handleVariantDecimalInput}
                         handleVariantDecimalBlur={handleVariantDecimalBlur}
                         selectedCategoryLevel={selectedCategoryLevel}
+                        RetailPrice={RetailPrice}
                     />
                 </div>
             )}

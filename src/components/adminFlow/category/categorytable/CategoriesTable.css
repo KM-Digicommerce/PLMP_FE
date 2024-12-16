@@ -249,4 +249,4 @@ tr:hover .action-buttons {
 .suggestion-item:hover {  background-color: #f0f0f0;}
 .swal2-container {  z-index: 1500 !important; }
 .swal2-popup { z-index: 1501 !important; }
-.clear_cat_btn{ background: rgb(145, 146, 146); color: white; border: none; cursor: pointer; margin: 0px 5px 0px 5px; border-radius: 5px; width: 12%; float: right; padding: 5px 5px 5px 5px;}
+.clear_cat_btn{ background: rgb(145, 146, 146); color: white; border: none; cursor: pointer; margin: 0px 5px 0px 5px; border-radius: 5px; width: 10%; float: right; padding: 5px 5px 5px 5px;}
