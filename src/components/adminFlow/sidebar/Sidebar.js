@@ -192,13 +192,13 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         </li>
         <li onClick={() => {toggleSettingsSubmenu(); handleSectionClick('setting');}} className={`productsMenu ${activeSection === 'setting' ? 'active' : ''}`}>
         <FontAwesomeIcon icon={faCog} className="icon" />
-        Settings
+        Admin control
           {showSettingsSubmenu && (
             <ul className="subMenu">
               <li onClick={() => { handleSectionClick('settings'); }}
                 className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
               <li onClick={() => { handleSectionClick('users'); }}
-                className={activeSection === 'users' ? 'active' : ''}>User's</li>
+                className={activeSection === 'users' ? 'active' : ''}>Users</li>
             </ul>
           )}
         </li>

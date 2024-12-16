@@ -34,6 +34,7 @@ const ProductDetail = ({ categories }) => {
         unfinishedPrice: '',
         finishedPrice: '',
         totalPrice:0,
+        retailPrice:0,
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
@@ -53,6 +54,9 @@ const ProductDetail = ({ categories }) => {
         level5: '',
         level6: '',
     });
+    const [RetailPrice, setShowRetailPrice] = useState([0]);
+    const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
+
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
@@ -186,13 +190,14 @@ console.log(id,'id ');
     }
     const fetchProductDetail = async (productId) => {
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {
-                id: productId,
-            });
+            const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {  id: productId,  });
             console.log(response,'response');
-            
             if (response.data && response.data.data) {
                 const productCategory = response.data.data.category_level;
+                const RetailPrice = response.data.data.category_brand_price.price;
+                const RetailPriceOption = response.data.data.category_brand_price.price_option;
+                setShowRetailPrice(RetailPrice);
+                setShowRetailPriceOption(RetailPriceOption);
                 const productObj = response.data.data.product_obj;
                 setCategoryIds(response.data.data.category_id);
                 setCategoryIdForVariant(response.data.data.category_id);
@@ -369,13 +374,37 @@ console.log(id,'id ');
         }
     };
 
+    // const handleVariantDetailChange = (e) => {
+    //     const { name, value } = e.target;
+    //    console.log(e.target,'Handle variant changes');
+       
+    //     setSelectedVariants((prevVariants) => ({
+    //         ...prevVariants,
+    //         [name]: value,
+    //     }));
+    // };
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
-        setSelectedVariants((prevVariants) => ({
-            ...prevVariants,
-            [name]: value,
-        }));
+    
+        setSelectedVariants((prevVariants) => {
+            const updatedVariants = { ...prevVariants };
+    
+            // Update the value of the input field
+            updatedVariants[name] = value;
+    
+            // Calculate retailPrice based on RetailPriceOption
+            if (RetailPriceOption === 'finished_price' && name === 'finishedPrice') {
+                updatedVariants.retailPrice = RetailPrice * parseFloat(value || 0);
+            }
+            else if (RetailPriceOption === 'unfinished_price' && name === 'unfinishedPrice') {
+                updatedVariants.retailPrice = RetailPrice * parseFloat(value || 0);
+            }
+    
+            // Return the updated variants
+            return updatedVariants;
+        });
     };
+    
     const handleVariantChange = (typeId, optionId) => {
         setSelectedVariants((prev) => ({
             ...prev,
@@ -385,7 +414,7 @@ console.log(id,'id ');
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            const totalPrice = parseFloat(formData.base_price || 0) + parseFloat(selectedVariants.finishedPrice || 0);            
+            const RetailPrice = RetailPrice * parseFloat(selectedVariants.finishedPrice || 0);            
             const options = variantOptions
                 .map((variant) => {
                     const selectedOption = selectedVariants[variant.type_id];
@@ -405,7 +434,8 @@ console.log(id,'id ');
                     sku_number: selectedVariants.sku,
                     un_finished_price: selectedVariants.unfinishedPrice,
                     finished_price: selectedVariants.finishedPrice,
-                    total_price: totalPrice, 
+                    retail_price: RetailPrice,
+                    total_price: RetailPrice, 
                     quantity: selectedVariants.quantity,
                     options: options,
 
@@ -813,7 +843,7 @@ console.log(id,'id ');
                                                 <td>{variant.sku_number}</td>
                                                 <td>{variant.un_finished_price ? `$${variant.un_finished_price}` : ''}</td>
                                                 <td>{variant.finished_price ? `$${variant.finished_price}` : ''}</td>
-                                                <td>{variant.total_price ? `$${variant.total_price}` : ''}</td>
+                                                <td>{variant.retail_price ? `$${variant.retail_price}` : ''}</td>
 
                                                 <td>
                                                     {variant.varient_option_list.map((option, index) => (
@@ -856,14 +886,16 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
-                                             <TextField fullWidth type="text" name="retailPrice" label="Retail Price" value={selectedVariants.retailPrice}
+                                              <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>Retail Price</label>
+                                              <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />
+                                             {/* <TextField fullWidth type="text" name="retailPrice" label="" value={selectedVariants.retailPrice}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
                                                         handleVariantDetailChange({ target: { name: 'retailPrice', value } });
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
-                                            />
+                                            /> */}
                                             <TextField  fullWidth  type="number"  name="quantity"  className='input_pdp'  label="Quantity"  value={selectedVariants.quantity}  onChange={handleVariantDetailChange}  margin="normal"  size="small"  sx={{ marginBottom: 2 }}
                                             />
 
