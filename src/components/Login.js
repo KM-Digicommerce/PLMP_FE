@@ -111,11 +111,11 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-          <img 
+          {/* <img 
             src="https://kmdigicommerce.com/wp-content/uploads/2024/08/KM-2048x1976.png" 
             alt="KM Digi Commerce" 
             className="logo" 
-          />
+          /> */}
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="one">

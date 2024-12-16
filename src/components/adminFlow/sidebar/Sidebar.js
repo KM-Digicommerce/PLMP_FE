@@ -3,7 +3,7 @@ import './Sidebar.css';
 import ApiResponseModal from '../../../ApiResponseModal';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns  } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns,faCreditCard   } from '@fortawesome/free-solid-svg-icons';
 import Modal from '@mui/material/Modal';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 import { LinearProgress } from '@mui/material';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick}) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -112,6 +112,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     else if (section === 'import' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/import'); 
     }
+    else if (section === 'price' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/price'); 
+    }
   };
   return (
     <div className="sidebar">
@@ -144,6 +147,11 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
                 className={activeSection === 'add-product' ? 'active' : ''}>Add New Product</li>
             </ul>
           )}
+        </li>
+        <li  onClick={() => { OnPriceClick(); handleSectionClick('price'); }}
+          className={activeSection === 'price' ? 'active' : ''}>
+          <FontAwesomeIcon icon={faCreditCard} className="icon" />
+          Pricing
         </li>
         <li onClick={() => { OnImportClick();handleImportClick(); handleSectionClick('import'); }}
           className={activeSection === 'import' ? 'active' : ''}>
@@ -180,7 +188,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         <li onClick={() => { onHistoryClick(); handleSectionClick('history'); }}
           className={activeSection === 'history' ? 'active' : ''}>  
           <FontAwesomeIcon icon={faHistory} className="icon" />
-          History
+          Logs
         </li>
         <li onClick={() => {toggleSettingsSubmenu(); handleSectionClick('setting');}} className={`productsMenu ${activeSection === 'setting' ? 'active' : ''}`}>
         <FontAwesomeIcon icon={faCog} className="icon" />

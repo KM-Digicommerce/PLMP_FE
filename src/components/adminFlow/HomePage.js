@@ -16,6 +16,7 @@ import HistoryPage from './History/HistoryPage.js';
 import BrandList from './brand/BrandList.js';
 import ExportPage from './Export/ExportPage.js';
 import ApiResponseModal from '../../ApiResponseModal.js';
+import Price from './Price/Price.js';
 
 
 function HomePage() {
@@ -29,6 +30,7 @@ function HomePage() {
   const [showBrand, setShowBrand] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [showPrice, setShowPrice] = useState(false);
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,6 +160,21 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handlePriceClick = () => {
+    if ((location.pathname.includes("product/"))) { 
+      navigate("/Admin/price");
+    }
+    setShowPrice(true);
+    setShowImport(false);
+    setShowExport(false);
+    setShowBrand(false);
+    setShowHistory(false);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   return (
     <div>
       <Header />
@@ -174,6 +191,7 @@ function HomePage() {
             onBrandClick={handleBrandClick}
             OnExportClick={handleExportClick}
             OnImportClick={handleImportClick}
+            OnPriceClick={handlePriceClick}
           />
         </div>
         <div className="right-container">
@@ -197,6 +215,7 @@ function HomePage() {
             <Route path="/brand" element={  showBrand ? ( <BrandList />):null} />
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
+            <Route path="/price" element={  showPrice ? ( <Price />):null} />
           </Routes>
 
         </div>
