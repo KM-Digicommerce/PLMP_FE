@@ -206,7 +206,7 @@ const PriceComponent = () => {
 };
   return (
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'25px'}}>
-      <h1>Pricing Schema</h1>
+      <h2>Pricing Schema</h2>
       <div
         style={{ display: "block", justifyContent: "flex-start", marginBottom: "20px", }}
       >
