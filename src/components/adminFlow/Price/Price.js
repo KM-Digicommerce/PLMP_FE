@@ -124,16 +124,16 @@ const PriceComponent = () => {
   const handleBrandSelect = (brand) => {
     setSelectedBrandId(brand.id)
     setSelectedBrand(brand);
-    if (selectedBrandId.length === 0) {
-      fetchPriceTableData(brand.id); 
-    }
+    // if (selectedBrandId.length === 0) {
+    //   fetchPriceTableData(brand.id); 
+    // }
   };
-  useEffect(() => {
-    if (selectedBrandId && selectedBrandId !== '') {
-        console.log('Brand selected:', selectedBrand);
-        fetchPriceTableData(); // Fetch price table data whenever selectedBrandId changes
-    }
-}, [selectedBrandId]); // Runs when selectedBrandId changes
+//   useEffect(() => {
+//     if (selectedBrandId && selectedBrandId !== '') {
+//         console.log('Brand selected:', selectedBrand);
+//         fetchPriceTableData(); // Fetch price table data whenever selectedBrandId changes
+//     }
+// }, [selectedBrandId]); // Runs when selectedBrandId changes
 
 
   const handleBrandRemove = () => {
