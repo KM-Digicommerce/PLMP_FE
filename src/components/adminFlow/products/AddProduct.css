@@ -13,277 +13,59 @@ input[type="number"] {
     display: flex;
     justify-content: space-between;
 }
-.input-group input, .input-group textarea {
-    width: 48%; 
-    padding: 10px 0px 10px 4px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 5px;
+.input-group input, .input-group textarea { width: 48%;  padding: 10px 0px 10px 4px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;
 }
 
-textarea {
-    height: 80px; /* Adjust height as needed */
-    margin: 10px;
-}
+textarea { height: 80px; margin: 10px;}
 
-.save-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+.save-button {display: block;width: 100%;padding: 10px;background-color: #007bff;color: white;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;
 }
 
 .save-button:hover {
     background-color: #0056b3;
 }
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it is above other elements */
+    position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, 0.5);display: flex;justify-content: center;align-items: center;z-index: 1000; 
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    max-width: 55%; /* Limit width to 90% of viewport */
-    max-height: 90%; /* Limit height to 90% of viewport */
-    overflow-y: auto; /* Allow scrolling if content overflows */
-    display: flex;
-    flex-direction: column; /* Arrange child elements in a column */
+.modal-content {background: white;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);max-width: 55%; max-height: 90%; overflow-y: auto;display: flex;flex-direction: column;
 }
-.modal-content {
-    position: relative;
-    width: 90%;
-    max-width: 600px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.modal-content { position: relative; width: 90%; max-width: 600px; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-
-.close-btn {
-    position: absolute;
-    top: 5px;
-    right: 1px;
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #4c4949;
-    transition: color 0.3s;
-    text-align: right;
-    width: 6%;
-    padding: 5px 10px 5px 10px;
+.close-btn { position: absolute; top: 5px; right: 1px; background: transparent; border: none; font-size: 20px; cursor: pointer; color: #4c4949; transition: color 0.3s; text-align: right; width: 6%; padding: 5px 10px 5px 10px;
 }
-
-.close-btn:hover {
-    color: #333;
-}
-
-.form-section {
-    margin-bottom: 10px; /* Space between sections */
-}
-
-input, textarea {
-    width: 90%; /* Full width */
-    margin-bottom: 10px; /* Space between inputs */
-    padding: 10px; /* Padding for inputs */
-    border: 1px solid #ccc; /* Border for inputs */
-    border-radius: 4px; /* Rounded corners */
-}
-
-textarea {
-    resize: vertical; /* Allow vertical resizing */
-    min-height: 100px; /* Minimum height for textareas */
-}
-
-.add-product-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-}
-
-.save-button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.save-button {
-    background-color: #28a745;
-    color: white;
-}
-.pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    align-items: center;
-}
-
-.pricing-field {
-    display: flex;
-    flex-direction: column;
-}
-
-.pricing-field label {
-    font-size: 14px;
-    margin-bottom: 4px;
-    font-weight: bold;
-}
-
-.pricing-field input {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.variant-scroll {
-    overflow-x: auto; 
-    white-space: nowrap; 
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.variant-row {
-    display: flex;
-    gap: 15px; 
-    align-items: center;
-}
-
-.variant-field {
-    min-width: 200px; 
-}
-
-.variant-field label {
-    font-size: 14px;
-    margin-bottom: 4px;
-    font-weight: bold;
-    display: block;
-}
-
-.variant-field input, .variant-field .MuiFormControl-root {
-    font-size: 12px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 80%;
-    margin: 0px;
-}
-.variant-dropdown {
-    display: inline-block;
-    min-width: 200px;
-}
-
-.dropdown-label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.dropdown-container {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #f9f9f9;
-}
-
-.styled-dropdown {
-    font-size: 16px;
-    border: none;
-    padding: 8px;
-    border-radius: 4px;
-    background-color: white;
-    transition: all 0.2s ease-in-out;
-}
-
-.styled-dropdown:hover {
-    border-color: #007bff;
-}
-
-.MuiMenuItem-root {
-    font-size: 16px;
-    padding: 10px 20px;
-    font-weight: 500;
-}
-
-.MuiSelect-icon {
-    color: #007bff;
-}
-
-.styled-dropdown:focus {
-    border-color: #007bff;
-    outline: none;
-}
-.add-variant-btn {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.add-variant-btn:hover {
-    background-color: #0056b3;
-}
-.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
-    height: 4px !important;
-    padding: 0px 6px !important;
-}
-.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {
-    min-height: 18px;
-}
-.css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{
-    font-size: 12px !important;
-}
-.add-variant-button{
-    margin: 3px 0px 3px 0px;
-    width: 18%;
-}
-.required {
-    color: red;
-    font-weight: bold;
-}
-.remove-variant-icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0px;
-    color: red;
-}
-
-.remove-variant-icon-button:hover i {
-    color: darkred; /* Change color on hover */
-}
-.icon-trash{
-margin: 0;
-}
+.close-btn:hover { color: #333; }
+.form-section { margin-bottom: 10px; }
+input, textarea { width: 90%;  margin-bottom: 10px; padding: 10px;  border: 1px solid #ccc;  border-radius: 4px; }
+textarea { resize: vertical;  min-height: 100px; }
+.add-product-button {background-color: #007bff;color: white;padding: 10px 20px;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;width: 100%; }
+.save-button { margin-top: 10px; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+.save-button { background-color: #28a745; color: white; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: center;}
+.pricing-field {display: flex;flex-direction: column;}
+.pricing-field label {font-size: 14px;margin-bottom: 4px;font-weight: bold;}
+.pricing-field input {padding: 8px;font-size: 14px;border: 1px solid #ccc;border-radius: 4px;}
+.variant-scroll {overflow-x: auto; white-space: nowrap; padding: 10px;border: 1px solid #ddd;border-radius: 5px;}
+.variant-row {display: flex;gap: 15px; align-items: center;}
+.variant-field {min-width: 200px; }
+.variant-field label { font-size: 14px; margin-bottom: 4px; font-weight: bold; display: block;}
+.variant-field input, .variant-field .MuiFormControl-root { font-size: 12px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 80%; margin: 0px;}
+.variant-dropdown {display: inline-block;min-width: 200px;}
+.dropdown-label {display: block;font-size: 14px;font-weight: bold;margin-bottom: 5px;color: #333;}
+.dropdown-container {border: 1px solid #ccc;border-radius: 4px;background: #f9f9f9;}
+.styled-dropdown {font-size: 16px;border: none;padding: 8px;border-radius: 4px;background-color: white;transition: all 0.2s ease-in-out;}
+.styled-dropdown:hover { border-color: #007bff;}
+.MuiMenuItem-root {font-size: 16px;padding: 10px 20px;font-weight: 500;}
+.MuiSelect-icon {color: #007bff;}
+.styled-dropdown:focus {border-color: #007bff;outline: none;}
+.add-variant-btn {margin-top: 10px;padding: 10px 20px;background-color: #007bff;color: #fff;border: none;border-radius: 4px;cursor: pointer;font-size: 16px;}
+.add-variant-btn:hover {background-color: #0056b3;}
+.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{height: 4px !important;padding: 0px 6px !important;}
+.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {min-height: 18px;}
+.css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{font-size: 12px !important;}
+.add-variant-button{margin: 3px 0px 3px 0px;width: 18%;}
+.apply-rule-button{background-color: rgb(0, 123, 255);width: 15%;padding: 9px;margin: 4px 0px 0px 70px;}
+.required {color: red;font-weight: bold;}
+.remove-variant-icon-button {background: none;border: none;cursor: pointer;padding: 0;display: flex;align-items: center;justify-content: center;margin: 0px;color: red;}
+.remove-variant-icon-button:hover i {color: darkred;}
+.icon-trash{margin: 0;padding: 20px 0px 0px 0px;}

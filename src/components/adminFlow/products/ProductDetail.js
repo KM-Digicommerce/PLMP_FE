@@ -463,8 +463,8 @@ console.log(id,'id ');
                     <div className="section-buttons">
                         <button onClick={() => setView('productDetail')} className={view === 'productDetail' ? 'productDetail active' : 'productDetail'}>Product Detail</button>
                         <button onClick={() => setView('taxonomy')} className={view === 'taxonomy' ? 'taxonomy active' : 'taxonomy'}>Taxonomy</button>
-                        <button onClick={() => setView('variants')} className={view === 'variants' ? 'variants active' : 'variants'}>Variants</button>
-                        <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'pricing active' : 'pricing'}>Pricing</button>
+                        <button onClick={() => setView('variants')} className={view === 'variants' ? 'variants active' : 'variants'}>Variants & Pricing</button>
+                        {/* <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'pricing active' : 'pricing'}>Pricing</button> */}
                         <button onClick={() => setView('otherDetails')} className={view === 'otherDetails' ? 'otherDetails active' : 'otherDetails'}>Other Details</button>
                     </div>
                 </div>
@@ -562,7 +562,7 @@ console.log(id,'id ');
                                         </select>
                                     </div>
 
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                         <label htmlFor="base_price">Base Price</label>
                                         <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
                                             onChange={(e) => {
@@ -575,7 +575,7 @@ console.log(id,'id ');
                                                 });
                                             }}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="form-group">
                                         <label htmlFor="model">Model</label>
                                         <input type="text" id="model" className='input_pdps' name="model" value={formData.model ? formData.model.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
@@ -803,7 +803,7 @@ console.log(id,'id ');
                                             <th>Variant SKU</th>
                                             <th>Unfinished Price</th>
                                             <th>Finished Price</th>
-                                            <th>Total Price</th>
+                                            <th>Retail Price</th>
                                             <th>Options</th>
                                         </tr>
                                     </thead>
@@ -856,6 +856,14 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
+                                             <TextField fullWidth type="text" name="retailPrice" label="Retail Price" value={selectedVariants.retailPrice}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    if (/^\d*\.?\d{0,2}$/.test(value)) {
+                                                        handleVariantDetailChange({ target: { name: 'retailPrice', value } });
+                                                    }
+                                                }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
+                                            />
                                             <TextField  fullWidth  type="number"  name="quantity"  className='input_pdp'  label="Quantity"  value={selectedVariants.quantity}  onChange={handleVariantDetailChange}  margin="normal"  size="small"  sx={{ marginBottom: 2 }}
                                             />
 
@@ -892,7 +900,7 @@ console.log(id,'id ');
                             </div>
                         )}
 
-                        {view === 'pricing' && (
+                        {/* {view === 'pricing' && (
                             <div className="pricing-section">
                                 <h3>Pricing Details</h3>
                                 <div className="form-group">
@@ -912,7 +920,7 @@ console.log(id,'id ');
                                     />
                                 </div>
                             </div>
-                        )}
+                        )} */}
 
                         {view === 'otherDetails' && (
                             <div className="other-details-section">

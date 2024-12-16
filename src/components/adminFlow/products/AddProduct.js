@@ -130,96 +130,15 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
                     <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange} />
                 </div>
-
-                <div className="form-section">
-                    <h3 style={{ margin: '6px' }}>Descriptions</h3>
-                    <label htmlFor="long_description">Long Description <span className="required">*</span></label>
-                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
-                    <label htmlFor="short_description">Short Description <span className="required">*</span></label>
-                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
-                </div>
-
-                <div className="form-section">
-    <h3 style={{ margin: '6px' }}>Pricing</h3>
-    <div className="pricing-grid">
-        <div className="pricing-field">
-            <label htmlFor="base_price">Base <span className="required">*</span></label>
-            <input
-                type="number"
-                id="base_price"
-                name="base_price"
-                required
-                placeholder="Base"
-                value={productData.base_price}
-                onChange={(e) => {
-                    handleChange(e, 'base_price'); // Pass the event and field name
-                    handleDecimalInput(e, 'base_price');
-                }}
-                onBlur={(e) => handleDecimalBlur(e, 'base_price')}
-            />
-        </div>
-        <div className="pricing-field">
-            <label htmlFor="msrp">MSRP <span className="required">*</span></label>
-            <input
-                type="number"
-                id="msrp"
-                name="msrp"
-                required
-                placeholder="MSRP"
-                value={productData.msrp}
-                onChange={(e) => {
-                    handleChange(e, 'msrp'); // Pass the event and field name
-                    handleDecimalInput(e, 'msrp');
-                }}
-                onBlur={(e) => handleDecimalBlur(e, 'msrp')}
-            />
-        </div>
-        <div className="pricing-field">
-            <label htmlFor="discount_price">Discount <span className="required">*</span></label>
-            <input
-                type="number"
-                id="discount_price"
-                name="discount_price"
-                required
-                placeholder="Discount"
-                value={productData.discount_price || ''}
-                onChange={(e) => {
-                    handleChange(e, 'discount_price'); // Pass the event and field name
-                    handleDecimalInput(e, 'discount_price');
-                }}
-                onBlur={(e) => handleDecimalBlur(e, 'discount_price')}
-            />
-        </div>
-    </div>
-</div>
-
-
-
-                <div className="form-section">
-                    <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
-                    <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
-                    <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
-                    <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
-                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
-                </div>
                 <div className="form-section">
                     <div className="CategoryTable-header">
-                        <h3 style={{ margin: '6px' }}>Variant Details</h3>
+                        <h3 style={{ margin: '6px' }}>Variant and Price Details</h3>
+                        <button onClick={addVariantRow} className="apply-rule-button">Apply Rule</button>
                         <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
                     </div>
                     <div className="variant-scroll">
                         {selectedVariants.map((variant, index) => (
                             <div className="variant-row" key={index}>
-                                {index > 0 && (
-                                    <button
-                                        className="remove-variant-icon-button"
-                                        onClick={() => removeVariantRow(index)}
-                                        aria-label="Remove Variant"
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} className="icon-trash" />
-                                    </button>
-                                )}
-
                                 <div className="variant-field">
                                     <label htmlFor="sku">SKU <span className="required">*</span></label>
                                     <input
@@ -258,6 +177,10 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                     />
                                 </div>
                                 <div className="variant-field">
+                                    <label htmlFor="totalPrice">Retail Price</label>
+                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
+                                </div>
+                                <div className="variant-field">
                                     <label htmlFor="quantity">Quantity <span className="required">*</span></label>
                                     <input
                                         type="number"
@@ -269,10 +192,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         onChange={(e) => handleVariantDetailChange(e, index)}
                                     />
                                 </div>
-                                <div className="variant-field">
-                                    <label htmlFor="totalPrice">Total Price</label>
-                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.totalPrice} readOnly />
-                                </div>
+                              
                                 {variantOptions?.map((variantOption) => (
                                     <div className="variant-dropdown" key={variantOption.type_id}>
                                         <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
@@ -302,10 +222,91 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         </FormControl>
                                     </div>
                                 ))}
+                                 {index > 0 && (
+                                    <button
+                                        className="remove-variant-icon-button"
+                                        onClick={() => removeVariantRow(index)}
+                                        aria-label="Remove Variant"
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} className="icon-trash" />
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
+                <div className="form-section">
+                    <h3 style={{ margin: '6px' }}>Descriptions</h3>
+                    <label htmlFor="long_description">Long Description <span className="required">*</span></label>
+                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    <label htmlFor="short_description">Short Description <span className="required">*</span></label>
+                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
+                </div>
+
+                <div className="form-section" style={{ display: 'none' }}>
+                    <h3 style={{ margin: '6px' }}>Pricing</h3>
+                    <div className="pricing-grid">
+                        <div className="pricing-field">
+                            <label htmlFor="base_price">Base <span className="required">*</span></label>
+                            <input
+                                type="number"
+                                id="base_price"
+                                name="base_price"
+                                required
+                                placeholder="Base"
+                                value={productData.base_price}
+                                onChange={(e) => {
+                                    handleChange(e, 'base_price'); // Pass the event and field name
+                                    handleDecimalInput(e, 'base_price');
+                                }}
+                                onBlur={(e) => handleDecimalBlur(e, 'base_price')}
+                            />
+                        </div>
+                        <div className="pricing-field">
+                            <label htmlFor="msrp">MSRP <span className="required">*</span></label>
+                            <input
+                                type="number"
+                                id="msrp"
+                                name="msrp"
+                                required
+                                placeholder="MSRP"
+                                value={productData.msrp}
+                                onChange={(e) => {
+                                    handleChange(e, 'msrp'); // Pass the event and field name
+                                    handleDecimalInput(e, 'msrp');
+                                }}
+                                onBlur={(e) => handleDecimalBlur(e, 'msrp')}
+                            />
+                        </div>
+                        <div className="pricing-field">
+                            <label htmlFor="discount_price">Discount <span className="required">*</span></label>
+                            <input
+                                type="number"
+                                id="discount_price"
+                                name="discount_price"
+                                required
+                                placeholder="Discount"
+                                value={productData.discount_price || ''}
+                                onChange={(e) => {
+                                    handleChange(e, 'discount_price'); // Pass the event and field name
+                                    handleDecimalInput(e, 'discount_price');
+                                }}
+                                onBlur={(e) => handleDecimalBlur(e, 'discount_price')}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div className="form-section">
+                    <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
+                    <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
+                    <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
+                    <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
+                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
+                </div>
+              
 
 
                 <button onClick={onSave} className="save-button">Add Product</button>
@@ -461,9 +462,10 @@ const AddProduct = (categories) => {
       };
     
     const handleSave = async () => {
+        // !productData.product_obj.base_price || !productData.product_obj.msrp
         if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean|| 
             !productData.product_obj.brand_id || !productData.product_obj.product_name || 
-            !productData.product_obj.short_description || !productData.product_obj.base_price || !productData.product_obj.msrp) {
+            !productData.product_obj.short_description ) {
             alert("Please fill in all required fields.");
             return;
         }
