@@ -886,7 +886,11 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
-                                              <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>Retail Price</label>
+                                            <div style={{display: "flex",justifyContent: "space-between"}}>
+                                            <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>Retail Price</label>
+                                            <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>${RetailPrice || 0}</label>
+                                            </div>
+                                             
                                               <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />
                                              {/* <TextField fullWidth type="text" name="retailPrice" label="" value={selectedVariants.retailPrice}
                                                 onChange={(e) => {

@@ -17,6 +17,7 @@ import BrandList from './brand/BrandList.js';
 import ExportPage from './Export/ExportPage.js';
 import ApiResponseModal from '../../ApiResponseModal.js';
 import Price from './Price/Price.js';
+import CreateUser from './Users/CreateUser.js';
 
 
 function HomePage() {
@@ -31,6 +32,8 @@ function HomePage() {
   const [showExport, setShowExport] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [showPrice, setShowPrice] = useState(false);
+  const [showUser, setShowUser] = useState(false);
+
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
   const location = useLocation();
@@ -175,6 +178,22 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handleCreateUserClick = () => {
+    if ((location.pathname.includes("product/"))) { 
+      navigate("/Admin/createuser");
+    }
+    setShowUser(true);
+    setShowPrice(false);
+    setShowImport(false);
+    setShowExport(false);
+    setShowBrand(false);
+    setShowHistory(false);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   return (
     <div>
       <Header />
@@ -192,6 +211,7 @@ function HomePage() {
             OnExportClick={handleExportClick}
             OnImportClick={handleImportClick}
             OnPriceClick={handlePriceClick}
+            OnUserClick={handleCreateUserClick}
           />
         </div>
         <div className="right-container">
@@ -216,6 +236,7 @@ function HomePage() {
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
+            <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
           </Routes>
 
         </div>

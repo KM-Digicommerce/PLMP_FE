@@ -40,7 +40,7 @@ textarea { resize: vertical;  min-height: 100px; }
 .css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {min-height: 18px;}
 .css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{font-size: 12px !important;}
 .add-variant-button{margin: 3px 0px 3px 0px;width: 18%;}
-.apply-rule-button{background-color: rgb(0, 123, 255);width: 10%;color: #fff; padding: 9px;margin: 4px 0px 0px 70px;border-radius: 5px;}
+.apply-rule-button{background-color: rgb(0, 123, 255);width: 10%;color: #fff; padding: 7px;margin: 3px 0px 3px 162px;border-radius: 5px;}
 .required {color: red;font-weight: bold;}
 .remove-variant-icon-button {background: none;border: none;cursor: pointer;padding: 0;display: flex;align-items: center;justify-content: center;margin: 0px;color: red;}
 .remove-variant-icon-button:hover i {color: darkred;}

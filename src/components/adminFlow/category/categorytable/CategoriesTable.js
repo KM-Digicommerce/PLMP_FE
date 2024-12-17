@@ -1108,7 +1108,7 @@ const handleLevelClear = (e) => {
                     Taxonomy
                     {sortOrder.column === 'taxonomy' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
-                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('price')} >
+                  {/* <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('price')} >
                     Base Price
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
@@ -1116,7 +1116,7 @@ const handleLevelClear = (e) => {
 
                     MSRP
                     {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('model')} >
                     Model
                     {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
@@ -1138,9 +1138,9 @@ const handleLevelClear = (e) => {
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} className="product-cell" >{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.category_name}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
+                    {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
                     </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell> */}
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell>
                   </TableRow>
                 ))}
