@@ -19,7 +19,6 @@ const ApiResponseModal = ({
   const [draggedSource, setDraggedSource] = useState(null);
   const [allMapped, setAllMapped] = useState(false); // Track if all values are mapped
   const navigate = useNavigate();
-  const [toDashboard,setToDashboard] =useState(false);
 
   const databaseOptions = apiResponse?.Database_options || [];
   const databaseList = apiResponse?.Database_list || [];
@@ -27,7 +26,7 @@ const ApiResponseModal = ({
   if (selectedFilepath) {
     localStorage.setItem("selectedFile", selectedFilepath);
   }
-  const selectedFiles = localStorage.getItem("selectedFile");
+  let selectedFiles = localStorage.getItem("selectedFile");
 
   useEffect(() => {
     if (apiResponse?.extract_list) {
@@ -118,11 +117,16 @@ const handleDashboard = async () =>{
           },
         }
       );
-      if (response.data) {
+      if (response.data && response.data.data.status === true) {
         Swal.fire({ title: 'Success!', text: 'File uploaded successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
           }
         }).then(() => {  navigate('/Admin'); window.location.reload();});
            
+      }
+      else{
+        Swal.fire({ title: 'Error!', text: 'File uploaded Error!', icon: 'Error', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+        }
+      }).then(() => {  navigate('/Admin'); window.location.reload();});
       }
       setShowResponseModal(false);
     } catch (err) {

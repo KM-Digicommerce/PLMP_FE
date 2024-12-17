@@ -39,11 +39,10 @@ const HistoryPage = () => {
     if (activeButton === 'priceLog') {
       return (
         <>
-          <TableCell><strong>Price Name</strong></TableCell>
+          <TableCell><strong>SKU Number</strong></TableCell>
           <TableCell><strong>User Name</strong></TableCell>
-          <TableCell><strong>Product Name</strong></TableCell>
-          <TableCell><strong>Action</strong></TableCell>
-          <TableCell><strong>Update Price</strong></TableCell>
+          <TableCell><strong>New Retail Price</strong></TableCell>
+          <TableCell><strong>Old Retail Price</strong></TableCell>
           <TableCell><strong>Log Date</strong></TableCell>
         </>
       );
@@ -77,7 +76,20 @@ const HistoryPage = () => {
           <TableCell><strong>Action</strong></TableCell>
           <TableCell><strong>Level</strong></TableCell>
           <TableCell><strong>Category Name</strong></TableCell>
+          <TableCell><strong>Category Level</strong></TableCell>
           <TableCell><strong>Log Date</strong></TableCell>
+        </>
+      );
+    }
+    if (activeButton === 'categoryLog') {
+      return (
+        <>
+         <TableCell><strong>User Name</strong></TableCell>
+        <TableCell><strong>Category Name</strong></TableCell>
+        <TableCell><strong>Action</strong></TableCell>
+        <TableCell><strong>Level</strong></TableCell>
+        <TableCell><strong>Category Level</strong></TableCell>
+        <TableCell><strong>Log Date</strong></TableCell>
         </>
       );
     }
@@ -98,32 +110,10 @@ const HistoryPage = () => {
       <TableRow key={index}>
         {activeButton === 'priceLog' ? (
           <>
-            <TableCell>{log['price name']}</TableCell>
-            <TableCell>{log.user_name}</TableCell>
-            <TableCell>{log.product_name}</TableCell>
-            <TableCell>{log.action}</TableCell>
-            <TableCell>
-              {log.previous_price && log.current_price ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {log.previous_price}
-                  <span
-                    style={{
-                      margin: '0 6px',
-                      color: '#007BFF',
-                      fontWeight: 'bold',
-                      transition: 'transform 0.3s ease',
-                      display: 'inline-block',
-                    }}
-                    className="arrow"
-                  >
-                    →
-                  </span>
-                  {log.current_price}
-                </span>
-              ) : (
-                log.current_price || 'N/A'
-              )}
-            </TableCell>
+            <TableCell>{log.sku_number}</TableCell>
+            <TableCell>{log.user_id}</TableCell>
+            <TableCell>{log.new_retail_price}</TableCell>
+            <TableCell>{log.old_retail_price}</TableCell>
             <TableCell>{log.log_date}</TableCell>
           </>
         ) : activeButton === 'productLog' ? (
@@ -139,6 +129,25 @@ const HistoryPage = () => {
             <TableCell>{log.sku_number}</TableCell>
             <TableCell>{log.product_name}</TableCell>
             <TableCell>{log.action}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
+          </>
+        ) : activeButton === 'categoryLog' ? (
+          <>
+            <TableCell>{log.user_name}</TableCell>
+            <TableCell>{log.category_last_name}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.level}</TableCell>
+            <TableCell>{log.category_name}</TableCell>
+            <TableCell>{log.log_date}</TableCell>
+          </>
+         ) : activeButton === 'categoryVariantLog' ? (
+          <>
+            <TableCell>{log.user_name}</TableCell>
+            <TableCell>{log.varient_option_name}</TableCell>
+            <TableCell>{log.action}</TableCell>
+            <TableCell>{log.level}</TableCell>
+            <TableCell>{log.category_last_name}</TableCell>
+            <TableCell>{log.category_name}</TableCell>
             <TableCell>{log.log_date}</TableCell>
           </>
         ) : (

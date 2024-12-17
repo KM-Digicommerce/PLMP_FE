@@ -83,11 +83,11 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Basic Info</h3>
                      <label htmlFor="model">Model <span className="required">*</span></label>
-                    <input type="text" name="model" placeholder="" required value={productData.model} onChange={handleChange} />
+                    <input type="text" name="model" placeholder="" required value={productData.model} onChange={handleChange}  autoComplete="off" />
                     <label htmlFor="mpn">MPN <span className="required">*</span></label>
-                    <input type="text" name="mpn" placeholder="" required value={productData.mpn} onChange={handleChange} />
+                    <input type="text" name="mpn" placeholder="" required value={productData.mpn} onChange={handleChange}  autoComplete="off" />
                     <label htmlFor="upc_ean">UPC/EAN <span className="required">*</span></label>
-                    <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange} />
+                    <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange}  autoComplete="off" />
                     <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
                     <input type="text" name="breadcrumb" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
                     <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
@@ -109,7 +109,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     </select>
 
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
-                    <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange} />
+                    <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange}  autoComplete="off" />
                 </div>
                 <div className="form-section">
                     <div className="CategoryTable-header">
@@ -130,18 +130,21 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         required
                                         value={variant.sku}
                                         onChange={(e) => handleVariantDetailChange(e, index)}
+                                         autoComplete="off"
                                     />
                                 </div>
                                 <div className="variant-field">
-                                    <label htmlFor="unfinishedPrice">Unfinished Price</label>
+                                    <label htmlFor="unfinishedPrice">Unfinished Price <span className="required">*</span></label>
                                     <input
                                         type="number"
                                         id="unfinishedPrice"
                                         name="unfinishedPrice"
                                         placeholder="Unfinished Price"
+                                        required
                                         value={variant.unfinishedPrice}
                                         onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}
                                         onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}
+                                        autoComplete="off"
                                     />
                                 </div>
                                 <div className="variant-field">
@@ -155,6 +158,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         value={variant.finishedPrice}
                                         onChange={(e) => { handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'finishedPrice', index)}}
                                         onBlur={(e) => handleVariantDecimalBlur(e, 'finishedPrice', index)}
+                                         autoComplete="off"
                                     />
                                 </div>
                                 <div className="variant-field">

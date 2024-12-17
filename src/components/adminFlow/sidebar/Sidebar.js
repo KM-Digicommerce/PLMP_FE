@@ -11,7 +11,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 import { LinearProgress } from '@mui/material';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick}) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick, OnUserClick}) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -39,7 +39,6 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   };
   const handleImportClick = () => {
     setShowImportModal(true);
-    // navigate('/HomePage'); 
   };
 
   const closeImportModal = () => {
@@ -78,12 +77,10 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         setApiResponse(response.data.data);
         setShowResponseModal(true);
         setShowImportModal(false);
-        setSelectedFile(null);
       } else {
         Swal.fire({ title: 'Success!', text: 'File uploaded successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
           }
         });
-        setSelectedFile(null);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -114,6 +111,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     }
     else if (section === 'price' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/price'); 
+    }
+    else if (section === 'users' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/createuser'); 
     }
   };
   return (
@@ -176,7 +176,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             showResponseModal={showResponseModal}
             setShowResponseModal={setShowResponseModal}
             apiResponse={apiResponse}
-            selectedFilepath={selectedFile ? selectedFile.name : ""}
+            selectedFilepath={selectedFilepath ? selectedFilepath : ""}
           />
         )
       )}
@@ -197,7 +197,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             <ul className="subMenu">
               <li onClick={() => { handleSectionClick('settings'); }}
                 className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
-              <li onClick={() => { handleSectionClick('users'); }}
+              <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
                 className={activeSection === 'users' ? 'active' : ''}>Users</li>
             </ul>
           )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../../utils/axiosConfig";
 import './Price.css';
 import Swal from "sweetalert2";
@@ -14,17 +14,12 @@ const PriceComponent = () => {
   const [priceOption, setPriceOption] = useState('finished_price');
   const [priceInput, setInputPrice] = useState('');
   const [tableData, setTableData] = useState([]);
+  const dropdownRef = useRef(null);
 
   const handleToggle = async (index) => {
     try {
       const updatedRow = tableData[index];
-      console.log(updatedRow,'updatedRow');
-      
-            const payload = {
-        category_id: updatedRow.id,
-        brand_id: selectedBrandId,
-        price:updatedRow.price,
-      };
+            const payload = {  category_id: updatedRow.id,  brand_id: selectedBrandId,  price:updatedRow.price, };
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateActiveRetailPrice/`, payload );
       if (response?.data?.estatus) {
         console.log(`Successfully updated active status for category ID: ${updatedRow.id}`);
@@ -74,13 +69,13 @@ const PriceComponent = () => {
     const categoryId = e.target.value;
     if (categoryId === "all") {
         const allCategoryIds = categories.map(cat => cat.id); 
-        setSelectedCategories([{ name: "Apply all category" }]); 
+        setSelectedCategories([{ name: "Apply to all categories" }]); 
         setSelectedCategoryIds(allCategoryIds);
         fetchPriceTableData(allCategoryIds); 
     } else {
         const category = categories.find(category => category.id === categoryId);
         const allCategoryIds = selectedCategories.map(cat => cat.name); 
-        if (allCategoryIds[0] === "Apply all category") {
+        if (allCategoryIds[0] === "Apply to all categories") {
           setSelectedCategories([]); 
           setSelectedCategoryIds([]);
         }
@@ -109,7 +104,6 @@ const PriceComponent = () => {
       setSelectedCategoryIds([]);
       fetchPriceTableData([]); 
   } else {
-
     setSelectedCategories((prevSelectedCategories) =>
       prevSelectedCategories.filter((category) => category.id !== categoryId)
     );
@@ -120,21 +114,22 @@ const PriceComponent = () => {
     });
   }
   };
-
-  const handleBrandSelect = (brand) => {
-    setSelectedBrandId(brand.id)
-    setSelectedBrand(brand);
-    // if (selectedBrandId.length === 0) {
-    //   fetchPriceTableData(brand.id); 
-    // }
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
   };
-//   useEffect(() => {
-//     if (selectedBrandId && selectedBrandId !== '') {
-//         console.log('Brand selected:', selectedBrand);
-//         fetchPriceTableData(); // Fetch price table data whenever selectedBrandId changes
-//     }
-// }, [selectedBrandId]); // Runs when selectedBrandId changes
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  useEffect(() => {
+    fetchCategories();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  const handleBrandSelect = (brand) => {
+      setSelectedBrandId(brand.id);
+    fetchPriceTableDataBrand(brand.id);
+    setSelectedBrand(brand);
+  };
 
   const handleBrandRemove = () => {
     setSelectedBrand(null);
@@ -149,7 +144,10 @@ const PriceComponent = () => {
       }    
   };
   const handleInputChange = (e) => {
-    setInputPrice(e.target.value);
+    if (e.target.value === '' || parseFloat(e.target.value) >= 0) {
+      setInputPrice(e.target.value);
+        }
+   
   };
   const handlePriceApply = async () => {
     if (selectedCategoryIds && selectedBrand && priceOption && priceInput) {
@@ -185,13 +183,12 @@ const PriceComponent = () => {
       });
     }
   };
-  const fetchPriceTableData = async (categoryIdList) => {    
-    // if (selectedBrandId) { 
-    //   console.log("Inside IF API");
-      
+  const fetchPriceTableDataBrand = async (BrandID) => {    
     try {
         setLoading(true);
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, { category_id_list: categoryIdList, brand_id: selectedBrandId}); 
+        let payload = '';
+        payload = { brand_id: BrandID};
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, payload); 
         const categoryList = response?.data?.data?.category_list || [];
         setTableData(categoryList);
         console.log(response.data,'priceTableData');
@@ -202,19 +199,30 @@ const PriceComponent = () => {
     } finally {
         setLoading(false);
     }
-  // }
+};
+  const fetchPriceTableData = async (categoryIdList) => {    
+    try {
+        setLoading(true);
+        let payload = '';
+        payload = { category_id_list: categoryIdList, brand_id: selectedBrandId};
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, payload); 
+        const categoryList = response?.data?.data?.category_list || [];
+        setTableData(categoryList);
+        console.log(response.data,'priceTableData');
+    } catch (error) {
+        console.error("Error fetching price table data:", error);
+        Swal.fire({ title: "Error", text: "Failed to fetch price table data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+        });
+    } finally {
+        setLoading(false);
+    }
 };
   return (
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'25px'}}>
       <h2>Pricing Schema</h2>
-      <div
-        style={{ display: "block", justifyContent: "flex-start", marginBottom: "20px", }}
-      >
+      <div  style={{ display: "block", justifyContent: "flex-start", marginBottom: "20px", }} >
         <div>
           <h3>Select Brand</h3>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
             <div>
               <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block"
               }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
@@ -229,51 +237,63 @@ const PriceComponent = () => {
               {selectedBrand && (
                 <div style={{ marginTop: '10px', display: "inline-block" }}>
                   <span
-                    style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} >
-                    {selectedBrand.name}
-                    <span
-                      style={{  marginLeft: '5px',  cursor: 'pointer',  color: '#bfbfbf'}}
-                      onClick={handleBrandRemove}  >X </span>
-                  </span>
+                    style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} > {selectedBrand.name}
+                    <span   style={{  marginLeft: '5px',  cursor: 'pointer',  color: '#bfbfbf'}}   onClick={handleBrandRemove}  >X </span> </span>
                 </div>
               )}
             </div>
-          )}
         </div>
-        <div style={{ margin: '0px 0px 0px 0px' }}>
-          <h3>Select Category</h3>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <div>
-              <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block" }}onChange={handleCategorySelect} >
-                <option value="">Select a category</option>
-                <option value="all">Apply all category</option>
-                {categories.map((category) => (
-                  <option value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              <div style={{ marginTop: '10px', display: "inline-block" }}>
-                {selectedCategories &&(
-                selectedCategories.map((category) => (
-                  <span
-                    style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} >
-                    {category.name}
-                    <span style={{  marginLeft: '5px', cursor: 'pointer', color: '#bfbfbf', }}
-                      onClick={() => handleCategoryRemove(category.id)} > X </span>
-                  </span>
-                ))
-              )}
-              </div>
+        <div style={{ margin: "0px 0px 0px 0px" }}>
+      <h3>Select Category</h3>
+      <div ref={dropdownRef} style={{ position: "relative",display: "inline-block" }}>
+        <div
+          style={{ padding: "8px", borderRadius: "5px", border: "1px solid #ccc", width: "180px", cursor: "pointer", display: "inline-block", background: "#fff" }}
+          onClick={() => setDropdownOpen((prev) => !prev)}
+        >
+           Select a category
+        </div>
+
+        {dropdownOpen && (
+          <div
+            style={{ width: "180px", border: "1px solid #ccc", backgroundColor: "white", zIndex: 1000, maxHeight: "150px", overflowY: "auto", padding: "8px" }}
+          >
+            <div
+              style={{ padding: "10px", cursor: "pointer", background: "#f0f0f0", }}
+              onClick={() => handleCategorySelect({ target: { value: "all" } })}
+            >
+              Apply to all categories
             </div>
-          )}
-        </div>
+            {categories.map((category) => (
+              <div
+                style={{ padding: "8px", cursor: "pointer",}}
+                onClick={() => handleCategorySelect({ target: { value: category.id } })}
+              >
+                 {selectedCategoryIds.includes(category.id) ? (
+                    <span style={{color: "#18b418"}}>✔</span>
+                  ) : null}
+                {category.name}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginTop: "10px", display: "inline-block" }}>
+        {selectedCategories.map((category) => (
+          <span
+            style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px", }} > {category.name}
+            <span style={{ marginLeft: "5px", cursor: "pointer", color: "#bfbfbf" }} onClick={() => handleCategoryRemove(category.id)} >
+              {" "}
+              X{" "}
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
         <div style={{ margin: '20px 0px 0px 0px' }}>
           <h4 style={{ marginTop: '0px', display: "inline-block" }}>Retail Pricing Logic</h4>
           <div style={{ margin: '0px 0px 0px 20px', display: "inline-block" ,width:'10%'}}>
-            <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} />
+            <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange}  min="0"/>
           </div>
           <span style={{ padding: '0px 0px 0px 21px', cursor: 'pointer', color: '#bfbfbf' }} > X </span>
           <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
@@ -310,12 +330,7 @@ const PriceComponent = () => {
                 <td>{row.price_option}</td>
                 <td>
                   <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={row.is_active}
-                      onChange={() => handleToggle(index)}
-                      disabled={row.is_active} // Disable if already active
-                    />
+                    <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled={row.is_active}  />
                     <span className="slider"></span>
                   </label>
                   {row.is_active ? " Active" : " Inactive"}
@@ -328,5 +343,4 @@ const PriceComponent = () => {
     </div>
   );
 };
-
 export default PriceComponent;
