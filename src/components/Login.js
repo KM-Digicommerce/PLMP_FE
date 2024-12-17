@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 const Login = () => {
-  const [name, setName] = useState('');
+  const [user_name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_IP}/loginUser/`, {
-        name,
+        user_name,
         password,
       });
 
@@ -119,12 +119,12 @@ const Login = () => {
         <h2 className="login-h2">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="one">
-            <label className="label-login" htmlFor="email">Name</label>
+            <label className="label-login" htmlFor="email">User Name</label>
             <input
               className="label-input"
               type="text"
               id="email"
-              value={name}
+              value={user_name}
               onChange={(e) => setName(e.target.value)}
               required
             />
