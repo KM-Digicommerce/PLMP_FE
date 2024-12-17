@@ -104,6 +104,11 @@ const PriceComponent = () => {
       setSelectedCategoryIds([]);
       fetchPriceTableData([]); 
   } else {
+    const allCategoryIds = selectedCategories.map(cat => cat.name); 
+    if (allCategoryIds[0] === "Apply to all categories") {
+      setSelectedCategories([]); 
+      setSelectedCategoryIds([]);
+    }
     setSelectedCategories((prevSelectedCategories) =>
       prevSelectedCategories.filter((category) => category.id !== categoryId)
     );
