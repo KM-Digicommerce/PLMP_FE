@@ -153,13 +153,7 @@ tr:hover .action-buttons {
   margin: 0 auto;
   border-radius: 5px;
 }
-.custom-dropdown {
-  position: relative;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  padding: 2px;
-  border-radius: 4px;
-  margin: 8px;
+.custom-dropdown { position: relative; cursor: pointer; border: 1px solid #ccc; padding: 2px; border-radius: 4px; margin: 8px; width: 295px;
 } 
 
 .selected-category {
