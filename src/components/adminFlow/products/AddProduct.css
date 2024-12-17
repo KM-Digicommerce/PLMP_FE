@@ -45,3 +45,14 @@ textarea { resize: vertical;  min-height: 100px; }
 .remove-variant-icon-button {background: none;border: none;cursor: pointer;padding: 0;display: flex;align-items: center;justify-content: center;margin: 0px;color: red;}
 .remove-variant-icon-button:hover i {color: darkred;}
 .icon-trash{margin: 0;padding: 20px 0px 0px 0px;}
+/* Hide arrows in Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Hide arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield; /* Disable spinner in Firefox */
+  appearance: textfield; /* Standard property */
+}
