@@ -131,13 +131,20 @@ const PriceComponent = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const handleBrandSelect = (brand) => {
+    if (brand && brand.id) {
       setSelectedBrandId(brand.id);
-    fetchPriceTableDataBrand(brand.id);
-    setSelectedBrand(brand);
+      fetchPriceTableDataBrand(brand.id);
+      setSelectedBrand(brand);
+    }
+    else{
+      setSelectedBrandId(null);
+      setSelectedBrand(null);
+    }
   };
 
   const handleBrandRemove = () => {
     setSelectedBrand(null);
+    setSelectedBrandId(null);
   };
   const handlePriceChange = async (event) => {
     const selectedOption = event.target.value;
@@ -170,7 +177,9 @@ const PriceComponent = () => {
           });
         }
         console.log(response,'response');
+        setBrands([]);
         setSelectedBrand(null);
+        setSelectedBrandId(null);
         setSelectedCategories([]);
         setSelectedCategoryIds([]);
         setInputPrice('');
