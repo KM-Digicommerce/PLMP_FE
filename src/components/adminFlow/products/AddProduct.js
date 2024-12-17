@@ -102,7 +102,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <select  id="brand-select"  name="brand_id"  required  value={productData.product_obj.brand_id || ''}  onChange={handleChange}  className="dropdown"  style={{ width: '94%', margin: '6px 20px 6px 10px' }} >
                         <option value="">Select Brand</option>
                         {brand.map((item) => (
-                            <option key={item._id} value={item.id}>
+                            <option value={item.id}>
                                 {item.name}
                             </option>
                         ))}
@@ -400,7 +400,7 @@ const AddProduct = (categories) => {
             if (RetailPriceOption === 'finished_price' && name === 'finishedPrice') {
                 updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].finishedPrice || 0);
             }
-            else if (RetailPriceOption === 'unfinished_price' && name === 'finishedPrice') {
+            else if (RetailPriceOption === 'unfinished_price' && name === 'unfinishedPrice') {
                 updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].unfinishedPrice || 0);
             }
             return updatedVariants;
@@ -408,20 +408,21 @@ const AddProduct = (categories) => {
     };
     const handleChange = async (e) => {
         const { name, value } = e.target;
-        try {
-            const payload = {
-              category_id: selectedCategoryForVariant,
-              brand_id: value,
-            };
-              const response =  await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRetailBrandPrice/`, payload );
-              console.log(response.data.data.price, 'Response');  
-              setShowRetailPrice(response.data.data.price); 
-              setShowRetailPriceOption(response.data.data.price_option);
-        }
-        catch (error) {
-              console.error("Error sending brand and category name:", error);
-              Swal.fire({  title: "Error",  text: "An error occurred while sending brand and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+        if (name === 'brand_id' && value !== '') {
+            try {
+                const payload = {
+                  category_id: selectedCategoryForVariant,
+                  brand_id: value,
+                };
+                  const response =  await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRetailBrandPrice/`, payload );
+                  setShowRetailPrice(response.data.data.price); 
+                  setShowRetailPriceOption(response.data.data.price_option);
             }
+            catch (error) {
+                  console.error("Error sending brand and category name:", error);
+                  Swal.fire({  title: "Error",  text: "An error occurred while sending brand and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+                }
+        }
         setProductData({
             ...productData,
             product_obj: {
@@ -449,7 +450,7 @@ const AddProduct = (categories) => {
               option_value_id: optionId,
             });
           }
-          updatedVariant[typeId] = optionId;
+          updatedVariant[typeId] = optionId;          
         if (RetailPriceOption === 'finished_price') {
             updatedVariant.retailPrice = RetailPrice * (parseFloat(updatedVariant.finishedPrice) || 0);
         }
@@ -461,7 +462,6 @@ const AddProduct = (categories) => {
       };
     
     const handleSave = async () => {
-        // !productData.product_obj.base_price || !productData.product_obj.msrp
         if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean|| 
             !productData.product_obj.brand_id || !productData.product_obj.product_name || 
             !productData.product_obj.short_description ) {
@@ -470,7 +470,7 @@ const AddProduct = (categories) => {
         }
     
         const invalidVariants = selectedVariants.some(variant => 
-            !variant.sku || !variant.finishedPrice || !variant.quantity
+            !variant.sku || !variant.unfinishedPrice || !variant.finishedPrice || !variant.quantity
         );
         if (invalidVariants) {
             alert("Please fill in all required fields for variants.");
@@ -718,9 +718,7 @@ const AddProduct = (categories) => {
     };
 
     const handleLevelSelect = (level, id) => {
-        const selectedValue = id || '';
-        console.log(selectedValue, 'selectedValue');
-        
+        const selectedValue = id || '';        
         if (selectedValue !== '') {
             switch (level) {
                 case 4:
@@ -935,7 +933,7 @@ const AddProduct = (categories) => {
                                         <span>Select Category</span>
                                     </div>
                                     {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
                                             <span>{level1.name}</span>
                                         </div>
                                     ))}
@@ -969,7 +967,7 @@ const AddProduct = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -1003,7 +1001,7 @@ const AddProduct = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -1037,7 +1035,7 @@ const AddProduct = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                             <span>{level4.name}</span>
                                         </div>
                                     ))}
@@ -1071,7 +1069,7 @@ const AddProduct = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                             <span>{level5.name}</span>
                                         </div>
                                     ))}
@@ -1105,7 +1103,7 @@ const AddProduct = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                        <div className="dropdown-option"  onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                             <span>{level6.name}</span>
                                         </div>
                                     ))}
