@@ -269,7 +269,7 @@ const PriceComponent = () => {
 
         {dropdownOpen && (
           <div
-            style={{ width: "180px", border: "1px solid #ccc", backgroundColor: "white", zIndex: 1000, maxHeight: "150px", overflowY: "auto", padding: "8px" }}
+            style={{ width: "180px", border: "1px solid #ccc", backgroundColor: "white", zIndex: 1000, maxHeight: "150px", overflowY: "auto", padding: "8px", display:'flex',flexDirection:'column' }}
           >
             <div
               style={{ padding: "10px", cursor: "pointer", background: "#f0f0f0", }}
@@ -306,10 +306,17 @@ const PriceComponent = () => {
     </div>
         <div style={{ margin: '20px 0px 0px 0px' }}>
           <h4 style={{ marginTop: '0px', display: "inline-block" }}>Retail Pricing Logic</h4>
-          <div style={{ margin: '0px 0px 0px 20px', display: "inline-block" ,width:'10%'}}>
-            <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange}  min="0"/>
+          <div style={{ margin: '0px 0px 0px 20px', display: "inline-block" ,width:'13%'}}>
+            <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange}  min="0" style={{
+    width: "58%",
+    paddingRight: "30px", // Space for 'X'
+    backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`,
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 10px center",
+    backgroundSize: "16px 16px",
+  }}/>
           </div>
-          <span style={{ padding: '0px 0px 0px 21px', cursor: 'pointer', color: '#bfbfbf' }} > X </span>
+          {/* <span style={{ padding: '0px 0px 0px 21px', cursor: 'pointer', color: '#bfbfbf' }} > X </span> */}
           <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
             <select value={priceOption} onChange={handlePriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block" }}>
               <option value="finished_price">Finished Wholesale Price</option>

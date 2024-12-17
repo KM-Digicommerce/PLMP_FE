@@ -114,7 +114,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <div className="CategoryTable-header">
                         <h3 style={{ margin: '6px' }}>Variant and Price Details</h3>
-                        <span className="apply-rule-button">${RetailPrice || 0}</span>
+                        <span className="apply-rule-button">
+                        {RetailPrice ? `${RetailPrice}X` : '0'}</span>
                         <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
                     </div>
                     <div className="variant-scroll">

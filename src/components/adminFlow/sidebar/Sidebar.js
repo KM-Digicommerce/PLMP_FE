@@ -90,7 +90,6 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       setUploadProgress(0);
     }
   };
-  
   const toggleProductsSubmenu = () => {
     setShowProductsSubmenu(!showProductsSubmenu);
   };
@@ -99,7 +98,16 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   };
   const handleSectionClick = (section) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setActiveSection(section);
+    if (section !== 'products' && section !== 'setting') {
+      setShowProductsSubmenu(false);  // Close the product submenu
+    }
+    if (section !== 'setting') {
+      setShowSettingsSubmenu(false);  // Close the admin control submenu
+    }
+    if (section !== 'products') {
+      setShowProductsSubmenu(false);  // Close the admin control submenu
+    }
+      setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/brand'); 
     }
@@ -158,10 +166,6 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
           <FontAwesomeIcon icon={faFileImport} className="icon" /> Import
         </li>
         {loading ? (
-        // <div className="loading-spinner-container">
-        //   <CircularProgress size={50} />
-        //   <span>Loading...</span>
-        // </div>
         <Modal open={showImportModal} onClose={closeImportModal}>
         <div className="import-modal">
                   <div style={{ marginTop: '10px' }}>
@@ -233,7 +237,6 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
               variant="contained"
               color="success"
               onClick={handleUpload}
-              // disabled={loading}
               startIcon={loading && <CircularProgress size={20} color="inherit" />}
             >
               {loading ? 'Uploading...' : 'Upload'}
