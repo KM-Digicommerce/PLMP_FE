@@ -1,5 +1,5 @@
 // src/components/category/categorytable/CategoriesTable.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CategoriesTable.css';
 import Swal from 'sweetalert2';
 import AddCategory from '../categoryform/AddCategory';
@@ -140,6 +140,28 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [searchQueryLevel5, setSearchQueryLevel5] = useState('');
   const [searchQueryLevel6, setSearchQueryLevel6] = useState('');
 
+  const categoryDropdownRef = useRef(null);
+  const categoryDropdown2Ref = useRef(null);
+  const categoryDropdown3Ref = useRef(null);
+  const categoryDropdown4Ref = useRef(null);
+  const categoryDropdown5Ref = useRef(null);
+  const categoryDropdown6Ref = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
+    if (categoryDropdown2Ref.current && !categoryDropdown2Ref.current.contains(event.target)) { setIsLevel2DropdownOpen(false); }
+    if (categoryDropdown3Ref.current && !categoryDropdown3Ref.current.contains(event.target)) { setIsLevel3DropdownOpen(false); }
+    if (categoryDropdown4Ref.current && !categoryDropdown4Ref.current.contains(event.target)) { setIslevel4DropdownOpen(false); }
+    if (categoryDropdown5Ref.current && !categoryDropdown5Ref.current.contains(event.target)) { setIslevel5DropdownOpen(false); }
+    if (categoryDropdown6Ref.current && !categoryDropdown6Ref.current.contains(event.target)) { setIslevel6DropdownOpen(false); }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   if (!categories.category_list) {
     return (
       <div className="superAdmin-error-message">
@@ -286,7 +308,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
         console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
         return;
       }
-
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(selectedValue);
       setSelectedCategoryIdPopup(level1Category._id);
@@ -295,6 +316,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel4('');
       setSelectedlevel5('');
       setSelectedlevel6('');
+      setIsCategoryDropdownOpen(false);
       setIsLevel2DropdownOpen(false);
       setIsLevel3DropdownOpen(false);
     } else {
@@ -730,9 +752,11 @@ const handleLevelClear = (e) => {
       <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
       )}
         <div className='DropdownsContainer'>
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn' ref={categoryDropdownRef}>
             <label htmlFor="categorySelect">Level 1: </label>
-            <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
+            <div className="custom-dropdown"  onClick={() => {
+      setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+    }}>
               <div className="selected-category">
                 {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name
                   : 'Select Category'}
@@ -783,7 +807,7 @@ const handleLevelClear = (e) => {
           </div>
           {/* {level2Categories.length > 0 && ( */}
           {/* <> */}
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn'  ref={categoryDropdown2Ref}>
             <label htmlFor="sectionSelect">Level 2:</label>
             <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
               <div className="selected-category">
@@ -822,7 +846,7 @@ const handleLevelClear = (e) => {
 
           {/* {level3Categories.length > 0 && (
             <> */}
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn' ref={categoryDropdown3Ref}>
             <label htmlFor="productTypeSelect">Level 3:</label>
             <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
               <div className="selected-category">
@@ -860,7 +884,7 @@ const handleLevelClear = (e) => {
           )} */}
           {/* {level4Categories.length > 0 && (
             <> */}
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn' ref={categoryDropdown4Ref}>
             <label htmlFor="productTypeSelect">Level 4:</label>
             <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
               <div className="selected-category">
@@ -898,7 +922,7 @@ const handleLevelClear = (e) => {
           )} */}
           {/* {level5Categories.length > 0 && (
             <> */}
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn' ref={categoryDropdown5Ref}>
             <label htmlFor="productTypeSelect">Level 5:</label>
             <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
               <div className="selected-category">
@@ -934,7 +958,7 @@ const handleLevelClear = (e) => {
     )} */}
           {/* {level6Categories.length > 0 && (
             <> */}
-          <div className='DropdownColumn'>
+          <div className='DropdownColumn' ref={categoryDropdown6Ref}>
             <label htmlFor="productTypeSelect">Level 6:</label>
             <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
               <div className="selected-category">
