@@ -73,8 +73,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const selectedOption = event.target.value;
     console.log(selectedOption,'sort');
     
-    if (selectedOption !== '' ) {
-      setProducts('');
+    if (selectedOption !== '') {
+      // setProducts('');
       setSortOption(selectedOption);
     const filter = selectedOption === 'newest' ? true : false;
     fetchData(filter);
@@ -713,6 +713,8 @@ const handleLevelClear = (e) => {
     setSearchQuerylist(query);
     if (query.length > 0) {
       const matchedSuggestions = products.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));
+      console.log(matchedSuggestions,'matchedSuggestions');
+      
       setSuggestions(matchedSuggestions);
     } else {
       setSuggestions([]);
@@ -726,14 +728,10 @@ const handleLevelClear = (e) => {
   let sortedProductss = '';
   if (products) {
     sortedProductss = sortProducts(products);
-    // console.log('HEre youyr respsn products', products);
   }
   else if (responseData) {
     sortedProductss = sortProducts(responseData);
-    // console.log('HEre youyr respsn responseData', responseData);
   }
-// console.log('sortedProductss',sortedProductss);
-
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) =>
       product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
@@ -1040,69 +1038,74 @@ const handleLevelClear = (e) => {
       </div>
       {levelOneCategory && (
         <div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0px' }}>
-  <h3>Products</h3>
- 
-  <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-  {sortVisible && (
-  <div className="sort-container"  style={{ position: 'relative',width: '538px', bottom: '10px' }} >
-        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown" style={{  position: 'absolute', minWidth: '350px',  transform: 'translateY(-50%)',  cursor: 'pointer',  fontSize: '15px',  color: '#aaa', }} >
-        <option value="">Sort by Products</option>
-          <option value="newest">Newest Products</option>
-          <option value="oldest">Oldest Products</option>
-        </select>
-      </div>
-  )}
-    {searchVisible && (
-      <div style={{ position: 'relative', width: '500px' }}>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchQuerylist}
-          onChange={handleSearchChange}
-          style={{ marginRight: '10px', padding: '7px 0px 7px 0px', fontSize: '15px', width: '100%', border: '1px solid #ddd', borderRadius: '4px',
-          }}
-        />
-        {searchQuerylist && (
-          <span
-            onClick={() => {
-              setSearchQuerylist('');
-              setSuggestions([]);
-            }}
-            style={{  position: 'absolute',  right: '0px',  top: '47%',  transform: 'translateY(-50%)',  cursor: 'pointer',  fontSize: '16px',  color: '#aaa', }}> ✕ </span>
-        )}
-      </div>
-    )}
-  </div>
-
-  {searchVisible && suggestions.length > 0 && (
-    <div
-      style={{ position: 'absolute', top: '61%', left: '61.7%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', zIndex: 1000, width: '500px', maxHeight: '150px', overflowY: 'auto', marginTop: '5px', }} >
-      {suggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          onClick={() => handleSuggestionClick(suggestion)}
-          className="suggest_cls"
-          style={{ padding: '6px', cursor: 'pointer', fontSize: '15px', backgroundColor: 'white', }}
-        >
-          {suggestion}
-        </div>
-      ))}
-    </div>
-  )}
-
-  <h3 style={{ fontWeight: 'normal', marginLeft: '10px' }}>
-    <FontAwesomeIcon
-      icon={faSearch}
-      onClick={handleSearchClick}
-      style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
-    /> <FontAwesomeIcon
-    icon={faSort}   onClick={handleSortClick}     style={{ cursor: 'pointer', fontSize: '18px', marginRight: searchVisible ? '10px' : '10px' }}
-
-  />
-  Total Products: {getFilteredAndSortedProducts().length}
-  </h3>
-</div>
+            <h3>Products</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              {sortVisible && (
+                <div className="sort-container" style={{ display: 'flex', flexDirection: 'column', width: '350px' }}>
+                  <select
+                    onChange={handleSortChange}
+                    value={sortOption}
+                    className="sort-dropdown"
+                    style={{ width: '100%', padding: '7px', fontSize: '15px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', color: '#aaa',  }} >
+                    <option value="">Sort by Products</option>
+                    <option value="newest">Newest Products</option>
+                    <option value="oldest">Oldest Products</option>
+                  </select>
+                </div>
+              )}
+              {searchVisible && (
+                <div style={{ display: 'flex', flexDirection: 'column', width: '500px', position: 'relative' }}>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input type="text" placeholder="Search products..." className='search_prods_input' value={searchQuerylist} onChange={handleSearchChange}  />
+                    {searchQuerylist && (
+                      <button
+                        onClick={() => {
+                          setSearchQuerylist('');
+                          setSuggestions([]);
+                        }}
+                        style={{
+                          position: 'absolute', right: '10px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%',
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {suggestions.length > 0 && (
+                    <div
+                      style={{  backgroundColor: 'white',  border: '1px solid #ddd',  borderRadius: '4px',  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',  position: 'absolute',  top: '100%',  left: 0,  width: '98%',  maxHeight: '200px',  overflowY: 'auto',  zIndex: 1000,  }}  >
+                      {suggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="suggest_cls"
+                          style={{ padding: '8px', cursor: 'pointer', fontSize: '14px', backgroundColor: 'white', borderBottom: '1px solid #f1f1f1', display: 'flex', alignItems: 'center', gap: '10px', }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}  >
+                          <span style={{ flex: 1 }}>{suggestion}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <h3 style={{ fontWeight: 'normal', marginLeft: '10px' }}>
+              <FontAwesomeIcon
+                icon={faSearch}
+                onClick={handleSearchClick}
+                style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px' }}
+              />
+              <FontAwesomeIcon
+                icon={faSort}
+                onClick={handleSortClick}
+                style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px' }}
+              />
+              Total Products: {getFilteredAndSortedProducts().length}
+            </h3>
+          </div>
 
           <TableContainer
             component={Paper}
