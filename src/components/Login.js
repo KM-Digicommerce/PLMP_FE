@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const Login = () => {
   const [user_name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +21,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
+    setShowPassword((prev) => !prev);
   };
 
   // Handle login form submission
@@ -148,7 +149,7 @@ const Login = () => {
           required
         />
         <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
+          {showPassword ? <VisibilityOff /> : <Visibility />}
         </span>
       </div>
     </div>
