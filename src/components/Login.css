@@ -177,5 +177,5 @@ form {
 }
 .login-container img { max-width: 18%;}
 .password-input-container { position: relative; display: flex; align-items: center; width: 100%;}
-  .password-toggle-icon { position: absolute; right: 10px; cursor: pointer; font-size: 18px; color: #ffffff; }
+  .password-toggle-icon { position: absolute; right: 10px; cursor: pointer; font-size: 18px; color:#cbcbcb; }
   #password { margin-right: 0px !important;}
