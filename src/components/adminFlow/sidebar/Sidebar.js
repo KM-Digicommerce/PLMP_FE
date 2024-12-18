@@ -107,6 +107,12 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     if (section !== 'products') {
       setShowProductsSubmenu(false);  // Close the admin control submenu
     }
+      if (section === 'all-products' || section === 'add-product') {
+        setActiveSection('products')
+      }
+      if (section === 'settings' || section === 'users') {
+        setActiveSection('setting')
+      }
       setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/brand'); 

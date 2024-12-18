@@ -33,8 +33,8 @@ const ProductDetail = ({ categories }) => {
         sku_number: '',
         unfinishedPrice: '',
         finishedPrice: '',
-        totalPrice:0,
-        retailPrice:0,
+        totalPrice: 0,
+        retailPrice: 0,
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
@@ -61,7 +61,7 @@ const ProductDetail = ({ categories }) => {
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
 
-    const levelOneCategory =  categories?.category_list?.find(level1 => level1._id === selectedCategoryId);
+    const levelOneCategory = categories?.category_list?.find(level1 => level1._id === selectedCategoryId);
     const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
         level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
     );
@@ -131,9 +131,9 @@ const ProductDetail = ({ categories }) => {
     };
 
     const handleLevel3Select = (id) => {
-        let level1Category='';
-        let level2Category='';
-console.log(id,'id ');
+        let level1Category = '';
+        let level2Category = '';
+        console.log(id, 'id ');
 
         categories?.category_list?.some(level1 => {
             const foundLevel2 = level1.level_one_category_list.find(level2 =>
@@ -190,8 +190,8 @@ console.log(id,'id ');
     }
     const fetchProductDetail = async (productId) => {
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, {  id: productId,  });
-            console.log(response,'response');
+            const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, { id: productId, });
+            console.log(response, 'response');
             if (response.data && response.data.data) {
                 const productCategory = response.data.data.category_level;
                 const RetailPrice = response.data.data.category_brand_price.price;
@@ -242,9 +242,8 @@ console.log(id,'id ');
                 console.error('Error fetching variants:', err);
             }
         } catch (err) {
-            console.log(err,'err');
-            
-            setError('Error fetching product details 1');
+            console.log(err, 'err');
+            setError('Error fetching product details');
         } finally {
             setLoading(false);
         }
@@ -377,7 +376,7 @@ console.log(id,'id ');
     // const handleVariantDetailChange = (e) => {
     //     const { name, value } = e.target;
     //    console.log(e.target,'Handle variant changes');
-       
+
     //     setSelectedVariants((prevVariants) => ({
     //         ...prevVariants,
     //         [name]: value,
@@ -385,26 +384,20 @@ console.log(id,'id ');
     // };
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
-    
+
         setSelectedVariants((prevVariants) => {
             const updatedVariants = { ...prevVariants };
-    
-            // Update the value of the input field
             updatedVariants[name] = value;
-    
-            // Calculate retailPrice based on RetailPriceOption
             if (RetailPriceOption === 'finished_price' && name === 'finishedPrice') {
                 updatedVariants.retailPrice = RetailPrice * parseFloat(value || 0);
             }
             else if (RetailPriceOption === 'unfinished_price' && name === 'unfinishedPrice') {
                 updatedVariants.retailPrice = RetailPrice * parseFloat(value || 0);
             }
-    
-            // Return the updated variants
             return updatedVariants;
         });
     };
-    
+
     const handleVariantChange = (typeId, optionId) => {
         setSelectedVariants((prev) => ({
             ...prev,
@@ -414,7 +407,6 @@ console.log(id,'id ');
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            const RetailPrice = RetailPrice * parseFloat(selectedVariants.finishedPrice || 0);            
             const options = variantOptions
                 .map((variant) => {
                     const selectedOption = selectedVariants[variant.type_id];
@@ -434,8 +426,8 @@ console.log(id,'id ');
                     sku_number: selectedVariants.sku,
                     un_finished_price: selectedVariants.unfinishedPrice,
                     finished_price: selectedVariants.finishedPrice,
-                    retail_price: RetailPrice,
-                    total_price: RetailPrice, 
+                    retail_price: selectedVariants.retailPrice,
+                    total_price: RetailPrice,
                     quantity: selectedVariants.quantity,
                     options: options,
 
@@ -458,6 +450,7 @@ console.log(id,'id ');
             sku: '',
             unfinishedPrice: '',
             finishedPrice: '',
+            retailPrice: 0,
             quantity: '',
         });
         setIsPopupOpen(true);
@@ -478,13 +471,13 @@ console.log(id,'id ');
     const handleScrollNext = () => {
         const container = document.querySelector(".thumbnail-section");
         container.scrollLeft += 120; // Adjust scroll distance
-      };
-      
-      const handleScrollPrev = () => {
+    };
+
+    const handleScrollPrev = () => {
         const container = document.querySelector(".thumbnail-section");
         container.scrollLeft -= 120; // Adjust scroll distance
-      };
-      
+    };
+
     return (
         <div>
             <div className='section_container'>
@@ -515,16 +508,16 @@ console.log(id,'id ');
                                         />
                                     </div>
                                     <div className="thumbnail-container">
-                                    {formData.image && (
-                                        formData.image.length > 2 && (
-                                            <span
-                                                className="thumbnail-scroll-btn prev-btn"
-                                                onClick={handleScrollPrev}
-                                            >
-                                                &lt;
-                                            </span>
-                                        )
-                                       )}
+                                        {formData.image && (
+                                            formData.image.length > 2 && (
+                                                <span
+                                                    className="thumbnail-scroll-btn prev-btn"
+                                                    onClick={handleScrollPrev}
+                                                >
+                                                    &lt;
+                                                </span>
+                                            )
+                                        )}
                                         <div className="thumbnail-section">
                                             {Array.isArray(formData.image) &&
                                                 formData.image.map((image, index) => (
@@ -539,24 +532,24 @@ console.log(id,'id ');
                                                 ))}
                                         </div>
                                         {formData.image && (
-                                        formData.image.length > 2 && (
-                                            <span
-                                                className="thumbnail-scroll-btn next-btn"
-                                                onClick={handleScrollNext}
-                                            >
-                                                &gt;
-                                            </span>
-                                        )
-                                    )}
+                                            formData.image.length > 2 && (
+                                                <span
+                                                    className="thumbnail-scroll-btn next-btn"
+                                                    onClick={handleScrollNext}
+                                                >
+                                                    &gt;
+                                                </span>
+                                            )
+                                        )}
                                     </div>
                                 </div>
                                 <div className="product-detail-section">
-                                <div className="CategoryTable-header-edit">
-                                    <h3>Edit Product Details</h3>
-                                    {categoryLevel && (
-                        <span className='categoryLevel'>{categoryLevel}</span>
-                    )}
-                    </div>
+                                    <div className="CategoryTable-header-edit">
+                                        <h3>Edit Product Details</h3>
+                                        {categoryLevel && (
+                                            <span className='categoryLevel'>{categoryLevel}</span>
+                                        )}
+                                    </div>
                                     <div className="form-group">
                                         <label htmlFor="mpn">MPN</label>
                                         <input type="text" id="mpn" className='input_pdps' name="mpn" value={String(formData.mpn || '')} onChange={handleChange} required />
@@ -621,14 +614,14 @@ console.log(id,'id ');
 
                         {view === 'taxonomy' && (
                             <div className="taxonomy-section">
-                                    <h3>Taxonomy</h3>
+                                <h3>Taxonomy</h3>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="categorySelect">Level 1:</label>
-                                        <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'} 
+                                                {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {!isCategoryDropdownOpen && (
@@ -660,9 +653,9 @@ console.log(id,'id ');
                                     {/* Level 2 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="sectionSelect">Level 2:</label>
-                                        <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}               
+                                                {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel2DropdownOpen && (
@@ -691,9 +684,9 @@ console.log(id,'id ');
                                     {/* Level 3 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="productTypeSelect">Level 3:</label>
-                                        <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}               
+                                                {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel3DropdownOpen && (
@@ -722,9 +715,9 @@ console.log(id,'id ');
                                     {/* Level 4 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="level4Select">Level 4:</label>
-                                        <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}               
+                                                {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel4DropdownOpen && (
@@ -753,9 +746,9 @@ console.log(id,'id ');
                                     {/* Level 5 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="level5Select">Level 5:</label>
-                                        <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}               
+                                                {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel5DropdownOpen && (
@@ -784,9 +777,9 @@ console.log(id,'id ');
                                     {/* Level 6 Dropdown */}
                                     <div className='DropdownColumn'>
                                         <label htmlFor="level6Select">Level 6:</label>
-                                        <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                                             <div className="selected-category">
-                                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}               
+                                                {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel6DropdownOpen && (
@@ -856,13 +849,14 @@ console.log(id,'id ');
                                 </table>
                                 <Modal
                                     open={isPopupOpen}
-                                    onClose={handleClosePopup}
+                                    onClose={handleClosePopup} 
                                     aria-labelledby="variant-modal-title"
                                     aria-describedby="variant-modal-description"
                                     className="variant_model_pdp"
                                 >
                                     <Box
-                                        sx={{ width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
+                                        sx={{
+                                            width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
                                         }}
                                     >
                                         <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
@@ -886,13 +880,13 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             />
-                                            <div style={{display: "flex",justifyContent: "space-between"}}>
-                                            <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>Retail Price</label>
-                                            <label htmlFor="totalPrice" style={{margin: "0px 0px 0px 5px", color:'rgba(0, 0, 0, 0.6)'}}>${RetailPrice || 0}</label>
+                                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price</label>
+                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
                                             </div>
-                                             
-                                              <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />
-                                             {/* <TextField fullWidth type="text" name="retailPrice" label="" value={selectedVariants.retailPrice}
+
+                                            <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />
+                                            {/* <TextField fullWidth type="text" name="retailPrice" label="" value={selectedVariants.retailPrice}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
@@ -900,7 +894,7 @@ console.log(id,'id ');
                                                     }
                                                 }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
                                             /> */}
-                                            <TextField  fullWidth  type="number"  name="quantity"  className='input_pdp'  label="Quantity"  value={selectedVariants.quantity}  onChange={handleVariantDetailChange}  margin="normal"  size="small"  sx={{ marginBottom: 2 }}
+                                            <TextField fullWidth type="number" name="quantity" className='input_pdp' label="Quantity" value={selectedVariants.quantity} onChange={handleVariantDetailChange} margin="normal" size="small" sx={{ marginBottom: 2 }}
                                             />
 
 
@@ -925,7 +919,7 @@ console.log(id,'id ');
                                                     </FormControl>
                                                 </div>
                                             ))}
-                                            <Button  type="submit"  variant="contained"    color="primary"  sx={{ width: '100%', marginTop: 2 }}
+                                            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}
                                             >
                                                 Save Variant
                                             </Button>
@@ -1076,15 +1070,15 @@ console.log(id,'id ');
 
                             </div>
                         )}
-{view !== 'variants' && view !== 'taxonomy' && (
-  <button
-    type="submit"
-    className="save-button_pdp"
-    onClick={view === 'taxonomy' ? swapProductToCategory : undefined}
-  >
-    Save
-  </button>
-)}
+                        {view !== 'variants' && view !== 'taxonomy' && (
+                            <button
+                                type="submit"
+                                className="save-button_pdp"
+                                onClick={view === 'taxonomy' ? swapProductToCategory : undefined}
+                            >
+                                Save
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>

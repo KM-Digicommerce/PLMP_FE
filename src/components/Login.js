@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const Login = () => {
   const [user_name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +18,10 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   // Handle login form submission
   const handleSubmit = async (e) => {
@@ -130,16 +135,23 @@ const Login = () => {
             />
           </div>
           <div className="one">
-            <label className="label-login" htmlFor="password">Password</label>
-            <input
-              className="label-input"
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+      <label className="label-login" htmlFor="password">
+        Password
+      </label>
+      <div className="password-input-container">
+        <input
+          className="label-input"
+          type={showPassword ? 'text' : 'password'}
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
+      </div>
+    </div>
           <button className="button-login" type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>

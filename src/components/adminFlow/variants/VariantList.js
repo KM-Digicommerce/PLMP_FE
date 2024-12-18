@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Swal from 'sweetalert2';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import './VariantList.css';
@@ -31,6 +31,28 @@ const VariantList = ({ categories }) => {
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
     const [selectedCategoryLevelForVariant, setSelectedCategoryLevelForVariant] = useState('');
+    const categoryDropdownRef = useRef(null);
+    const categoryDropdown2Ref = useRef(null);
+    const categoryDropdown3Ref = useRef(null);
+    const categoryDropdown4Ref = useRef(null);
+    const categoryDropdown5Ref = useRef(null);
+    const categoryDropdown6Ref = useRef(null);
+   
+    const handleClickOutside = (event) => {
+     if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
+     if (categoryDropdown2Ref.current && !categoryDropdown2Ref.current.contains(event.target)) { setIsLevel2DropdownOpen(false); }
+     if (categoryDropdown3Ref.current && !categoryDropdown3Ref.current.contains(event.target)) { setIsLevel3DropdownOpen(false); }
+     if (categoryDropdown4Ref.current && !categoryDropdown4Ref.current.contains(event.target)) { setIslevel4DropdownOpen(false); }
+     if (categoryDropdown5Ref.current && !categoryDropdown5Ref.current.contains(event.target)) { setIslevel5DropdownOpen(false); }
+     if (categoryDropdown6Ref.current && !categoryDropdown6Ref.current.contains(event.target)) { setIslevel6DropdownOpen(false); }
+     };
+   
+     useEffect(() => {
+       document.addEventListener('mousedown', handleClickOutside);
+       return () => {
+         document.removeEventListener('mousedown', handleClickOutside);
+       };
+     }, []);
    
     const filteredCategories = categories.category_list.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
@@ -443,7 +465,7 @@ const VariantList = ({ categories }) => {
       )}
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdownRef}>
                         <label htmlFor="categorySelect">Level 1:</label>
                         <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                             <div className="selected-category">
@@ -477,7 +499,7 @@ const VariantList = ({ categories }) => {
                     </div>
 
                     {/* Level 2 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdown2Ref}>
                         <label htmlFor="sectionSelect">Level 2:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                             <div className="selected-category">
@@ -511,7 +533,7 @@ const VariantList = ({ categories }) => {
                     </div>
 
                     {/* Level 3 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdown3Ref}>
                         <label htmlFor="productTypeSelect">Level 3:</label>
                         <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                             <div className="selected-category">
@@ -545,7 +567,7 @@ const VariantList = ({ categories }) => {
                     </div>
 
                     {/* Level 4 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdown4Ref}>
                         <label htmlFor="level4Select">Level 4:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                             <div className="selected-category">
@@ -579,7 +601,7 @@ const VariantList = ({ categories }) => {
                     </div>
 
                     {/* Level 5 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdown5Ref}>
                         <label htmlFor="level5Select">Level 5:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                             <div className="selected-category">
@@ -613,7 +635,7 @@ const VariantList = ({ categories }) => {
                     </div>
 
                     {/* Level 6 Dropdown */}
-                    <div className='DropdownColumn'>
+                    <div className='DropdownColumn' ref={categoryDropdown6Ref}>
                         <label htmlFor="level6Select">Level 6:</label>
                         <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                             <div className="selected-category">
