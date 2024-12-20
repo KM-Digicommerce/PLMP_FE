@@ -11,7 +11,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 import { LinearProgress } from '@mui/material';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick, OnUserClick}) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick, OnUserClick, OnRevokePriceClick }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -129,6 +129,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     else if (section === 'users' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/createuser'); 
     }
+    else if (section === 'revoke' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/revokeprice'); 
+    }
   };
   return (
     <div className="sidebar">
@@ -143,7 +146,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         <li onClick={() => { onBrandClick(); handleSectionClick('brand'); }}
           className={activeSection === 'brand' ? 'active' : ''}>
           <FontAwesomeIcon icon={faStore} className="icon" />
-          Brand
+          Vendor
         </li>
         <li  onClick={() => { OnAllVariantsClick(); handleSectionClick('variants'); }}
           className={activeSection === 'variants' ? 'active' : ''}>
@@ -207,6 +210,8 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             <ul className="subMenu">
               <li onClick={() => { handleSectionClick('settings'); }}
                 className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
+                  <li onClick={() => { OnRevokePriceClick(); handleSectionClick('revoke'); }}
+                className={activeSection === 'revoke' ? 'active' : ''} >Revoke Price</li>
               <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
                 className={activeSection === 'users' ? 'active' : ''}>Users</li>
             </ul>

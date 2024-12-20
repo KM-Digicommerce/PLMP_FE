@@ -372,16 +372,6 @@ const ProductDetail = ({ categories }) => {
             alert('Please selected the category to updated');
         }
     };
-
-    // const handleVariantDetailChange = (e) => {
-    //     const { name, value } = e.target;
-    //    console.log(e.target,'Handle variant changes');
-
-    //     setSelectedVariants((prevVariants) => ({
-    //         ...prevVariants,
-    //         [name]: value,
-    //     }));
-    // };
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
 
@@ -559,7 +549,7 @@ const ProductDetail = ({ categories }) => {
                                         <input type="text" id="product_name" className='input_pdps' name="product_name" value={formData.product_name ? formData.product_name.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="brand">Brand</label>
+                                        <label htmlFor="brand">Vendor</label>
                                         <select
                                             id="brand-select"
                                             name="brand_id"

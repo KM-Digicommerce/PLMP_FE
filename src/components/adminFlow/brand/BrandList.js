@@ -34,10 +34,10 @@ const BrandList = () => {
 
   const handleAddBrand = async () => {
     const { value: brandName } = await Swal.fire({
-      title: 'Add New Brand',
+      title: 'Add New Vendor',
       input: 'text',
-      inputLabel: 'Brand Name',
-      inputPlaceholder: 'Enter the brand name',
+      inputLabel: 'Vendor Name',
+      inputPlaceholder: 'Enter the Vendor name',
       showCancelButton: true,
     });
 
@@ -46,7 +46,7 @@ const BrandList = () => {
         await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
         Swal.fire({
           title: 'Success!',
-          text: 'Brand added successfully!',
+          text: 'Vendor added successfully!',
           icon: 'success',
           confirmButtonText: 'OK',
           customClass: {
@@ -59,10 +59,10 @@ const BrandList = () => {
         });
         fetchBrands(); // Refresh brand list
       } catch (error) {
-        console.error('Error adding brand:', error);
+        console.error('Error adding Vendor:', error);
         Swal.fire({
           title: 'Error',
-          text: 'Failed to add brand.',
+          text: 'Failed to add Vendor.',
           icon: 'error',
           confirmButtonText: 'OK',
           customClass: {
@@ -84,7 +84,7 @@ const BrandList = () => {
   if (!brands) {
     return (
       <div className="superAdmin-error-message">
-        <p>Error loading brand data. Please try again later.</p>
+        <p>Error loading Vendor data. Please try again later.</p>
       </div>
     );
   }
@@ -92,13 +92,13 @@ const BrandList = () => {
   return (
     <div className="brand-page">
       <div className="brand-header">
-        <h1>Brand Management</h1>
+        <h1>Vendor Management</h1>
         <button className="add-brand-btn" onClick={handleAddBrand}>
-          Add Brand
+          Add Vendor
         </button>
       </div>
       {loading ? (
-        <p>Loading brands...</p>
+        <p>Loading Vendors...</p>
       ) : (
         <div className="brand-cards-container">
           {brands.map((brand) => (
