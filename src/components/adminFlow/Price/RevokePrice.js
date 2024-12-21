@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../../utils/axiosConfig";
+import './RevokePrice.css';
 import Swal from "sweetalert2";
 
 const RevokePrice = () => {
@@ -9,8 +10,6 @@ const RevokePrice = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const [tableData, setTableData] = useState([]);
   const dropdownRef = useRef(null);
   const [variantOptions, setVariantOptions] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -29,6 +28,9 @@ const RevokePrice = () => {
   const [currentVariantPriceInput, setCurrentVariantPriceInput] = useState("");
   const [previousVariantPriceInput, setPreviousVariantPriceInput] = useState("");
   const dropdownRefForValue = useRef(null);
+   const [priceOption, setPriceOption] = useState('');
+   const [variantpriceOption, setVariantPriceOption] = useState('');
+ 
  
   const fetchBrands = async () => {
     try {
@@ -49,8 +51,7 @@ const RevokePrice = () => {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllLastLevelIds/`);
       setCategories(response.data.data.last_level_category || []); // Assuming the response contains user list in `data`
     } catch (error) {
-      console.error("Error fetching users:", error);
-      Swal.fire({ title: "Error", text: "Failed to fetch users.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      Swal.fire({ title: "Error", text: "Failed to fetch Categories.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
     } finally {
     //   setLoading(false);
@@ -67,7 +68,7 @@ const RevokePrice = () => {
         const allCategoryIds = categories.map(cat => cat.id); 
         setSelectedCategories([{ name: "Apply to all categories" }]); 
         setSelectedCategoryIds(allCategoryIds);
-        handlePriceApply();
+        handlePriceDisplayInInputField();
     } else {
         const category = categories.find(category => category.id === categoryId);
         const allCategoryIds = selectedCategories.map(cat => cat.name); 
@@ -80,12 +81,10 @@ const RevokePrice = () => {
             setSelectedCategories(prevSelectedCategories => [...prevSelectedCategories, category]);
             setSelectedCategoryIds((prevSelectedCategoryIds) => {
               if (prevSelectedCategoryIds.length === 0) {
-                const newCategoryIds = category.id;
-                handlePriceApply(newCategoryIds);
+                const newCategoryIds = [category.id];
                 return newCategoryIds;
               } else {
                 const newCategoryIds = [...prevSelectedCategoryIds, category.id];
-                handlePriceApply(category.id);
                 return newCategoryIds;
               }
             });
@@ -93,6 +92,16 @@ const RevokePrice = () => {
         }
     }
 };
+const handlePriceChange = async (event) => {
+    const selectedOption = event.target.value;
+    if (selectedOption) {  setPriceOption(selectedOption);  handlePriceDisplayInInputField(selectedCategoryIds,selectedOption); }
+      else{   setPriceOption('');setPreviousPriceInput('');setCurrentPriceInput(''); }    
+  };
+  const handleVariantPriceChange = async (event) => {
+    const selectedOption = event.target.value;
+    if (selectedOption) {  setVariantPriceOption(selectedOption); handleVariantPriceDisplayInInputField(selectedOption); }
+      else{   setVariantPriceOption('');setCurrentVariantPriceInput('');setPreviousVariantPriceInput(''); }    
+  };
   const handleCategoryRemove = (categoryId) => {
     if (categoryId === "all") {
       setSelectedCategories([]);
@@ -108,7 +117,6 @@ const RevokePrice = () => {
     );
     setSelectedCategoryIds((prevSelectedCategoryIds) => {
       const newCategoryIds = prevSelectedCategoryIds.filter((id) => id !== categoryId);
-      handlePriceApply();
       return newCategoryIds; 
     });
   }
@@ -163,29 +171,22 @@ const RevokePrice = () => {
     fetchBrands();
   };
 
-  const handlePriceApply = async (selectedCategoryIds) => {
-    if (selectedCategoryIds && selectedBrand) {
+  const handlePriceDisplayInInputField = async (selectedCategoryIds,selectedOption) => {
+    // console.log(selectedCategoryIds,'selectedCategoryIds');
+    // console.log(selectedBrandId,'selectedBrandId');
+    // console.log(selectedOption,'priceOption');
+    if (selectedCategoryIds && selectedBrandId && selectedOption) {
       try {
         // setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRevertPreviousAndCurrentPriceForCategory/`,
           { category_id: selectedCategoryIds,
             brand_id: selectedBrandId,
+            price_option:selectedOption,
            }
         );
         console.log(response,'response');
         setPreviousPriceInput(response.data.data.old_price);
         setCurrentPriceInput(response.data.data.current_price);
-        // if (response.status === 200) {
-        //   Swal.fire({ title: "Success", text: "Revoked Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-        //   });
-        // }
-        // setBrands([]);
-        // setSelectedBrand(null);
-        // setSelectedBrandId(null);
-        // setSelectedCategories([]);
-        // setSelectedCategoryIds([]);
-        // setTableData([]);
-        // fetchBrands();
       } catch (error) {
         console.error("Error fetching data:", error);
         Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
@@ -199,27 +200,31 @@ const RevokePrice = () => {
       });
     }
   };
-  const handleVariantPriceApply = async (selectedVariantValue) => {
+
+  const handleRevokeApply = async () => {
+    if (selectedCategoryIds && selectedBrandId && priceOption && previousPriceInput > 0) {
       try {
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRevertPreviousAndCurrentPriceForVarientOption/`,
-          { 
-            brand_id: selectedBrandIdForVariant,
-            option_name_id:selectedVariantId,
-            option_value_id:selectedVariantValue,
+        // setLoading(true);
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForCategory/`,
+          { category_id: selectedCategoryIds,
+            brand_id: selectedBrandId,
+            price_option:priceOption,
            }
         );
-        // if (response.status === 200) {
-        //   Swal.fire({ title: "Success", text: "Applied Based on Vendor & Variant wise Successfully", icon: "Success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-        //   });
-        // }
-        console.log(response,'response');
-        setPreviousVariantPriceInput(response.data.data.old_price);
-        setCurrentVariantPriceInput(response.data.data.current_price);
-        setSelectedVariantValueIds([]);
-        setSelectedBrandForVariant(null);
-        setSelectedBrandIdForVariant(null);
-        setTableData([]);
+        if (response.status === 200) {
+          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+          });
+        }
+        setBrands([]);
+        setSelectedBrand(null);
+        setSelectedBrandId(null);
+        setPreviousPriceInput('');
+        setCurrentPriceInput('');
+        setPriceOption('');
+        setSelectedCategories([]); 
+        setSelectedCategoryIds([]);
         fetchBrands();
+        console.log(response,'response');
       } catch (error) {
         console.error("Error fetching data:", error);
         Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
@@ -227,43 +232,84 @@ const RevokePrice = () => {
       } finally {
         // setLoading(false);
       }
+    }
+    else{
+      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      });
+    }
   };
 
-//   const fetchPriceTableDataBrand = async (BrandID) => {    
-//     try {
-//         // setLoading(true);
-//         let payload = '';
-//         payload = { brand_id: BrandID};
-//         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, payload); 
-//         const categoryList = response?.data?.data?.category_list || [];
-//         setTableData(categoryList);
-//         console.log(response.data,'priceTableData');
-//     } catch (error) {
-//         console.error("Error fetching price table data:", error);
-//         Swal.fire({ title: "Error", text: "Failed to fetch price table data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-//         });
-//     } finally {   
-//         // setLoading(false); 
-//     }
-// };
-//   const fetchPriceTableData = async (categoryIdList) => {    
-//     try {
-//         // setLoading(true);
-//         let payload = '';
-//         payload = { category_id_list: categoryIdList, brand_id: selectedBrandId};
-//         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, payload); 
-//         const categoryList = response?.data?.data?.category_list || [];
-//         setTableData(categoryList);
-//         console.log(response.data,'priceTableData');
-//     } catch (error) {
-//         console.error("Error fetching price table data:", error);
-//         Swal.fire({ title: "Error", text: "Failed to fetch price table data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-//         });
-//     } finally {
-//         // setLoading(false);
-//     }
-// };
+  const handleVariantPriceDisplayInInputField = async (variantpriceOption) => {
+    console.log(selectedBrandIdForVariant,'selectedBrandIdForVariant');
+    console.log(selectedVariantId,'selectedVariantId');
+    console.log(selectedVariantValueIds,'selectedVariantValue');
+    console.log(variantpriceOption,'variantpriceOption');
 
+    if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption) {
+      try {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRevertPreviousAndCurrentPriceForVarientOption/`,
+          { 
+            brand_id: selectedBrandIdForVariant,
+            option_name_id:selectedVariantId,
+            option_value_id:selectedVariantValueIds,
+            price_option:variantpriceOption,
+           }
+        );   
+        setPreviousVariantPriceInput(response.data.data.old_price);
+        setCurrentVariantPriceInput(response.data.data.current_price);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+        });
+      } finally { }
+    }
+    else{
+      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      });
+    }
+  };
+  const handleVariantRevokeApply = async () => {
+    if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption && previousVariantPriceInput > 0) {
+        try {
+        // setLoading(true);
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForVarientOption/`,
+            { 
+                brand_id: selectedBrandIdForVariant,
+                option_name_id:selectedVariantId,
+                option_value_id:selectedVariantValueIds,
+                price_option:variantpriceOption,
+               }
+        );
+        if (response.status === 200) {
+          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Variant wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+          });
+        }
+        setBrands([]);
+        setSelectedBrandForVariant(null);
+        setSelectedBrandIdForVariant(null);
+        setSelectedVariant(null);
+        setVariantOptions([]);
+        setSelectedVariantValues([]);
+        setSelectedVariantValueIds([]);
+        setPreviousVariantPriceInput('');
+        setCurrentVariantPriceInput('');
+        setVariantPriceOption('');
+        fetchVariantOptions();
+        fetchBrands();
+        console.log(response,'response');
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+        });
+      } finally {
+        // setLoading(false);
+      }
+    }
+    else{
+      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      });
+    }
+  };
   const fetchVariantOptions = async () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptionForRetailPrice/`);      
@@ -314,7 +360,7 @@ const handleVariantValueSelect = (event) => {
           ...prevSelectedValues,
           { id: selectedValue.id, name: selectedValue.name },
         ]);
-        handleVariantPriceApply(selectedValue.id);
+        // handleVariantPriceDisplayInInputField(selectedValue.id);
         setSelectedVariantValueIds((prevSelectedValueIds) => {
           const newVariantValueIds = [...prevSelectedValueIds, selectedValue.id];
           return newVariantValueIds;
@@ -361,7 +407,7 @@ const handleVariantValueRemove = (id) => {
     </div>
 
     <div style={{ margin: "10px 0" }}>
-      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category</h3>
+      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category <span className="required">*</span></h3>
       <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
         <div
           style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -375,13 +421,7 @@ const handleVariantValueRemove = (id) => {
         {dropdownOpen && (
           <div style={{ width: "225px", border: "1px solid #ccc", backgroundColor: "#fff", zIndex: 1000, maxHeight: "120px", overflowY: "auto", padding: "8px", position: "absolute", top: "110%", left: 0, boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", borderRadius: "5px" }}>
             <div
-              style={{
-                padding: "8px",
-                cursor: "pointer",
-                background: "lightgrey",
-                borderRadius: "4px",
-                marginBottom: "4px",
-                fontSize: "14px",
+              style={{ padding: "8px", cursor: "pointer", background: "lightgrey", borderRadius: "4px", marginBottom: "4px", fontSize: "14px",
               }}
               onClick={() => handleCategorySelect({ target: { value: "all" } })}
             >
@@ -389,13 +429,7 @@ const handleVariantValueRemove = (id) => {
             </div>
             {categories.map((category) => (
               <div
-                style={{
-                  padding: "6px",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",
-                  fontSize: "14px",
-                  marginBottom: "2px",
+                style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",  fontSize: "14px",  marginBottom: "2px",
                 }}
                 onClick={() => handleCategorySelect({ target: { value: category.id } })}
               >
@@ -408,6 +442,7 @@ const handleVariantValueRemove = (id) => {
           </div>
         )}
       </div>
+     
 
       <div style={{ marginTop: "12px", display: "inline-block" }}>
         {selectedCategories.map((category) => (
@@ -422,7 +457,16 @@ const handleVariantValueRemove = (id) => {
         ))}
       </div>
     </div>
-
+    <div style={{ margin: "10px 0" }}>
+      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
+      <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
+        <select value={priceOption} onChange={handlePriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "245px", display: "inline-block" }}>
+        <option value="">Select Price Option</option>
+          <option value="finished_price">Finished Wholesale Price</option>
+          <option value="un_finished_price">Unfinished Wholesale Price</option>
+        </select>
+      </div>
+      </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>
   {/* Input Fields Section */}
   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
@@ -432,13 +476,7 @@ const handleVariantValueRemove = (id) => {
         type="number"
         value={previousPriceInput}
         placeholder="Previous value"
-        style={{
-          width: "42%",
-          paddingRight: "30px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
+        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }}
       />
     </div>
 
@@ -449,13 +487,7 @@ const handleVariantValueRemove = (id) => {
         type="number"
         value={currentPriceInput}
         placeholder="Current value"
-        style={{
-          width: "42%",
-          paddingRight: "30px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
+        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }}
       />
     </div>
   </div>
@@ -463,18 +495,9 @@ const handleVariantValueRemove = (id) => {
   {/* Revoke Button Section */}
   <div style={{ textAlign: "center" }}>
     <button
-      onClick={() => handlePriceApply()}
-      style={{
-        width: "14%",
-        padding: "10px",
-        borderRadius: "5px",
-        border: "1px solid #ccc",
-        cursor: "pointer",
-      }}
-      className="add-brand-btn"
-    >
-      Revoke
-    </button>
+      onClick={() => handleRevokeApply()}
+      style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
+      className="add-brand-btn revoke_btn" disabled={previousPriceInput === 0}> Revoke </button>
   </div>
 </div>
 
@@ -508,13 +531,7 @@ const handleVariantValueRemove = (id) => {
           Select Variant  <span className="required">*</span>
         </h3>
         <select
-          style={{
-            padding: "10px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            width: "248px",
-            display: "inline-block",
-          }}
+          style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block", }}
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="">Select Variant</option>
@@ -538,7 +555,7 @@ const handleVariantValueRemove = (id) => {
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Variant Value  <span className="required">*</span></h3>
       <div ref={dropdownRefForValue} style={{ position: "relative", display: "inline-block" }}>
         <div
-          style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "225px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
+          style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "226px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
           }}
           onClick={() => setDropdownOpenForValue((prev) => !prev)}  >
           Select a variant value
@@ -582,6 +599,16 @@ const handleVariantValueRemove = (id) => {
         ))}
       </div>
     </div>
+    <div style={{ margin: "10px 0" }}>
+      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
+      <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
+        <select value={variantpriceOption} onChange={handleVariantPriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "245px", display: "inline-block" }}>
+        <option value="">Select Price Option</option>
+          <option value="finished_price">Finished Wholesale Price</option>
+          <option value="un_finished_price">Unfinished Wholesale Price</option>
+        </select>
+      </div>
+      </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>
   {/* Input Fields Section */}
   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
@@ -592,14 +619,7 @@ const handleVariantValueRemove = (id) => {
         type="number"
         value={previousVariantPriceInput}
         placeholder="Previous value"
-        style={{
-          width: "42%",
-          paddingRight: "30px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
-      />
+        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
     </div>
 
     {/* Current Logic */}
@@ -609,30 +629,16 @@ const handleVariantValueRemove = (id) => {
         type="number"
         value={currentVariantPriceInput}
         placeholder="Current value"
-        style={{
-          width: "42%",
-          paddingRight: "30px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
-      />
+        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
     </div>
   </div>
 
   {/* Revoke Button Section */}
   <div style={{ textAlign: "center" }}>
     <button
-      onClick={() => handlePriceApply()}
-      style={{
-        width: "14%",
-        padding: "10px",
-        borderRadius: "5px",
-        border: "1px solid #ccc",
-        cursor: "pointer",
-      }}
-      className="add-brand-btn"
-    >
+      onClick={() => handleVariantRevokeApply()}
+      style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
+      className="add-brand-btn revoke_variant_btn" disabled={previousVariantPriceInput === 0}>
       Revoke
     </button>
   </div>

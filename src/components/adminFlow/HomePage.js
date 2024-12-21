@@ -165,6 +165,10 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  // const handleNavigation = (path) => {
+  //       navigate(path);
+  //     };
+
   const handlePriceClick = () => {
     if ((location.pathname.includes("product/"))) { 
       navigate("/Admin/price");
@@ -213,6 +217,39 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+// const renderContent = () => {
+//   const path = location.pathname;
+
+//   if (path === '/' || path === '/Admin') {
+//     return <Dashboard />;
+//   } else if (path === '/Admin/categories') {
+//     return <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} />;
+//   } else if (path === '/Admin/products') {
+//     return <ProductList />;
+//   } else if (path === '/Admin/variants') {
+//     return <VariantList categories={categoriesData} />;
+//   } else if (path === '/Admin/addProduct') {
+//     return <AddProduct categories={categoriesData} />;
+//   } else if (path === '/Admin/history') {
+//     return <HistoryPage />;
+//   } else if (path === '/Admin/brand') {
+//     return <BrandList />;
+//   } else if (path === '/Admin/export') {
+//     return <ExportPage categories={categoriesData} />;
+//   } else if (path === '/Admin/import') {
+//     return <ApiResponseModal />;
+//   } else if (path === '/Admin/price') {
+//     return <Price />;
+//   } else if (path === '/Admin/createuser') {
+//     return <CreateUser />;
+//   } else if (path === '/Admin/revokeprice') {
+//     return <RevokePrice />;
+//   } else if (path.startsWith('/product/:productId')) {
+//     return <ProductDetail categories={categoriesData} />;
+//   }
+
+//   return null; // Default fallback
+// };
   return (
     <div>
       <Header />
@@ -230,8 +267,11 @@ function HomePage() {
             OnExportClick={handleExportClick}
             OnImportClick={handleImportClick}
             OnPriceClick={handlePriceClick}
+            // OnPriceClick={() => handleNavigation('/Admin/price')}
             OnUserClick={handleCreateUserClick}
             OnRevokePriceClick={handleRevokePriceClick}
+            // OnRevokePriceClick={() => handleNavigation('/Admin/revokeprice')}
+
 
           />
         </div>
@@ -253,14 +293,14 @@ function HomePage() {
               ) : null
             } />
             <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
-            <Route path="/brand" element={  showBrand ? ( <BrandList />):null} />
+            <Route path="/vendor" element={  showBrand ? ( <BrandList />):null} />
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
             <Route path="/revokeprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
           </Routes>
-
+          {/* {renderContent()} */}
         </div>
       </div>
       <Footer />
@@ -269,3 +309,122 @@ function HomePage() {
 }
 
 export default HomePage;
+// import React, { useState, useEffect } from 'react';
+// import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+// import './HomePage.css';
+// import Sidebar from './sidebar/Sidebar';
+// import ProductList from './products/ProductList';
+// import ProductDetail from './products/ProductDetail';
+// import Header from '../Header/Header.js';
+// import Footer from '../Footer/Footer.js';
+// import CategoriesTable from './category/categorytable/CategoriesTable';
+// import VariantList from './variants/VariantList';
+// import AddProduct from './products/AddProduct';
+// import Dashboard from './dashboard/Dashboard';
+// import axiosInstance from '../../utils/axiosConfig.js';
+// import HistoryPage from './History/HistoryPage.js';
+// import BrandList from './brand/BrandList.js';
+// import ExportPage from './Export/ExportPage.js';
+// import ApiResponseModal from '../../ApiResponseModal.js';
+// import Price from './Price/Price.js';
+// import CreateUser from './Users/CreateUser.js';
+// import RevokePrice from './Price/RevokePrice.js';
+
+// function HomePage() {
+//   const [categoriesData, setCategoriesData] = useState([]);
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const [selectedProductTypeId, setSelectedProductTypeId] = useState(null);
+
+
+//   // Fetch categories
+//   const fetchCategories = async () => {
+//     try {
+//       const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+//       setCategoriesData(res.data.data);
+//     } catch (err) {
+//       console.error('ERROR', err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchCategories();
+//   }, []);
+
+//   // Handle Sidebar Navigation
+//   const handleNavigation = (path) => {
+//     navigate(path);
+//   };
+
+//   if (!categoriesData) {
+//     return (
+//       <div className="superAdmin-error-message">
+//         <p>Error loading dashboard data. Please try again later.</p>
+//       </div>
+//     );
+//   }
+
+//   // Determine active component based on current route
+//   const renderContent = () => {
+//     const path = location.pathname;
+
+//     if (path === '/' || path === '/Admin') {
+//       return <Dashboard />;
+//     } else if (path === '/Admin/categories') {
+//       return <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} />;
+//     } else if (path === '/Admin/products') {
+//       return <ProductList />;
+//     } else if (path === '/Admin/variants') {
+//       return <VariantList categories={categoriesData} />;
+//     } else if (path === '/Admin/addProduct') {
+//       return <AddProduct categories={categoriesData} />;
+//     } else if (path === '/Admin/history') {
+//       return <HistoryPage />;
+//     } else if (path === '/Admin/vendor') {
+//       return <BrandList />;
+//     } else if (path === '/Admin/export') {
+//       return <ExportPage categories={categoriesData} />;
+//     } else if (path === '/Admin/import') {
+//       return <ApiResponseModal />;
+//     } else if (path === '/Admin/price') {
+//       return <Price />;
+//     } else if (path === '/Admin/createuser') {
+//       return <CreateUser />;
+//     } else if (path === '/Admin/revokeprice') {
+//       return <RevokePrice />;
+//     } else if (path.startsWith('/product/:productId')) {
+//       return <ProductDetail categories={categoriesData} />;
+//     }
+
+//     return null; // Default fallback
+//   };
+
+//   return (
+//     <div>
+//       <Header />
+//       <div className="main-container">
+//         <div className="sidebar-container">
+//           <Sidebar
+//             setSelectedProductTypeId= {setSelectedProductTypeId}
+//             onCategoriesClick={() => handleNavigation('/Admin/categories')}
+//             onAllProductsClick={() => handleNavigation('/Admin/products')}
+//             OnAllVariantsClick={() => handleNavigation('/Admin/variants')}
+//             OnAddProductClick={() => handleNavigation('/Admin/addProduct')}
+//             onDashboardClick={() => handleNavigation('/Admin')}
+//             onHistoryClick={() => handleNavigation('/Admin/history')}
+//             onBrandClick={() => handleNavigation('/Admin/brand')}
+//             OnExportClick={() => handleNavigation('/Admin/export')}
+//             OnImportClick={() => handleNavigation('/Admin/import')}
+//             OnPriceClick={() => handleNavigation('/Admin/price')}
+//             OnUserClick={() => handleNavigation('/Admin/createuser')}
+//             OnRevokePriceClick={() => handleNavigation('/Admin/revokeprice')}
+//           />
+//         </div>
+//         <div className="right-container">{renderContent()}</div>
+//       </div>
+//       <Footer />
+//     </div>
+//   );
+// }
+
+// export default HomePage;

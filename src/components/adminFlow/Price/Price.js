@@ -70,8 +70,7 @@ const PriceComponent = () => {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllLastLevelIds/`);
       setCategories(response.data.data.last_level_category || []); // Assuming the response contains user list in `data`
     } catch (error) {
-      console.error("Error fetching users:", error);
-      Swal.fire({ title: "Error", text: "Failed to fetch users.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      Swal.fire({ title: "Error", text: "Failed to fetch Categories.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
     } finally {
       setLoading(false);
@@ -287,6 +286,7 @@ const PriceComponent = () => {
         setSelectedBrandIdForVariant(null);
         setVariantInputPrice('');
         setTableData([]);
+        fetchVariantOptions();
         fetchBrands();
         const tableHTML = `
         <div style="overflow-x: auto; max-height: 400px;">
@@ -429,9 +429,24 @@ const PriceComponent = () => {
       console.error("Error fetching variant options:", error);
     }
   };
+// useEffect(() => {
+//   fetchVariantOptions();
+// }, []); 
+const fetchAllData = async () => {
+  try {
+    setLoading(true);
+    await Promise.all([fetchBrands(), fetchCategories(), fetchVariantOptions()]);
+  } catch (error) {
+    console.error("Error loading data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Fetch data on component mount
 useEffect(() => {
-  fetchVariantOptions();
-}, []); 
+  fetchAllData();
+}, []);
 
 const handleVariantSelect = async(id) => {    
   const variant = variantOptions.find((option) => option.id === id);
@@ -755,7 +770,8 @@ const handleVariantValueRemove = (id) => {
                 <td>{row.price_option}</td>
                 <td>
                   <label className="switch">
-                    <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled={row.is_active}  />
+                    {/* <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled={row.is_active}  /> */}
+                    <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled />
                     <span className="slider"></span>
                   </label>
                   {row.is_active ? " Active" : " Inactive"}

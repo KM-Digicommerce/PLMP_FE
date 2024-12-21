@@ -115,7 +115,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       }
       setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
-      navigate('/Admin/brand'); 
+      navigate('/Admin/vendor'); 
     }
     else if (section === 'export' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/export'); 
