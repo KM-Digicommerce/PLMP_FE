@@ -146,23 +146,19 @@ const PriceComponent = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const handleClickOutsideForVariant = (event) => {
+    if ( dropdownRefForValue.current && !dropdownRefForValue.current.contains(event.target) ) {
+      setDropdownOpenForValue(false);
+    }
+  };
   const [dropdownOpenForValue, setDropdownOpenForValue] = useState(false);
   useEffect(() => {
-    const handleClickOutsideForVariant = (event) => {
-      if (
-        dropdownRefForValue.current &&
-        !dropdownRefForValue.current.contains(event.target)
-      ) {
-        setDropdownOpenForValue(false);
-      }
-    };
-
     document.addEventListener("mousedown", handleClickOutsideForVariant);
     return () => {
       document.removeEventListener("mousedown", handleClickOutsideForVariant);
     };
   }, []);
- 
+
   const handleBrandSelect = (brand) => {
     if (brand && brand.id) {
       setProductTableDataAfterSave([]);
@@ -493,7 +489,6 @@ const handleVariantValueSelect = (event) => {
       }      
     }
   }
-  setDropdownOpenForValue(false);
 };
 
 const handleVariantValueRemove = (id) => {

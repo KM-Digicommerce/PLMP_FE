@@ -202,9 +202,8 @@ const handlePriceChange = async (event) => {
   };
 
   const handleRevokeApply = async () => {
-    if (selectedCategoryIds && selectedBrandId && priceOption && previousPriceInput > 0) {
+    if (selectedCategoryIds && selectedBrandId && priceOption ) {
       try {
-        // setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForCategory/`,
           { category_id: selectedCategoryIds,
             brand_id: selectedBrandId,
@@ -269,7 +268,7 @@ const handlePriceChange = async (event) => {
     }
   };
   const handleVariantRevokeApply = async () => {
-    if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption && previousVariantPriceInput > 0) {
+    if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption) {
         try {
         // setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForVarientOption/`,
@@ -368,7 +367,6 @@ const handleVariantValueSelect = (event) => {
       }      
     }
   }
-  setDropdownOpenForValue(false);
 };
 
 const handleVariantValueRemove = (id) => {
@@ -497,7 +495,7 @@ const handleVariantValueRemove = (id) => {
     <button
       onClick={() => handleRevokeApply()}
       style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
-      className="add-brand-btn revoke_btn" disabled={previousPriceInput === 0}> Revoke </button>
+      className="add-brand-btn revoke_btn" disabled={currentPriceInput === 0}> Revoke </button>
   </div>
 </div>
 
@@ -638,7 +636,7 @@ const handleVariantValueRemove = (id) => {
     <button
       onClick={() => handleVariantRevokeApply()}
       style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
-      className="add-brand-btn revoke_variant_btn" disabled={previousVariantPriceInput === 0}>
+      className="add-brand-btn revoke_variant_btn" disabled={currentVariantPriceInput === 0}>
       Revoke
     </button>
   </div>
