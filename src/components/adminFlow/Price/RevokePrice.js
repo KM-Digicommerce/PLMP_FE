@@ -312,7 +312,7 @@ const handlePriceChange = async (event) => {
   const fetchVariantOptions = async () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptionForRetailPrice/`);      
-      setVariantOptions(response.data.data.varient_option_list );
+      setVariantOptions(response.data.data.varient_option_list);
     } catch (error) {
       console.error("Error fetching variant options:", error);
     }
@@ -533,11 +533,18 @@ const handleVariantValueRemove = (id) => {
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="">Select Variant</option>
-          {variantOptions?.map((variant) => (
+          {/* {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))}
+          ))} */}
+          {variantOptions
+  ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
+  .map((variant) => (
+    <option key={variant.id} value={variant.id}>
+      {variant.name}
+    </option>
+  ))}
         </select>
 
         {selectedVariant && (

@@ -214,7 +214,9 @@ const PriceComponent = () => {
     setcurrencyOption(e.target.value);
   };
   const handlePriceApply = async () => {
-    if (selectedCategoryIds && selectedBrand && priceOption && priceInput) {
+    console.log('Inside Handle price Apply');
+    
+    if (selectedCategoryIds.length > 0 && selectedBrand && priceOption && priceInput) {
       try {
         setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRetailPrice/`,
@@ -246,7 +248,7 @@ const PriceComponent = () => {
       }
     }
     else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      Swal.fire({  text: "Please Enter the all fields to apply",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
     }
   };
@@ -527,7 +529,7 @@ const handleVariantValueRemove = (id) => {
     </div>
 
     <div style={{ margin: "10px 0" }}>
-      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category</h3>
+      <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category  <span className="required">*</span> </h3>
       <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
         <div
           style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -644,11 +646,18 @@ const handleVariantValueRemove = (id) => {
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="">Select Variant</option>
-          {variantOptions?.map((variant) => (
+          {/* {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))}
+          ))} */}
+           {variantOptions
+  ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
+  .map((variant) => (
+    <option key={variant.id} value={variant.id}>
+      {variant.name}
+    </option>
+  ))}
         </select>
 
         {selectedVariant && (
