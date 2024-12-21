@@ -134,7 +134,7 @@ function Dashboard() {
           <p>{dashboardData.total_product}</p>
         </div>
         <div className="card card-green">
-          <h3>Total Brands</h3>
+          <h3>Total Vendors</h3>
           <p>{dashboardData.total_brand}</p>
         </div>
         <div className="card card-yellow">

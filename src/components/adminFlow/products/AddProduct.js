@@ -28,23 +28,23 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
     
     const handleAddBrand = async () => {
         const { value: brandName } = await Swal.fire({
-          title: 'Add New Brand',
+          title: 'Add New Vendor',
           input: 'text',
-          inputLabel: 'Brand Name',
-          inputPlaceholder: 'Enter the brand name',
+          inputLabel: 'Vendor Name',
+          inputPlaceholder: 'Enter the Vendor name',
           showCancelButton: true,
         });
     
         if (brandName) {
           try {
             await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
-            Swal.fire({  title: 'Success!',  text: 'Brand added successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {    container: 'swal-custom-container',    popup: 'swal-custom-popup',    title: 'swal-custom-title',    confirmButton: 'swal-custom-confirm',    cancelButton: 'swal-custom-cancel',
+            Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {    container: 'swal-custom-container',    popup: 'swal-custom-popup',    title: 'swal-custom-title',    confirmButton: 'swal-custom-confirm',    cancelButton: 'swal-custom-cancel',
               },
             });
             fetchBrand();
           } catch (error) {
-            console.error('Error adding brand:', error);
-            Swal.fire({ title: 'Error', text: 'Failed to add brand.', icon: 'error', confirmButtonText: 'OK', customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel',
+            console.error('Error adding Vendor:', error);
+            Swal.fire({ title: 'Error', text: 'Failed to add Vendor.', icon: 'error', confirmButtonText: 'OK', customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel',
               },
             });
           }
@@ -91,16 +91,16 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
                     <input type="text" name="breadcrumb" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
                     <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
-                        Brand <span className="required">*</span>
+                        Vendor <span className="required">*</span>
                     </label>
                     <button
                         type="button"
                         onClick={handleAddBrand} // Function to handle the "Add Brand" action
                         style={{ marginLeft: 'auto', backgroundColor: '#007bff', color: '#fff', border: 'none', width:'15%', padding: '8px 8px', borderRadius: '4px', cursor: 'pointer' }} >
-                        Add Brand
+                        Add Vendor
                     </button>
                     <select  id="brand-select"  name="brand_id"  required  value={productData.product_obj.brand_id || ''}  onChange={handleChange}  className="dropdown"  style={{ width: '94%', margin: '6px 20px 6px 10px' }} >
-                        <option value="">Select Brand</option>
+                        <option value="">Select Vendor</option>
                         {brand.map((item) => (
                             <option value={item.id}>
                                 {item.name}
@@ -422,8 +422,8 @@ const AddProduct = (categories) => {
                   setShowRetailPriceOption(response.data.data.price_option);
             }
             catch (error) {
-                  console.error("Error sending brand and category name:", error);
-                  Swal.fire({  title: "Error",  text: "An error occurred while sending brand and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+                  console.error("Error sending Vendor and category name:", error);
+                  Swal.fire({  title: "Error",  text: "An error occurred while sending Vendor and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
                 }
         }
          if (name === 'brand_id' && value === '') {

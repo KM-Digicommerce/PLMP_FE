@@ -1,0 +1,10 @@
+.revoke_btn:disabled {
+    background-color: grey; /* Grey color for disabled button */
+    color: #ccc; /* Lighter text color for better contrast */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+  }
+  .revoke_variant_btn:disabled {
+    background-color: grey; /* Grey color for disabled button */
+    color: #ccc; /* Lighter text color for better contrast */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+  }

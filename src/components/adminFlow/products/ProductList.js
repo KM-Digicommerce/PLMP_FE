@@ -134,11 +134,11 @@ const ProductList = () => {
               <th className="checkbox-column" onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="mpn-column" onClick={() => handleSort("mpn")}>MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="product-column" onClick={() => handleSort("product_name")}>Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
-              <th className="brand-column" onClick={() => handleSort("brand")}>Brand {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="brand-column" onClick={() => handleSort("brand")}>Vendor {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="taxonomy-column" style={{ width: '16%' }} onClick={() => handleSort("taxonomy")}>Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               {/* <th className="price-column" onClick={() => handleSort("base_price")}>Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="msrpprice-column" onClick={() => handleSort("msrp")}>MSRP {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th> */}
-              <th className="model-column" onClick={() => handleSort("model")}>Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              {/* <th className="model-column" onClick={() => handleSort("model")}>Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th> */}
             </tr>
           </thead>
           <tbody>
@@ -174,7 +174,7 @@ const ProductList = () => {
                 <td className="attributes-column">{item.category_name}</td>
                 {/* <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
                 <td className="msrpprice-column">{item.msrp ? `$${item.msrp}` : ''}</td> */}
-                <td className="model-column">{item.model}</td>
+                {/* <td className="model-column">{item.model}</td> */}
               </tr>
             ))}
           </tbody>
