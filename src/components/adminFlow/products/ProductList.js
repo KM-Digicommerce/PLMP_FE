@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter,faList } from '@fortawesome/free-solid-svg-icons';
+import { faFilter,faSort } from '@fortawesome/free-solid-svg-icons';
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);
@@ -164,7 +164,7 @@ const ProductList = () => {
           style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px' }}
         />
         <FontAwesomeIcon
-          icon={faList}
+          icon={faSort}
           onClick={handleSortClick}
           style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px'}}
         />
