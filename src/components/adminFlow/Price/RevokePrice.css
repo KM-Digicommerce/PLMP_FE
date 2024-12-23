@@ -8,3 +8,6 @@
     color: #ccc; /* Lighter text color for better contrast */
     cursor: not-allowed; /* Change cursor to indicate disabled state */
   }
+input[type="number"] {
+    margin: 2px 0px !important;
+  }

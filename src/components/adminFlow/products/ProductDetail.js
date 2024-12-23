@@ -872,7 +872,11 @@ const ProductDetail = ({ categories }) => {
                                             />
                                             <div style={{ display: "flex", justifyContent: "space-between" }}>
                                                 <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price</label>
-                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
+                                                {RetailPrice === 1 ? (
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X ` : '0X'}(by default)</label>
+                                                ) : (
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
+                                                )}
                                             </div>
 
                                             <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />

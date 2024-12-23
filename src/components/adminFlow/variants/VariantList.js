@@ -680,17 +680,15 @@ const VariantList = ({ categories }) => {
                 </button>
             )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            {variantsData.varient_list && variantsData.varient_list.length > 0 && (
+            {variantsData.varient_list && variantsData.varient_list.length > 0 ? (
                 <div>
-
-
                     {variantsData.varient_list && (
                         <div className="variant-container">
                             <div className="variant-header">
                                 <span>Variants</span>
                             </div>
 
-                            {variantList.length > 0 && (
+                            {variantList.length > 0 ? (
                                 <div className="variant-container">
                                     <div className="variant-option-table">
                                         <table>
@@ -738,12 +736,18 @@ const VariantList = ({ categories }) => {
                                         </table>
                                     </div>
                                 </div>
-                            )}
+                            ): (
+                                <div>No variants found 1</div>
+                              )}
                         </div>
                     )}
 
                 </div>
-            )}
+            ):(
+                <div className="variant-container">
+    <div className="no-variants-message">No variants found </div>
+    </div>
+              )}
         </div>
     );
 };
