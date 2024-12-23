@@ -130,3 +130,10 @@ width:47%;
   font-size: 16px;
   font-weight: 500;
 }
+.no-variants-message {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-top: 20px;
+  color: #555;
+}

@@ -32,6 +32,10 @@ const PriceComponent = () => {
   const [variantTypeValues, setVariantTypeValues] = useState([]); // Example data, replace with API call
   const [selectedVariantValues, setSelectedVariantValues] = useState([]);
   const [selectedVariantValueIds, setSelectedVariantValueIds] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formSubmittedForVariant, setFormSubmittedForVariant] = useState(false);
 
   const dropdownRefForValue = useRef(null);
   const handleToggle = async (index) => {
@@ -68,7 +72,8 @@ const PriceComponent = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllLastLevelIds/`);
-      setCategories(response.data.data.last_level_category || []); // Assuming the response contains user list in `data`
+      setCategories(response.data.data.last_level_category || []); 
+      setFilteredCategories(response.data.data.last_level_category || []); 
     } catch (error) {
       Swal.fire({ title: "Error", text: "Failed to fetch Categories.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
@@ -80,39 +85,52 @@ const PriceComponent = () => {
     fetchBrands();
     fetchCategories();
   }, []);
-  
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+      const filtered = categories.filter((category) =>
+      category.name.toLowerCase().includes(query)
+    );
+    setFilteredCategories(filtered);
+  };
   const handleCategorySelect = (e) => {
     const categoryId = e.target.value;
+  
     if (categoryId === "all") {
-        const allCategoryIds = categories.map(cat => cat.id); 
-        setSelectedCategories([{ name: "Apply to all categories" }]); 
-        setSelectedCategoryIds(allCategoryIds);
-        fetchPriceTableData(allCategoryIds); 
+      const allCategoryIds = categories.map((cat) => cat.id);
+      setSelectedCategories([{ name: "Apply to all categories" }]);
+      setSelectedCategoryIds(allCategoryIds);
+      fetchPriceTableData(allCategoryIds);
     } else {
-        const category = categories.find(category => category.id === categoryId);
-        const allCategoryIds = selectedCategories.map(cat => cat.name); 
-        if (allCategoryIds[0] === "Apply to all categories") {
-          setSelectedCategories([]); 
-          setSelectedCategoryIds([]);
-        }
-        if (category) {
-          if (!selectedCategories.some(selectedCategory => selectedCategory.id === category.id)) {
-            setSelectedCategories(prevSelectedCategories => [...prevSelectedCategories, category]);
-            setSelectedCategoryIds((prevSelectedCategoryIds) => {
-              if (prevSelectedCategoryIds.length === 0) {
-                const newCategoryIds = [category.id];
-                fetchPriceTableData(newCategoryIds); 
-                return newCategoryIds;
-              } else {
-                const newCategoryIds = [...prevSelectedCategoryIds, category.id];
-                fetchPriceTableData(newCategoryIds); 
-                return newCategoryIds;
-              }
-            });
+      const category = categories.find((category) => category.id === categoryId);
+  
+      if (category) {
+        if (selectedCategoryIds.includes(category.id)) {
+          setSelectedCategories((prevSelectedCategories) =>
+            prevSelectedCategories.filter((selectedCategory) => selectedCategory.id !== category.id)
+          );
+          setSelectedCategoryIds((prevSelectedCategoryIds) =>
+            prevSelectedCategoryIds.filter((id) => id !== category.id)
+          );
+          fetchPriceTableData(selectedCategoryIds.filter((id) => id !== category.id));
+        } else {
+          if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+            setSelectedCategories([]);
+            setSelectedCategoryIds([]);
           }
+          setSelectedCategories((prevSelectedCategories) => [
+            ...prevSelectedCategories,
+            category,
+          ]);
+          setSelectedCategoryIds((prevSelectedCategoryIds) => {
+            const newCategoryIds = [...prevSelectedCategoryIds, category.id];
+            fetchPriceTableData(newCategoryIds);
+            return newCategoryIds;
+          });
         }
+      }
     }
-};
+  };
   const handleCategoryRemove = (categoryId) => {
     if (categoryId === "all") {
       setSelectedCategories([]);
@@ -213,177 +231,161 @@ const PriceComponent = () => {
   const handleCurrencyChange = (e) => {
     setcurrencyOption(e.target.value);
   };
-  const handlePriceApply = async () => {
-    console.log('Inside Handle price Apply');
-    
-    if (selectedCategoryIds.length > 0 && selectedBrand && priceOption && priceInput) {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRetailPrice/`,
-          { category_id_list: selectedCategoryIds,
-            brand_id: selectedBrandId,
-            price_option:priceOption,
-            price:priceInput
-           }
-        );
-        if (response.status === 200) {
-          Swal.fire({ title: "Success", text: "Applied Based on Vendor & Category wise Successfully", icon: 'success', confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+  const handlePriceApply = async () => {   
+    setFormSubmitted(true);
+    if (!selectedBrand || !selectedCategoryIds.length || !priceInput) {
+      Swal.fire({  text: "Please Enter all fields to apply",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
           });
-        }
-        console.log(response,'response');
-        setBrands([]);
-        setSelectedBrand(null);
-        setSelectedBrandId(null);
-        setSelectedCategories([]);
-        setSelectedCategoryIds([]);
-        setInputPrice('');
-        setTableData([]);
-        fetchBrands();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    else{
-      Swal.fire({  text: "Please Enter the all fields to apply",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-      });
+            } else {
+              try {
+                setLoading(true);
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRetailPrice/`,
+                  { category_id_list: selectedCategoryIds,
+                    brand_id: selectedBrandId,
+                    price_option:priceOption,
+                    price:priceInput
+                   }
+                );
+                if (response.status === 200) {
+                  Swal.fire({ title: "Success", text: "Applied Based on Vendor & Category wise Successfully", icon: 'success', confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                  });
+                  setFormSubmitted(false);
+                }
+                console.log(response,'response');
+                setBrands([]);
+                setSelectedBrand(null);
+                setSelectedBrandId(null);
+                setSelectedCategories([]);
+                setSelectedCategoryIds([]);
+                setInputPrice('');
+                setTableData([]);
+                fetchBrands();
+              } catch (error) {
+                console.error("Error fetching data:", error);
+                Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                });
+              } finally {
+                setLoading(false);
+              }
+      console.log("Form submitted successfully");
     }
   };
   const handleVariantPriceApply = async () => {
-    if (selectedVariantId && selectedBrandIdForVariant && selectedVariantValueIds && variantpriceOption && currencyOption && VariantpriceInput) {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductBasedOnVarientOption/`,
-          { 
-            brand_id: selectedBrandIdForVariant,
-            option_name_id:selectedVariantId,
-            option_value_id:selectedVariantValueIds,
-            price_option:variantpriceOption,
-            price_symbol:currencyOption,
-            price:VariantpriceInput
-           }
-        );
-        if (response.status === 200) {
-          Swal.fire({ title: "Success", text: "Applied Based on Vendor & Variant wise Successfully", icon: 'success', confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+    setFormSubmittedForVariant(true);
+    if (!selectedBrandIdForVariant || !selectedVariantValueIds.length || !selectedVariantId || !variantpriceOption || !currencyOption ||!VariantpriceInput) {
+      Swal.fire({  text: "Please Enter all fields to apply",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
           });
-        }
-        console.log(response,'response');
-        // setProductTableData(response.data.data);
-        setBrands([]);
-        setVariantOptions([]);
-        setSelectedVariant([]);
-        setSelectedVariantValues([]);
-        setVariantTypeValues([]);
-        setVariantOptions([]);
-        setSelectedVariant(null); 
-        setSelectedVariantValueIds([]);
-        setSelectedBrandForVariant(null);
-        setSelectedBrandIdForVariant(null);
-        setVariantInputPrice('');
-        setTableData([]);
-        fetchVariantOptions();
-        fetchBrands();
-        const tableHTML = `
-        <div style="overflow-x: auto; max-height: 400px;">
-          <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
-            <thead>
-              <tr>
-                <th style="padding: 10px;">Image</th>
-                <th style="padding: 10px;">Product Name</th>
-                <th style="padding: 10px;">Variant Value</th>
-                <th style="padding: 10px;">Unfinished Price</th>
-                <th style="padding: 10px;">Finished Price</th>
-                <th style="padding: 10px;">Retail Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${response.data.data
-                .map((row) => {
-                  const image = Array.isArray(row.image_url)
-                    ? row.image_url[0]
-                    : row.image_url;
-                  const variantOptions = row.varient_option_list
-                    .map((option) => `${option.type_name}: ${option.type_value}`)
-                    .join("<br>");
-                  return `
-                    <tr>
-                      <td style="padding: 10px;"><img src="${image}" alt="${row.product_name}" style="width: 50px; height: 50px; border-radius: 50%;"></td>
-                      <td style="padding: 10px;">${row.product_name}</td>
-                      <td style="padding: 10px;">${variantOptions}</td>
-                      <td style="padding: 10px;">${row.un_finished_price}</td>
-                      <td style="padding: 10px;">${row.finished_price}</td>
-                      <td style="padding: 10px;">${row.retail_price}</td>
-                    </tr>`;
-                })
-                .join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
-
-      // Display the Swal popup with the table
-      Swal.fire({
-        title: "Fetched Data",
-        html: tableHTML,
-        showConfirmButton: false,
-        width: "80%",
-        customClass: {
-          container: "swal-custom-container",
-          popup: "swal-custom-popup",
-          title: "swal-custom-title",
-        },
-        didRender: () => {
-          const saveButton = document.createElement("button");
-          saveButton.innerHTML = "Save Changes";
-          saveButton.style = "padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;";
-          saveButton.onclick = async() => {
-            try {
-              const saveresponse =  await axiosInstance.post(`${process.env.REACT_APP_IP}/saveChangesForVarientOption/`,
-                { result_list: response.data.data,
-                 }
-              );
-              console.log(saveresponse,'saveresponse');
-              console.log(saveresponse.status,'saveresponse.status');
-              
-              if (saveresponse.status === 200) {
-                setProductTableDataAfterSave(response.data.data);
-              }
-            } catch (error) {
-              console.error("Error fetching data:", error);
-              Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+            } 
+            else{
+              try {
+                setLoading(true);
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductBasedOnVarientOption/`,
+                  { 
+                    brand_id: selectedBrandIdForVariant,
+                    option_name_id:selectedVariantId,
+                    option_value_id:selectedVariantValueIds,
+                    price_option:variantpriceOption,
+                    price_symbol:currencyOption,
+                    price:VariantpriceInput
+                   }
+                );
+                if (response.status === 200) {
+                  Swal.fire({ title: "Success", text: "Applied Based on Vendor & Variant wise Successfully", icon: 'success', confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                  });
+                  setFormSubmittedForVariant(false);
+                }
+                console.log(response,'response');
+                // setProductTableData(response.data.data);
+                setBrands([]);
+                setVariantOptions([]);
+                setSelectedVariant([]);
+                setSelectedVariantValues([]);
+                setVariantTypeValues([]);
+                setVariantOptions([]);
+                setSelectedVariant(null); 
+                setSelectedVariantValueIds([]);
+                setSelectedBrandForVariant(null);
+                setSelectedBrandIdForVariant(null);
+                setVariantInputPrice('');
+                setTableData([]);
+                fetchVariantOptions();
+                fetchBrands();
+                const tableHTML = `
+                <div style="overflow-x: auto; max-height: 400px;">
+                  <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <thead>
+                      <tr>
+                        <th style="padding: 10px;">Image</th>
+                        <th style="padding: 10px;">Product Name</th>
+                        <th style="padding: 10px;">Variant Value</th>
+                        <th style="padding: 10px;">Unfinished Price</th>
+                        <th style="padding: 10px;">Finished Price</th>
+                        <th style="padding: 10px;">Retail Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${response.data.data
+                        .map((row) => {
+                          const image = Array.isArray(row.image_url)
+                            ? row.image_url[0]
+                            : row.image_url;
+                          const variantOptions = row.varient_option_list
+                            .map((option) => `${option.type_name}: ${option.type_value}`)
+                            .join("<br>");
+                          return `
+                            <tr>
+                              <td style="padding: 10px;"><img src="${image}" alt="${row.product_name}" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                              <td style="padding: 10px;">${row.product_name}</td>
+                              <td style="padding: 10px;">${variantOptions}</td>
+                              <td style="padding: 10px;">${row.un_finished_price}</td>
+                              <td style="padding: 10px;">${row.finished_price}</td>
+                              <td style="padding: 10px;">${row.retail_price}</td>
+                            </tr>`;
+                        })
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+        
+              // Display the Swal popup with the table
+              Swal.fire({  title: "Fetched Data",  html: tableHTML,  showConfirmButton: false,  width: "80%",
+                customClass: {  container: "swal-custom-container",  popup: "swal-custom-popup",  title: "swal-custom-title", },
+                didRender: () => {
+                  const saveButton = document.createElement("button");
+                  saveButton.innerHTML = "Save Changes";
+                  saveButton.style = "padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;";
+                  saveButton.onclick = async() => {
+                    try {
+                      const saveresponse =  await axiosInstance.post(`${process.env.REACT_APP_IP}/saveChangesForVarientOption/`,
+                        { result_list: response.data.data,
+                         }
+                      );
+                      console.log(saveresponse,'saveresponse');
+                      console.log(saveresponse.status,'saveresponse.status');
+                      
+                      if (saveresponse.status === 200) {
+                        setProductTableDataAfterSave(response.data.data);
+                      }
+                    } catch (error) {
+                      console.error("Error fetching data:", error);
+                      Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                      });
+                    }
+                    Swal.fire({  title: "Changes Saved",  text: "Your changes have been saved successfully!",  icon: "success",  confirmButtonText: "OK",  customClass: {  container: "swal-custom-container",  popup: "swal-custom-popup",  title: "swal-custom-title",  confirmButton: 'swal-custom-confirm', },
+                    });
+                  };
+                  Swal.getHtmlContainer().appendChild(saveButton);
+                },
               });
+              } catch (error) {
+                console.error("Error fetching data:", error);
+                Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                });
+              } finally {
+                setLoading(false);
+              }
             }
-            Swal.fire({
-              title: "Changes Saved",
-              text: "Your changes have been saved successfully!",
-              icon: "success",
-              confirmButtonText: "OK",
-              customClass: {
-                container: "swal-custom-container",
-                popup: "swal-custom-popup",
-                title: "swal-custom-title",
-                confirmButton: 'swal-custom-confirm',
-              },
-            });
-          };
-          Swal.getHtmlContainer().appendChild(saveButton);
-        },
-      });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-      });
-    }
   };
  
   const fetchPriceTableDataBrand = async (BrandID) => {    
@@ -464,31 +466,41 @@ const handleVariantRemove = () => {
   setSelectedVariant(null); // Remove selected variant
 };
 
-
 const handleVariantValueSelect = (event) => {
   const selectedValueId = event.target.value;
+
   if (selectedValueId === "all") {
     const allVariantValueIds = variantTypeValues.map((value) => value.id);
     setSelectedVariantValues([{ name: "Apply to all variant values" }]);
     setSelectedVariantValueIds(allVariantValueIds);
-  } else {    
+  } else {
     const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
-    const allVariantValueNames = selectedVariantValues.map((value) => value.name);
-    if (allVariantValueNames[0] === "Apply to all variant values") {
-      setSelectedVariantValues([]);
-      setSelectedVariantValueIds([]);
-    }
+
     if (selectedValue) {
-      if (!selectedVariantValueIds.includes(selectedValue.id)) {
+      if (selectedVariantValueIds.includes(selectedValue.id)) {
+        setSelectedVariantValues((prevSelectedValues) =>
+          prevSelectedValues.filter((value) => value.id !== selectedValue.id)
+        );
+        setSelectedVariantValueIds((prevSelectedValueIds) =>
+          prevSelectedValueIds.filter((id) => id !== selectedValue.id)
+        );
+      } else {
+        if (
+          selectedVariantValues.length === 1 &&
+          selectedVariantValues[0].name === "Apply to all variant values"
+        ) {
+          setSelectedVariantValues([]);
+          setSelectedVariantValueIds([]);
+        }
         setSelectedVariantValues((prevSelectedValues) => [
           ...prevSelectedValues,
           { id: selectedValue.id, name: selectedValue.name },
         ]);
-        setSelectedVariantValueIds((prevSelectedValueIds) => {
-          const newVariantValueIds = [...prevSelectedValueIds, selectedValue.id];
-          return newVariantValueIds;
-        });
-      }      
+        setSelectedVariantValueIds((prevSelectedValueIds) => [
+          ...prevSelectedValueIds,
+          selectedValue.id,
+        ]);
+      }
     }
   }
 };
@@ -509,8 +521,8 @@ const handleVariantValueRemove = (id) => {
 
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
-        <option value="">Select a Vendor</option>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
+        <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id}>
             {brand.name}
@@ -530,51 +542,49 @@ const handleVariantValueRemove = (id) => {
 
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category  <span className="required">*</span> </h3>
-      <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
+      <div ref={dropdownRef} style={{ position: "relative", display: "inline-block",}}>
         <div
-          style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
+          style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && selectedCategoryIds.length === 0  ? "1px solid red"  : "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
           }}
           onClick={() => setDropdownOpen((prev) => !prev)}
         >
-          Select a category
+          Select Category
           <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
         </div>
 
         {dropdownOpen && (
-          <div style={{ width: "225px", border: "1px solid #ccc", backgroundColor: "#fff", zIndex: 1000, maxHeight: "120px", overflowY: "auto", padding: "8px", position: "absolute", top: "110%", left: 0, boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", borderRadius: "5px" }}>
-            <div
-              style={{
-                padding: "8px",
-                cursor: "pointer",
-                background: "lightgrey",
-                borderRadius: "4px",
-                marginBottom: "4px",
-                fontSize: "14px",
-              }}
-              onClick={() => handleCategorySelect({ target: { value: "all" } })}
-            >
-              Apply to all categories
-            </div>
-            {categories.map((category) => (
-              <div
-                style={{
-                  padding: "6px",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",
-                  fontSize: "14px",
-                  marginBottom: "2px",
-                }}
-                onClick={() => handleCategorySelect({ target: { value: category.id } })}
-              >
-                {selectedCategoryIds.includes(category.id) && (
-                  <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
-                )}
-                {category.name}
-              </div>
-            ))}
-          </div>
-        )}
+  <div
+    style={{  width: "228px",  border: "1px solid #ccc",  backgroundColor: "#fff",  zIndex: 1000,  maxHeight: "130px",  overflowY: "auto",  padding: "8px",  position: "absolute",  top: "110%",  left: 0,  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",  borderRadius: "5px",
+    }}
+  >
+    <input type="text" placeholder="Search category..." value={searchQuery} onChange={handleSearchChange} className="dropdown-search-input"
+      onClick={(e) => e.stopPropagation()}   style={{ width: "92%", padding: "6px", marginBottom: "8px", fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px",  }}
+    />
+    <div
+      style={{ padding: "8px", cursor: "pointer", background: "lightgrey", borderRadius: "4px", marginBottom: "4px", fontSize: "14px",  }}
+      onClick={() => handleCategorySelect({ target: { value: "all" } })}  >
+      Apply to all categories
+    </div>
+    {filteredCategories.length > 0 ? (
+      filteredCategories.map((category) => (
+        <div
+          style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",  fontSize: "14px",  marginBottom: "2px",
+          }}
+          onClick={() => handleCategorySelect({ target: { value: category.id } })}
+        >
+          {selectedCategoryIds.includes(category.id) && (
+            <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
+          )}
+          {category.name}
+        </div>
+      ))
+    ) : (
+      <div style={{ padding: "6px", fontSize: "14px", color: "#999" }}>
+        No categories found.
+      </div>
+    )}
+  </div>
+)}
       </div>
 
       <div style={{ marginTop: "12px", display: "inline-block" }}>
@@ -594,10 +604,10 @@ const handleVariantValueRemove = (id) => {
     <div style={{ margin: '20px 0px 0px 0px', width: '100%' }}>
       <h5 style={{ marginTop: '0px', display: "inline-block", width: '26%' }}>Retail Pricing Logic</h5>
       <div style={{ margin: '0px 0px 0px 20px', display: "inline-block", width: '24%' }}>
-        <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} min="0" style={{ width: "45%", paddingRight: "30px", backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", backgroundSize: "16px 16px", }} />
+        <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} min="0" style={{ width: "45%", paddingRight: "30px", backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", backgroundSize: "16px 16px", border: formSubmitted && !priceInput ? "1px solid red" : "1px solid #ccc", }} />
       </div>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block" }}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block", border: "1px solid #ccc"}}>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
@@ -613,8 +623,8 @@ const handleVariantValueRemove = (id) => {
 
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span> </h4>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
-        <option value="">Select a Vendor</option>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
+        <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id} >
             {brand.name}
@@ -639,7 +649,7 @@ const handleVariantValueRemove = (id) => {
           style={{
             padding: "10px",
             borderRadius: "5px",
-            border: "1px solid #ccc",
+            border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc",
             width: "248px",
             display: "inline-block",
           }}
@@ -673,10 +683,10 @@ const handleVariantValueRemove = (id) => {
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Variant Value  <span className="required">*</span></h3>
       <div ref={dropdownRefForValue} style={{ position: "relative", display: "inline-block" }}>
         <div
-          style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "225px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
+          style={{  padding: "10px",  borderRadius: "5px",  border: formSubmittedForVariant && !selectedVariantValueIds.length ? "1px solid red" : "1px solid #ccc",   width: "225px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
           }}
           onClick={() => setDropdownOpenForValue((prev) => !prev)}  >
-          Select a variant value
+          Select Variant Value
           <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
         </div>
 
@@ -723,7 +733,7 @@ const handleVariantValueRemove = (id) => {
       style={{ margin: "0px 0px 0px 15px", display: "inline-block", width: "10%", }} >
       <input className="" id="" type="number" value={VariantpriceInput} placeholder="value" required 
       onChange={handleVariantInputChange} 
-        style={{ width: "70%", }} />
+        style={{ width: "70%",  border: formSubmittedForVariant && !VariantpriceInput ? "1px solid red" : "1px solid #ccc",  }}  />
     </div>
     <div  style={{ margin: "0px 0px 0px 20px", display: "inline-block", width: '14%' }} >
       <select
@@ -736,8 +746,7 @@ const handleVariantValueRemove = (id) => {
     </div>
     <div
       style={{ margin: "0px 0px 0px 0px", display: "inline-block", }} >
-      <select value={variantpriceOption} onChange={handleVariantPriceChange} className="sort-dropdown"
-        style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block", }} >
+      <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block", }} >
         <option value="finished_price">Finished Wholesale Price</option>
         <option value="un_finished_price">Unfinished Wholesale Price</option>
       </select>
@@ -751,7 +760,7 @@ const handleVariantValueRemove = (id) => {
   </div>
 </div>
 
-      {tableData.length > 0 && (
+      {tableData.length > 0 ? (
         <table
           border="1"
           style={{ marginTop: "20px", width: "100%", textAlign: "left" }}
@@ -784,6 +793,27 @@ const handleVariantValueRemove = (id) => {
             ))}
           </tbody>
         </table>
+      ):(
+        <table
+        border="1"
+        style={{ marginTop: "20px", width: "100%", textAlign: "left" }}
+      >
+        <thead>
+          <tr>
+            <th>Vendor Name</th>
+            <th>Category Name</th>
+            <th>Retail Price</th>
+            <th>Price Option</th>
+            <th>Is Active</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+  <td colSpan="5"  style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>No Pricing found.</td>
+</tr>
+
+        </tbody>
+      </table>
       )}
 <div>
 {productTableDataAfterSave.length > 0 && (
@@ -833,9 +863,6 @@ const handleVariantValueRemove = (id) => {
           </tbody>
         </table>
       )}
-      {/* <div style={{float:'right'}}>
-      <button style={{width:'12%'}}>Save Changes</button>
-      </div> */}
 </div>
 
     </div>

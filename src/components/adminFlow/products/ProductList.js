@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductList.css';
 import axiosInstance from '../../../../src/utils/axiosConfig';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter,faSort } from '@fortawesome/free-solid-svg-icons';
 
 const ProductList = () => {
   const [responseData, setResponseData] = useState([]);
@@ -13,7 +15,12 @@ const ProductList = () => {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortOption, setSortOption] = useState(''); // default value to 'newest'
-
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [searchVisible, setSearchVisible] = useState(false);
+    const [sortVisible, setSortVisible] = useState(false);
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -22,25 +29,19 @@ const ProductList = () => {
       setSortOrder("asc");
     }
   };
-
   const handleSortChange = async (event) => {
     const selectedOption = event.target.value;
     if (selectedOption) {
       setSortOption(selectedOption);
     const filter = selectedOption === 'newest' ? true : false;
-    fetchData(filter);
-    }
-      else{
-        setSortOption('');
-      }    
+    fetchData({ filter });
+  }
+      else{  setSortOption(''); }    
   };
-
-  const fetchData = async (filter) => {
+  const fetchData = async (params = {}) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
-        params: { filter }
-      });
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
 
       if (response.data && response.data.data && response.data.data.product_list) {
         setResponseData(response.data.data.product_list);
@@ -53,11 +54,45 @@ const ProductList = () => {
       setLoading(false);
     }
   };
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllLastLevelIds/`);
+      setCategories(response.data.data.last_level_category || []); 
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  };
 
+  const fetchBrands = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+      setBrands(response.data.data.brand_list || []);
+    } catch (err) {
+      console.error("Error fetching brands:", err);
+    }
+  };
   useEffect(() => {
-    fetchData(true); // By default, load newest products
+    fetchData({ filter: true });
+    fetchCategories();
+    fetchBrands();
   }, []);
+  const handleCategoryChange = async (event) => {
+    const selectedCategoryId = event.target.value;
+    setSelectedCategory(selectedCategoryId);
+    if (selectedCategoryId !== '') {
+      fetchData({ category_id: selectedCategoryId });
+    }
+    else{ fetchData(); }
+  };
 
+  const handleBrandChange = async (event) => {
+    const selectedBrandId = event.target.value;
+    setSelectedBrand(selectedBrandId);
+    if (selectedBrandId !== '') {
+      fetchData({ brand_id: selectedBrandId });
+    }
+    else{   fetchData();  }
+  };
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/Admin/product/${productId}`);
@@ -67,9 +102,7 @@ const ProductList = () => {
     if (event.target.checked) {
       const allProductIds = responseData.map((item) => item.product_id);
       setSelectedProducts(allProductIds);
-    } else {
-      setSelectedProducts([]);
-    }
+    } else {   setSelectedProducts([]); }
   };
 
   const handleSelectProduct = (productId) => {
@@ -79,20 +112,24 @@ const ProductList = () => {
         : [...prevSelected, productId]
     );
   };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSortClick = () => {
+    setSortVisible(!sortVisible);
+    if (searchVisible) {
+      setSearchVisible(!searchVisible);
+    }
   };
-
-  const filteredProducts = responseData.filter((item) =>
-    item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSearchClick = () => {
+    setSearchVisible(!searchVisible);
+    if (sortVisible) {
+      setSortVisible(!sortVisible);
+    }
+  };
+  const handleSearchChange = (event) => { setSearchQuery(event.target.value);};
+  const filteredProducts = responseData.filter((item) =>  item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) );
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortColumn) return 0;
-
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
-
     if (aValue === bValue) return 0;
     return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
   });
@@ -100,22 +137,43 @@ const ProductList = () => {
   return (
     <div className="product-list">
       <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="search-input"
-        />
+        <input type="text" placeholder="Search products..." value={searchQuery} onChange={handleSearchChange} className="search-input"  />
       </div>
       <div className="sort-container">
+    
+       
+      {searchVisible && (
+                   <select value={selectedBrand} onChange={handleBrandChange} className="filter-dropdown" >
+                   <option value="">All Vendors</option>
+                   {brands.map((brand) => (
+                     <option  value={brand.id}>{brand.name}</option>
+                   ))}
+                 </select>
+              )}
+        {sortVisible && (
+                  <select  value={selectedCategory}  onChange={handleCategoryChange}  className="filter-dropdown"  >
+                  <option value="">All Categories</option>
+                  {categories.map((cat) => (
+                    <option value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              )}
+        <FontAwesomeIcon
+          icon={faFilter}
+          onClick={handleSearchClick}
+          style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px' }}
+        />
+        <FontAwesomeIcon
+          icon={faSort}
+          onClick={handleSortClick}
+          style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px'}}
+        />
         <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
         <option value="">Sort by Products</option>
           <option value="newest">Newest Products</option>
           <option value="oldest">Oldest Products</option>
         </select>
       </div>
-
       {loading ? (
         <p>Loading products...</p>
       ) : error ? (
@@ -185,5 +243,4 @@ const ProductList = () => {
     </div>
   );
 };
-
 export default ProductList;

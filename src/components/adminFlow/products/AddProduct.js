@@ -114,8 +114,14 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <div className="CategoryTable-header">
                         <h3 style={{ margin: '6px' }}>Variant and Price Details</h3>
-                        <span className="apply-rule-button">
-                        {RetailPrice ? `${RetailPrice}X` : '0'}</span>
+                        {RetailPrice === 1 ? (
+                              <>
+                              <span className="apply-rule-button">1X</span>
+                              <span style={{padding:'10px 0px 0px 0px'}}>(by default)</span>
+                          </>
+                        ) : (
+                            <span className="apply-rule-button">{`${RetailPrice}X`}</span>                          
+                        )}
                         <button onClick={addVariantRow} className="add-variant-button">Add Variant</button>
                     </div>
                     <div className="variant-scroll">
@@ -283,8 +289,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     </div>
                 </div>
 
-
-
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
                     <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
@@ -292,9 +296,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
-              
-
-
                 <button onClick={onSave} className="save-button">Add Product</button>
             </div>
         </div>
@@ -307,10 +308,6 @@ const AddProduct = (categories) => {
     const [clearBtn, setShowclearBtn] = useState(false);
     const [RetailPrice, setShowRetailPrice] = useState([0]);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
-
-
-
-
     useEffect(() => {
         const fetchCategoryData = async () => {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
@@ -394,6 +391,8 @@ const AddProduct = (categories) => {
       };
       
     const handleVariantDetailChange = (e, index) => {
+        console.log('Inside Variant change 1');
+        
         const { name, value } = e.target;
         setSelectedVariants(prev => {
             const updatedVariants = [...prev];
@@ -403,6 +402,11 @@ const AddProduct = (categories) => {
             }
             else if (RetailPriceOption === 'unfinished_price' && name === 'unfinishedPrice') {
                 updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].unfinishedPrice || 0);
+            }
+            else{
+                console.log('Inside else pae');
+                
+                updatedVariants[index].retailPrice = 1 * (parseFloat(updatedVariants[index].finishedPrice) || 0);
             }
             return updatedVariants;
         });
@@ -438,6 +442,7 @@ const AddProduct = (categories) => {
         });
     };
     const handleVariantChange = (typeId, optionId, index) => {        
+        console.log('Inside Variant change 2222');
         setSelectedVariants(prev => {
           const updatedVariants = [...prev];
           const updatedVariant = updatedVariants[index];
@@ -462,6 +467,9 @@ const AddProduct = (categories) => {
         }
         else if (RetailPriceOption === 'unfinished_price') {
             updatedVariant.retailPrice = RetailPrice * (parseFloat(updatedVariant.unfinishedPrice) || 0);
+        }
+        else{
+            updatedVariant.retailPrice = 1 * (parseFloat(updatedVariant.finishedPrice) || 0);
         }
           return updatedVariants;
         });
@@ -594,7 +602,6 @@ const categoryDropdownRef = useRef(null);
 
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
 
-    
     const filteredCategoriesLevel3 = levelTwoCategory
         ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
             level3.name.toLowerCase().includes(safeSearchQuery)
@@ -816,23 +823,19 @@ const categoryDropdownRef = useRef(null);
                         console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
                         return;
                     }
-    
                     const level1CategoryForLevel5 = categories.categories.category_list.find(level1 =>
                         level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel5._id)
                     );
-    
                     if (!level1CategoryForLevel5) {
                         console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
                         return;
                     }
-    
                     setSelectedCategoryId(level1CategoryForLevel5._id);
                     setselectedLevel2Id(level2CategoryForLevel5._id);
                     setSelectedLevel3Id(level3CategoryForLevel5._id);
                     setSelectedlevel4(level4Category._id);
                     setSelectedlevel5(selectedValue);
                     break;
-    
                 case 6:
                     const level5Category = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
@@ -1168,5 +1171,4 @@ const categoryDropdownRef = useRef(null);
         </div>
     );
 };
-
 export default AddProduct;

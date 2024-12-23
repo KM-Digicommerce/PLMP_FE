@@ -14,84 +14,90 @@ const RevokePrice = () => {
   const [variantOptions, setVariantOptions] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
-
   const [selectedBrandForVariant, setSelectedBrandForVariant] = useState(null);
   const [selectedBrandIdForVariant, setSelectedBrandIdForVariant] = useState(null);
-
   const [variantTypeValues, setVariantTypeValues] = useState([]); // Example data, replace with API call
   const [selectedVariantValues, setSelectedVariantValues] = useState([]);
   const [selectedVariantValueIds, setSelectedVariantValueIds] = useState([]);
   const [dropdownOpenForValue, setDropdownOpenForValue] = useState(false);
-
   const [currentPriceInput, setCurrentPriceInput] = useState("");
   const [previousPriceInput, setPreviousPriceInput] = useState("");
   const [currentVariantPriceInput, setCurrentVariantPriceInput] = useState("");
   const [previousVariantPriceInput, setPreviousVariantPriceInput] = useState("");
   const dropdownRefForValue = useRef(null);
-   const [priceOption, setPriceOption] = useState('');
-   const [variantpriceOption, setVariantPriceOption] = useState('');
- 
- 
+  const [priceOption, setPriceOption] = useState('');
+  const [variantpriceOption, setVariantPriceOption] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+   const [formSubmittedForVariant, setFormSubmittedForVariant] = useState(false);
   const fetchBrands = async () => {
     try {
-    //   setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
       setBrands(response.data.data.brand_list || []);
     } catch (error) {
       console.error("Error fetching vendors:", error);
       Swal.fire({ title: "Error", text: "Failed to fetch vendors.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
-    } finally {
-    //   setLoading(false);
-    }
+    } finally {    }
   };
   const fetchCategories = async () => {
     try {
-    //   setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllLastLevelIds/`);
-      setCategories(response.data.data.last_level_category || []); // Assuming the response contains user list in `data`
+      setCategories(response.data.data.last_level_category || []);  
+      setFilteredCategories(response.data.data.last_level_category || []);
     } catch (error) {
       Swal.fire({ title: "Error", text: "Failed to fetch Categories.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
-    } finally {
-    //   setLoading(false);
-    }
+    } finally {    }
   };
   useEffect(() => {
     fetchBrands();
     fetchCategories();
   }, []);
-  
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+      const filtered = categories.filter((category) =>
+      category.name.toLowerCase().includes(query)
+    );
+    setFilteredCategories(filtered);
+  };
   const handleCategorySelect = (e) => {
     const categoryId = e.target.value;
+  
     if (categoryId === "all") {
-        const allCategoryIds = categories.map(cat => cat.id); 
-        setSelectedCategories([{ name: "Apply to all categories" }]); 
-        setSelectedCategoryIds(allCategoryIds);
-        handlePriceDisplayInInputField();
+      const allCategoryIds = categories.map((cat) => cat.id);
+      setSelectedCategories([{ name: "Apply to all categories" }]);
+      setSelectedCategoryIds(allCategoryIds);
     } else {
-        const category = categories.find(category => category.id === categoryId);
-        const allCategoryIds = selectedCategories.map(cat => cat.name); 
-        if (allCategoryIds[0] === "Apply to all categories") {
-          setSelectedCategories([]); 
-          setSelectedCategoryIds([]);
-        }
-        if (category) {
-          if (!selectedCategories.some(selectedCategory => selectedCategory.id === category.id)) {
-            setSelectedCategories(prevSelectedCategories => [...prevSelectedCategories, category]);
-            setSelectedCategoryIds((prevSelectedCategoryIds) => {
-              if (prevSelectedCategoryIds.length === 0) {
-                const newCategoryIds = [category.id];
-                return newCategoryIds;
-              } else {
-                const newCategoryIds = [...prevSelectedCategoryIds, category.id];
-                return newCategoryIds;
-              }
-            });
+      const category = categories.find((category) => category.id === categoryId);
+  
+      if (category) {
+        if (selectedCategoryIds.includes(category.id)) {
+          setSelectedCategories((prevSelectedCategories) =>
+            prevSelectedCategories.filter((selectedCategory) => selectedCategory.id !== category.id)
+          );
+          setSelectedCategoryIds((prevSelectedCategoryIds) =>
+            prevSelectedCategoryIds.filter((id) => id !== category.id)
+          );
+        } else {
+          if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+            setSelectedCategories([]);
+            setSelectedCategoryIds([]);
           }
+          setSelectedCategories((prevSelectedCategories) => [
+            ...prevSelectedCategories,
+            category,
+          ]);
+          setSelectedCategoryIds((prevSelectedCategoryIds) => {
+            const newCategoryIds = [...prevSelectedCategoryIds, category.id];
+            return newCategoryIds;
+          });
         }
+      }
     }
-};
+  };
 const handlePriceChange = async (event) => {
     const selectedOption = event.target.value;
     if (selectedOption) {  setPriceOption(selectedOption);  handlePriceDisplayInInputField(selectedCategoryIds,selectedOption); }
@@ -196,54 +202,49 @@ const handlePriceChange = async (event) => {
       }
     }
     else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      Swal.fire({ title: "Error", text: "Please Enter all fields to revoke", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
     }
   };
 
   const handleRevokeApply = async () => {
-    if (selectedCategoryIds && selectedBrandId && priceOption ) {
-      try {
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForCategory/`,
-          { category_id: selectedCategoryIds,
-            brand_id: selectedBrandId,
-            price_option:priceOption,
-           }
-        );
-        if (response.status === 200) {
-          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-          });
-        }
-        setBrands([]);
-        setSelectedBrand(null);
-        setSelectedBrandId(null);
-        setPreviousPriceInput('');
-        setCurrentPriceInput('');
-        setPriceOption('');
-        setSelectedCategories([]); 
-        setSelectedCategoryIds([]);
-        fetchBrands();
-        console.log(response,'response');
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-        });
-      } finally {
-        // setLoading(false);
-      }
-    }
-    else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-      });
-    }
+      setFormSubmitted(true);
+        if (!selectedBrandId || !selectedCategoryIds.length || !priceOption) {
+          Swal.fire({  text: "Please Enter all fields to revoke",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+              });
+                } 
+                else{
+                    try {
+                        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForCategory/`,
+                          { category_id: selectedCategoryIds,
+                            brand_id: selectedBrandId,
+                            price_option:priceOption,
+                           }
+                        );
+                        if (response.status === 200) {
+                          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                          });
+                          setFormSubmitted(false);
+                        }
+                        setBrands([]);
+                        setSelectedBrand(null);
+                        setSelectedBrandId(null);
+                        setPreviousPriceInput('');
+                        setCurrentPriceInput('');
+                        setPriceOption('');
+                        setSelectedCategories([]); 
+                        setSelectedCategoryIds([]);
+                        fetchBrands();
+                        console.log(response,'response');
+                      } catch (error) {
+                        console.error("Error fetching data:", error);
+                        Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                        });
+                      } finally {  }
+                }
   };
 
   const handleVariantPriceDisplayInInputField = async (variantpriceOption) => {
-    console.log(selectedBrandIdForVariant,'selectedBrandIdForVariant');
-    console.log(selectedVariantId,'selectedVariantId');
-    console.log(selectedVariantValueIds,'selectedVariantValue');
-    console.log(variantpriceOption,'variantpriceOption');
-
     if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption) {
       try {
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRevertPreviousAndCurrentPriceForVarientOption/`,
@@ -263,14 +264,18 @@ const handlePriceChange = async (event) => {
       } finally { }
     }
     else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+      Swal.fire({ title: "Error", text: "Please Enter all fields to revoke", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
       });
     }
   };
   const handleVariantRevokeApply = async () => {
-    if (selectedBrandIdForVariant && selectedVariantId && selectedVariantValueIds && variantpriceOption) {
+         setFormSubmittedForVariant(true);
+            if (!selectedBrandIdForVariant || !selectedVariantValueIds.length || !selectedVariantId || !variantpriceOption) {
+              Swal.fire({  text: "Please Enter all fields to apply",  confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                  });
+                    } 
+                    else{
         try {
-        // setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateRevertPriceForVarientOption/`,
             { 
                 brand_id: selectedBrandIdForVariant,
@@ -282,6 +287,7 @@ const handlePriceChange = async (event) => {
         if (response.status === 200) {
           Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Variant wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
           });
+          setFormSubmittedForVariant(false);
         }
         setBrands([]);
         setSelectedBrandForVariant(null);
@@ -303,10 +309,6 @@ const handlePriceChange = async (event) => {
       } finally {
         // setLoading(false);
       }
-    }
-    else{
-      Swal.fire({ title: "Error", text: "Please Enter the all fields to apply", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-      });
     }
   };
   const fetchVariantOptions = async () => {
@@ -339,35 +341,48 @@ const handleVariantRemove = () => {
   setSelectedVariant(null); // Remove selected variant
 };
 
-
 const handleVariantValueSelect = (event) => {
-  const selectedValueId = event.target.value;
-  if (selectedValueId === "all") {
-    const allVariantValueIds = variantTypeValues.map((value) => value.id);
-    setSelectedVariantValues([{ name: "Apply to all variant values" }]);
-    setSelectedVariantValueIds(allVariantValueIds);
-  } else {    
-    const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
-    const allVariantValueNames = selectedVariantValues.map((value) => value.name);
-    if (allVariantValueNames[0] === "Apply to all variant values") {
-      setSelectedVariantValues([]);
-      setSelectedVariantValueIds([]);
+    const selectedValueId = event.target.value;
+  
+    if (selectedValueId === "all") {
+      const allVariantValueIds = variantTypeValues.map((value) => value.id);
+      setSelectedVariantValues([{ name: "Apply to all variant values" }]);
+      setSelectedVariantValueIds(allVariantValueIds);
+    } else {
+      const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
+  
+      if (selectedValue) {
+        // Check if the variant value is already selected
+        if (selectedVariantValueIds.includes(selectedValue.id)) {
+          // Deselect the variant value
+          setSelectedVariantValues((prevSelectedValues) =>
+            prevSelectedValues.filter((value) => value.id !== selectedValue.id)
+          );
+          setSelectedVariantValueIds((prevSelectedValueIds) =>
+            prevSelectedValueIds.filter((id) => id !== selectedValue.id)
+          );
+        } else {
+          // Select the variant value
+          if (
+            selectedVariantValues.length === 1 &&
+            selectedVariantValues[0].name === "Apply to all variant values"
+          ) {
+            setSelectedVariantValues([]);
+            setSelectedVariantValueIds([]);
+          }
+          setSelectedVariantValues((prevSelectedValues) => [
+            ...prevSelectedValues,
+            { id: selectedValue.id, name: selectedValue.name },
+          ]);
+          setSelectedVariantValueIds((prevSelectedValueIds) => [
+            ...prevSelectedValueIds,
+            selectedValue.id,
+          ]);
+        }
+      }
     }
-    if (selectedValue) {
-      if (!selectedVariantValueIds.includes(selectedValue.id)) {
-        setSelectedVariantValues((prevSelectedValues) => [
-          ...prevSelectedValues,
-          { id: selectedValue.id, name: selectedValue.name },
-        ]);
-        // handleVariantPriceDisplayInInputField(selectedValue.id);
-        setSelectedVariantValueIds((prevSelectedValueIds) => {
-          const newVariantValueIds = [...prevSelectedValueIds, selectedValue.id];
-          return newVariantValueIds;
-        });
-      }      
-    }
-  }
-};
+  };
+  
 
 const handleVariantValueRemove = (id) => {
   setSelectedVariantValues((prevSelectedValues) => prevSelectedValues.filter((value) => value.id !== id));
@@ -385,8 +400,8 @@ const handleVariantValueRemove = (id) => {
 
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
-        <option value="">Select a Vendor</option>
+      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
+        <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id}>
             {brand.name}
@@ -406,39 +421,49 @@ const handleVariantValueRemove = (id) => {
 
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category <span className="required">*</span></h3>
-      <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
+      <div ref={dropdownRef} style={{ position: "relative", display: "inline-block"  }}>
         <div
-          style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
+          style={{ padding: "10px", borderRadius: "5px",border: formSubmitted && selectedCategoryIds.length === 0  ? "1px solid red"  : "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
           }}
           onClick={() => setDropdownOpen((prev) => !prev)}
         >
-          Select a category
+          Select  Category
           <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
         </div>
 
         {dropdownOpen && (
-          <div style={{ width: "225px", border: "1px solid #ccc", backgroundColor: "#fff", zIndex: 1000, maxHeight: "120px", overflowY: "auto", padding: "8px", position: "absolute", top: "110%", left: 0, boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", borderRadius: "5px" }}>
-            <div
-              style={{ padding: "8px", cursor: "pointer", background: "lightgrey", borderRadius: "4px", marginBottom: "4px", fontSize: "14px",
-              }}
-              onClick={() => handleCategorySelect({ target: { value: "all" } })}
-            >
-              Apply to all categories
-            </div>
-            {categories.map((category) => (
-              <div
-                style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",  fontSize: "14px",  marginBottom: "2px",
-                }}
-                onClick={() => handleCategorySelect({ target: { value: category.id } })}
-              >
-                {selectedCategoryIds.includes(category.id) && (
-                  <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
-                )}
-                {category.name}
-              </div>
-            ))}
-          </div>
-        )}
+  <div
+    style={{  width: "228px",  border: "1px solid #ccc",  backgroundColor: "#fff",  zIndex: 1000,  maxHeight: "130px",  overflowY: "auto",  padding: "8px",  position: "absolute",  top: "110%",  left: 0,  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",  borderRadius: "5px",
+    }}
+  >
+    <input type="text" placeholder="Search category..." value={searchQuery} onChange={handleSearchChange} className="dropdown-search-input"
+      onClick={(e) => e.stopPropagation()}   style={{ width: "92%", padding: "6px", marginBottom: "8px", fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px",  }}
+    />
+    <div
+      style={{ padding: "8px", cursor: "pointer", background: "lightgrey", borderRadius: "4px", marginBottom: "4px", fontSize: "14px",  }}
+      onClick={() => handleCategorySelect({ target: { value: "all" } })}  >
+      Apply to all categories
+    </div>
+    {filteredCategories.length > 0 ? (
+      filteredCategories.map((category) => (
+        <div
+          style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",  fontSize: "14px",  marginBottom: "2px",
+          }}
+          onClick={() => handleCategorySelect({ target: { value: category.id } })}
+        >
+          {selectedCategoryIds.includes(category.id) && (
+            <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
+          )}
+          {category.name}
+        </div>
+      ))
+    ) : (
+      <div style={{ padding: "6px", fontSize: "14px", color: "#999" }}>
+        No categories found.
+      </div>
+    )}
+  </div>
+)}
       </div>
      
 
@@ -458,7 +483,7 @@ const handleVariantValueRemove = (id) => {
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "245px", display: "inline-block" }}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !priceOption  ? "1px solid red"  : "1px solid #ccc",  width: "245px", display: "inline-block" }}>
         <option value="">Select Price Option</option>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
@@ -467,36 +492,36 @@ const handleVariantValueRemove = (id) => {
       </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>
   {/* Input Fields Section */}
-  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
-    <div style={{ textAlign: "center", marginRight: "20px", width: "45%" }}>
-      <label style={{ display: "block", marginBottom: "5px", paddingRight:'8px' }}>Previous Logic</label>
+  <div style={{ display: "block", marginBottom: "20px" }}>
+    <div style={{ textAlign: "left", width: "40%",display: "inline-block", }}>
+    <h3 style={{ display: "block", marginBottom: "5px",paddingRight:'15px',fontSize:'18px',fontWeight:'500', textAlign:'left'  }}>Previous Logic</h3>
       <input
         type="number"
         value={previousPriceInput}
         placeholder="Previous value"
-        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }}
+        className="PrevCurrentValues"
+        style={{ width: "50%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }}
       />
     </div>
 
     {/* Current Logic */}
-    <div style={{ textAlign: "center", marginLeft: "20px", width: "45%" }}>
-      <label style={{ display: "block", marginBottom: "5px",paddingRight:'15px'  }}>Current Logic</label>
+    <div style={{ textAlign: "left", width: "40%",display: "inline-block", }}>
+      <h3 style={{ display: "block", marginBottom: "5px",paddingRight:'15px',fontSize:'18px',fontWeight:'500', textAlign:'left'  }}>Current Logic</h3>
       <input
         type="number"
         value={currentPriceInput}
         placeholder="Current value"
-        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }}
+        className="PrevCurrentValues"
+        style={{ width: "47%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px",margin:'0px 0px' }}
       />
     </div>
-  </div>
-
-  {/* Revoke Button Section */}
-  <div style={{ textAlign: "center" }}>
+    <div style={{ width: "20%",display: "inline-block", }}>
     <button
       onClick={() => handleRevokeApply()}
-      style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
+      style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
       className="add-brand-btn revoke_btn" disabled={currentPriceInput === 0}> Revoke </button>
   </div>
+  </div>  
 </div>
 
   </div>
@@ -506,10 +531,10 @@ const handleVariantValueRemove = (id) => {
 
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span> </h4>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
-        <option value="">Select a Vendor</option>
+      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
+        <option value=""  style={{ fontSize: "14px", fontWeight: "500" }}>Select Vendor</option>
         {brands.map((brand) => (
-          <option value={brand.id} >
+          <option  style={{ fontSize: "14px", fontWeight: "500" }} value={brand.id} >
             {brand.name}
           </option>
         ))}
@@ -529,10 +554,11 @@ const handleVariantValueRemove = (id) => {
           Select Variant  <span className="required">*</span>
         </h3>
         <select
-          style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "248px", display: "inline-block", }}
+          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc",
+            width: "248px", display: "inline-block", }}
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
-          <option value="">Select Variant</option>
+          <option value="" style={{ fontSize: "14px", fontWeight: "500" }}>Select Variant</option>
           {/* {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
@@ -541,7 +567,7 @@ const handleVariantValueRemove = (id) => {
           {variantOptions
   ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
   .map((variant) => (
-    <option key={variant.id} value={variant.id}>
+    <option style={{ fontSize: "14px", fontWeight: "500" }} key={variant.id} value={variant.id}>
       {variant.name}
     </option>
   ))}
@@ -560,10 +586,10 @@ const handleVariantValueRemove = (id) => {
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Variant Value  <span className="required">*</span></h3>
       <div ref={dropdownRefForValue} style={{ position: "relative", display: "inline-block" }}>
         <div
-          style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "226px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
+          style={{  padding: "10px",  borderRadius: "5px", border: formSubmittedForVariant && !selectedVariantValueIds.length ? "1px solid red" : "1px solid #ccc",   width: "226px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
           }}
           onClick={() => setDropdownOpenForValue((prev) => !prev)}  >
-          Select a variant value
+          Select Variant Value
           <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
         </div>
 
@@ -578,7 +604,7 @@ const handleVariantValueRemove = (id) => {
             </div>
             {variantTypeValues.map((variant) => (
               <div
-                style={{ padding: "6px", cursor: "pointer", borderRadius: "4px", background: selectedVariantValueIds.includes(variant.id) ? "#d7ffe6" : "#fff", fontSize: "14px", marginBottom: "2px",
+                style={{ padding: "6px", cursor: "pointer", borderRadius: "4px", background: selectedVariantValueIds.includes(variant.id) ? "#d7ffe6" : "#fff", fontSize: "15px",fontWeight:'500', marginBottom: "2px",
                 }}
                 onClick={() => handleVariantValueSelect({ target: { value: variant.id } })}
               >
@@ -607,46 +633,42 @@ const handleVariantValueRemove = (id) => {
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={variantpriceOption} onChange={handleVariantPriceChange} className="sort-dropdown" style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "245px", display: "inline-block" }}>
-        <option value="">Select Price Option</option>
-          <option value="finished_price">Finished Wholesale Price</option>
-          <option value="un_finished_price">Unfinished Wholesale Price</option>
+        <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !variantpriceOption ? "1px solid red" : "1px solid #ccc", width: "245px", display: "inline-block" }}>
+        <option value=""  style={{ fontSize: "13px", fontWeight: "500" }}>Select Price Option</option>
+          <option  style={{ fontSize: "14px", fontWeight: "500" }} value="finished_price">Finished Wholesale Price</option>
+          <option  style={{ fontSize: "14px", fontWeight: "500" }} value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
       </div>
       </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>
   {/* Input Fields Section */}
-  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
-    {/* Previous Logic */}
-    <div style={{ textAlign: "center", marginRight: "20px", width: "45%" }}>
-      <label style={{ display: "block", marginBottom: "5px", paddingRight:'8px' }}>Previous Logic</label>
-      <input
+  <div style={{ display: "block", marginBottom: "20px" }}>    
+    <div style={{ textAlign: "left", width: "40%",display: "inline-block", }}>
+    <h3 style={{ display: "block", marginBottom: "5px",paddingRight:'15px',fontSize:'18px',fontWeight:'500', textAlign:'left'  }}>Previous Logic</h3>
+    <input
         type="number"
         value={previousVariantPriceInput}
         placeholder="Previous value"
-        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
+        style={{ width: "50%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
     </div>
-
-    {/* Current Logic */}
-    <div style={{ textAlign: "center", marginLeft: "20px", width: "45%" }}>
-      <label style={{ display: "block", marginBottom: "5px", paddingRight:'15px'  }}>Current Logic</label>
-      <input
+    <div style={{ textAlign: "left", width: "40%",display: "inline-block",  }}>
+    <h3 style={{ display: "block", marginBottom: "5px",paddingRight:'15px',fontSize:'18px',fontWeight:'500', textAlign:'left'  }}>Current Logic</h3>
+          <input
         type="number"
         value={currentVariantPriceInput}
         placeholder="Current value"
-        style={{ width: "42%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
+        style={{ width: "47%", paddingRight: "30px", border: "1px solid #ccc", borderRadius: "5px", padding: "10px", }} />
     </div>
-  </div>
-
-  {/* Revoke Button Section */}
-  <div style={{ textAlign: "center" }}>
+    <div style={{ width: "20%",display: "inline-block", }}>
     <button
       onClick={() => handleVariantRevokeApply()}
-      style={{ width: "14%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
+      style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
       className="add-brand-btn revoke_variant_btn" disabled={currentVariantPriceInput === 0}>
       Revoke
     </button>
   </div>
+  </div>
+  
 </div>
   </div>
 </div>
