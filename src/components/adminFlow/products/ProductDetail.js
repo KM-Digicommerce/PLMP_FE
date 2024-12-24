@@ -894,7 +894,7 @@ const ProductDetail = ({ categories }) => {
 
                                             {variantOptions?.map((variant) => (
                                                 <div key={variant.type_id}>
-                                                    <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                                                    <FormControl fullWidth variant="outlined" sx={{ mb: 2,padding:'5px 0px 0px 0px',marginBottom:'6px' }}>
                                                         <InputLabel id={`variant-${variant.type_id}`} >{variant.type_name}</InputLabel>
                                                         <Select
                                                             labelId={`variant-${variant.type_id}`}
@@ -902,10 +902,9 @@ const ProductDetail = ({ categories }) => {
                                                             onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
                                                             label={variant.type_name}
                                                             size="small"
-                                                            sx={{ padding: '8px' }}
-                                                        >
+                                                            sx={{ padding: '4px',fontSize:'14px' }}   >
                                                             {variant.option_value_list?.map((option) => (
-                                                                <MenuItem key={option.type_value_id} value={option.type_value_id}>
+                                                                <MenuItem key={option.type_value_id} value={option.type_value_id} style={{fontSize:'14px'}}>
                                                                     {option.type_value_name}
                                                                 </MenuItem>
                                                             ))}

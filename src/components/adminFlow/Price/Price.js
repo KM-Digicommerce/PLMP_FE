@@ -38,22 +38,22 @@ const PriceComponent = () => {
   const [formSubmittedForVariant, setFormSubmittedForVariant] = useState(false);
 
   const dropdownRefForValue = useRef(null);
-  const handleToggle = async (index) => {
-    try {
-      const updatedRow = tableData[index];
-            const payload = {  category_id: updatedRow.id,  brand_id: selectedBrandId,  price:updatedRow.price, };
-        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateActiveRetailPrice/`, payload );
-      if (response?.data?.estatus) {
-        console.log(`Successfully updated active status for category ID: ${updatedRow.id}`);
-        await fetchPriceTableData(selectedCategoryIds); 
-      } else {
-        Swal.fire({ title: "Error", text: response?.data?.emessage || "Failed to update active status.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
-      }
-    } catch (error) {
-      console.error("Error updating active state:", error);
-      Swal.fire({  title: "Error",  text: "An error occurred while updating active status.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
-    }
-  };
+  // const handleToggle = async (index) => {
+  //   try {
+  //     const updatedRow = tableData[index];
+  //           const payload = {  category_id: updatedRow.id,  brand_id: selectedBrandId,  price:updatedRow.price, };
+  //       const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateActiveRetailPrice/`, payload );
+  //     if (response?.data?.estatus) {
+  //       console.log(`Successfully updated active status for category ID: ${updatedRow.id}`);
+  //       await fetchPriceTableData(selectedCategoryIds); 
+  //     } else {
+  //       Swal.fire({ title: "Error", text: response?.data?.emessage || "Failed to update active status.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating active state:", error);
+  //     Swal.fire({  title: "Error",  text: "An error occurred while updating active status.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
+  //   }
+  // };
  
   const fetchBrands = async () => {
     try {
@@ -463,7 +463,7 @@ const handleVariantSelect = async(id) => {
 const handleVariantRemove = () => {
   setVariantOptions([]);
   fetchVariantOptions();
-  setSelectedVariant(null); // Remove selected variant
+  setSelectedVariant(null);
 };
 
 const handleVariantValueSelect = (event) => {
@@ -504,17 +504,13 @@ const handleVariantValueSelect = (event) => {
     }
   }
 };
-
 const handleVariantValueRemove = (id) => {
   setSelectedVariantValues((prevSelectedValues) => prevSelectedValues.filter((value) => value.id !== id));
   setSelectedVariantValueIds((prevSelectedValueIds) => prevSelectedValueIds.filter((valueId) => valueId !== id));
 };
-
-
   return (
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'16px'}}>
       <h2 style={{textAlign:'center'}}>Pricing Schema</h2>
-     
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch' }}>
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Categories</h4>
@@ -529,7 +525,6 @@ const handleVariantValueRemove = (id) => {
           </option>
         ))}
       </select>
-
       {selectedBrand && (
         <div style={{ marginTop: '10px', display: "inline-block" }}>
           <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -545,9 +540,7 @@ const handleVariantValueRemove = (id) => {
       <div ref={dropdownRef} style={{ position: "relative", display: "inline-block",}}>
         <div
           style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && selectedCategoryIds.length === 0  ? "1px solid red"  : "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
-          }}
-          onClick={() => setDropdownOpen((prev) => !prev)}
-        >
+          }}    onClick={() => setDropdownOpen((prev) => !prev)}  >
           Select Category
           <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
         </div>
@@ -555,11 +548,9 @@ const handleVariantValueRemove = (id) => {
         {dropdownOpen && (
   <div
     style={{  width: "228px",  border: "1px solid #ccc",  backgroundColor: "#fff",  zIndex: 1000,  maxHeight: "130px",  overflowY: "auto",  padding: "8px",  position: "absolute",  top: "110%",  left: 0,  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",  borderRadius: "5px",
-    }}
-  >
+    }} >
     <input type="text" placeholder="Search category..." value={searchQuery} onChange={handleSearchChange} className="dropdown-search-input"
-      onClick={(e) => e.stopPropagation()}   style={{ width: "92%", padding: "6px", marginBottom: "8px", fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px",  }}
-    />
+      onClick={(e) => e.stopPropagation()}   style={{ width: "92%", padding: "6px", marginBottom: "8px", fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px",  }} />
     <div
       style={{ padding: "8px", cursor: "pointer", background: "lightgrey", borderRadius: "4px", marginBottom: "4px", fontSize: "14px",  }}
       onClick={() => handleCategorySelect({ target: { value: "all" } })}  >
@@ -570,8 +561,7 @@ const handleVariantValueRemove = (id) => {
         <div
           style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes(category.id) ? "#d7ffe6" : "#fff",  fontSize: "14px",  marginBottom: "2px",
           }}
-          onClick={() => handleCategorySelect({ target: { value: category.id } })}
-        >
+          onClick={() => handleCategorySelect({ target: { value: category.id } })}  >
           {selectedCategoryIds.includes(category.id) && (
             <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
           )}
@@ -590,8 +580,7 @@ const handleVariantValueRemove = (id) => {
       <div style={{ marginTop: "12px", display: "inline-block" }}>
         {selectedCategories.map((category) => (
           <span
-            style={{ display: "inline-flex", alignItems: "center", margin: "4px", padding: "5px 10px", backgroundColor: "#007bff", color: "#fff", borderRadius: "20px", fontSize: "14px" }}
-          >
+            style={{ display: "inline-flex", alignItems: "center", margin: "4px", padding: "5px 10px", backgroundColor: "#007bff", color: "#fff", borderRadius: "20px", fontSize: "14px" }} >
             {category.name}
             <span style={{ marginLeft: "8px", cursor: "pointer", fontWeight: "bold", color: "rgb(193 193 193)" }} onClick={() => handleCategoryRemove(category.id)}>
               X
@@ -600,7 +589,6 @@ const handleVariantValueRemove = (id) => {
         ))}
       </div>
     </div>
-
     <div style={{ margin: '20px 0px 0px 0px', width: '100%' }}>
       <h5 style={{ marginTop: '0px', display: "inline-block", width: '26%' }}>Retail Pricing Logic</h5>
       <div style={{ margin: '0px 0px 0px 20px', display: "inline-block", width: '24%' }}>
@@ -613,9 +601,7 @@ const handleVariantValueRemove = (id) => {
         </select>
       </div>
     </div>
-    <button onClick={() => handlePriceApply()} className="add-brand-btn">
-      Apply
-    </button>
+    <button onClick={() => handlePriceApply()} className="add-brand-btn">  Apply </button>
   </div>
 
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px' }}>
@@ -646,15 +632,9 @@ const handleVariantValueRemove = (id) => {
           Select Variant  <span className="required">*</span>
         </h3>
         <select
-          style={{
-            padding: "10px",
-            borderRadius: "5px",
-            border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc",
-            width: "248px",
-            display: "inline-block",
+          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",
           }}
-          onChange={(e) => handleVariantSelect(e.target.value)}
-        >
+          onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
           {/* {variantOptions?.map((variant) => (
             <option value={variant.id}>
@@ -662,13 +642,11 @@ const handleVariantValueRemove = (id) => {
             </option>
           ))} */}
            {variantOptions
-  ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
+  ?.filter((variant) => variant.name.toLowerCase() === "wood type")
   .map((variant) => (
     <option key={variant.id} value={variant.id}>
       {variant.name}
-    </option>
-  ))}
-        </select>
+    </option> ))}  </select>
 
         {selectedVariant && (
           <div style={{ marginTop: '10px', display: "inline-block" }}>
@@ -703,8 +681,7 @@ const handleVariantValueRemove = (id) => {
               <div
                 style={{ padding: "6px", cursor: "pointer", borderRadius: "4px", background: selectedVariantValueIds.includes(variant.id) ? "#d7ffe6" : "#fff", fontSize: "14px", marginBottom: "2px",
                 }}
-                onClick={() => handleVariantValueSelect({ target: { value: variant.id } })}
-              >
+                onClick={() => handleVariantValueSelect({ target: { value: variant.id } })}  >
                 {selectedVariantValueIds.includes(variant.id) && (
                   <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
                 )}
@@ -752,19 +729,12 @@ const handleVariantValueRemove = (id) => {
       </select>
     </div>   
   </div>
-  <button onClick={() =>handleVariantPriceApply() } className="add-brand-btn">
-          Apply
-        </button>
-        <p style={{display:'contents'}}>(This given variant price will update the variant price and the retail price accordingly)
-        <span className="required">*</span></p>
+  <button onClick={() =>handleVariantPriceApply() } className="add-brand-btn">  Apply  </button>
+  <p style={{display:'contents'}}>(This given variant price will update the variant price and the retail price accordingly) <span className="required">*</span></p>
   </div>
 </div>
-
       {tableData.length > 0 ? (
-        <table
-          border="1"
-          style={{ marginTop: "20px", width: "100%", textAlign: "left" }}
-        >
+        <table  border="1"  style={{ marginTop: "20px", width: "100%", textAlign: "left" }} >
           <thead>
             <tr>
               <th>Vendor Name</th>
@@ -784,7 +754,9 @@ const handleVariantValueRemove = (id) => {
                 <td>
                   <label className="switch">
                     {/* <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled={row.is_active}  /> */}
-                    <input type="checkbox" checked={row.is_active} onChange={() => handleToggle(index)} disabled />
+                    <input type="checkbox" checked={row.is_active} 
+                    // onChange={() => handleToggle(index)}
+                     disabled />
                     <span className="slider"></span>
                   </label>
                   {row.is_active ? " Active" : " Inactive"}
@@ -811,16 +783,12 @@ const handleVariantValueRemove = (id) => {
         <tr>
   <td colSpan="5"  style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>No Pricing found.</td>
 </tr>
-
         </tbody>
       </table>
       )}
 <div>
 {productTableDataAfterSave.length > 0 && (
-        <table
-          border="1"
-          style={{ marginTop: "20px", width: "100%", textAlign: "left" }}
-        >
+        <table border="1" style={{ marginTop: "20px", width: "100%", textAlign: "left" }} >
           <thead>
             <tr>
               <th>Image</th>
@@ -836,17 +804,9 @@ const handleVariantValueRemove = (id) => {
               <tr key={index}>
                 <td>
                 {Array.isArray(row.image_url) ? (
-                    <img
-                      src={row.image_url[0]}
-                      alt={row.product_name}
-                      className="product-image-round"
-                    />
+                    <img  src={row.image_url[0]}  alt={row.product_name}  className="product-image-round"  />
                   ) : (
-                    <img
-                      src={row.image_url}
-                      alt={row.product_name}
-                      className="product-image-round"
-                    />
+                    <img src={row.image_url} alt={row.product_name} className="product-image-round" />
                   )}
                 </td>
                 <td>{row.product_name}</td>
@@ -864,7 +824,6 @@ const handleVariantValueRemove = (id) => {
         </table>
       )}
 </div>
-
     </div>
   );
 };
