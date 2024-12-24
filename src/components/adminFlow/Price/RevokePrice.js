@@ -400,7 +400,7 @@ const handleVariantValueRemove = (id) => {
 
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id}>
@@ -408,6 +408,7 @@ const handleVariantValueRemove = (id) => {
           </option>
         ))}
       </select>
+      <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
 
       {selectedBrand && (
         <div style={{ marginTop: '10px', display: "inline-block" }}>
@@ -483,11 +484,12 @@ const handleVariantValueRemove = (id) => {
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !priceOption  ? "1px solid red"  : "1px solid #ccc",  width: "245px", display: "inline-block" }}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !priceOption  ? "1px solid red"  : "1px solid #ccc",  width: "245px", display: "inline-block",appearance:'none'  }}>
         <option value="">Select Price Option</option>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
+        <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       </div>
       </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>
@@ -531,7 +533,7 @@ const handleVariantValueRemove = (id) => {
 
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span> </h4>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px",  border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
         <option value=""  style={{ fontSize: "14px", fontWeight: "500" }}>Select Vendor</option>
         {brands.map((brand) => (
           <option  style={{ fontSize: "14px", fontWeight: "500" }} value={brand.id} >
@@ -539,7 +541,7 @@ const handleVariantValueRemove = (id) => {
           </option>
         ))}
       </select>
-
+      <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       {selectedBrandForVariant && (
         <div style={{ marginTop: '10px', display: "inline-block" }}>
           <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -555,7 +557,7 @@ const handleVariantValueRemove = (id) => {
         </h3>
         <select
           style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc",
-            width: "248px", display: "inline-block", }}
+            width: "248px", display: "inline-block", appearance:'none' }}
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="" style={{ fontSize: "14px", fontWeight: "500" }}>Select Variant</option>
@@ -572,7 +574,7 @@ const handleVariantValueRemove = (id) => {
     </option>
   ))}
         </select>
-
+        <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
           <div style={{ marginTop: '10px', display: "inline-block" }}>
             <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -633,11 +635,12 @@ const handleVariantValueRemove = (id) => {
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Price Option <span className="required">*</span></h3>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !variantpriceOption ? "1px solid red" : "1px solid #ccc", width: "245px", display: "inline-block" }}>
+        <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !variantpriceOption ? "1px solid red" : "1px solid #ccc", width: "245px", display: "inline-block",appearance:'none'  }}>
         <option value=""  style={{ fontSize: "13px", fontWeight: "500" }}>Select Price Option</option>
           <option  style={{ fontSize: "14px", fontWeight: "500" }} value="finished_price">Finished Wholesale Price</option>
           <option  style={{ fontSize: "14px", fontWeight: "500" }} value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
+        <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       </div>
       </div>
     <div style={{ margin: "20px 0px", width: "100%" }}>

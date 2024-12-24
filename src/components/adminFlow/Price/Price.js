@@ -512,12 +512,12 @@ const handleVariantValueRemove = (id) => {
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'16px'}}>
       <h2 style={{textAlign:'center'}}>Pricing Schema</h2>
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch' }}>
-  <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px' }}>
+  <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Categories</h4>
 
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none' }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id}>
@@ -525,6 +525,7 @@ const handleVariantValueRemove = (id) => {
           </option>
         ))}
       </select>
+      <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       {selectedBrand && (
         <div style={{ marginTop: '10px', display: "inline-block" }}>
           <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -542,7 +543,7 @@ const handleVariantValueRemove = (id) => {
           style={{ padding: "10px", borderRadius: "5px",  border: formSubmitted && selectedCategoryIds.length === 0  ? "1px solid red"  : "1px solid #ccc", width: "225px", cursor: "pointer", background: "#fff", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "space-between",
           }}    onClick={() => setDropdownOpen((prev) => !prev)}  >
           Select Category
-          <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
+          <span style={{ fontSize: "12px", color: "#918f8f" }}>▼</span>
         </div>
 
         {dropdownOpen && (
@@ -595,21 +596,22 @@ const handleVariantValueRemove = (id) => {
         <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} min="0" style={{ width: "45%", paddingRight: "30px", backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", backgroundSize: "16px 16px", border: formSubmitted && !priceInput ? "1px solid red" : "1px solid #ccc", }} />
       </div>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block", border: "1px solid #ccc"}}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block", border: "1px solid #ccc",appearance:'none' }}>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
+        <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       </div>
     </div>
     <button onClick={() => handlePriceApply()} className="add-brand-btn">  Apply </button>
   </div>
 
-  <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px' }}>
+  <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Variants</h4>
 
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span> </h4>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block" }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id} >
@@ -617,7 +619,7 @@ const handleVariantValueRemove = (id) => {
           </option>
         ))}
       </select>
-
+      <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       {selectedBrandForVariant && (
         <div style={{ marginTop: '10px', display: "inline-block" }}>
           <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -632,8 +634,7 @@ const handleVariantValueRemove = (id) => {
           Select Variant  <span className="required">*</span>
         </h3>
         <select
-          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",
-          }}
+          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }}
           onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
           {/* {variantOptions?.map((variant) => (
@@ -647,7 +648,7 @@ const handleVariantValueRemove = (id) => {
     <option key={variant.id} value={variant.id}>
       {variant.name}
     </option> ))}  </select>
-
+    <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
           <div style={{ marginTop: '10px', display: "inline-block" }}>
             <span style={{ display: "inline-block", margin: "5px", padding: "5px 10px", backgroundColor: "#007bff", color: "white", borderRadius: "20px", fontSize: "14px" }}>
@@ -665,7 +666,7 @@ const handleVariantValueRemove = (id) => {
           }}
           onClick={() => setDropdownOpenForValue((prev) => !prev)}  >
           Select Variant Value
-          <span style={{ fontSize: "12px", color: "#888" }}>▼</span>
+          <span style={{ fontSize: "12px", color: "#918f8f" }}>▼</span>
         </div>
 
         {dropdownOpenForValue && (
@@ -723,10 +724,11 @@ const handleVariantValueRemove = (id) => {
     </div>
     <div
       style={{ margin: "0px 0px 0px 0px", display: "inline-block", }} >
-      <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block", }} >
+      <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block",appearance:'none'  }} >
         <option value="finished_price">Finished Wholesale Price</option>
         <option value="un_finished_price">Unfinished Wholesale Price</option>
       </select>
+      <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
     </div>   
   </div>
   <button onClick={() =>handleVariantPriceApply() } className="add-brand-btn">  Apply  </button>

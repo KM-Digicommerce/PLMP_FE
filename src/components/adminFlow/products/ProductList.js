@@ -21,6 +21,10 @@ const ProductList = () => {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [searchVisible, setSearchVisible] = useState(false);
     const [sortVisible, setSortVisible] = useState(false);
+    const [showText, setShowText] = useState(false);
+    const [showTextCategories, setShowTextCategories] = useState(false);
+
+
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -112,13 +116,13 @@ const ProductList = () => {
         : [...prevSelected, productId]
     );
   };
-  const handleSortClick = () => {
+  const handleCategorySortClick = () => {
     setSortVisible(!sortVisible);
     if (searchVisible) {
       setSearchVisible(!searchVisible);
     }
   };
-  const handleSearchClick = () => {
+  const handleBrandSortClick = () => {
     setSearchVisible(!searchVisible);
     if (sortVisible) {
       setSortVisible(!sortVisible);
@@ -140,34 +144,42 @@ const ProductList = () => {
         <input type="text" placeholder="Search products..." value={searchQuery} onChange={handleSearchChange} className="search-input"  />
       </div>
       <div className="sort-container">
-    
-       
       {searchVisible && (
                    <select value={selectedBrand} onChange={handleBrandChange} className="filter-dropdown" >
                    <option value="">All Vendors</option>
                    {brands.map((brand) => (
                      <option  value={brand.id}>{brand.name}</option>
                    ))}
-                 </select>
-              )}
+                 </select>    )}
         {sortVisible && (
                   <select  value={selectedCategory}  onChange={handleCategoryChange}  className="filter-dropdown"  >
                   <option value="">All Categories</option>
                   {categories.map((cat) => (
-                    <option value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
-              )}
+                    <option value={cat.id}>{cat.name}</option>   ))} </select> )}
+        <div style={{ position: 'relative', display: 'inline-block' }}>
         <FontAwesomeIcon
           icon={faFilter}
-          onClick={handleSearchClick}
+          onClick={handleBrandSortClick}
           style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px' }}
+          onMouseEnter={() => setShowText(true)}
+          onMouseLeave={() => setShowText(false)}
         />
+        {showText && (  <span  style={{  position: 'absolute',  top: '-25px',  left: '0',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',   }} >   Filter by Vendors </span> )}
+          </div>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
         <FontAwesomeIcon
           icon={faSort}
-          onClick={handleSortClick}
+          onClick={handleCategorySortClick}
           style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px'}}
+          onMouseEnter={() => setShowTextCategories(true)}
+          onMouseLeave={() => setShowTextCategories(false)}
         />
+        {showTextCategories && (
+            <span
+              style={{  position: 'absolute',  top: '-25px',  left: '0',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+              }} >   Filter by Categories </span>
+          )}
+        </div>
         <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
         <option value="">Sort by Products</option>
           <option value="newest">Newest Products</option>

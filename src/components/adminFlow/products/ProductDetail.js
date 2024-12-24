@@ -565,7 +565,7 @@ const ProductDetail = ({ categories }) => {
                                                 });
                                             }}
                                             className="dropdown"
-                                            style={{ width: '100%', margin: '6px 4px 6px 2px' }}
+                                            style={{ width: '100%', margin: '6px 4px 6px 2px',border:'1px solid #ccc',borderRadius:'4px', }}
                                         >
                                             {brand.map((item) => (
                                                 <option value={item.id}>
@@ -844,76 +844,47 @@ const ProductDetail = ({ categories }) => {
                                     aria-describedby="variant-modal-description"
                                     className="variant_model_pdp"
                                 >
-                                    <Box
-                                        sx={{
+                                    <Box  sx={{
                                             width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
-                                        }}
-                                    >
+                                        }}    >
                                         <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
                                         <form onSubmit={handleFormSubmit}>
-                                            <TextField fullWidth name="sku" label="SKU" value={selectedVariants.sku} onChange={handleVariantDetailChange} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
-                                            />
-                                            <TextField fullWidth type="text" name="unfinishedPrice" label="Unfinished Price" value={selectedVariants.unfinishedPrice || ''}
-                                                onChange={(e) => {
+                                        <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU</label>
+                                        <input type="text" name="sku" className="input_pdp" value={selectedVariants.sku} onChange={handleVariantDetailChange}  />
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price</label>
+                                            <input type="text" name="sku" className="input_pdp" value={selectedVariants.unfinishedPrice || ''}  onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
                                                         handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
-                                                    }
-                                                }} margin="normal" className="input_pdp" size="small" sx={{ marginBottom: 2 }}
-                                            />
-
-                                            <TextField fullWidth type="text" name="finishedPrice" label="Finished Price" value={selectedVariants.finishedPrice}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (/^\d*\.?\d{0,2}$/.test(value)) {
-                                                        handleVariantDetailChange({ target: { name: 'finishedPrice', value } });
-                                                    }
-                                                }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
-                                            />
+                                                    }  }}  />
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Finished Price</label>
+                                            <input  type="text"  name="finishedPrice"  className="input_pdp"  value={selectedVariants.finishedPrice}   onChange={(e) => {     const value = e.target.value;      if (/^\d*\.?\d{0,2}$/.test(value)) {        handleVariantDetailChange({ target: { name: 'finishedPrice', value } });      }    }}  />
                                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price</label>
+                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price</label>
                                                 {RetailPrice === 1 ? (
-                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X ` : '0X'}(by default)</label>
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X ` : '0X'}(by default)</label>
                                                 ) : (
-                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 5px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
                                                 )}
                                             </div>
-
-                                            <input type="number" id="RetailPrice" name="totalPrice" value={selectedVariants.retailPrice} readOnly />
-                                            {/* <TextField fullWidth type="text" name="retailPrice" label="" value={selectedVariants.retailPrice}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (/^\d*\.?\d{0,2}$/.test(value)) {
-                                                        handleVariantDetailChange({ target: { name: 'retailPrice', value } });
-                                                    }
-                                                }} margin="normal" className='input_pdp' size="small" sx={{ marginBottom: 2 }}
-                                            /> */}
-                                            <TextField fullWidth type="number" name="quantity" className='input_pdp' label="Quantity" value={selectedVariants.quantity} onChange={handleVariantDetailChange} margin="normal" size="small" sx={{ marginBottom: 2 }}
-                                            />
-
-
+                                            <input type="text" className="input_pdp"  name="totalPrice" value={selectedVariants.retailPrice.toFixed(2)} readOnly />
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Quantity</label>
+                                            <input type="number" name="quantity" className="input_pdp" value={selectedVariants.quantity} onChange={handleVariantDetailChange}  />
                                             {variantOptions?.map((variant) => (
                                                 <div key={variant.type_id}>
-                                                    <FormControl fullWidth variant="outlined" sx={{ mb: 2,padding:'5px 0px 0px 0px',marginBottom:'6px' }}>
-                                                        <InputLabel id={`variant-${variant.type_id}`} >{variant.type_name}</InputLabel>
-                                                        <Select
-                                                            labelId={`variant-${variant.type_id}`}
-                                                            value={selectedVariants[variant.type_id] || ''}
-                                                            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-                                                            label={variant.type_name}
-                                                            size="small"
-                                                            sx={{ padding: '4px',fontSize:'14px' }}   >
-                                                            {variant.option_value_list?.map((option) => (
-                                                                <MenuItem key={option.type_value_id} value={option.type_value_id} style={{fontSize:'14px'}}>
-                                                                    {option.type_value_name}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
-                                                    </FormControl>
+                                                      <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>{variant.type_name}</label>
+                                                    <select id="brand-select" name="brand_id" required value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
+                                                        <option value="">Select Variant Value</option>
+                                                        {variant.option_value_list?.map((option) => (
+                                                            <option value={option.id}>
+                                                                {option.type_value_name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                   
                                                 </div>
                                             ))}
-                                            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}
-                                            >
+                                            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}  >
                                                 Save Variant
                                             </Button>
                                         </form>
