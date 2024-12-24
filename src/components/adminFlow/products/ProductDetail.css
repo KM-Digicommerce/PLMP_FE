@@ -51,9 +51,9 @@
 .cls_addvariant { background: rgb(144 144 144); margin: 0; width: 15%;}
 
 .select_pdp { margin: 2px;}
-.input_pdp { margin: 4px !important;}
+.input_pdp { margin: 4px 0px 4px 0px !important; width: 95% !important;}
 .input_pdps {  margin: 0px !important;  width: 97% !important;}
-input[type="text"] {  margin-right: 10px !important;}
+/* input[type="text"] {  margin-right: 10px !important;} */
 input[type="number"] {  margin: 6px 10px 6px 10px !important;}
 .css-1y6tzp0-MuiFormControl-root {  margin-top: 10px;  margin-bottom: 4px;}
 .product-info-section {  display: flex;  gap: 20px;}

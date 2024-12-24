@@ -1,10 +1,10 @@
 .add-product-container { max-width: 178px; padding: 20px; float: right;}
-input[type="text"] { margin: 6px 20px 6px 10px; }
+.add_input_field { margin: 6px 20px 6px 10px; width: 93% !important; }
 input[type="number"] { margin: 10px 20px 10px 10px; }
 .input-group { display: flex; justify-content: space-between;}
 .input-group input, .input-group textarea { width: 48%;  padding: 10px 0px 10px 4px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;}
 textarea { height: 80px; margin: 10px;}
-.save-button {display: block;width: 100%;padding: 10px;background-color: #007bff;color: white;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;}
+.save-button {display: block;width: 98%;padding: 10px;background-color: #007bff;color: white;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;}
 .save-button:hover { background-color: #0056b3; }
 .modal-overlay { position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, 0.5);display: flex;justify-content: center;align-items: center;z-index: 1000; }
 .modal-content {background: white;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);max-width: 55%; max-height: 90%; overflow-y: auto;display: flex;flex-direction: column;}
@@ -12,10 +12,10 @@ textarea { height: 80px; margin: 10px;}
 .close-btn { position: absolute; top: 5px; right: 1px; background: transparent; border: none; font-size: 20px; cursor: pointer; color: #4c4949; transition: color 0.3s; text-align: right; width: 6%; padding: 5px 10px 5px 10px;}
 .close-btn:hover { color: #333; }
 .form-section { margin-bottom: 10px; }
-input, textarea { width: 90%;  margin-bottom: 10px; padding: 10px;  border: 1px solid #ccc;  border-radius: 4px; }
+input, textarea { width: 94%;  margin-bottom: 10px; padding: 10px;  border: 1px solid #ccc;  border-radius: 4px; }
 textarea { resize: vertical;  min-height: 100px; }
 .add-product-button {background-color: #007bff;color: white;padding: 10px 20px;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;width: 100%; }
-.save-button { margin-top: 10px; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+.save-button { margin-top: 10px; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;margin-left: 8px; }
 .save-button { background-color: #28a745; color: white; }
 .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: center;}
 .pricing-field {display: flex;flex-direction: column;}
@@ -53,6 +53,48 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 /* Hide arrows in Firefox */
 input[type="number"] {
-  -moz-appearance: textfield; /* Disable spinner in Firefox */
-  appearance: textfield; /* Standard property */
+  -moz-appearance: textfield; 
+  appearance: textfield; 
+}
+.variant-scroll {
+  overflow-y: auto; 
+  white-space: nowrap;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex; 
+  flex-direction: column;
+  max-height: 300px; 
+}
+
+.variant-row {
+  display: flex; 
+  min-width: 600px; 
+  border-radius: 5px;
+  gap: 10px; 
+  height: 100px;
+}
+
+.variant-field {
+  margin-bottom: 10px;
+  flex: 1; 
+}
+
+.variant-dropdown {
+  margin-bottom: 10px;
+}
+
+.styled-dropdown {
+  width: 100%;
+}
+
+.remove-variant-icon-button {
+  margin-top: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.icon-trash {
+  color: red;
 }

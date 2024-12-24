@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './AddProduct.css'; // Add your CSS file
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
-import { Select, MenuItem, FormControl } from '@mui/material';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,6 +11,9 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [openDropdownIndex, setOpenDropdownIndex] = useState(null); // Track which dropdown is open
+
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
@@ -25,7 +27,27 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
             fetchVariants();
         }
     }, [isOpen, selectedCategoryId]);
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+      };
     
+      const filteredVariantOptions = variantOptions?.map((variantOption) => ({
+        ...variantOption,
+        filteredOptions: variantOption.option_value_list?.filter((option) =>
+          option.type_value_name?.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+      }));
+      const handleDropdownClick = (index) => {
+        setOpenDropdownIndex(openDropdownIndex === index ? null : index); // Toggle open/close for the clicked dropdown
+        if (openDropdownIndex === null) {
+            setSearchQuery('');
+        }
+      };
+      const handleVariantSelect = (typeId, valueId, index) => {
+        handleVariantChange(typeId, valueId, index); 
+            setOpenDropdownIndex(null);
+      };
     const handleAddBrand = async () => {
         const { value: brandName } = await Swal.fire({
           title: 'Add New Vendor',
@@ -83,13 +105,13 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Basic Info</h3>
                      <label htmlFor="model">Model <span className="required">*</span></label>
-                    <input type="text" name="model" placeholder="" required value={productData.model} onChange={handleChange}  autoComplete="off" />
-                    <label htmlFor="mpn">MPN <span className="required">*</span></label>
-                    <input type="text" name="mpn" placeholder="" required value={productData.mpn} onChange={handleChange}  autoComplete="off" />
+                    <input type="text" name="model" className="add_input_field" placeholder="" required value={productData.model} onChange={handleChange}  autoComplete="off" />
+                    <label htmlFor="mpn">MPN <span className="required">*</span> </label>
+                    <input type="text" name="mpn" className="add_input_field" placeholder="" required value={productData.mpn} onChange={handleChange}  autoComplete="off" />
                     <label htmlFor="upc_ean">UPC/EAN <span className="required">*</span></label>
-                    <input type="text" name="upc_ean" placeholder="" required value={productData.upc_ean} onChange={handleChange}  autoComplete="off" />
+                    <input type="text" name="upc_ean" className="add_input_field" placeholder="" required value={productData.upc_ean} onChange={handleChange}  autoComplete="off" />
                     <label htmlFor="breadcrumb">Breadcrumb <span className="required">*</span></label>
-                    <input type="text" name="breadcrumb" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
+                    <input type="text" name="breadcrumb" className="add_input_field" placeholder="" required value={breadcrumbs} onChange={handleChange} readOnly/>
                     <label htmlFor="brand-select" style={{ marginRight: '10px' }}>
                         Vendor <span className="required">*</span>
                     </label>
@@ -99,7 +121,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         style={{ marginLeft: 'auto', backgroundColor: '#007bff', color: '#fff', border: 'none', width:'15%', padding: '8px 8px', borderRadius: '4px', cursor: 'pointer' }} >
                         Add Vendor
                     </button>
-                    <select  id="brand-select"  name="brand_id"  required  value={productData.product_obj.brand_id || ''}  onChange={handleChange}  className="dropdown"  style={{ width: '94%', margin: '6px 20px 6px 10px' }} >
+                    <select  id="brand-select"  name="brand_id"  required  value={productData.product_obj.brand_id || ''}  onChange={handleChange}  className="dropdown"  style={{ width: '97%', margin: '6px 20px 6px 10px',border:'1px solid #ccc',borderRadius:'4px',padding:'10px 0px 10px 0px' }} >
                         <option value="">Select Vendor</option>
                         {brand.map((item) => (
                             <option value={item.id}>
@@ -109,7 +131,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     </select>
 
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
-                    <input type="text" name="product_name" placeholder="" required value={productData.product_name} onChange={handleChange}  autoComplete="off" />
+                    <input type="text" name="product_name" className="add_input_field" placeholder="" required value={productData.product_name} onChange={handleChange}  autoComplete="off" />
                 </div>
                 <div className="form-section">
                     <div className="CategoryTable-header">
@@ -129,40 +151,15 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                             <div className="variant-row" key={index}>
                                 <div className="variant-field">
                                     <label htmlFor="sku">SKU <span className="required">*</span></label>
-                                    <input
-                                        type="text"
-                                        id="sku"
-                                        name="sku"
-                                        placeholder="SKU"
-                                        required
-                                        value={variant.sku}
-                                        onChange={(e) => handleVariantDetailChange(e, index)}
-                                         autoComplete="off"
-                                    />
+                                    <input  type="text"  id="sku"  name="sku"  placeholder="SKU"  required  value={variant.sku}  onChange={(e) => handleVariantDetailChange(e, index)}   autoComplete="off" />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="unfinishedPrice">Unfinished Price <span className="required">*</span></label>
-                                    <input
-                                        type="number"
-                                        id="unfinishedPrice"
-                                        name="unfinishedPrice"
-                                        placeholder="Unfinished Price"
-                                        required
-                                        value={variant.unfinishedPrice}
-                                        onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}
-                                        onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}
-                                        autoComplete="off"
-                                    />
+                                    <input  type="number"  id="unfinishedPrice"  name="unfinishedPrice"  placeholder="Unfinished Price"  required  value={variant.unfinishedPrice}  onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}  autoComplete="off"   />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
-                                    <input
-                                        type="number"
-                                        id="finishedPrice"
-                                        name="finishedPrice"
-                                        placeholder="Finished Price"
-                                        required
-                                        value={variant.finishedPrice}
+                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" required value={variant.finishedPrice}
                                         onChange={(e) => { handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'finishedPrice', index)}}
                                         onBlur={(e) => handleVariantDecimalBlur(e, 'finishedPrice', index)}
                                          autoComplete="off"
@@ -170,7 +167,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="totalPrice">Retail Price</label>
-                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.retailPrice} readOnly />
+                                    <input type="number" id="totalPrice" name="totalPrice" value={variant.retailPrice.toFixed(2)} readOnly />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="quantity">Quantity <span className="required">*</span></label>
@@ -185,44 +182,90 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                     />
                                 </div>
                               
-                                {variantOptions?.map((variantOption) => (
-                                    <div className="variant-dropdown" key={variantOption.type_id}>
-                                        <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
-                                            {variantOption.type_name}
-                                        </label>
-                                        <FormControl fullWidth variant="outlined" className="dropdown-container">
-                                            <Select
-                                                labelId={`variant-${variantOption.type_id}`}
-                                                value={variant[variantOption.type_id] || ''}
-                                                onChange={(e) => handleVariantChange(variantOption.type_id, e.target.value, index)}
-                                                displayEmpty
-                                                className="styled-dropdown"
-                                                inputProps={{
-                                                    style: {
-                                                        fontSize: '16px',
-                                                        padding: '8px',
-                                                    },
-                                                }}
-                                            >
-                                                <MenuItem value="" disabled>Select {variantOption.type_name}</MenuItem>
-                                                {variantOption.option_value_list?.map((option) => (
-                                                    <MenuItem key={option.type_value_id} value={option.type_value_id}>
-                                                        {option.type_value_name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </div>
-                                ))}
+                                {filteredVariantOptions?.map((variantOption, idx) => (
+        <div className="variant-dropdown" key={variantOption.type_id} style={{ position: 'relative' }}>
+          <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
+            {variantOption.type_name}
+          </label>
+
+          {/* Custom dropdown header */}
+          <div
+            className="custom-dropdown-header"
+            onClick={() => handleDropdownClick(idx)} // Toggle the dropdown based on index
+            style={{
+              width: '97%',
+              padding: '10px 0px 10px 0px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
+          >
+            {/* Display the selected variant value */}
+            {variant[variantOption.type_id] 
+              ? variantOption.option_value_list?.find(option => option.type_value_id === variant[variantOption.type_id])?.type_value_name 
+              : "Select Variant Value"
+            }
+          </div>
+
+          {/* Dropdown list */}
+          {openDropdownIndex === idx && ( // Only show the dropdown for the selected index
+            <div
+              className="custom-dropdown-list"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                width: '90%',
+                backgroundColor: '#fff',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                borderRadius: '5px',
+                maxHeight: '150px',
+                overflowY: 'auto',
+                zIndex: 1000,
+                border: '1px solid #ccc',
+                padding: '8px',
+              }}
+            >
+              {/* Search input inside the dropdown */}
+              <input
+                type="text"
+                placeholder="Search options..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                style={{
+                  width: '90%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  fontSize: '14px',
+                }}
+              />
+
+              {/* Option list */}
+              {variantOption.filteredOptions?.map((option) => (
+                <div
+                  key={option.type_value_id}
+                  className="custom-dropdown-option"
+                  onClick={() => handleVariantSelect(variantOption.type_id, option.type_value_id, index)}
+                  style={{
+                    padding: '8px',
+                    cursor: 'pointer',
+                    backgroundColor: variant[variantOption.type_id] === option.type_value_id ? '#d7ffe6' : '#fff',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                  }}
+                >
+                  {option.type_value_name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
                                  {index > 0 && (
-                                    <button
-                                        className="remove-variant-icon-button"
-                                        onClick={() => removeVariantRow(index)}
-                                        aria-label="Remove Variant"
-                                    >
+                                    <button className="remove-variant-icon-button" onClick={() => removeVariantRow(index)} aria-label="Remove Variant"  >
                                         <FontAwesomeIcon icon={faTrash} className="icon-trash" />
-                                    </button>
-                                )}
+                                    </button>  )}
                             </div>
                         ))}
                     </div>
@@ -306,7 +349,7 @@ const AddProduct = (categories) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
     const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
     const [clearBtn, setShowclearBtn] = useState(false);
-    const [RetailPrice, setShowRetailPrice] = useState([0]);
+    const [RetailPrice, setShowRetailPrice] = useState(1);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -442,7 +485,7 @@ const AddProduct = (categories) => {
         });
     };
     const handleVariantChange = (typeId, optionId, index) => {        
-        console.log('Inside Variant change 2222');
+        console.log('Inside Variant change 2222', typeId, optionId, index);
         setSelectedVariants(prev => {
           const updatedVariants = [...prev];
           const updatedVariant = updatedVariants[index];
