@@ -7,13 +7,18 @@ const BrandList = () => {
   const [brands, setBrands] = useState([]);
   const [brandCount, setBrandCounts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterLetter, setFilterLetter] = useState(''); // State for letter filter
 
   const fetchBrands = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
       setBrandCounts(response.data.data.brand_count || []);
-      setBrands(response.data.data.brand_list || []);
+      const brandList = response.data.data.brand_list || [];
+      const sortedBrands = brandList.sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+      setBrands(sortedBrands);
     } catch (error) {
       console.error('Error fetching brands:', error);
       Swal.fire({
@@ -33,7 +38,9 @@ const BrandList = () => {
       setLoading(false);
     }
   };
-
+  const filteredBrands = filterLetter
+  ? brands.filter((brand) => brand.name.startsWith(filterLetter))
+  : brands;
   const handleAddBrand = async () => {
     const { value: formValues } = await Swal.fire({
       title: 'Add New Vendor',
@@ -51,12 +58,7 @@ const BrandList = () => {
         }
         return { vendorName, vendorLogo };
       },
-      customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm-brand',
-        cancelButton: 'swal-custom-cancel-brand',
+      customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
       },
     });
   
@@ -146,16 +148,33 @@ const BrandList = () => {
             <span className="brand-count">{brandCount}</span>
           </div>
         </div>
-        <button className="add-brand-btn" onClick={handleAddBrand}>
-          Add Vendor
-        </button>
+          <button className="add-brand-btn" onClick={handleAddBrand}>
+            Add Vendor
+          </button>
       </div>
-  
+      <div className="alphabetical-dropdown">
+        <label htmlFor="alphabetical-filter" className="dropdown-label-vendor">
+          Filter by Alphabet:
+        </label>
+        <select
+          id="alphabetical-filter"
+          className="dropdown-select"
+          value={filterLetter}
+          onChange={(e) => setFilterLetter(e.target.value)}
+        >
+          <option value="">All</option>
+          {Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map((letter) => (
+            <option key={letter} value={letter}>
+              {letter}
+            </option>
+          ))}
+        </select>
+      </div>
       {loading ? (
         <p>Loading Vendors...</p>
       ) : (
         <div className="brand-cards-container">
-          {brands.map((brand) => (
+          {filteredBrands.map((brand) => (
             <div key={brand.id} className="brand-card">
               <div className="brand-logo">
                 <img

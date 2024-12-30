@@ -561,18 +561,18 @@ const handleVariantValueRemove = (id) => {
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="" style={{ fontSize: "14px", fontWeight: "500" }}>Select Variant</option>
-          {/* {variantOptions?.map((variant) => (
+          {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))} */}
-          {variantOptions
+          ))}
+          {/* {variantOptions
   ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
   .map((variant) => (
     <option style={{ fontSize: "14px", fontWeight: "500" }} key={variant.id} value={variant.id}>
       {variant.name}
     </option>
-  ))}
+  ))} */}
         </select>
         <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
