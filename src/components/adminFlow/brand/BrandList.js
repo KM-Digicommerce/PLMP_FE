@@ -5,12 +5,14 @@ import './BrandList.css';
 
 const BrandList = () => {
   const [brands, setBrands] = useState([]);
+  const [brandCount, setBrandCounts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchBrands = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+      setBrandCounts(response.data.data.brand_count || []);
       setBrands(response.data.data.brand_list || []);
     } catch (error) {
       console.error('Error fetching brands:', error);
@@ -33,30 +35,77 @@ const BrandList = () => {
   };
 
   const handleAddBrand = async () => {
-    const { value: brandName } = await Swal.fire({
+    const { value: formValues } = await Swal.fire({
       title: 'Add New Vendor',
-      input: 'text',
-      inputLabel: 'Vendor Name',
-      inputPlaceholder: 'Enter the Vendor name',
+      html: `
+        <input id="vendor-name" class="swal2-input vendor_input" placeholder="Enter Vendor Name">
+        <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
+      `,
       showCancelButton: true,
+      focusConfirm: false,
+      preConfirm: () => {
+        const vendorName = document.getElementById('vendor-name').value;
+        const vendorLogo = document.getElementById('vendor-logo').files[0];
+        if (!vendorName || !vendorLogo) {
+          Swal.showValidationMessage('Please enter a vendor name and select a logo');
+        }
+        return { vendorName, vendorLogo };
+      },
+      customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm-brand',
+        cancelButton: 'swal-custom-cancel-brand',
+      },
     });
-
-    if (brandName) {
+  
+    if (formValues) {
+      const { vendorName, vendorLogo } = formValues;
+      const formData = new FormData();
+      formData.append('name', vendorName);
+      formData.append('logo', vendorLogo);
+  
       try {
-        await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
-        Swal.fire({
-          title: 'Success!',
-          text: 'Vendor added successfully!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: {
-            container: 'swal-custom-container',
-            popup: 'swal-custom-popup',
-            title: 'swal-custom-title',
-            confirmButton: 'swal-custom-confirm',
-            cancelButton: 'swal-custom-cancel',
-          },
-        });
+        const response = await axiosInstance.post(
+          `${process.env.REACT_APP_IP}/createBrand/`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+  
+        if (response.data.data.is_created === true) {
+          Swal.fire({
+            title: 'Success!',
+            text: 'Vendor added successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              container: 'swal-custom-container',
+              popup: 'swal-custom-popup',
+              title: 'swal-custom-title',
+              confirmButton: 'swal-custom-confirm',
+              cancelButton: 'swal-custom-cancel',
+            },
+          });
+        } else if (response.data.data.is_created === false) {
+          Swal.fire({
+            title: 'Error!',
+            text: response.data.data.error,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+              container: 'swal-custom-container',
+              popup: 'swal-custom-popup',
+              title: 'swal-custom-title',
+              confirmButton: 'swal-custom-confirm',
+              cancelButton: 'swal-custom-cancel',
+            },
+          });
+        }
         fetchBrands(); // Refresh brand list
       } catch (error) {
         console.error('Error adding Vendor:', error);
@@ -75,8 +124,7 @@ const BrandList = () => {
         });
       }
     }
-  };
-
+  };  
   useEffect(() => {
     fetchBrands();
   }, []);
@@ -88,15 +136,21 @@ const BrandList = () => {
       </div>
     );
   }
-
   return (
     <div className="brand-page">
       <div className="brand-header">
-        <h1>Vendor Management</h1>
+        <div className="brand-header-info">
+          <h1 className="brand-title">Vendor Management</h1>
+          <div className="brand-count-container">
+            <span className="total-brands-text">Total Brands:</span>
+            <span className="brand-count">{brandCount}</span>
+          </div>
+        </div>
         <button className="add-brand-btn" onClick={handleAddBrand}>
           Add Vendor
         </button>
       </div>
+  
       {loading ? (
         <p>Loading Vendors...</p>
       ) : (

@@ -637,17 +637,12 @@ const handleVariantValueRemove = (id) => {
           style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }}
           onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
-          {/* {variantOptions?.map((variant) => (
+          {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))} */}
-           {variantOptions
-  ?.filter((variant) => variant.name.toLowerCase() === "wood type")
-  .map((variant) => (
-    <option key={variant.id} value={variant.id}>
-      {variant.name}
-    </option> ))}  </select>
+          ))}      {/* {variantOptions ?.filter((variant) => variant.name.toLowerCase() === "wood type")  .map((variant) => (   <option  key={variant.id} value={variant.id}>  {variant.name}  </option> ))}  */}
+     </select>
     <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
           <div style={{ marginTop: '10px', display: "inline-block" }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
 import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
@@ -9,6 +9,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({});
@@ -24,6 +25,7 @@ const ProductDetail = ({ categories }) => {
     const [selectedlevel6, setSelectedlevel6] = useState('');
 
     const [categoryIdForVariant, setCategoryIdForVariant] = useState('');
+    const [categoryLevelForcategories, setCategoryLevelForcategories] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [categoryIds, setCategoryIds] = useState('');
 
@@ -133,8 +135,6 @@ const ProductDetail = ({ categories }) => {
     const handleLevel3Select = (id) => {
         let level1Category = '';
         let level2Category = '';
-        console.log(id, 'id ');
-
         categories?.category_list?.some(level1 => {
             const foundLevel2 = level1.level_one_category_list.find(level2 =>
                 level2.level_two_category_list.some(level3 => level3._id === id)
@@ -191,7 +191,6 @@ const ProductDetail = ({ categories }) => {
     const fetchProductDetail = async (productId) => {
         try {
             const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, { id: productId, });
-            console.log(response, 'response');
             if (response.data && response.data.data) {
                 const productCategory = response.data.data.category_level;
                 const RetailPrice = response.data.data.category_brand_price.price;
@@ -201,22 +200,29 @@ const ProductDetail = ({ categories }) => {
                 const productObj = response.data.data.product_obj;
                 setCategoryIds(response.data.data.category_id);
                 setCategoryIdForVariant(response.data.data.category_id);
+                setCategoryLevelForcategories('level-1');
                 if (response.data.data.category_name === 'level-1') {
                     handleCategorySelect(response.data.data.category_id);
+                    setCategoryLevelForcategories('level-1');
                 }
                 if (response.data.data.category_name === 'level-2') {
                     handleLevel2Select(response.data.data.category_id);
+                    setCategoryLevelForcategories('level-2');
                 }
                 if (response.data.data.category_name === 'level-3') {
                     handleLevel3Select(response.data.data.category_id);
+                    setCategoryLevelForcategories('level-3');
                 }
                 if (response.data.data.category_name === 'level-4') {
                     handleLevelSelect('level-4', response.data.data.category_id);
+                    setCategoryLevelForcategories('level-4');
                 }
                 if (response.data.data.category_name === 'level-5') {
                     handleLevelSelect('level-5', response.data.data.category_id);
+                    setCategoryLevelForcategories('level-5');
                 }
                 if (response.data.data.category_name === 'level-6') {
+                    setCategoryLevelForcategories('level-6');
                     handleLevelSelect('level-6', response.data.data.category_id);
                 }
                 setCategoryLevel(productCategory);
@@ -229,14 +235,11 @@ const ProductDetail = ({ categories }) => {
             const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
                 product_id: productId,
             });
-            console.log("variantResponse", variantResponse);
-
             if (variantResponse.data && variantResponse.data.data) {
                 setVariantData(variantResponse.data.data || []);
             }
             try {
                 const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-                console.log("Response 2", res.data.data.brand_list);
                 setBrand(res.data.data.brand_list);
             } catch (err) {
                 console.error('Error fetching variants:', err);
@@ -339,13 +342,21 @@ const ProductDetail = ({ categories }) => {
     };
 
     const handleBackClick = () => {
-        navigate('/Admin');
-    };
+        let categoryId = localStorage.getItem("categoryId");
+        let category_level = localStorage.getItem("levelCategory");
+        if (categoryId && category_level) {
+          const params = new URLSearchParams();
+          params.set('categoryId', categoryId);
+          params.set('level', category_level);
+                navigate(`/Admin?${params.toString()}`);
+        } else {
+          console.log("Category ID or level not found in localStorage");
+           navigate(`/Admin`);
+        }
+      };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
-
-
     const swapProductToCategory = async () => {
         if (categoryIds) {
             try {
@@ -354,7 +365,6 @@ const ProductDetail = ({ categories }) => {
                     category_id: categoryId,
                     category_name: categoryName
                 });
-                console.log(response.status, 'response.status');
                 if (response.status === 200) {
                     Swal.fire({
                         title: 'Success!', text: 'Category updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
