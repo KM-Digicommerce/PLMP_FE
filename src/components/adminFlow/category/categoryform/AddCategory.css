@@ -4,11 +4,9 @@
     margin: 55px 0px;
     text-align: center;
 }
-
-input[type="text"] {
+/* input[type="text"] {
     margin-right: 10px !important;
-}
-
+} */
 .form-title{
     margin-bottom: 5px;
 }

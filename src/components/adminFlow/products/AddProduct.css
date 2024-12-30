@@ -56,45 +56,10 @@ input[type="number"] {
   -moz-appearance: textfield; 
   appearance: textfield; 
 }
-.variant-scroll {
-  overflow-y: auto; 
-  white-space: nowrap;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  display: flex; 
-  flex-direction: column;
-  max-height: 300px; 
-}
-
-.variant-row {
-  display: flex; 
-  min-width: 600px; 
-  border-radius: 5px;
-  gap: 10px; 
-  height: 100px;
-}
-
-.variant-field {
-  margin-bottom: 10px;
-  flex: 1; 
-}
-
-.variant-dropdown {
-  margin-bottom: 10px;
-}
-
-.styled-dropdown {
-  width: 100%;
-}
-
-.remove-variant-icon-button {
-  margin-top: 10px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.icon-trash {
-  color: red;
-}
+.variant-scroll { overflow-y: auto;  white-space: nowrap; padding: 10px; border: 1px solid #ddd; border-radius: 5px; display: flex;  flex-direction: column; max-height: 250px; }
+.variant-row { display: flex;  min-width: 600px;  border-radius: 5px; gap: 10px;  height: 100px;}
+.variant-field { margin-bottom: 10px; flex: 1; }
+.variant-dropdown { margin-bottom: 10px;}
+.styled-dropdown { width: 100%;}
+.remove-variant-icon-button { margin-top: 10px; background: transparent; border: none; cursor: pointer;}
+.icon-trash { color: red;}

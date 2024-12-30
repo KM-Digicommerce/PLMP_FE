@@ -38,16 +38,25 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
           option.type_value_name?.toLowerCase().includes(searchQuery.toLowerCase())
         ),
       }));
-      const handleDropdownClick = (index) => {
-        setOpenDropdownIndex(openDropdownIndex === index ? null : index); // Toggle open/close for the clicked dropdown
-        if (openDropdownIndex === null) {
-            setSearchQuery('');
-        }
-      };
+      const handleDropdownClick = (rowIndex, dropdownIndex) => {
+        const currentIndex = `${rowIndex}-${dropdownIndex}`;
+        setOpenDropdownIndex((prevIndex) => (prevIndex === currentIndex ? null : currentIndex));
+    };
       const handleVariantSelect = (typeId, valueId, index) => {
         handleVariantChange(typeId, valueId, index); 
             setOpenDropdownIndex(null);
       };
+      const handleOutsideClick = (event) => {
+        if (!event.target.closest(".variant-row")) {
+            setOpenDropdownIndex(null); 
+        }
+    };
+      useEffect(() => {
+        document.addEventListener("click", handleOutsideClick);
+        return () => {
+          document.removeEventListener("click", handleOutsideClick);
+        };
+      }, []);
     const handleAddBrand = async () => {
         const { value: brandName } = await Swal.fire({
           title: 'Add New Vendor',
@@ -155,14 +164,14 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="unfinishedPrice">Unfinished Price <span className="required">*</span></label>
-                                    <input  type="number"  id="unfinishedPrice"  name="unfinishedPrice"  placeholder="Unfinished Price"  required  value={variant.unfinishedPrice}  onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}  autoComplete="off"   />
+                                    <input  type="number"  id="unfinishedPrice"  name="unfinishedPrice"  placeholder="Unfinished Price"  required  value={variant.unfinishedPrice}  onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}  autoComplete="off"  onWheel={(e) => e.target.blur()} />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
                                     <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" required value={variant.finishedPrice}
                                         onChange={(e) => { handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'finishedPrice', index)}}
                                         onBlur={(e) => handleVariantDecimalBlur(e, 'finishedPrice', index)}
-                                         autoComplete="off"
+                                         autoComplete="off" onWheel={(e) => e.target.blur()}
                                     />
                                 </div>
                                 <div className="variant-field">
@@ -171,97 +180,71 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="quantity">Quantity <span className="required">*</span></label>
-                                    <input
-                                        type="number"
-                                        id="quantity"
-                                        name="quantity"
-                                        placeholder="Quantity"
-                                        required
-                                        value={variant.quantity}
-                                        onChange={(e) => handleVariantDetailChange(e, index)}
+                                    <input  type="number"  id="quantity"  name="quantity"  placeholder="Quantity"  required  value={variant.quantity}  onChange={(e) => handleVariantDetailChange(e, index)}  onWheel={(e) => e.target.blur()}
                                     />
                                 </div>
                               
-                                {filteredVariantOptions?.map((variantOption, idx) => (
-        <div className="variant-dropdown" key={variantOption.type_id} style={{ position: 'relative' }}>
-          <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
-            {variantOption.type_name}
-          </label>
+                                {filteredVariantOptions?.map((variantOption, dropdownIndex) => (
+                                    <div className="variant-dropdown" key={variantOption.type_id} style={{ position: 'relative' }}>
+                                        <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
+                                            {variantOption.type_name}
+                                        </label>
 
-          {/* Custom dropdown header */}
-          <div
-            className="custom-dropdown-header"
-            onClick={() => handleDropdownClick(idx)} // Toggle the dropdown based on index
-            style={{
-              width: '97%',
-              padding: '10px 0px 10px 0px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-          >
-            {/* Display the selected variant value */}
-            {variant[variantOption.type_id] 
-              ? variantOption.option_value_list?.find(option => option.type_value_id === variant[variantOption.type_id])?.type_value_name 
-              : "Select Variant Value"
-            }
-          </div>
+                                        {/* Custom dropdown header */}
+                                        <div
+                                            className="custom-dropdown-header"
+                                            onClick={() => handleDropdownClick(index, dropdownIndex)} // Pass both row and dropdown index
+                                            style={{
+                                                width: '95%', padding: '10px 0px 10px 4px', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', fontSize: '14px',
+                                            }}
+                                        >
+                                            {/* Display the selected variant value */}
+                                            {variant[variantOption.type_id]
+                                                ? variantOption.option_value_list?.find(option => option.type_value_id === variant[variantOption.type_id])?.type_value_name
+                                                : "Select Variant Value"
+                                            }
+                                        </div>
 
-          {/* Dropdown list */}
-          {openDropdownIndex === idx && ( // Only show the dropdown for the selected index
-            <div
-              className="custom-dropdown-list"
-              style={{
-                position: 'absolute',
-                top: '100%',
-                width: '90%',
-                backgroundColor: '#fff',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                borderRadius: '5px',
-                maxHeight: '150px',
-                overflowY: 'auto',
-                zIndex: 1000,
-                border: '1px solid #ccc',
-                padding: '8px',
-              }}
-            >
-              {/* Search input inside the dropdown */}
-              <input
-                type="text"
-                placeholder="Search options..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                style={{
-                  width: '90%',
-                  padding: '8px',
-                  borderRadius: '4px',
-                  border: '1px solid #ccc',
-                  fontSize: '14px',
-                }}
-              />
+                                        {/* Dropdown list */}
+                                        {openDropdownIndex === `${index}-${dropdownIndex}` && ( // Only show the dropdown for the clicked index
+                                            <div
+                                                className="custom-dropdown-list"
+                                                style={{
+                                                    position: 'absolute', top: '100%', width: '90%', backgroundColor: '#fff', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '5px', maxHeight: '150px', overflowY: 'auto', zIndex: 1000, border: '1px solid #ccc', padding: '8px',
+                                                }}
+                                            >
+                                                {/* Search input inside the dropdown */}
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search options..."
+                                                    value={searchQuery}
+                                                    onChange={handleSearchChange}
+                                                    style={{
+                                                        width: '90%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px',
+                                                    }}
+                                                />
 
-              {/* Option list */}
-              {variantOption.filteredOptions?.map((option) => (
-                <div
-                  key={option.type_value_id}
-                  className="custom-dropdown-option"
-                  onClick={() => handleVariantSelect(variantOption.type_id, option.type_value_id, index)}
-                  style={{
-                    padding: '8px',
-                    cursor: 'pointer',
-                    backgroundColor: variant[variantOption.type_id] === option.type_value_id ? '#d7ffe6' : '#fff',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                  }}
-                >
-                  {option.type_value_name}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
+                                                {/* Option list */}
+                                                {variantOption.filteredOptions?.map((option) => (
+                                                    <div
+                                                        key={option.type_value_id}
+                                                        className="custom-dropdown-option"
+                                                        onClick={() => handleVariantSelect(variantOption.type_id, option.type_value_id, index)}
+                                                        style={{
+                                                            padding: '8px',
+                                                            cursor: 'pointer',
+                                                            backgroundColor: variant[variantOption.type_id] === option.type_value_id ? '#d7ffe6' : '#fff',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px',
+                                                        }}
+                                                    >
+                                                        {option.type_value_name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                                  {index > 0 && (
                                     <button className="remove-variant-icon-button" onClick={() => removeVariantRow(index)} aria-label="Remove Variant"  >
                                         <FontAwesomeIcon icon={faTrash} className="icon-trash" />
@@ -382,22 +365,22 @@ const AddProduct = (categories) => {
             varients: [
                 {
                     sku_number: '',
-                    finished_price: '',
-                    un_finished_price: '',
-                    quantity: '',
+                    finished_price: '0',
+                    un_finished_price: '0',
+                    quantity: '0',
                     options: []
                 }
             ]
         }
     });
     const [selectedVariants, setSelectedVariants] = useState([{
-        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, retailPrice:0, options: []
+        sku: '', unfinishedPrice: '0', finishedPrice: '0', quantity: '0',totalPrice: 0, retailPrice:0, options: []
     }]);
 
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
             ...prevVariants,
-            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0,retailPrice:0, options: [] }
+            { sku: '', unfinishedPrice: '0', finishedPrice: '0', quantity: '0', basePrice: '', totalPrice: 0,retailPrice:0, options: [] }
         ]);
     };
     const removeVariantRow = (indexToRemove) => {
@@ -568,9 +551,9 @@ const AddProduct = (categories) => {
                 setProductData({
                     product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '', varients: [{
                             sku_number: '',
-                            finished_price: '',
-                            un_finished_price: '',
-                            quantity: '',
+                            finished_price: '0',
+                            un_finished_price: '0',
+                            quantity: '0',
                             options: []
                         }],
                         category_id: '',

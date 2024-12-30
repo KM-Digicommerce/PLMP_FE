@@ -12,7 +12,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
@@ -44,7 +44,52 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [sortOption, setSortOption] = useState(''); // default value to 'newest'
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
-
+  const location = useLocation();
+  const getQueryParams = () => {
+    const params = new URLSearchParams(location.search);
+    const categoryId = params.get('categoryId');
+    const level = params.get('level');
+    return { categoryId, level };
+  };
+  useEffect(() => {
+  const { categoryId, level } = getQueryParams();
+  if (categoryId && level) {
+    console.log('Inside If');    
+    const categoryIdForVariant = localStorage.getItem("categoryId");
+    const categoryLevelForcategories = localStorage.getItem("levelCategory");
+    if (categoryIdForVariant && categoryLevelForcategories) {
+      setShowclearBtn(true);
+      console.log("Category Info:", categoryIdForVariant, categoryLevelForcategories);
+      setSelectedCategorylevelForallprod(categoryLevelForcategories);
+      setSelectedCategoryIdForallprod(categoryIdForVariant);
+      switch (categoryLevelForcategories) {
+        case "level-1":
+          handleCategorySelect(categoryIdForVariant);
+          break;
+        case "level-2":
+          handleLevel2Select(categoryIdForVariant);
+          break;
+        case "level-3":
+          handleLevel3Select(categoryIdForVariant);
+          break;
+        case "level-4":
+          handlelevel4("level-4", categoryIdForVariant);
+          break;
+        case "level-5":
+          handlelevel5("level-5", categoryIdForVariant);
+          break;
+        case "level-6":
+          handlelevel6("level-6", categoryIdForVariant);
+          break;
+        default:
+          console.warn("Unknown category level:", categoryLevelForcategories);
+          break;
+      }
+        localStorage.removeItem("categoryId");
+      localStorage.removeItem("levelCategory");
+    }
+  }
+}, []);
   useEffect(() => {
     const fetchProducts = async () => {
       if (selectedCategoryIdForallprod) {
@@ -57,7 +102,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                 level_name: selectedCategorylevelForallprod
               }
             }
-          );
+          );          
           setProducts(response.data.data.product_list);
 
         } catch (error) {
@@ -70,26 +115,18 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   }, [selectedCategoryIdForallprod]);
 
   const handleSortChange = async (event) => {
-    const selectedOption = event.target.value;
-    console.log(selectedOption,'sort');
-    
+    const selectedOption = event.target.value;    
     if (selectedOption !== '') {
-      // setProducts('');
       setSortOption(selectedOption);
     const filter = selectedOption === 'newest' ? true : false;
     fetchData(filter);
     }
-    else{
-      setSortOption('');
-    }
-    
+    else{  setSortOption('');  }
   };
 
   const fetchData = async (filter) => {
-    setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
-       
         params: {
           category_id: selectedCategoryIdForallprod,
           level_name: selectedCategorylevelForallprod,
@@ -98,17 +135,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
       if (response.data && response.data.data && response.data.data.product_list) {
         setResponseData(response.data.data.product_list);
-        // setProducts('');
+        setLoading(false);
       } else {
         alert("Unexpected response structure");
       }
-    } catch (err) {
-      // setError(err.message);
-    } finally {
-      setLoading(false);
+    } catch (err) { // setError(err.message);
+    } finally {  setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData(true); // By default, load newest products
   }, []);
@@ -221,6 +255,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setShowclearBtn(true);
     setSelectedCategorylevelForallprod(category_level);
     setSelectedCategoryIdForallprod(id);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('categoryId', id);
+    urlParams.set('level', category_level);
+      window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+      localStorage.setItem("categoryId", id);
+      localStorage.setItem("levelCategory", category_level);
   };
   const handleCloseConfirmation = () => {
     if (isTyping) {
@@ -289,6 +329,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
     setSearchQuery('');
+    localStorage.removeItem("categoryId");
+    localStorage.removeItem("levelCategory");
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
@@ -332,8 +374,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
+    localStorage.removeItem("categoryId");
+    localStorage.removeItem("levelCategory");
   };
   const handleLevel3Select = (e) => {
+    console.log('Inside Level 3', e);
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
       let level1Category, level2Category;
@@ -374,6 +419,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
+    // localStorage.removeItem("categoryId");
+    // localStorage.removeItem("levelCategory");
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
@@ -426,6 +473,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
+    localStorage.removeItem("categoryId");
+    localStorage.removeItem("levelCategory");
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
@@ -490,6 +539,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel5IdPopup('');
       setSelectedlevel6('');
     }
+    localStorage.removeItem("categoryId");
+    localStorage.removeItem("levelCategory");
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
@@ -564,7 +615,11 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       }
       setSelectedlevel6('');
     }
+    localStorage.removeItem("categoryId");
+    localStorage.removeItem("levelCategory");
   };
+  
+  
 const handleLevelClear = (e) => {
   setSelectedCategoryId(e);
   setSelectedLevel2Id(e);
@@ -579,6 +634,9 @@ const handleLevelClear = (e) => {
   setIslevel4DropdownOpen(false);
   setIslevel5DropdownOpen(false);
   setIslevel6DropdownOpen(false);
+  localStorage.removeItem("categoryId");
+  localStorage.removeItem("levelCategory");
+   navigate(`/Admin`);
 }
   // if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
   //   return <div>No categories available</div>;
@@ -629,7 +687,6 @@ const handleLevelClear = (e) => {
   //     alert('Error updating category. Please try again.');
   //   }
   // };
-
 
   // const handleCategoryNameChange = (e) => {
   //   setNewCategoryName(e.target.value);
@@ -693,15 +750,12 @@ const handleLevelClear = (e) => {
     return sortedProducts;
   };
   const handleSearchClick = () => {
-    // setSearchPopupVisible(true);
-    console.log(!searchVisible);
     setSearchVisible(!searchVisible);
     if (sortVisible) {
       setSortVisible(!sortVisible);
     }
   };
   const handleSortClick = () => {
-    // setSearchPopupVisible(true);
     setSortVisible(!sortVisible);
     if (searchVisible) {
       setSearchVisible(!searchVisible);
@@ -712,9 +766,7 @@ const handleLevelClear = (e) => {
     const query = event.target.value;
     setSearchQuerylist(query);
     if (query.length > 0) {
-      const matchedSuggestions = products.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));
-      console.log(matchedSuggestions,'matchedSuggestions');
-      
+      const matchedSuggestions = products.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));      
       setSuggestions(matchedSuggestions);
     } else {
       setSuggestions([]);
@@ -1096,15 +1148,12 @@ const handleLevelClear = (e) => {
               <FontAwesomeIcon
                 icon={faSearch}
                 onClick={handleSearchClick}
-                style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px' }}
-              />
+                style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px' }}    />
               <FontAwesomeIcon
                 icon={faSort}
                 onClick={handleSortClick}
                 style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px' }}
-              />
-              Total Products: {getFilteredAndSortedProducts().length}
-            </h3>
+              />    Total Products: {getFilteredAndSortedProducts().length}  </h3>
           </div>
 
           <TableContainer
@@ -1152,7 +1201,7 @@ const handleLevelClear = (e) => {
               </TableHead>
               <TableBody>
                 {getFilteredAndSortedProducts().map((product) => (
-                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }} onClick={() => handleProductSelect(product.product_id)}>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
                       <img src={product.image[0]} alt={product.product_name} className="product-image-round"
                       />
@@ -1162,7 +1211,7 @@ const handleLevelClear = (e) => {
                     )}
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} className="product-cell" >{product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  className="product-cell" >{product.product_name}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.category_name}</TableCell>
                     {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}

@@ -213,7 +213,7 @@ const ProductList = () => {
           </thead>
           <tbody>
             {sortedProducts.map((item) => (
-              <tr key={`product-${item.product_id}`}>
+              <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} onClick={() => handleProductSelect(item.product_id)}>
                 <td className="checkbox-column">
                   <input
                     type="checkbox"
@@ -237,7 +237,7 @@ const ProductList = () => {
                   )}
                 </td>
                 <td className="mpn-column">{item.mpn}</td>
-                <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
+                <td className="product-cell">
                   <span className="product-name">{item.product_name}</span>
                 </td>
                 <td className="mpn-column">{item.brand}</td>

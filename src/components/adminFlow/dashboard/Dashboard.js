@@ -11,9 +11,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import './Dashboard.css';
+import './Dashboard.css'; // Add your custom styles here
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import Unauthorized from '../../Unauthorized';
+import Modal from '@mui/material/Modal'; // Correct Modal import
 
 ChartJS.register(
   CategoryScale,
@@ -30,6 +31,11 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
+  const [showVendors, setShowVendors] = useState(false);
+  const [vendors, setVendors] = useState([]);
+  const [parentCategories, setParentCategories] = useState([]); // Parent categories state
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isModalOpenvendor, setIsModalOpenVendor] = useState(false); // Modal state
 
   const options = {
     responsive: true,
@@ -51,7 +57,9 @@ function Dashboard() {
         if (response.status === 401) {
           setUnauthorized(true);
         } else if (response.data) {
-          setDashboardData(response.data.data); 
+          const categories = response.data.data.parent_level_category_list;
+          setParentCategories(categories); // Set parent categories
+          setDashboardData(response.data.data);
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -64,6 +72,28 @@ function Dashboard() {
 
     fetchDashboardData();
   }, []);
+  const fetchVendors = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
+      if (response.data) {
+        setVendors(response.data.data.brand_list); // Adjust based on the actual structure of the response
+      }
+    } catch (error) {
+      console.error('Error fetching vendors:', error);
+    }
+  };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => setIsModalOpen(false);
+  const handleVendorClick = () => {
+    setIsModalOpenVendor(true)
+    fetchVendors(); // Fetch vendors when the section is being displayed
+  };
+  const closeVendorModal = () => {
+    setShowVendors(false);
+    setIsModalOpenVendor(false);
+  };
 
   if (unauthorized) {
     return <Unauthorized />;
@@ -83,7 +113,6 @@ function Dashboard() {
       </div>
     );
   }
-  
   const variantData = {
     labels: dashboardData.varent_list.map(item => item.type_name),
     datasets: [
@@ -133,7 +162,7 @@ function Dashboard() {
           <h3>Total Products</h3>
           <p>{dashboardData.total_product}</p>
         </div>
-        <div className="card card-green">
+        <div className="card card-green" onClick={handleVendorClick}>
           <h3>Total Vendors</h3>
           <p>{dashboardData.total_brand}</p>
         </div>
@@ -141,12 +170,11 @@ function Dashboard() {
           <h3>Total End Level Categories</h3>
           <p>{dashboardData.total_last_level_category}</p>
         </div>
-        <div className="card card-orange">
+        <div className="card card-orange" onClick={openModal}>
           <h3>Total Parent Level Categories</h3>
           <p>{dashboardData.total_parent_level_category}</p>
         </div>
       </div>
-
       <div className="charts-section">
         <div className="chart-card">
           <h3>Variant-Options Count</h3>
@@ -158,8 +186,41 @@ function Dashboard() {
           <Bar data={categoryData} options={options} />
         </div>
       </div>
+      <Modal open={isModalOpen} className='modal-content-dashboard' onClose={closeModal}>
+  <div className="modal-container">
+    <h2>Parent Level Categories</h2>
+    <ul className='ulliclass'>
+      {parentCategories.length > 0 ? (
+        parentCategories.map((category) => (
+          <li key={category.id} className='ulliclass'>
+            {category.name}
+          </li>
+        ))
+      ) : (
+        <p>No categories found.</p>
+      )}
+    </ul>
+    <button onClick={closeModal} className='btn_dash'>Close</button>
+  </div>
+</Modal>
+<Modal open={isModalOpenvendor} className='modal-content-dashboard' onClose={closeVendorModal}>
+  <div className="modal-container">
+    <h2>Total Vendors</h2>
+    <ul className="ulliclass">
+              {vendors.length > 0 ? (
+                vendors.map(vendor => (
+                  <li key={vendor.id} className="ulliclass">
+                    <div className="vendor-name">{vendor.name}</div>
+                  </li>
+                ))
+              ) : (
+                <p>No vendors found.</p>
+              )}
+            </ul>
+    <button onClick={closeVendorModal} className='btn_dash'>Close</button>
+  </div>
+</Modal>
     </div>
   );
 }
-
 export default Dashboard;

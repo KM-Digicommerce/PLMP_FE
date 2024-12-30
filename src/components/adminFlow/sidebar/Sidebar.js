@@ -98,6 +98,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   };
   const handleSectionClick = (section) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (section === 'dashboard' || section === 'all-products' || section === 'add-product') {
+      navigate('/Admin');
+    }
     if (section !== 'products' && section !== 'setting') {
       setShowProductsSubmenu(false);  // Close the product submenu
     }

@@ -16,9 +16,7 @@ const Header = () => {
   useEffect(() => {
     const fetchobtainClientNameData = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainClientName/`);
-        console.log(response.data.data);
-        
+        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainClientName/`);        
         if (response.data) {
           setfetchobtainClientNameData(response.data.data);
         }
