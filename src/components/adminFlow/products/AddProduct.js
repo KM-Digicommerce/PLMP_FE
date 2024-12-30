@@ -50,6 +50,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         if (!event.target.closest(".variant-row")) {
             setOpenDropdownIndex(null); 
         }
+        setSearchQuery('');
     };
       useEffect(() => {
         document.addEventListener("click", handleOutsideClick);

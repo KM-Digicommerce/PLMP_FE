@@ -722,7 +722,7 @@ const VariantList = ({ categories }) => {
 
                                                         </td>
                                                         <td>
-                                                            <ul>
+                                                            <ul className="option-category-list">
                                                                 {variant.tagged_category_list
                                                                     .filter((item) => item)
                                                                     .map((item, index) => (
