@@ -85,8 +85,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           console.warn("Unknown category level:", categoryLevelForcategories);
           break;
       }
-        localStorage.removeItem("categoryId");
-      localStorage.removeItem("levelCategory");
+      // localStorage.removeItem("categoryId");
+      // localStorage.removeItem("levelCategory");
     }
   }
 }, []);
@@ -329,8 +329,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     setIsLevel2DropdownOpen(false);
     setIsLevel3DropdownOpen(false);
     setSearchQuery('');
-    localStorage.removeItem("categoryId");
-    localStorage.removeItem("levelCategory");
   };
   const handleLevel2Select = (e) => {
     const selectedValue = e;
@@ -374,11 +372,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
-    localStorage.removeItem("categoryId");
-    localStorage.removeItem("levelCategory");
   };
   const handleLevel3Select = (e) => {
-    console.log('Inside Level 3', e);
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
       let level1Category, level2Category;
@@ -473,8 +468,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
-    localStorage.removeItem("categoryId");
-    localStorage.removeItem("levelCategory");
+    // localStorage.removeItem("categoryId");
+    // localStorage.removeItem("levelCategory");
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;
@@ -539,8 +534,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel5IdPopup('');
       setSelectedlevel6('');
     }
-    localStorage.removeItem("categoryId");
-    localStorage.removeItem("levelCategory");
+    // localStorage.removeItem("categoryId");
+    // localStorage.removeItem("levelCategory");
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
@@ -615,8 +610,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       }
       setSelectedlevel6('');
     }
-    localStorage.removeItem("categoryId");
-    localStorage.removeItem("levelCategory");
+    // localStorage.removeItem("categoryId");
+    // localStorage.removeItem("levelCategory");
   };
   
   
