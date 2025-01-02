@@ -20,6 +20,7 @@ import DialogContent from '@mui/material/DialogContent';
 import axiosInstance from '../../../../utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch,faSort } from '@fortawesome/free-solid-svg-icons';
+import Soon from '../../../../assets/image_2025_01_02T08_51_07_818Z.png';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 const CategoriesTable = ({ categories, refreshCategories }) => {
@@ -44,6 +45,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [sortOption, setSortOption] = useState(''); // default value to 'newest'
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
+  const [responseDatasearch, setResponseDatasearch] = useState([]);
+
   const location = useLocation();
   const getQueryParams = () => {
     const params = new URLSearchParams(location.search);
@@ -104,7 +107,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             }
           );          
           setProducts(response.data.data.product_list);
-
         } catch (error) {
           console.error('Error fetching product list:', error);
         }
@@ -123,25 +125,29 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     }
     else{  setSortOption('');  }
   };
-
+ 
   const fetchData = async (filter) => {
-    try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
-        params: {
-          category_id: selectedCategoryIdForallprod,
-          level_name: selectedCategorylevelForallprod,
-          filter
-        }       });
-
-      if (response.data && response.data.data && response.data.data.product_list) {
-        setResponseData(response.data.data.product_list);
-        setLoading(false);
-      } else {
-        alert("Unexpected response structure");
+    setResponseDatasearch([]);
+    if (selectedCategoryIdForallprod && selectedCategorylevelForallprod) {
+      try {
+        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
+          params: {
+            category_id: selectedCategoryIdForallprod,
+            level_name: selectedCategorylevelForallprod,
+            filter
+          }       });
+  
+        if (response.data && response.data.data && response.data.data.product_list) {
+          setResponseData(response.data.data.product_list);
+          setLoading(false);
+        } else {
+          alert("Unexpected response structure");
+        }
+      } catch (err) { // setError(err.message);
+      } finally {  setLoading(false);
       }
-    } catch (err) { // setError(err.message);
-    } finally {  setLoading(false);
     }
+   
   };
   useEffect(() => {
     fetchData(true); // By default, load newest products
@@ -258,9 +264,16 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('categoryId', id);
     urlParams.set('level', category_level);
-      window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
-      localStorage.setItem("categoryId", id);
-      localStorage.setItem("levelCategory", category_level);
+    window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+    localStorage.setItem("categoryId", id);
+    localStorage.setItem("levelCategory", category_level);
+    // if (!responseDatasearch) {
+      setResponseDatasearch([]);
+    //   setResponseData([]);
+    //   setProducts([]);
+      // fetchData(true);
+    // }
+   
   };
   const handleCloseConfirmation = () => {
     if (isTyping) {
@@ -610,8 +623,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       }
       setSelectedlevel6('');
     }
-    // localStorage.removeItem("categoryId");
-    // localStorage.removeItem("levelCategory");
   };
   
   
@@ -746,22 +757,50 @@ const handleLevelClear = (e) => {
   };
   const handleSearchClick = () => {
     setSearchVisible(!searchVisible);
+    setSearchQuerylist('');
     if (sortVisible) {
+      fetchData(true);
       setSortVisible(!sortVisible);
     }
   };
   const handleSortClick = () => {
+    setSortOption('');
     setSortVisible(!sortVisible);
+    // fetchData(true);
     if (searchVisible) {
+      fetchData(true);
       setSearchVisible(!searchVisible);
     }
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = async(event) => {
     const query = event.target.value;
     setSearchQuerylist(query);
-    if (query.length > 0) {
-      const matchedSuggestions = products.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));      
+    if (query !== '') {
+      setResponseData([]);
+      setProducts([]);
+    }
+    try {
+      const response = await axiosInstance.get(
+        `${process.env.REACT_APP_IP}/obtainAllProductList/`,
+        {
+          params: {
+            category_id: selectedCategoryIdForallprod,
+            level_name: selectedCategorylevelForallprod,
+            search:query
+          }
+        }
+      );   
+      setResponseDatasearch(response.data.data.product_list);
+      console.log('Response',responseDatasearch);
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+    }
+    if (query.length > 0 && Array.isArray(responseDatasearch)) {
+      const matchedSuggestions = responseDatasearch
+        .map((product) => product.product_name)
+        .filter((name) => name.toLowerCase().includes(query.toLowerCase()));
+  
       setSuggestions(matchedSuggestions);
     } else {
       setSuggestions([]);
@@ -772,21 +811,35 @@ const handleLevelClear = (e) => {
     setSearchQuerylist(suggestion);
     setSuggestions([]);
   };
-  let sortedProductss = '';
-  if (products) {
+  let sortedProductss = [];
+  if (responseDatasearch.length > 0) {
+    console.log('responseDatasearch');
+    sortedProductss = sortProducts(responseDatasearch);
+  } else if (responseData.length > 0) {
+    console.log('responseData');
+    sortedProductss = sortProducts(responseData);
+  } 
+  if (products.length > 0) {
+    console.log('products')
     sortedProductss = sortProducts(products);
   }
-  else if (responseData) {
-    sortedProductss = sortProducts(responseData);
-  }
-  const getFilteredAndSortedProducts = () => {
-    return sortedProductss.filter((product) =>
-      product.product_name.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
-      product.model.toLowerCase().includes(searchQuerylist.toLowerCase()) ||
-      product.tags.toLowerCase().includes(searchQuerylist.toLowerCase())
-    );
-  };
 
+  const getFilteredAndSortedProducts = () => {
+    return sortedProductss.filter((product) => {
+      const productName = product.product_name?.toLowerCase() || '';
+      const model = product.model?.toLowerCase() || '';
+      const tags = product.tags?.toLowerCase() || '';
+      const mpn = product.mpn?.toLowerCase() || '';
+      const query = searchQuerylist.toLowerCase();
+  
+      return (
+        productName.includes(query) ||
+        model.includes(query) ||
+        tags.includes(query) ||
+        mpn.includes(query)
+      );
+    });
+  };
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
@@ -1111,9 +1164,11 @@ const handleLevelClear = (e) => {
                         onClick={() => {
                           setSearchQuerylist('');
                           setSuggestions([]);
+                          setResponseDatasearch([]);
+                          fetchData(true);
                         }}
                         style={{
-                          position: 'absolute', right: '10px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%',
+                          position: 'absolute', right: '6px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%',
                         }}
                       >
                         ✕
@@ -1198,7 +1253,7 @@ const handleLevelClear = (e) => {
                 {getFilteredAndSortedProducts().map((product) => (
                   <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }} onClick={() => handleProductSelect(product.product_id)}>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
-                      <img src={product.image[0]} alt={product.product_name} className="product-image-round"
+                      <img src={product.image[0]|| Soon } alt={product.product_name} className="product-image-round"
                       />
                     ) : (
                       <img src={product.image} alt={product.product_name} className="product-image-round"

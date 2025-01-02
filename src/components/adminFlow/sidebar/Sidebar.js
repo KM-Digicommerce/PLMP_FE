@@ -132,8 +132,8 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     else if (section === 'users' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/createuser'); 
     }
-    else if (section === 'revoke' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
-      navigate('/Admin/revokeprice'); 
+    else if (section === 'restore' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
+      navigate('/Admin/restoreprice'); 
     }
   };
   return (
@@ -213,8 +213,8 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             <ul className="subMenu">
               <li onClick={() => { handleSectionClick('settings'); }}
                 className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
-                  <li onClick={() => { OnRevokePriceClick(); handleSectionClick('revoke'); }}
-                className={activeSection === 'revoke' ? 'active' : ''} >Revoke Price</li>
+                  <li onClick={() => { OnRevokePriceClick(); handleSectionClick('restore'); }}
+                className={activeSection === 'restore' ? 'active' : ''} >Restore Price</li>
               <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
                 className={activeSection === 'users' ? 'active' : ''}>Users</li>
             </ul>

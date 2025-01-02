@@ -30,14 +30,29 @@ const ApiResponseModal = ({
 
   useEffect(() => {
     if (apiResponse?.extract_list) {
-      const initialMapping = apiResponse.extract_list.map((item) => ({
-        columnHeader: item,
-        databaseOption: databaseList[item] || "",
-      }));
-      setMapping(initialMapping);
+      const initialMapping = apiResponse.extract_list.map((item) => {
+        let resultKey = null;
+        // Find the key corresponding to the value in item
+        console.log(item,'Items');
+        
+        for (const [key, value] of Object.entries(databaseList)) {
+          if (value === item) {
+            resultKey = key;
+            console.log(key,'key');
+            console.log(value,'value');
+            break; // Exit loop once the key is found
+          }
+        }
+        return {
+          columnHeader: item,
+          databaseOption: resultKey, // Use the found resultKey
+        };
+      });
+      setMapping(initialMapping); // Update mapping state
     }
-    setLoading(false);
-  }, [apiResponse]);
+    setLoading(false); // Stop loading after setting mapping
+  }, [apiResponse, databaseList]); // Add dict as a dependency if needed
+  
 
   useEffect(() => {
     // Check if all unmatched values are mapped
@@ -99,7 +114,9 @@ const handleDashboard = async () =>{
     const fieldData = {};
     mapping.forEach((row) => {
       if (row.databaseOption) {
-        fieldData[row.columnHeader] = row.databaseOption;
+        // fieldData[row.columnHeader] = row.databaseOption;
+        fieldData[row.databaseOption] = row.columnHeader;
+
       }
     });
 

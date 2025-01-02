@@ -12,15 +12,14 @@ const VariantList = ({ categories }) => {
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
     const [clearBtn, setShowclearBtn] = useState(false);
+    const [isCategorySelected ,  setIsCategorySelected] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
     const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
     const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
     const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-    // const [data, setData] = useState([]);
     const [variantsData, setVariantsData] = useState([]);
-
     const [searchQueries, setSearchQueries] = useState({
         level1: '',
         level2: '',
@@ -61,13 +60,9 @@ const VariantList = ({ categories }) => {
     const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
 
     const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
-    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)
-    );
+    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
-    const filteredCategoriesLevel3 = levelTwoCategory
-        ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
-            level3.name.toLowerCase().includes(safeSearchQuery)
-        );
+    const filteredCategoriesLevel3 = levelTwoCategory  ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>  level3.name.toLowerCase().includes(safeSearchQuery) );
 
     const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
     const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
@@ -75,9 +70,7 @@ const VariantList = ({ categories }) => {
     const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
     const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
     const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
-    const filteredCategoriesLevel6 = levelFiveCategory
-        ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
-
+    const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -106,6 +99,7 @@ const VariantList = ({ categories }) => {
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
         if (id && level) {
             setShowclearBtn(true);
+            setIsCategorySelected(true);
         }                
         if (isIdInLastLevel) {
             setIsAddProductVisible(true);
@@ -386,7 +380,6 @@ const VariantList = ({ categories }) => {
         setIslevel6DropdownOpen(false);
       }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
-        // setIsLoading(true);
         setError(null);
         Swal.fire({title: 'Add New Variant',input: 'text',showCancelButton: true,confirmButtonText: 'Save',cancelButtonText: 'Cancel',customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel',
             },
@@ -420,7 +413,6 @@ const VariantList = ({ categories }) => {
     }, []); // Add dependencies if required
 
     const handleAddVariantValue = async (typeId) => {
-        // Show Swal popup to get the new type_value_name
         const { value: typeValueName } = await Swal.fire({title: 'Add Variant Value',input: 'text',inputPlaceholder: 'Enter variant value name',showCancelButton: true,confirmButtonText: 'Save',
             inputValidator: (value) => {
                 if (!value) {  return 'You need to enter a value!'; }
@@ -455,7 +447,7 @@ const VariantList = ({ categories }) => {
     };
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
     return (
-        <div>
+        <div className='variant-schema'>
             <div className='CategoryTable-header'>
             <h2 className='header_cls'>Variants Schema</h2>
             </div>
@@ -680,75 +672,72 @@ const VariantList = ({ categories }) => {
                 </button>
             )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            {variantsData.varient_list && variantsData.varient_list.length > 0 ? (
-                <div>
-                    {variantsData.varient_list && (
-                        <div className="variant-container">
-                            <div className="variant-header">
-                                <span>Variants</span>
-                            </div>
-
-                            {variantList.length > 0 ? (
-                                <div className="variant-container">
-                                    <div className="variant-option-table">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th style={{ width: '14%' }}>Option Type</th>
-                                                    <th style={{ width: '46%' }}>Values</th>
-                                                    <th style={{ width: '40%' }}>Applicable Categories</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {variantList.map((variant, index) => (
-                                                    <tr key={index}>
-                                                        <td>{variant.type_name} <button
-                                                            onClick={() => handleAddVariantValue(variant.type_id)}
-                                                            className="add-variant-value-button"
-                                                        >+
-                                                        </button></td>
-                                                        <td>
-                                                            {variant.option_value_list.length > 0 ? (
-                                                                <ul className="option-value-list">
-                                                                    {variant.option_value_list.map((value, valueIndex) => (
-                                                                        <li key={valueIndex} className="option-value-item">
-                                                                            {value.type_value_name}
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            ) : (
-                                                                <span>No values available</span>
-                                                            )}
-
-                                                        </td>
-                                                        <td>
-                                                            <ul className="option-category-list">
-                                                                {variant.tagged_category_list
-                                                                    .filter((item) => item)
-                                                                    .map((item, index) => (
-                                                                        <li key={index}>{item}</li>
-                                                                    ))}
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            ): (
-                                <div>No variants found 1</div>
-                              )}
-                        </div>
-                    )}
-
+{variantsData.varient_list && variantsData.varient_list.length > 0 ? (
+    <div>
+        {variantsData.varient_list && (
+            <div className="variant-container">
+                <div className="variant-header">
+                    <span>Variants</span>
                 </div>
-            ):(
-                <div className="variant-container">
-    <div className="no-variants-message">No variants found </div>
+                {variantList.length > 0 ? (
+                    <div className="variant-container">
+                        <div className="variant-option-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: '14%' }}>Option Type</th>
+                                        <th style={{ width: '46%' }}>Values</th>
+                                        <th style={{ width: '40%' }}>Applicable Categories</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {variantList.map((variant, index) => (
+                                        <tr key={index}>
+                                            <td>{variant.type_name} <button
+                                                onClick={() => handleAddVariantValue(variant.type_id)}
+                                                className="add-variant-value-button"
+                                            >+
+                                            </button></td>
+                                            <td>
+                                                {variant.option_value_list.length > 0 ? (
+                                                    <ul className="option-value-list">
+                                                        {variant.option_value_list.map((value, valueIndex) => (
+                                                            <li key={valueIndex} className="option-value-item">
+                                                                {value.type_value_name}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <span>No values available</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                <ul className="option-category-list">
+                                                    {variant.tagged_category_list
+                                                        .filter((item) => item)
+                                                        .map((item, index) => (
+                                                            <li key={index}>{item}</li>
+                                                        ))}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ): (
+                    <div>No variants found</div>
+                )}
+            </div>
+        )}
     </div>
-              )}
+): (
+    selectedCategoryForVariant && selectedCategoryForVariant !== '' ? (
+        <div className="variant-container">
+            <div className="no-variants-message">No variants found for the selected category</div>
         </div>
+    ) : null)}      </div>
     );
 };
 
