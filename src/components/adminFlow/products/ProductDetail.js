@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
-import { Button, Modal, MenuItem, Select, InputLabel, Box, TextField, FormControl } from '@mui/material';
+import { Button, Modal, Box } from '@mui/material';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({});
@@ -58,6 +57,7 @@ const ProductDetail = ({ categories }) => {
     });
     const [RetailPrice, setShowRetailPrice] = useState([0]);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
+    const [unsavedChanges, setUnsavedChanges] = useState(false);
 
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
@@ -271,9 +271,11 @@ const ProductDetail = ({ categories }) => {
         }
     };
     const handleChange = (e) => {
-        console.log('handle change', e.target);
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value, });
+        if (JSON.stringify(formData) !== JSON.stringify(originalData)) {
+            setUnsavedChanges(true);
+        }
     };
     const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
     useEffect(() => {
@@ -339,6 +341,7 @@ const ProductDetail = ({ categories }) => {
                 alert('Error updating product');
             }
         }
+        setUnsavedChanges(false); 
     };
 
     const handleBackClick = () => {
@@ -494,19 +497,25 @@ const ProductDetail = ({ categories }) => {
         const container = document.querySelector(".thumbnail-section");
         container.scrollLeft -= 120; // Adjust scroll distance
     };
-
+    const handleNavigation = (targetView) => {        
+        if (unsavedChanges) {
+          const shouldNavigate = window.confirm("You have some unsaved changes, do you want to continue?");
+          if (!shouldNavigate)   return; // Don't change the view
+        else { setFormData(originalData); setUnsavedChanges(false); }
+        }
+        setView(targetView);
+      };
     return (
         <div>
             <div className='section_container'>
                 <div className="section_sidebar">
                     <button onClick={handleBackClick} className="back-button">← Back to Products</button>
                     <div className="section-buttons">
-                        <button onClick={() => setView('productDetail')} className={view === 'productDetail' ? 'productDetail active' : 'productDetail'}>Product Detail</button>
-                        <button onClick={() => setView('taxonomy')} className={view === 'taxonomy' ? 'taxonomy active' : 'taxonomy'}>Taxonomy</button>
-                        <button onClick={() => setView('variants')} className={view === 'variants' ? 'variants active' : 'variants'}>Variants & Pricing</button>
-                        {/* <button onClick={() => setView('pricing')} className={view === 'pricing' ? 'pricing active' : 'pricing'}>Pricing</button> */}
-                        <button onClick={() => setView('otherDetails')} className={view === 'otherDetails' ? 'otherDetails active' : 'otherDetails'}>Other Details</button>
-                    </div>
+            <button onClick={() => handleNavigation('productDetail')} className={view === 'productDetail' ? 'productDetail active' : 'productDetail'}>Product Detail</button>
+            <button onClick={() => handleNavigation('taxonomy')} className={view === 'taxonomy' ? 'taxonomy active' : 'taxonomy'}>Taxonomy</button>
+            <button onClick={() => handleNavigation('variants')} className={view === 'variants' ? 'variants active' : 'variants'}>Variants & Pricing</button>
+            <button onClick={() => handleNavigation('otherDetails')} className={view === 'otherDetails' ? 'otherDetails active' : 'otherDetails'}>Other Details</button>
+          </div>
                 </div>
             </div>
             <div className="product-detail">
@@ -949,29 +958,37 @@ const ProductDetail = ({ categories }) => {
                                 <div className="form-group">
                                     <label htmlFor="key_features">Key Features</label>
                                     <textarea
-                                        id="key_features"
-                                        name="key_features"
-                                        className="input_pdps"
-                                        value={
-                                            formData.key_features
-                                                ?.split('\n')
-                                                .filter((feature) => feature.trim() !== '')
-                                                .map((feature) => `* ${feature.trim().replace(/^\*/, '')}`)
-                                                .join('\n') || ''
-                                        }
-                                        onChange={(e) => {
-                                            const updatedFeatures = e.target.value
-                                                .split('\n')
-                                                .map((line) => line.replace(/^\* */, '').trim())
-                                                .join('\n');
-                                            handleChange({
-                                                target: {
-                                                    name: 'key_features',
-                                                    value: updatedFeatures,
-                                                },
-                                            });
-                                        }}
-                                    />
+  id="key_features"
+  name="key_features"
+  className="input_pdps"
+  value={
+    formData.key_features
+      ?.split('\n')
+      .map((feature) => feature.trimEnd()) // Only trim trailing spaces, preserve leading spaces
+      .map((feature) => feature ? `* ${feature}` : '') // Add '*' if the line isn't empty
+      .join('\n') || ''
+  }
+  onChange={(e) => {
+    const updatedFeatures = e.target.value
+      .split('\n')
+      .map((line) => {
+        if (line.startsWith('*')) {
+          return line.slice(1).trimStart(); // Remove '*' and leading spaces only
+        }
+        return line; // Preserve spaces as entered
+      })
+      .join('\n');
+
+    handleChange({
+      target: {
+        name: 'key_features',
+        value: updatedFeatures,
+      },
+    });
+  }}
+/>
+
+
                                 </div>
 
                                 <div className="form-group">

@@ -20,6 +20,7 @@ import DialogContent from '@mui/material/DialogContent';
 import axiosInstance from '../../../../utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch,faSort } from '@fortawesome/free-solid-svg-icons';
+import Soon from '../../../../assets/image_2025_01_02T08_51_07_818Z.png';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 const CategoriesTable = ({ categories, refreshCategories }) => {
@@ -106,7 +107,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             }
           );          
           setProducts(response.data.data.product_list);
-
         } catch (error) {
           console.error('Error fetching product list:', error);
         }
@@ -127,7 +127,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
  
   const fetchData = async (filter) => {
-    setResponseDatasearch('');
+    setResponseDatasearch([]);
     if (selectedCategoryIdForallprod && selectedCategorylevelForallprod) {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, {
@@ -264,9 +264,16 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('categoryId', id);
     urlParams.set('level', category_level);
-      window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
-      localStorage.setItem("categoryId", id);
-      localStorage.setItem("levelCategory", category_level);
+    window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+    localStorage.setItem("categoryId", id);
+    localStorage.setItem("levelCategory", category_level);
+    // if (!responseDatasearch) {
+      setResponseDatasearch([]);
+    //   setResponseData([]);
+    //   setProducts([]);
+      // fetchData(true);
+    // }
+   
   };
   const handleCloseConfirmation = () => {
     if (isTyping) {
@@ -789,8 +796,11 @@ const handleLevelClear = (e) => {
     } catch (error) {
       console.error('Error fetching product list:', error);
     }
-    if (query.length > 0) {
-      const matchedSuggestions = responseDatasearch.map((product) => product.product_name).filter((name) => name.toLowerCase().includes(query.toLowerCase()));      
+    if (query.length > 0 && Array.isArray(responseDatasearch)) {
+      const matchedSuggestions = responseDatasearch
+        .map((product) => product.product_name)
+        .filter((name) => name.toLowerCase().includes(query.toLowerCase()));
+  
       setSuggestions(matchedSuggestions);
     } else {
       setSuggestions([]);
@@ -804,15 +814,13 @@ const handleLevelClear = (e) => {
   let sortedProductss = [];
   if (responseDatasearch.length > 0) {
     console.log('responseDatasearch');
-    
     sortedProductss = sortProducts(responseDatasearch);
   } else if (responseData.length > 0) {
-    console.log('responseDatasearch 2');
-
+    console.log('responseData');
     sortedProductss = sortProducts(responseData);
-  } else if (products.length > 0) {
-    console.log('responseDatasearch 3');
-
+  } 
+  if (products.length > 0) {
+    console.log('products')
     sortedProductss = sortProducts(products);
   }
 
@@ -832,8 +840,6 @@ const handleLevelClear = (e) => {
       );
     });
   };
- 
-
   return (
     <div className="CategoryMain">
       <div className="CategoryTable-header">
@@ -1247,7 +1253,7 @@ const handleLevelClear = (e) => {
                 {getFilteredAndSortedProducts().map((product) => (
                   <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }} onClick={() => handleProductSelect(product.product_id)}>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
-                      <img src={product.image[0]} alt={product.product_name} className="product-image-round"
+                      <img src={product.image[0]|| Soon } alt={product.product_name} className="product-image-round"
                       />
                     ) : (
                       <img src={product.image} alt={product.product_name} className="product-image-round"

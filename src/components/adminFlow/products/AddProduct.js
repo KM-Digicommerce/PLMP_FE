@@ -358,7 +358,22 @@ const AddProduct = (categories) => {
     const [selectedVariants, setSelectedVariants] = useState([{
         sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, retailPrice:0, options: []
     }]);
-
+    const handleLoadNewmodel = () => {
+        setProductData({
+            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '', varients: [{
+                    sku_number: '',
+                    finished_price: '0',
+                    un_finished_price: '0',
+                    quantity: '0',
+                    options: []
+                }],
+                category_id: '',
+                category_name: ''
+            }
+        });
+        setSelectedVariants([{  sku: '',   unfinishedPrice: '',   finishedPrice: '',   quantity: '',   totalPrice: 0,   retailPrice: 0,   options: []  }]);
+        
+    };
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
             ...prevVariants,
@@ -1119,7 +1134,7 @@ const categoryDropdownRef = useRef(null);
                     <button onClick={() => setIsModalOpen(true)} className="add-product-button">Add Product</button>
                     <Modal
                         isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
+                        onClose={() => {  setIsModalOpen(false);   handleLoadNewmodel();  }}
                         onSave={handleSave}
                         productData={productData}
                         handleChange={handleChange}
