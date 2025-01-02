@@ -67,9 +67,14 @@ const RevokePrice = () => {
     const categoryId = e.target.value;
   
     if (categoryId === "all") {
-      const allCategoryIds = categories.map((cat) => cat.id);
-      setSelectedCategories([{ name: "Apply to all categories" }]);
-      setSelectedCategoryIds(allCategoryIds);
+      if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+        setSelectedCategories([]);
+        setSelectedCategoryIds([]);
+    } else {
+        const allCategoryIds = categories.map((cat) => cat.id);
+        setSelectedCategories([{ name: "Apply to all categories" }]);
+        setSelectedCategoryIds(allCategoryIds);
+    }
     } else {
       const category = categories.find((category) => category.id === categoryId);
   
@@ -145,7 +150,6 @@ const handlePriceChange = async (event) => {
   const handleBrandSelect = (brand) => {
     if (brand && brand.id) {
       setSelectedBrandId(brand.id);
-    //   fetchPriceTableDataBrand(brand.id);
       setSelectedBrand(brand);
     }
     else{
@@ -156,7 +160,6 @@ const handlePriceChange = async (event) => {
   const handleBrandSelectForVariant = (brand) => {
     if (brand && brand.id) {
       setSelectedBrandIdForVariant(brand.id);
-    //   fetchPriceTableDataBrand(brand.id);
       setSelectedBrandForVariant(brand);
     }
     else{
@@ -178,28 +181,21 @@ const handlePriceChange = async (event) => {
   };
 
   const handlePriceDisplayInInputField = async (selectedCategoryIds,selectedOption) => {
-    // console.log(selectedCategoryIds,'selectedCategoryIds');
-    // console.log(selectedBrandId,'selectedBrandId');
-    // console.log(selectedOption,'priceOption');
     if (selectedCategoryIds && selectedBrandId && selectedOption) {
       try {
-        // setLoading(true);
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainRevertPreviousAndCurrentPriceForCategory/`,
           { category_id: selectedCategoryIds,
             brand_id: selectedBrandId,
             price_option:selectedOption,
            }
         );
-        console.log(response,'response');
         setPreviousPriceInput(response.data.data.old_price);
         setCurrentPriceInput(response.data.data.current_price);
       } catch (error) {
         console.error("Error fetching data:", error);
         Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
         });
-      } finally {
-        // setLoading(false);
-      }
+      } finally { }
     }
     else{
       Swal.fire({ title: "Error", text: "Please Enter all fields to revoke", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
@@ -222,7 +218,7 @@ const handlePriceChange = async (event) => {
                            }
                         );
                         if (response.status === 200) {
-                          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+                          Swal.fire({ title: "Success", text: "Restored price Based on Vendor & Category wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
                           });
                           setFormSubmitted(false);
                         }
@@ -285,7 +281,7 @@ const handlePriceChange = async (event) => {
                }
         );
         if (response.status === 200) {
-          Swal.fire({ title: "Success", text: "Revoked price Based on Vendor & Variant wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
+          Swal.fire({ title: "Success", text: "Restored price Based on Vendor & Variant wise Successfully", icon: "success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
           });
           setFormSubmittedForVariant(false);
         }
@@ -306,9 +302,7 @@ const handlePriceChange = async (event) => {
         console.error("Error fetching data:", error);
         Swal.fire({ title: "Error", text: "Failed to fetch data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
         });
-      } finally {
-        // setLoading(false);
-      }
+      } finally { }
     }
   };
   const fetchVariantOptions = async () => {
@@ -345,9 +339,14 @@ const handleVariantValueSelect = (event) => {
     const selectedValueId = event.target.value;
   
     if (selectedValueId === "all") {
-      const allVariantValueIds = variantTypeValues.map((value) => value.id);
-      setSelectedVariantValues([{ name: "Apply to all variant values" }]);
-      setSelectedVariantValueIds(allVariantValueIds);
+      if (selectedVariantValues.length === 1 && selectedVariantValues[0].name === "Apply to all variant values" ) {
+        setSelectedVariantValues([]);
+        setSelectedVariantValueIds([]);
+    } else {
+        const allVariantValueIds = variantTypeValues.map((value) => value.id);
+        setSelectedVariantValues([{ name: "Apply to all variant values" }]);
+        setSelectedVariantValueIds(allVariantValueIds);
+    }
     } else {
       const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
   
@@ -392,7 +391,7 @@ const handleVariantValueRemove = (id) => {
 
   return (
     <div style={{backgroundColor:'white',boxShadow:'0 2px 10px rgba(0, 0, 0, 0.1)',padding:'16px'}}>
-      <h2 style={{textAlign:'center'}}>Revoke Schema</h2>
+      <h2 style={{textAlign:'center'}}>Restore Schema</h2>
      
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch' }}>
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px', borderRadius:'20px' }}>
@@ -521,11 +520,10 @@ const handleVariantValueRemove = (id) => {
     <button
       onClick={() => handleRevokeApply()}
       style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
-      className="add-brand-btn revoke_btn" disabled={currentPriceInput === 0}> Revoke </button>
+      className="add-brand-btn revoke_btn" disabled={currentPriceInput === 0}> Restore </button>
   </div>
   </div>  
 </div>
-
   </div>
 
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px', borderRadius:'20px'}}>
@@ -561,18 +559,18 @@ const handleVariantValueRemove = (id) => {
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="" style={{ fontSize: "14px", fontWeight: "500" }}>Select Variant</option>
-          {variantOptions?.map((variant) => (
+          {/* {variantOptions?.map((variant) => (
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))}
-          {/* {variantOptions
+          ))} */}
+          {variantOptions
   ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
   .map((variant) => (
     <option style={{ fontSize: "14px", fontWeight: "500" }} key={variant.id} value={variant.id}>
       {variant.name}
     </option>
-  ))} */}
+  ))}
         </select>
         <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
@@ -667,7 +665,7 @@ const handleVariantValueRemove = (id) => {
       onClick={() => handleVariantRevokeApply()}
       style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
       className="add-brand-btn revoke_variant_btn" disabled={currentVariantPriceInput === 0}>
-      Revoke
+      Restore
     </button>
   </div>
   </div>

@@ -194,18 +194,18 @@ const ProductList = () => {
         <table className="product-table">
           <thead>
             <tr>
-              <th className="checkbox-column">
+              <th className="checkbox-column" style={{width:'3%'}}>
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
                   checked={selectedProducts.length === sortedProducts.length}
                 />
               </th>
-              <th className="checkbox-column" onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
-              <th className="mpn-column" onClick={() => handleSort("mpn")}>MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
-              <th className="product-column" onClick={() => handleSort("product_name")}>Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
-              <th className="brand-column" onClick={() => handleSort("brand")}>Vendor {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
-              <th className="taxonomy-column" style={{ width: '16%' }} onClick={() => handleSort("taxonomy")}>Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="checkbox-column" style={{width:'3%'}} onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="mpn-column" style={{width:'8%'}} onClick={() => handleSort("mpn")}>MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="product-column" style={{width: '35%'}} onClick={() => handleSort("product_name")}>Product Name {sortColumn === "product_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="brand-column" style={{width:'10%'}} onClick={() => handleSort("brand")}>Vendor {sortColumn === "brand" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
+              <th className="taxonomy-column" style={{width: '40%'}} onClick={() => handleSort("taxonomy")}>Taxonomy {sortColumn === "taxonomy" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               {/* <th className="price-column" onClick={() => handleSort("base_price")}>Base Price {sortColumn === "base_price" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="msrpprice-column" onClick={() => handleSort("msrp")}>MSRP {sortColumn === "msrp" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th> */}
               {/* <th className="model-column" onClick={() => handleSort("model")}>Model {sortColumn === "model" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th> */}
@@ -236,7 +236,7 @@ const ProductList = () => {
                     />
                   )}
                 </td>
-                <td className="mpn-column">{item.mpn}</td>
+                <td className="mpn-column" style={{width:'12%'}}>{item.mpn}</td>
                 <td className="product-cell">
                   <span className="product-name">{item.product_name}</span>
                 </td>

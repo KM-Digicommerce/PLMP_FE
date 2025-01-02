@@ -210,8 +210,11 @@ function Dashboard() {
               {vendors.length > 0 ? (
                 vendors.map(vendor => (
                   <li key={vendor.id} className="ulliclass">
-                    <div className="vendor-name">{vendor.name}</div>
-                  </li>
+                  <div className="vendor-name">
+                    <span>{vendor.name}</span>
+                    <span className="product-count">({vendor.product_count} products)</span>
+                  </div>
+                </li>
                 ))
               ) : (
                 <p>No vendors found.</p>

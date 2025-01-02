@@ -20,7 +20,7 @@ const PriceComponent = () => {
   const [tableData, setTableData] = useState([]);
   // const [productTableData, setProductTableData] = useState([]);
   const [productTableDataAfterSave, setProductTableDataAfterSave] = useState([]);
-
+  const [productcountDataAfterSave, setProductcountAfterSave] = useState([]);
   const dropdownRef = useRef(null);
   const [variantOptions, setVariantOptions] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -97,10 +97,16 @@ const PriceComponent = () => {
     const categoryId = e.target.value;
   
     if (categoryId === "all") {
-      const allCategoryIds = categories.map((cat) => cat.id);
-      setSelectedCategories([{ name: "Apply to all categories" }]);
-      setSelectedCategoryIds(allCategoryIds);
-      fetchPriceTableData(allCategoryIds);
+      if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+        setSelectedCategories([]);
+        setSelectedCategoryIds([]);
+        fetchPriceTableData([]);
+    } else {
+        const allCategoryIds = categories.map((cat) => cat.id);
+        setSelectedCategories([{ name: "Apply to all categories" }]);
+        setSelectedCategoryIds(allCategoryIds);
+        fetchPriceTableData(allCategoryIds);
+    }
     } else {
       const category = categories.find((category) => category.id === categoryId);
   
@@ -211,6 +217,7 @@ const PriceComponent = () => {
     setSelectedBrand(null);
     setSelectedBrandId(null);
     fetchBrands();
+    setTableData([]);
   };
   const handlePriceChange = async (event) => {
     const selectedOption = event.target.value;
@@ -311,20 +318,22 @@ const PriceComponent = () => {
                 fetchVariantOptions();
                 fetchBrands();
                 const tableHTML = `
-                <div style="overflow-x: auto; max-height: 400px;">
-                  <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
-                    <thead>
+                <div style="overflow-x: auto; max-height: 400px; border: 1px solid #ccc;">
+                  <table border="1" style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
+                   <span style="position: sticky; float:right; font-size: 14px; font-weight: bold;">
+                    Total Products: ${response.data.data.product_count}  </span>
+                    <thead style="background-color: #f8f8f8; position: sticky; top: 0; z-index: 1;">
                       <tr>
-                        <th style="padding: 10px;">Image</th>
-                        <th style="padding: 10px;">Product Name</th>
-                        <th style="padding: 10px;">Variant Value</th>
-                        <th style="padding: 10px;">Unfinished Price</th>
-                        <th style="padding: 10px;">Finished Price</th>
-                        <th style="padding: 10px;">Retail Price</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Image</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Product Name</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Variant Value</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Unfinished Price</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Finished Price</th>
+                        <th style="padding: 10px; background-color: #f4f4f4;">Retail Price</th>
                       </tr>
                     </thead>
                     <tbody>
-                      ${response.data.data
+                      ${response.data.data.result
                         .map((row) => {
                           const image = Array.isArray(row.image_url)
                             ? row.image_url[0]
@@ -334,7 +343,10 @@ const PriceComponent = () => {
                             .join("<br>");
                           return `
                             <tr>
-                              <td style="padding: 10px;"><img src="${image}" alt="${row.product_name}" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                              <td style="padding: 10px;">
+                                <img src="${image}" alt="${row.product_name}" 
+                                  style="width: 50px; height: 50px; border-radius: 50%;">
+                              </td>
                               <td style="padding: 10px;">${row.product_name}</td>
                               <td style="padding: 10px;">${variantOptions}</td>
                               <td style="padding: 10px;">${row.un_finished_price}</td>
@@ -346,10 +358,10 @@ const PriceComponent = () => {
                     </tbody>
                   </table>
                 </div>
-              `;
+              `;              
         
               // Display the Swal popup with the table
-              Swal.fire({  title: "Fetched Data",  html: tableHTML,  showConfirmButton: false,  width: "80%",
+              Swal.fire({  title: "Products Found",  html: tableHTML,  showConfirmButton: false,  width: "80%",
                 customClass: {  container: "swal-custom-container",  popup: "swal-custom-popup",  title: "swal-custom-title", },
                 didRender: () => {
                   const saveButton = document.createElement("button");
@@ -358,14 +370,15 @@ const PriceComponent = () => {
                   saveButton.onclick = async() => {
                     try {
                       const saveresponse =  await axiosInstance.post(`${process.env.REACT_APP_IP}/saveChangesForVarientOption/`,
-                        { result_list: response.data.data,
+                        { result_list: response.data.data.result,
                          }
                       );
                       console.log(saveresponse,'saveresponse');
                       console.log(saveresponse.status,'saveresponse.status');
-                      
                       if (saveresponse.status === 200) {
-                        setProductTableDataAfterSave(response.data.data);
+                        setProductTableDataAfterSave(response.data.data.result);
+                        setProductcountAfterSave(response.data.data.product_count);
+
                       }
                     } catch (error) {
                       console.error("Error fetching data:", error);
@@ -429,9 +442,6 @@ const PriceComponent = () => {
       console.error("Error fetching variant options:", error);
     }
   };
-// useEffect(() => {
-//   fetchVariantOptions();
-// }, []); 
 const fetchAllData = async () => {
   try {
     setLoading(true);
@@ -470,9 +480,14 @@ const handleVariantValueSelect = (event) => {
   const selectedValueId = event.target.value;
 
   if (selectedValueId === "all") {
-    const allVariantValueIds = variantTypeValues.map((value) => value.id);
-    setSelectedVariantValues([{ name: "Apply to all variant values" }]);
-    setSelectedVariantValueIds(allVariantValueIds);
+    if (selectedVariantValues.length === 1 && selectedVariantValues[0].name === "Apply to all variant values" ) {
+      setSelectedVariantValues([]);
+      setSelectedVariantValueIds([]);
+  } else {
+      const allVariantValueIds = variantTypeValues.map((value) => value.id);
+      setSelectedVariantValues([{ name: "Apply to all variant values" }]);
+      setSelectedVariantValueIds(allVariantValueIds);
+  }
   } else {
     const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
 
@@ -603,13 +618,13 @@ const handleVariantValueRemove = (id) => {
         <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       </div>
     </div>
-    <button onClick={() => handlePriceApply()} className="add-brand-btn">  Apply </button>
+    <button onClick={() => handlePriceApply()} className="apply-btn">  Apply </button>
   </div>
 
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Variants</h4>
 
-  <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span> </h4>
+  <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor <span className="required">*</span> </h4>
     <div>
       <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
@@ -641,7 +656,8 @@ const handleVariantValueRemove = (id) => {
             <option value={variant.id}>
               {variant.name}
             </option>
-          ))}      {/* {variantOptions ?.filter((variant) => variant.name.toLowerCase() === "wood type")  .map((variant) => (   <option  key={variant.id} value={variant.id}>  {variant.name}  </option> ))}  */}
+          ))}    
+            {/* {variantOptions ?.filter((variant) => variant.name.toLowerCase() === "wood type")  .map((variant) => (   <option  key={variant.id} value={variant.id}>  {variant.name}  </option> ))}  */}
      </select>
     <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
@@ -705,8 +721,7 @@ const handleVariantValueRemove = (id) => {
     <div
       style={{ margin: "0px 0px 0px 15px", display: "inline-block", width: "10%", }} >
       <input className="" id="" type="number" value={VariantpriceInput} placeholder="value" required 
-      onChange={handleVariantInputChange} 
-        style={{ width: "70%",  border: formSubmittedForVariant && !VariantpriceInput ? "1px solid red" : "1px solid #ccc",  }}  />
+      onChange={handleVariantInputChange}  style={{ width: "70%",  border: formSubmittedForVariant && !VariantpriceInput ? "1px solid red" : "1px solid #ccc",  }}  />
     </div>
     <div  style={{ margin: "0px 0px 0px 20px", display: "inline-block", width: '14%' }} >
       <select
@@ -726,7 +741,7 @@ const handleVariantValueRemove = (id) => {
       <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
     </div>   
   </div>
-  <button onClick={() =>handleVariantPriceApply() } className="add-brand-btn">  Apply  </button>
+  <button onClick={() =>handleVariantPriceApply() } className="apply-btn">  Apply  </button>
   <p style={{display:'contents'}}>(This given variant price will update the variant price and the retail price accordingly) <span className="required">*</span></p>
   </div>
 </div>
@@ -762,7 +777,8 @@ const handleVariantValueRemove = (id) => {
             ))}
           </tbody>
         </table>
-      ):(
+       ):(
+        (selectedBrandId || (selectedCategoryIds && selectedCategoryIds.length > 0)) ? (
         <table
         border="1"
         style={{ marginTop: "20px", width: "100%", textAlign: "left" }}
@@ -778,13 +794,17 @@ const handleVariantValueRemove = (id) => {
         </thead>
         <tbody>
         <tr>
-  <td colSpan="5"  style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>No Pricing found.</td>
-</tr>
+          <td colSpan="5"  style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>No Pricing found.</td>
+        </tr>
         </tbody>
       </table>
+        ) : null
       )}
 <div>
 {productTableDataAfterSave.length > 0 && (
+  <>
+       <span style={{position: 'sticky', float:'right', fontSize: '14px', fontWeight: 'bold'}}>
+             Total Products:{productcountDataAfterSave}</span>
         <table border="1" style={{ marginTop: "20px", width: "100%", textAlign: "left" }} >
           <thead>
             <tr>
@@ -819,6 +839,7 @@ const handleVariantValueRemove = (id) => {
             ))}
           </tbody>
         </table>
+        </>
       )}
 </div>
     </div>

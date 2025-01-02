@@ -402,7 +402,7 @@ const ExportPage = (categories) => {
     }
   };
   return (
-    <div>
+    <div className='export-page' style={{padding:'7px'}}>
          <div className='CategoryTable-header'>
                 <h2 className='header_cls_prod'>Export Schema</h2>
             </div>

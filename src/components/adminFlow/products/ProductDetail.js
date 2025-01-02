@@ -398,7 +398,7 @@ const ProductDetail = ({ categories }) => {
         });
     };
 
-    const handleVariantChange = (typeId, optionId) => {
+    const handleVariantChange = (typeId, optionId) => {        
         setSelectedVariants((prev) => ({
             ...prev,
             [typeId]: optionId,
@@ -406,44 +406,61 @@ const ProductDetail = ({ categories }) => {
     };
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const options = variantOptions
-                .map((variant) => {
-                    const selectedOption = selectedVariants[variant.type_id];
-
-                    if (selectedOption) {
-                        return {
-                            option_name_id: variant.type_id,
-                            option_value_id: selectedOption,
-                        };
-                    }
-                    return null;
-                })
-                .filter((option) => option !== null);
-            const res = await axiosInstance.post(`${process.env.REACT_APP_IP}/createAndAddVarient/`, {
-                product_id: productId,
-                varient_obj: {
-                    sku_number: selectedVariants.sku,
-                    un_finished_price: selectedVariants.unfinishedPrice,
-                    finished_price: selectedVariants.finishedPrice,
-                    retail_price: selectedVariants.retailPrice,
-                    total_price: RetailPrice,
-                    quantity: selectedVariants.quantity,
-                    options: options,
-
-                },
-            });
-            const resd = res.data.data.status;
-            if (resd === true) {
-                Swal.fire({
-                    title: 'Success!', text: 'Sucessfully variants added!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
-                })
-                fetchVariantDetail();
+        if (selectedVariants.sku !== '') {
+            try {
+                const options = variantOptions
+                    .map((variant) => {
+                        const selectedOption = selectedVariants[variant.type_id];
+                        if (selectedOption) {
+                            return {
+                                option_name_id: variant.type_id,
+                                option_value_id: selectedOption,
+                            };
+                        }
+                        return null;
+                    })
+                    .filter((option) => option !== null);
+                const res = await axiosInstance.post(`${process.env.REACT_APP_IP}/createAndAddVarient/`, {
+                    product_id: productId,
+                    varient_obj: {
+                        sku_number: selectedVariants.sku,
+                        un_finished_price: selectedVariants.unfinishedPrice,
+                        finished_price: selectedVariants.finishedPrice,
+                        retail_price: selectedVariants.retailPrice,
+                        total_price: RetailPrice,
+                        quantity: selectedVariants.quantity,
+                        options: options,
+    
+                    },
+                });
+                const resd = res.data.data.status;
+                if (resd === true) {
+                    Swal.fire({
+                        title: 'Success!', text: 'Sucessfully variants added!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
+                    })
+                    fetchVariantDetail();
+                }
+            } catch (err) {
+                console.error('Error fetching variants:', err);
             }
-        } catch (err) {
-            console.error('Error fetching variants:', err);
+            setIsPopupOpen(false);
         }
-        setIsPopupOpen(false);
+        else{
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Please Enter the SKU to add variant!',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel'
+                }
+            });
+        }
+      
     };
     const handleAddVariantClick = async () => {
         setSelectedVariants({
@@ -834,14 +851,15 @@ const ProductDetail = ({ categories }) => {
                                         {variantData.map((variant) => (
                                             <tr>
                                                 <td>{variant.sku_number}</td>
-                                                <td>{variant.un_finished_price ? `$${variant.un_finished_price}` : ''}</td>
-                                                <td>{variant.finished_price ? `$${variant.finished_price}` : ''}</td>
-                                                <td>{variant.retail_price ? `$${variant.retail_price}` : ''}</td>
-
+                                                <td>{variant.un_finished_price ? `$${parseFloat(variant.un_finished_price).toFixed(2)}` : ''}</td>
+                                                <td>{variant.finished_price ? `$${parseFloat(variant.finished_price).toFixed(2)}` : ''}</td>
+                                                <td>{variant.retail_price ? `$${parseFloat(variant.retail_price).toFixed(2)}` : ''}</td>
                                                 <td>
-                                                    {variant.varient_option_list.map((option, index) => (
-                                                        <div key={index}>{option.type_name}: {option.type_value}</div>
-                                                    ))}
+                                                    {variant.varient_option_list.map((option, index) =>
+                                                        option.type_value ? (
+                                                            <div key={index}>{option.type_name}: {option.type_value}</div>
+                                                        ) : null
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
@@ -859,7 +877,7 @@ const ProductDetail = ({ categories }) => {
                                         }}    >
                                         <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
                                         <form onSubmit={handleFormSubmit}>
-                                        <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU</label>
+                                        <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
                                         <input type="text" name="sku" className="input_pdp" value={selectedVariants.sku} onChange={handleVariantDetailChange}  />
                                             <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price</label>
                                             <input type="text" name="sku" className="input_pdp" value={selectedVariants.unfinishedPrice || ''}  onChange={(e) => {
@@ -886,12 +904,11 @@ const ProductDetail = ({ categories }) => {
                                                     <select id="brand-select" name="brand_id" required value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
                                                         <option value="">Select Variant Value</option>
                                                         {variant.option_value_list?.map((option) => (
-                                                            <option value={option.id}>
+                                                            <option value={option.type_value_id}>
                                                                 {option.type_value_name}
                                                             </option>
                                                         ))}
                                                     </select>
-                                                   
                                                 </div>
                                             ))}
                                             <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}  >

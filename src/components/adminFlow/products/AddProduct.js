@@ -145,7 +145,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 </div>
                 <div className="form-section">
                     <div className="CategoryTable-header">
-                        <h3 style={{ margin: '6px' }}>Variant and Price Details</h3>
+                        <h3 style={{ margin: '6px' }}>Variant & Price</h3>
                         {RetailPrice === 1 ? (
                               <>
                               <span className="apply-rule-button">1X</span>
@@ -165,11 +165,11 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="unfinishedPrice">Unfinished Price <span className="required">*</span></label>
-                                    <input  type="number"  id="unfinishedPrice"  name="unfinishedPrice"  placeholder="Unfinished Price"  required  value={variant.unfinishedPrice}  onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}  autoComplete="off"  onWheel={(e) => e.target.blur()} />
+                                    <input  type="number"  id="unfinishedPrice"  name="unfinishedPrice"  placeholder="0"  required  value={variant.unfinishedPrice}  onChange={(e) =>{handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'unfinishedPrice', index)}}onBlur={(e) => handleVariantDecimalBlur(e, 'unfinishedPrice', index)}  autoComplete="off"  onWheel={(e) => e.target.blur()} />
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="finishedPrice">Finished Price <span className="required">*</span></label>
-                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="Finished Price" required value={variant.finishedPrice}
+                                    <input type="number" id="finishedPrice" name="finishedPrice" placeholder="0" required value={variant.finishedPrice}
                                         onChange={(e) => { handleVariantDetailChange(e, index); handleVariantDecimalInput(e, 'finishedPrice', index)}}
                                         onBlur={(e) => handleVariantDecimalBlur(e, 'finishedPrice', index)}
                                          autoComplete="off" onWheel={(e) => e.target.blur()}
@@ -181,7 +181,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                 </div>
                                 <div className="variant-field">
                                     <label htmlFor="quantity">Quantity <span className="required">*</span></label>
-                                    <input  type="number"  id="quantity"  name="quantity"  placeholder="Quantity"  required  value={variant.quantity}  onChange={(e) => handleVariantDetailChange(e, index)}  onWheel={(e) => e.target.blur()}
+                                    <input  type="number"  id="quantity"  name="quantity"  placeholder="0"  required  value={variant.quantity}  onChange={(e) => handleVariantDetailChange(e, index)}  onWheel={(e) => e.target.blur()}
                                     />
                                 </div>
                               
@@ -190,31 +190,19 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                         <label className="dropdown-label" htmlFor={`variant-${variantOption.type_id}`}>
                                             {variantOption.type_name}
                                         </label>
-
-                                        {/* Custom dropdown header */}
-                                        <div
-                                            className="custom-dropdown-header"
-                                            onClick={() => handleDropdownClick(index, dropdownIndex)} // Pass both row and dropdown index
-                                            style={{
-                                                width: '95%', padding: '10px 0px 10px 4px', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', fontSize: '14px',
-                                            }}
-                                        >
-                                            {/* Display the selected variant value */}
+                                        <div className="custom-dropdown-header"  onClick={() => handleDropdownClick(index, dropdownIndex)} 
+                                            style={{  width: '95%', padding: '10px 0px 10px 4px', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', fontSize: '14px',  }} >
                                             {variant[variantOption.type_id]
                                                 ? variantOption.option_value_list?.find(option => option.type_value_id === variant[variantOption.type_id])?.type_value_name
                                                 : "Select Variant Value"
                                             }
                                         </div>
-
-                                        {/* Dropdown list */}
-                                        {openDropdownIndex === `${index}-${dropdownIndex}` && ( // Only show the dropdown for the clicked index
+                                        {openDropdownIndex === `${index}-${dropdownIndex}` && (
                                             <div
                                                 className="custom-dropdown-list"
                                                 style={{
                                                     position: 'absolute', top: '100%', width: '90%', backgroundColor: '#fff', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '5px', maxHeight: '150px', overflowY: 'auto', zIndex: 1000, border: '1px solid #ccc', padding: '8px',
-                                                }}
-                                            >
-                                                {/* Search input inside the dropdown */}
+                                                }}  >
                                                 <input
                                                     type="text"
                                                     placeholder="Search options..."
@@ -222,8 +210,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                                     onChange={handleSearchChange}
                                                     style={{
                                                         width: '90%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px',
-                                                    }}
-                                                />
+                                                    }}  />
 
                                                 {/* Option list */}
                                                 {variantOption.filteredOptions?.map((option) => (
@@ -231,14 +218,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                                         key={option.type_value_id}
                                                         className="custom-dropdown-option"
                                                         onClick={() => handleVariantSelect(variantOption.type_id, option.type_value_id, index)}
-                                                        style={{
-                                                            padding: '8px',
-                                                            cursor: 'pointer',
-                                                            backgroundColor: variant[variantOption.type_id] === option.type_value_id ? '#d7ffe6' : '#fff',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px',
-                                                        }}
-                                                    >
+                                                        style={{ padding: '8px', cursor: 'pointer', backgroundColor: variant[variantOption.type_id] === option.type_value_id ? '#d7ffe6' : '#fff', borderRadius: '4px', fontSize: '14px',
+                                                        }}   >
                                                         {option.type_value_name}
                                                     </div>
                                                 ))}
@@ -375,13 +356,13 @@ const AddProduct = (categories) => {
         }
     });
     const [selectedVariants, setSelectedVariants] = useState([{
-        sku: '', unfinishedPrice: '0', finishedPrice: '0', quantity: '0',totalPrice: 0, retailPrice:0, options: []
+        sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, retailPrice:0, options: []
     }]);
 
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
             ...prevVariants,
-            { sku: '', unfinishedPrice: '0', finishedPrice: '0', quantity: '0', basePrice: '', totalPrice: 0,retailPrice:0, options: [] }
+            { sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '', basePrice: '', totalPrice: 0,retailPrice:0, options: [] }
         ]);
     };
     const removeVariantRow = (indexToRemove) => {
@@ -441,7 +422,6 @@ const AddProduct = (categories) => {
     const handleChange = async (e) => {
         const { name, value } = e.target;
         console.log(value,'Values');
-        
         if (name === 'brand_id' && value !== '') {
             try {
                 const payload = {
@@ -456,20 +436,20 @@ const AddProduct = (categories) => {
                   console.error("Error sending Vendor and category name:", error);
                   Swal.fire({  title: "Error",  text: "An error occurred while sending Vendor and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
                 }
+                if (name === 'brand_id' && value === '') {
+                    setShowRetailPrice([0]); 
+                }
+                setProductData({
+                    ...productData,
+                    product_obj: {
+                        ...productData.product_obj,
+                        [name]: value
+                    }
+                });
         }
-         if (name === 'brand_id' && value === '') {
-            setShowRetailPrice([0]); 
-        }
-        setProductData({
-            ...productData,
-            product_obj: {
-                ...productData.product_obj,
-                [name]: value
-            }
-        });
+       
     };
     const handleVariantChange = (typeId, optionId, index) => {        
-        console.log('Inside Variant change 2222', typeId, optionId, index);
         setSelectedVariants(prev => {
           const updatedVariants = [...prev];
           const updatedVariant = updatedVariants[index];
@@ -503,13 +483,10 @@ const AddProduct = (categories) => {
       };
     
     const handleSave = async () => {
-        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean|| 
-            !productData.product_obj.brand_id || !productData.product_obj.product_name || 
-            !productData.product_obj.short_description ) {
+        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.brand_id || !productData.product_obj.product_name || !productData.product_obj.short_description ) {
             alert("Please fill in all required fields.");
             return;
         }
-    
         const invalidVariants = selectedVariants.some(variant => 
             !variant.sku || !variant.unfinishedPrice || !variant.finishedPrice || !variant.quantity
         );
@@ -535,10 +512,7 @@ const AddProduct = (categories) => {
                     }))
                 }
             };
-            const response = await axiosInstance.post(
-                `${process.env.REACT_APP_IP}/createProduct/`,
-                payload
-            );            
+            const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/createProduct/`,  payload );            
             if (response.data?.data?.status === true) {
                 Swal.fire({
                     title: 'Success', text: 'Product added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
@@ -618,21 +592,18 @@ const categoryDropdownRef = useRef(null);
   }, []);
 
     const filteredCategories = categories.categories.category_list.filter(category =>
-        category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
-    );
+        category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())  );
 
     const levelOneCategory = categories.categories.category_list.find(level1 => level1._id === selectedCategoryId);
 
     const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
-    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)
-    );
+    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
 
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
 
     const filteredCategoriesLevel3 = levelTwoCategory
         ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
-            level3.name.toLowerCase().includes(safeSearchQuery)
-        );
+            level3.name.toLowerCase().includes(safeSearchQuery) );
 
     const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
 
@@ -689,14 +660,8 @@ const categoryDropdownRef = useRef(null);
             setShowclearBtn(true);
         }
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
-
-        if (isIdInLastLevel) {
-            setIsAddProductVisible(true);
-        }
-        else {
-            setIsAddProductVisible(false);
-        }
-
+        if (isIdInLastLevel) {  setIsAddProductVisible(true); }
+        else {    setIsAddProductVisible(false); }
         setSelectedCategoryForVariant(id);
         setProductData((prevData) => ({
             ...prevData,
@@ -708,6 +673,7 @@ const categoryDropdownRef = useRef(null);
         }));
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
+            console.log(res,'response');
         } catch (err) {
             console.log('ERROR', err);
         }
@@ -721,7 +687,6 @@ const categoryDropdownRef = useRef(null);
             let level1Category;
             categories.categories.category_list.some(level1 => {
                 const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
-
                 if (foundLevel2) {
                     level1Category = level1;
                     return true;
@@ -733,7 +698,6 @@ const categoryDropdownRef = useRef(null);
                 console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
                 return;
             }
-
             setSelectedCategoryId(level1Category._id);
             setselectedLevel2Id(selectedValue);
             setSelectedLevel3Id('');
@@ -746,15 +710,13 @@ const categoryDropdownRef = useRef(null);
             setselectedLevel2Id('');
         }
     };
-
     const handleLevel3Select = (id) => {
         const selectedValue = id;
         if (selectedValue !== '') {
             let level1Category, level2Category;
             categories.categories.category_list.some(level1 => {
                 const foundLevel2 = level1.level_one_category_list.find(level2 =>
-                    level2.level_two_category_list.some(level3 => level3._id === selectedValue)
-                );
+                    level2.level_two_category_list.some(level3 => level3._id === selectedValue));
                 if (foundLevel2) {
                     level1Category = level1;
                     level2Category = foundLevel2;
@@ -810,8 +772,6 @@ const categoryDropdownRef = useRef(null);
                         console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
                         return;
                     }
-    
-                    // Set the selected categories and reset lower levels
                     setSelectedCategoryId(level1Category._id);
                     setselectedLevel2Id(level2Category._id);
                     setSelectedLevel3Id(level3Category._id);
@@ -831,7 +791,6 @@ const categoryDropdownRef = useRef(null);
                         console.error('Level 4 category not found for ID:', selectedValue);
                         return;
                     }
-    
                     const level3CategoryForLevel5 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .flatMap(level2 => level2.level_two_category_list)
@@ -841,11 +800,9 @@ const categoryDropdownRef = useRef(null);
                         console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
                         return;
                     }
-    
                     const level2CategoryForLevel5 = categories.categories.category_list
                         .flatMap(level1 => level1.level_one_category_list)
                         .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel5._id));
-    
                     if (!level2CategoryForLevel5) {
                         console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
                         return;
@@ -864,33 +821,21 @@ const categoryDropdownRef = useRef(null);
                     setSelectedlevel5(selectedValue);
                     break;
                 case 6:
-                    const level5Category = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .flatMap(level3 => level3.level_three_category_list)
-                        .flatMap(level4 => level4.level_four_category_list)
-                        .find(level5 => level5._id === selectedValue);
+                    const level5Category = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .flatMap(level3 => level3.level_three_category_list) .flatMap(level4 => level4.level_four_category_list) .find(level5 => level5._id === selectedValue);
     
                     if (!level5Category) {
                         console.error('Level 5 category not found for ID:', selectedValue);
                         return;
                     }
     
-                    const level4CategoryForLevel6 = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .flatMap(level3 => level3.level_three_category_list)
-                        .find(level4 => level4._id === level5Category.level_four_category_id);
+                    const level4CategoryForLevel6 = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .flatMap(level3 => level3.level_three_category_list) .find(level4 => level4._id === level5Category.level_four_category_id);
     
                     if (!level4CategoryForLevel6) {
                         console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
                         return;
                     }
     
-                    const level3CategoryForLevel6 = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
+                    const level3CategoryForLevel6 = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
     
                     if (!level3CategoryForLevel6) {
                         console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
@@ -914,7 +859,6 @@ const categoryDropdownRef = useRef(null);
                         console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
                         return;
                     }
-    
                     setSelectedCategoryId(level1CategoryForLevel6._id);
                     setselectedLevel2Id(level2CategoryForLevel6._id);
                     setSelectedLevel3Id(level3CategoryForLevel6._id);
@@ -942,7 +886,6 @@ const categoryDropdownRef = useRef(null);
             }
         }
     };
-    
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
     const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -957,7 +900,7 @@ const categoryDropdownRef = useRef(null);
         console.log(level6Categories);
     }
     return (
-        <div>
+        <div className='addproduct-schema'>
             <div className='CategoryTable-header'>
                 <h2 className='header_cls_prod'>Products Schema</h2>
             </div>

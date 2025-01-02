@@ -202,7 +202,7 @@ function HomePage() {
   };
   const handleRevokePriceClick = () => {
     if ((location.pathname.includes("product/"))) { 
-      navigate("/Admin/revokeprice");
+      navigate("/Admin/restoreprice");
     }
     setShowRevokePrice(true);
     setShowUser(false);
@@ -298,7 +298,7 @@ function HomePage() {
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
-            <Route path="/revokeprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
+            <Route path="/restoreprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
           </Routes>
           {/* {renderContent()} */}
         </div>

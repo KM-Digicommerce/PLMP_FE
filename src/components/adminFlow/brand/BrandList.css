@@ -1,11 +1,10 @@
 /* General Styles */
 .brand-page {
-  padding: 20px;
+  padding: 7px;
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
   color: #333;
+  min-height: 100vh;
 }
-
 .brand-header {
   display: flex;
   justify-content: space-between;
@@ -14,7 +13,6 @@
 }
 
 .brand-header h1 {
-  margin: 0;
   font-size: 24px;
   font-weight: bold;
   color: #222;
@@ -58,13 +56,6 @@
 .swal-custom-cancel-brand{
   width: 52% !important;
 }
-/* Brand List CSS */
-.brand-page {
-  font-family: 'Arial', sans-serif;
-  padding: 20px;
-  background-color: #f8f8f8;
-  min-height: 100vh;
-}
 
 .brand-header {
   display: flex;
@@ -76,6 +67,7 @@
 .brand-header-info {
   display: flex;
   flex-direction: column;
+  width: 50%;
 }
 
 .brand-title {
@@ -106,7 +98,7 @@
   background-color: #f1f1f1;
 }
 
-.add-brand-btn { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s; margin: 0px; width: 12%;}
+.add-brand-btn { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s; margin: 0px; width: 25%;}
 .add-brand-btn:hover { background-color: #0056b3;}
 .brand-cards-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 30px;
 }
@@ -127,4 +119,40 @@
 }
 .filter-letter:hover { background-color: #e0e0e0;}
 .filter-letter.active { background-color: #007bff; color: #fff; border-color: #007bff;}
-.dropdown-label-vendor{ font-size: 16px; font-weight: bold; }
+.alphabetical-dropdown{display: inline-block;}
+.dropdown-select{display: inline-block;margin: 0px 18px 0px 10px;}
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin: 0 auto;
+  width: 40%;
+  padding: 10px 0px 0px 0px;
+}
+
+.pagination-button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination-button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border-color: #007bff;
+}
+
+.pagination-button:hover {
+  background-color: #e9ecef;
+}
+
+.prev-button,
+.next-button {
+  font-weight: bold;
+  width: 18%;
+}
