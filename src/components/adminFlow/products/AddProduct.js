@@ -454,15 +454,15 @@ const AddProduct = (categories) => {
                 if (name === 'brand_id' && value === '') {
                     setShowRetailPrice([0]); 
                 }
-                setProductData({
-                    ...productData,
-                    product_obj: {
-                        ...productData.product_obj,
-                        [name]: value
-                    }
-                });
+               
         }
-       
+        setProductData({
+            ...productData,
+            product_obj: {
+                ...productData.product_obj,
+                [name]: value
+            }
+        });
     };
     const handleVariantChange = (typeId, optionId, index) => {        
         setSelectedVariants(prev => {
@@ -497,8 +497,8 @@ const AddProduct = (categories) => {
         });
       };
     
-    const handleSave = async () => {
-        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.brand_id || !productData.product_obj.product_name || !productData.product_obj.short_description ) {
+    const handleSave = async () => {        
+        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.brand_id || !productData.product_obj.product_name || !productData.product_obj.short_description ) {            
             alert("Please fill in all required fields.");
             return;
         }

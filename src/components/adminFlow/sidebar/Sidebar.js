@@ -141,15 +141,15 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       <ul className="topMenu">
         <li onClick={() => { onDashboardClick(); handleSectionClick('dashboard'); }}
           className={activeSection === 'dashboard' ? 'active' : ''}><FontAwesomeIcon icon={faColumns} className="icon" /> Dashboard</li>
+        <li onClick={() => { onBrandClick(); handleSectionClick('brand'); }}
+          className={activeSection === 'brand' ? 'active' : ''}>
+          <FontAwesomeIcon icon={faStore} className="icon" />
+          Vendors
+        </li>
         <li onClick={() => { onCategoriesClick(); handleSectionClick('categories'); }}
           className={activeSection === 'categories' ? 'active' : ''}>
           <FontAwesomeIcon icon={faTags} className="icon" />
           Categories
-        </li>
-        <li onClick={() => { onBrandClick(); handleSectionClick('brand'); }}
-          className={activeSection === 'brand' ? 'active' : ''}>
-          <FontAwesomeIcon icon={faStore} className="icon" />
-          Vendor
         </li>
         <li  onClick={() => { OnAllVariantsClick(); handleSectionClick('variants'); }}
           className={activeSection === 'variants' ? 'active' : ''}>
