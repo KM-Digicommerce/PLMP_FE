@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../utils/axiosConfig";
 import Swal from "sweetalert2";
+import './CreateUser.css';
 const CreateUser = () => {
   const [formData, setFormData] = useState({
     user_name: "",
@@ -8,9 +9,21 @@ const CreateUser = () => {
     email: "",
     password: "",
   });
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // To handle loading state
+  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
+  const [users, setUsers] = useState([]); // State to store the list of users
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainUserBasedOnClient/`);
+      setUsers(response.data.data.user_list || []); // Assuming the API returns an array of users
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers(); // Fetch users on initial load
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,144 +32,136 @@ const CreateUser = () => {
       [name]: value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset error message
-
-    // Check if all fields are filled
     if (!formData.user_name || !formData.name || !formData.email || !formData.password) {
       setError("All fields are required.");
       return;
     }
-
     setLoading(true); // Start loading
 
     try {
       // Make API call to create user
-      const response =  await axiosInstance.post(`${process.env.REACT_APP_IP}/createUser/`, formData);
-      console.log("User Created:", response.data);
+      const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createUser/`, formData);      
       if (response.data.data.is_created === true) {
-          Swal.fire({ title: "Success", text: "User Created Successfully", icon: "Success", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
-                  });
+        Swal.fire({
+          title: "Success",
+          text: "User Created Successfully",
+          icon: "success",
+          confirmButtonText: "OK",
+          customClass: {
+            container: "swal-custom-container",
+            popup: "swal-custom-popup",
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm",
+            cancelButton: "swal-custom-cancel",
+          },
+        });
+        fetchUsers();
+        setFormData({ user_name: "", name: "", email: "", password: "" });
+        setShowForm(false); // Hide form after successful submission
       }
-      setFormData({ user_name: "", name: "", email: "", password: "" });
     } catch (error) {
       setError("Failed to create user. Please try again.");
       console.error("Error creating user:", error);
     }
-
     setLoading(false); // Stop loading
   };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2>Create Account</h2>
-        {error && <div style={styles.error}>{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div style={styles.inputGroup}>
-            <label htmlFor="user_name">Username</label>
-            <input
-              type="text"
-              id="user_name"
-              name="user_name"
-              value={formData.user_name}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-              autoComplete="off"
-            />
+    <div className="container">
+      <div className="userheader">
+        <button className="createUserButton" onClick={() => setShowForm(true)}>
+          Create User
+        </button>
+      </div>
+      {/* Modal Form for Create User */}
+      {showForm && (
+        <div className="modalOverlay">
+          <div className="modalCard">
+            <h2>Create Account</h2>
+            {error && <div className="error">{error}</div>}
+            <form onSubmit={handleSubmit}>
+              <div className="inputGroup">
+                <label htmlFor="user_name">Username</label>
+                <input
+                  type="text"
+                  id="user_name"
+                  name="user_name"
+                  value={formData.user_name}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <button type="submit" className="signbutton" disabled={loading}>
+                {loading ? "Creating..." : "Sign Up"}
+              </button>
+            </form>
+            <button className="closeButton" onClick={() => setShowForm(false)}>
+              Close
+            </button>
           </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-              autoComplete="off"
-            />
-          </div>
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Creating..." : "Sign Up"}
-          </button>
-        </form>
+        </div>
+      )}
+      {/* User List Displayed in Card */}
+      <div className="userListCard">
+        <h2 style={{margin:'0px 0px 20px 0px'}}>Users Schema</h2>
+        <div className="userList">
+          {users.length > 0 ? (
+            users.map((user) => (
+              <div key={user.id} className="userCard">
+                <h3> {user.name}</h3>
+                <p>Role: {user.role || "N/A"}</p>
+                <p>Status: {user.is_active ? "Active" : "Inactive"}</p>
+              </div>
+            ))
+          ) : (
+            <div className="noUsers">No users available.</div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f7f7f7",
-  },
-  card: {
-    backgroundColor: "white",
-    padding: "0px 40px 40px 40px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-    width: "100%",
-    maxWidth: "400px",
-  },
-  inputGroup: {
-    marginBottom: "15px",
-  },
-  input: {
-    width: "93%",
-    padding: "10px",
-    margin: "5px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "16px",
-  },
-  button: {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-  error: {
-    color: "red",
-    marginBottom: "15px",
-  },
-};
-
 export default CreateUser;

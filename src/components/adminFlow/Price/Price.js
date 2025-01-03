@@ -196,9 +196,9 @@ const PriceComponent = () => {
     }
   };
   const handleBrandSelectForVariant = (brand) => {
+    setProductcountAfterSave('');
     if (brand && brand.id) {
       setSelectedBrandIdForVariant(brand.id);
-      // fetchPriceTableDataBrand(brand.id);
       setSelectedBrandForVariant(brand);
     }
     else{
@@ -302,7 +302,6 @@ const PriceComponent = () => {
                   setFormSubmittedForVariant(false);
                 }
                 console.log(response,'response');
-                // setProductTableData(response.data.data);
                 setBrands([]);
                 setVariantOptions([]);
                 setSelectedVariant([]);
@@ -318,10 +317,11 @@ const PriceComponent = () => {
                 fetchVariantOptions();
                 fetchBrands();
                 const tableHTML = `
+                <div style="text-align: end">
+                  <span style="font-size: 16px; font-weight: bold;">
+                    Total Products: ${response.data.data.product_count}  </span></div>
                 <div style="overflow-x: auto; max-height: 400px; border: 1px solid #ccc;">
                   <table border="1" style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
-                   <span style="position: sticky; float:right; font-size: 14px; font-weight: bold;">
-                    Total Products: ${response.data.data.product_count}  </span>
                     <thead style="background-color: #f8f8f8; position: sticky; top: 0; z-index: 1;">
                       <tr>
                         <th style="padding: 10px; background-color: #f4f4f4;">Image</th>
@@ -378,7 +378,6 @@ const PriceComponent = () => {
                       if (saveresponse.status === 200) {
                         setProductTableDataAfterSave(response.data.data.result);
                         setProductcountAfterSave(response.data.data.product_count);
-
                       }
                     } catch (error) {
                       console.error("Error fetching data:", error);
@@ -803,8 +802,8 @@ const handleVariantValueRemove = (id) => {
 <div>
 {productTableDataAfterSave.length > 0 && (
   <>
-       <span style={{position: 'sticky', float:'right', fontSize: '14px', fontWeight: 'bold'}}>
-             Total Products:{productcountDataAfterSave}</span>
+       <span style={{ float:'right', fontSize: '16px', fontWeight: 'bold',margin:'12px 0px 10px 0px'}}>
+             Total Products: {productcountDataAfterSave}</span>
         <table border="1" style={{ marginTop: "20px", width: "100%", textAlign: "left" }} >
           <thead>
             <tr>
