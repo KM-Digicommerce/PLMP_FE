@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
-import { Button, Modal, Box } from '@mui/material';
+import { Button, Modal, Box, InputAdornment } from '@mui/material';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
+import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
@@ -277,13 +278,12 @@ const ProductDetail = ({ categories }) => {
             setUnsavedChanges(true);
         }
     };
-    const [mainImage, setMainImage] = useState('placeholder-image-url.jpg');
+    const [mainImage, setMainImage] = useState(Soon);
     useEffect(() => {
         if (Array.isArray(formData.image) && formData.image.length > 0) {
             setMainImage(formData.image[0]);
         }
     }, [formData.image]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (view !== 'taxonomy' && view !== 'variants') {
@@ -505,6 +505,13 @@ const ProductDetail = ({ categories }) => {
         }
         setView(targetView);
       };
+      const formatFeature = (feature) => {
+        if (feature && !feature.trim().startsWith('*')) {
+          return `* ${feature}`;
+        }
+        return feature;
+      };
+      
     return (
         <div>
             <div className='section_container'>
@@ -958,55 +965,82 @@ const ProductDetail = ({ categories }) => {
                                 <div className="form-group">
                                     <label htmlFor="key_features">Key Features</label>
                                     <textarea
-  id="key_features"
-  name="key_features"
-  className="input_pdps"
-  value={
-    formData.key_features
-      ?.split('\n')
-      .map((feature) => feature.trimEnd()) // Only trim trailing spaces, preserve leading spaces
-      .map((feature) => feature ? `* ${feature}` : '') // Add '*' if the line isn't empty
-      .join('\n') || ''
-  }
-  onChange={(e) => {
-    const updatedFeatures = e.target.value
-      .split('\n')
-      .map((line) => {
-        if (line.startsWith('*')) {
-          return line.slice(1).trimStart(); // Remove '*' and leading spaces only
-        }
-        return line; // Preserve spaces as entered
-      })
-      .join('\n');
-
-    handleChange({
-      target: {
-        name: 'key_features',
-        value: updatedFeatures,
-      },
-    });
-  }}
-/>
-
-
+                                        id="key_features"
+                                        name="key_features"
+                                        className="input_pdps"
+                                        value={formData.key_features ? formatFeature(formData.key_features) : ''}
+                                        onKeyDown={(e) => {
+                                            if (e.key === ' ') {
+                                                e.preventDefault(); // Prevent default space action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.key_features.slice(0, cursorPosition) +  ' ' +  formData.key_features.slice(cursorPosition); // Add a space at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'key_features',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            } else if (e.key === 'Enter') {
+                                                e.preventDefault(); // Prevent default Enter action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.key_features.slice(0, cursorPosition) +   '\n* ' +  formData.key_features.slice(cursorPosition); // Add a new line with '* ' at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'key_features',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            }
+                                        }}
+                                        onChange={(e) => {
+                                            handleChange({
+                                                target: {
+                                                    name: 'key_features',
+                                                    value: e.target.value,
+                                                },
+                                            });
+                                        }}
+                                    />
                                 </div>
-
                                 <div className="form-group">
                                     <label htmlFor="features">Features</label>
                                     <textarea
                                         id="features"
                                         name="features"
                                         className="input_pdps"
-                                        value={
-                                            formData.features
-                                                ?.split('\n').filter((feature) => feature.trim() !== '').map((feature) => `* ${feature.trim().replace(/^\*/, '')}`).join('\n') || ''
-                                        }
+                                        value={formData.features ? formatFeature(formData.features) : ''}
+                                        onKeyDown={(e) => {
+                                            if (e.key === ' ') {
+                                                e.preventDefault();
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.features.slice(0, cursorPosition) +  ' ' + formData.features.slice(cursorPosition);
+                                                handleChange({
+                                                    target: {
+                                                        name: 'features',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            } else if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.features.slice(0, cursorPosition) +  '\n* ' + formData.features.slice(cursorPosition);
+                                                handleChange({
+                                                    target: {
+                                                        name: 'features',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            }
+                                        }}
                                         onChange={(e) => {
-                                            const updatedFeatures = e.target.value.split('\n').map((line) => line.replace(/^\* */, '').trim()).join('\n');
                                             handleChange({
                                                 target: {
                                                     name: 'features',
-                                                    value: updatedFeatures,
+                                                    value: e.target.value,
                                                 },
                                             });
                                         }}
@@ -1019,15 +1053,37 @@ const ProductDetail = ({ categories }) => {
                                         id="short_description"
                                         name="short_description"
                                         className="input_pdps"
-                                        value={
-                                            formData.short_description?.split('\n').filter((desc) => desc.trim() !== '').map((desc) => `* ${desc.trim().replace(/^\*/, '')}`).join('\n') || ''
-                                        }
+                                        value={formData.short_description ? formatFeature(formData.short_description) : ''}
+                                        onKeyDown={(e) => {
+                                            if (e.key === ' ') {
+                                                e.preventDefault(); // Prevent default space action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.short_description.slice(0, cursorPosition) +   ' ' +  formData.short_description.slice(cursorPosition); // Add a space at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'short_description',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            } else if (e.key === 'Enter') {
+                                                e.preventDefault(); // Prevent default Enter action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.short_description.slice(0, cursorPosition) +   '\n* ' + formData.short_description.slice(cursorPosition); // Add a new line with '* ' at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'short_description',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            }
+                                        }}
                                         onChange={(e) => {
-                                            const updatedDescription = e.target.value.split('\n').map((line) => line.replace(/^\* */, '').trim()).join('\n');
                                             handleChange({
                                                 target: {
                                                     name: 'short_description',
-                                                    value: updatedDescription,
+                                                    value: e.target.value,
                                                 },
                                             });
                                         }}
@@ -1040,52 +1096,91 @@ const ProductDetail = ({ categories }) => {
                                         id="long_description"
                                         name="long_description"
                                         className="input_pdps"
-                                        value={
-                                            formData.long_description?.split('\n').filter((desc) => desc.trim() !== '').map((desc) => `* ${desc.trim().replace(/^\*/, '')}`).join('\n') || ''
-                                        }
+                                        value={formData.long_description ? formatFeature(formData.long_description) : ''}
+                                        onKeyDown={(e) => {
+                                            if (e.key === ' ') {
+                                                e.preventDefault(); // Prevent default space action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.long_description.slice(0, cursorPosition) +  ' ' +  formData.long_description.slice(cursorPosition); // Add a space at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'long_description',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            } else if (e.key === 'Enter') {
+                                                e.preventDefault(); // Prevent default Enter action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.long_description.slice(0, cursorPosition) + '\n* ' + formData.long_description.slice(cursorPosition); // Add a new line with '* ' at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'long_description',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            }
+                                        }}
                                         onChange={(e) => {
-                                            const updatedDescription = e.target.value.split('\n').map((line) => line.replace(/^\* */, '').trim()).join('\n');
                                             handleChange({
                                                 target: {
                                                     name: 'long_description',
-                                                    value: updatedDescription,
+                                                    value: e.target.value,
                                                 },
                                             });
                                         }}
                                     />
                                 </div>
-
                                 <div className="form-group">
                                     <label htmlFor="tags">Tags</label>
                                     <textarea
                                         id="tags"
                                         name="tags"
                                         className="input_pdps"
-                                        value={
-                                            formData.tags?.split('\n').filter((tag) => tag.trim() !== '').map((tag) => `* ${tag.trim().replace(/^\*/, '')}`).join('\n') || ''
-                                        }
+                                        value={formData.tags ? formatFeature(formData.tags) : ''}
+                                        onKeyDown={(e) => {
+                                            if (e.key === ' ') {
+                                                e.preventDefault(); // Prevent default space action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.tags.slice(0, cursorPosition) + ' ' + formData.tags.slice(cursorPosition); // Add a space at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'tags',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            } else if (e.key === 'Enter') {
+                                                e.preventDefault(); // Prevent default Enter action
+                                                const cursorPosition = e.target.selectionStart;
+                                                const updatedValue =
+                                                    formData.tags.slice(0, cursorPosition) +  '\n* ' + formData.tags.slice(cursorPosition); // Add a new line with '* ' at the cursor position
+                                                handleChange({
+                                                    target: {
+                                                        name: 'tags',
+                                                        value: updatedValue,
+                                                    },
+                                                });
+                                            }
+                                        }}
                                         onChange={(e) => {
-                                            const updatedTags = e.target.value.split('\n').map((line) => line.replace(/^\* */, '').trim()).join('\n');
                                             handleChange({
                                                 target: {
                                                     name: 'tags',
-                                                    value: updatedTags,
+                                                    value: e.target.value,
                                                 },
                                             });
                                         }}
                                     />
                                 </div>
-
                             </div>
                         )}
                         {view !== 'variants' && view !== 'taxonomy' && (
                             <button
                                 type="submit"
                                 className="save-button_pdp"
-                                onClick={view === 'taxonomy' ? swapProductToCategory : undefined}
-                            >
-                                Save
-                            </button>
+                                onClick={view === 'taxonomy' ? swapProductToCategory : undefined} > Save  </button>
                         )}
                     </div>
                 </form>
