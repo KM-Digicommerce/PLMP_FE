@@ -1,0 +1,44 @@
+/* Container for the entire page */
+.container { display: flex; flex-direction: column; align-items: center; height: 100vh; background-color: #f7f7f7; padding: 7px;
+  }
+  /* Header section */
+  .userheader { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 20px;
+  }
+  /* Button for creating a new user */
+  .createUserButton { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; margin: 0px; width: 13%;
+  }
+  /* Modal Overlay */
+  .modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;
+  }
+  /* Modal card styling */
+  .modalCard {  background-color: white;  padding: 40px;  border-radius: 8px;  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  width: 100%;  max-width: 400px;
+  }
+  
+  /* Form input styling */
+  .inputGroup { margin-bottom: 15px;}
+  .input {  width: 93%;  padding: 10px;  margin: 5px;  border-radius: 4px;  border: 1px solid #ccc;  font-size: 16px;
+  }
+  /* Submit button */
+  .signbutton { width: 100%; padding: 12px; background-color: #4caf50; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;
+  }
+  
+  /* Error message styling */
+  .error {
+    color: red;
+    margin-bottom: 15px;
+  }
+  /* Styling for individual user cards */
+  .userList { display: flex; flex-wrap: wrap; gap: 25px; padding: 5px 10px 5px 0px;
+  }
+  .userCard { background-color: #f9f9f9; padding: 20px; border-radius: 8px; width: 150px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  .userCard h4 { margin: 0; }
+  .userCard p {  font-size: 14px;}
+  /* No users message */
+  .noUsers {
+    color: gray;
+    font-size: 16px;
+  }
+  /* Close button */
+  .closeButton { margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; width: 100%;
+  }  

@@ -31,12 +31,10 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
-  const [showVendors, setShowVendors] = useState(false);
   const [vendors, setVendors] = useState([]);
   const [parentCategories, setParentCategories] = useState([]); // Parent categories state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isModalOpenvendor, setIsModalOpenVendor] = useState(false); // Modal state
-
   const options = {
     responsive: true,
     plugins: {
@@ -91,10 +89,8 @@ function Dashboard() {
     fetchVendors(); // Fetch vendors when the section is being displayed
   };
   const closeVendorModal = () => {
-    setShowVendors(false);
     setIsModalOpenVendor(false);
   };
-
   if (unauthorized) {
     return <Unauthorized />;
   }
@@ -132,7 +128,6 @@ function Dashboard() {
       },
     ],
   };
-
   const categoryData = {
     labels: Object.keys(dashboardData.category_project_dict),
     datasets: [
@@ -156,7 +151,6 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <h2 className="dashboard-title">Dashboard Overview</h2>
-
       <div className="stats-cards">
         <div className="card card-blue">
           <h3>Total Products</h3>
@@ -180,7 +174,6 @@ function Dashboard() {
           <h3>Variant-Options Count</h3>
           <Line data={variantData} options={options} />
         </div>
-
         <div className="chart-card">
           <h3>Category-Products Count</h3>
           <Bar data={categoryData} options={options} />
@@ -212,7 +205,7 @@ function Dashboard() {
                   <li key={vendor.id} className="ulliclass">
                   <div className="vendor-name">
                     <span>{vendor.name}</span>
-                    <span className="product-count">({vendor.product_count} products)</span>
+                    <span className="product-count"> ({vendor.product_count} products)</span>
                   </div>
                 </li>
                 ))
