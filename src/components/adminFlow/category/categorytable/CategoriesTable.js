@@ -1335,7 +1335,7 @@ const handleLevelClear = (e) => {
             sx={{ margin: '0px 0', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
           >
             <Table>
-              <TableHead>
+              <TableHead style={{background:'#e9e9e9'}}>
                 <TableRow>
                   <TableCell
                     align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('image')} >
