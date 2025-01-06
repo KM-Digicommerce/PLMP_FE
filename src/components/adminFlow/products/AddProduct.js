@@ -6,6 +6,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useLocation } from 'react-router-dom';
 
 const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
     const [variantOptions, setVariantOptions] = useState([]);
@@ -324,37 +325,44 @@ const AddProduct = (categories) => {
 
         fetchCategoryData();
     }, []);
-
+    const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [productData, setProductData] = useState({
-        product_obj: {
-            category_id: '',
-            category_name: '',
-            model: '',
-            mpn: '',
-            upc_ean: '',
-            breadcrumb: '',
-            brand_id: '',
-            product_name: '',
-            long_description: '',
-            short_description: '',
-            features: '',
-            attributes: '',
-            tags: '',
-            msrp: '',
-            base_price: '',
-            key_features: '',
-            varients: [
-                {
-                    sku_number: '',
-                    finished_price: '0',
-                    un_finished_price: '0',
-                    quantity: '0',
-                    options: []
-                }
-            ]
-        }
-    });
+       const  [productData, setProductData] = useState({
+            product_obj: {
+                category_id: '',
+                category_name: '',
+                model: '',
+                mpn: '',
+                upc_ean: '',
+                breadcrumb: '',
+                brand_id: '',
+                product_name: '',
+                long_description: '',
+                short_description: '',
+                features: '',
+                attributes: '',
+                tags: '',
+                msrp: '',
+                base_price: '',
+                key_features: '',
+                varients: [
+                    {
+                        sku_number: '',
+                        finished_price: '0',
+                        un_finished_price: '0',
+                        quantity: '0',
+                        options: []
+                    }
+                ]
+            }
+        });
+        useEffect(() => {
+            // Check if the state contains the productData
+            if (location.state && location.state.productData) {
+              setProductData(location.state.productData);
+              setIsModalOpen(true);
+            }
+          }, [location]);       
     const [selectedVariants, setSelectedVariants] = useState([{
         sku: '', unfinishedPrice: '', finishedPrice: '', quantity: '',totalPrice: 0, retailPrice:0, options: []
     }]);
@@ -998,10 +1006,7 @@ const categoryDropdownRef = useRef(null);
                         <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                             <div className="selected-category">
                                 {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
-                                <span className="dropdown-icons">
-
-                                    <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
-                                </span>
+                                <span className="dropdown-icons"> <ChevronDownIcon style={{ fontSize: 25, float: "right" }} /> </span>
                             </div>
                             {isLevel3DropdownOpen && (
                                 <div className="dropdown-options">

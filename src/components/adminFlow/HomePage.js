@@ -280,18 +280,14 @@ function HomePage() {
             <Route path="/" element={
               showDashboard ? (
                 <Dashboard />
-              ) : showCategoriesTable ? (
-                <CategoriesTable categories={categoriesData} refreshCategories={fetchCategories} />
-              ) : showProductList ? (
+              )  : showProductList ? (
                 <ProductList productTypeId={selectedProductTypeId} />
-              ) : showVariantsTable ? (
-                <VariantList categories={categoriesData} />
-              ) : addProduct ? (
-                <AddProduct categories={categoriesData} />
-              ) : showHistory ? (
-                <HistoryPage  />
               ) : null
             } />
+            <Route path="/history" element={ showHistory ? ( <HistoryPage />):null} />
+            <Route path="/categorylist"  element={showCategoriesTable ? (<CategoriesTable categories={categoriesData} refreshCategories={fetchCategories}  />) : null}  />
+            <Route path="/variantlist"  element={showVariantsTable ? (<VariantList categories={categoriesData} />) : null}  />
+            <Route path="/addproduct"  element={addProduct ? (<AddProduct categories={categoriesData} />) : null}  />
             <Route path="/product/:productId" element={<ProductDetail categories={categoriesData}/>} />
             <Route path="/vendor" element={  showBrand ? ( <BrandList />):null} />
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />

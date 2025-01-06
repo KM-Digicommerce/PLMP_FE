@@ -38,7 +38,7 @@ const Login = () => {
 
       if (response.data.data.valid) {
         localStorage.setItem('user_login_id', response.data.data.user_login_id);
-        if (response.data.data.user_role == "admin"){
+        if (response.data.data.user_role == "admin" || response.data.data.user_role == "admin-client"){
         navigate("/Admin");}
         else if (response.data.data.user_role == "super-admin"){
         navigate("/SuperAdmin");}

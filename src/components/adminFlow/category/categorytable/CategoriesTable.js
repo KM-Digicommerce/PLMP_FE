@@ -642,7 +642,7 @@ const handleLevelClear = (e) => {
   setIslevel6DropdownOpen(false);
   localStorage.removeItem("categoryId");
   localStorage.removeItem("levelCategory");
-   navigate(`/Admin`);
+   navigate(`/Admin/categorylist`);
 }
   // if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
   //   return <div>No categories available</div>;

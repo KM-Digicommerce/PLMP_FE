@@ -131,7 +131,8 @@ border: 1px solid #ccc;
   width: 120px; /* Adjust these as needed to make the table compact */
   text-align: center; /* Center align the text */
 }
-
+.others-column{
+  text-align: center !important;}
 .price-column {
   width: 80px; /* Smaller width for price column */
 }

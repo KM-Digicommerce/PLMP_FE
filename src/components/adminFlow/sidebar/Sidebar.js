@@ -103,6 +103,8 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     }
     if (section !== 'products' && section !== 'setting') {
       setShowProductsSubmenu(false);  // Close the product submenu
+      localStorage.removeItem("categoryId");
+      localStorage.removeItem("levelCategory");
     }
     if (section !== 'setting') {
       setShowSettingsSubmenu(false);  // Close the admin control submenu
@@ -113,9 +115,15 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       if (section === 'all-products' || section === 'add-product') {
         setActiveSection('products')
       }
+      if (section === 'add-product') {
+        navigate('/Admin/addproduct');
+      }
       if (section === 'settings' || section === 'users') {
         setActiveSection('setting')
       }
+      if (section === 'variants') {  navigate('/Admin/variantlist'); }
+      if (section === 'categories') {  navigate('/Admin/categorylist'); }
+      if (section === 'history') {  navigate('/Admin/history'); }
       setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/vendor'); 
