@@ -19,6 +19,7 @@ import ApiResponseModal from '../../ApiResponseModal.js';
 import Price from './Price/Price.js';
 import CreateUser from './Users/CreateUser.js';
 import RevokePrice from './Price/RevokePrice.js';
+import HiddenProduct from './HiddenProduct/HiddenProduct.js';
 
 
 function HomePage() {
@@ -34,6 +35,7 @@ function HomePage() {
   const [showImport, setShowImport] = useState(false);
   const [showPrice, setShowPrice] = useState(false);
   const [showUser, setShowUser] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
   const [showRevokePrice, setShowRevokePrice] = useState(false);
 
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
@@ -200,6 +202,23 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  const handleHiddenClick = () => {
+    if ((location.pathname.includes("product/"))) { 
+      navigate("/Admin/hiddenproduct");
+    }
+    setShowHidden(true);
+    setShowUser(false);
+    setShowPrice(false);
+    setShowImport(false);
+    setShowExport(false);
+    setShowBrand(false);
+    setShowHistory(false);
+    setShowDashboard(false);
+    setShowCategoriesTable(false);
+    setShowProductList(false);
+    setShowVariantsTable(false);
+    setAddProduct(false);
+  };
   const handleRevokePriceClick = () => {
     if ((location.pathname.includes("product/"))) { 
       navigate("/Admin/restoreprice");
@@ -268,6 +287,7 @@ function HomePage() {
             OnImportClick={handleImportClick}
             OnPriceClick={handlePriceClick}
             // OnPriceClick={() => handleNavigation('/Admin/price')}
+            OnHiddenClick={handleHiddenClick}
             OnUserClick={handleCreateUserClick}
             OnRevokePriceClick={handleRevokePriceClick}
             // OnRevokePriceClick={() => handleNavigation('/Admin/revokeprice')}
@@ -294,6 +314,7 @@ function HomePage() {
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
+            <Route path="/hiddenproduct" element={  showHidden ? ( <HiddenProduct />):null} />
             <Route path="/restoreprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
           </Routes>
           {/* {renderContent()} */}

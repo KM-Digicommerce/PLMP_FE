@@ -11,9 +11,8 @@ import AddLevelSix from '../categoryform/AddLevelSix';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -115,7 +114,133 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
 
     fetchProducts();
   }, [selectedCategoryIdForallprod]);
-
+  const handleVisibilityToggle = async (e, product) => {
+    e.stopPropagation(); // Prevent click propagation if necessary
+    // Toggle the visibility based on the current state of `is_active`
+    const updatedVisibility = !product.is_active;
+    // Update local state immediately
+    setResponseData(prevData =>
+      prevData.map(item =>
+        item.product_id === product.product_id
+          ? { ...item, is_active: updatedVisibility }
+          : item
+      )
+    );
+    setProducts(prevData =>
+      prevData.map(item =>
+        item.product_id === product.product_id
+          ? { ...item, is_active: updatedVisibility }
+          : item
+      )
+    );
+    console.log(`Visibility toggled for product: ${product.product_name} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
+    // Show confirmation dialog with SweetAlert
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,
+      cancelButtonText: "No, stay",
+      customClass: {
+        container: 'swal-custom-container',
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        confirmButton: 'swal-custom-confirm',
+        cancelButton: 'swal-custom-cancel'
+      }
+    }).then((result) => {
+      // If the user clicks "Yes", then call the API to update the product status
+      if (result.isConfirmed) {
+        const payload = { id: product.product_id, is_active: updatedVisibility };
+        // Call the API to update product visibility in the backend
+        axiosInstance.post(`${process.env.REACT_APP_IP}/UpdateProductActiveInActive/`, payload)
+          .then((response) => {
+            if (response.data && response.data.data && response.data.data.is_update) {
+              // After successful update, optionally refetch data or update UI
+              fetchData();
+              if (selectedCategoryIdForallprod) {
+                try {
+                  const response =  axiosInstance.get(
+                    `${process.env.REACT_APP_IP}/obtainAllProductList/`,
+                    {
+                      params: {
+                        category_id: selectedCategoryIdForallprod,
+                        level_name: selectedCategorylevelForallprod
+                      }
+                    }
+                  );          
+                  setProducts(response.data.data.product_list);
+                } catch (error) {
+                  console.error('Error fetching product list:', error);
+                }
+              }
+              Swal.fire({
+                title: 'Success!',
+                text: `The product has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,
+                icon: 'success',
+                customClass: {
+                  container: 'swal-custom-container',
+                  popup: 'swal-custom-popup',
+                  title: 'swal-custom-title',
+                  confirmButton: 'swal-custom-confirm',
+                  cancelButton: 'swal-custom-cancel'
+                }
+              });
+            } else {
+              alert("Unexpected response structure");
+            }
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: 'Error',
+              text: 'There was an issue updating the product status.',
+              icon: 'error',
+              customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel'
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        // If the user clicks "No, stay", revert the local state change
+        setResponseData(prevData =>
+          prevData.map(item =>
+            item.product_id === product.product_id
+              ? { ...item, is_active: !updatedVisibility }
+              : item
+          )
+        );
+        setProducts(prevData =>
+          prevData.map(item =>
+            item.product_id === product.product_id
+              ? { ...item, is_active: !updatedVisibility }
+              : item
+          )
+        );
+        Swal.fire({
+          title: 'Cancelled',
+          text: 'No changes were made.',
+          icon: 'info',
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel'
+          }
+        });
+      }
+    });
+  };
   const handleSortChange = async (event) => {
     const selectedOption = event.target.value;    
     if (selectedOption !== '') {
@@ -134,8 +259,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           params: {
             category_id: selectedCategoryIdForallprod,
             level_name: selectedCategorylevelForallprod,
-            filter
-          }       });
+            filter } });
   
         if (response.data && response.data.data && response.data.data.product_list) {
           setResponseData(response.data.data.product_list);
@@ -1234,6 +1358,7 @@ const handleLevelClear = (e) => {
                     Taxonomy
                     {sortOrder.column === 'taxonomy' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} >   Action </TableCell>
                   {/* <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('price')} >
                     Base Price
                     {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
@@ -1251,19 +1376,18 @@ const handleLevelClear = (e) => {
               </TableHead>
               <TableBody>
                 {getFilteredAndSortedProducts().map((product) => (
-                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }} onClick={() => handleProductSelect(product.product_id)}>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (
-                      <img src={product.image[0]|| Soon } alt={product.product_name} className="product-image-round"
-                      />
-                    ) : (
-                      <img src={product.image} alt={product.product_name} className="product-image-round"
-                      />
+                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }}>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (  <img src={product.image[0]|| Soon } alt={product.product_name} className="product-image-round"
+                      />  ) : ( <img src={product.image} alt={product.product_name} className="product-image-round"    onClick={() => handleProductSelect(product.product_id)} />
                     )}
                     </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.mpn}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  className="product-cell" >{product.product_name}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.brand}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.category_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.mpn}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  className="product-cell"  onClick={() => handleProductSelect(product.product_id)} >{product.product_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.brand}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.category_name}</TableCell>
+                    <TableCell sx={{ padding: '15px', fontSize: '14px' }} className="others-column">
+                      <FontAwesomeIcon icon={product.is_active ? faEye : faEyeSlash} onClick={(e) => handleVisibilityToggle(e, product)} style={{ cursor: 'pointer', fontSize: '16px' }}  />
+                    </TableCell>
                     {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
                     </TableCell>
                     <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell> */}

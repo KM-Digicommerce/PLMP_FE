@@ -551,7 +551,7 @@ const ProductDetail = ({ categories }) => {
           }
         });
       };
-      const handleEditClick = (variant) => {
+      const handleEditClick = async(variant) => {
         console.log(variant,'Varaint fuill data');
         // Set the selected variant data to populate the modal form
         setSelectedVariants({
@@ -561,8 +561,13 @@ const ProductDetail = ({ categories }) => {
           finishedPrice: variant.finished_price,
           retailPrice: variant.retail_price,
           quantity: variant.quantity || 0,
-          options: variant.varient_option_list || [],
         });
+        try {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
+            setVariantOptions(res.data.data.varient_list);
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
         setIsUpdatePopupOpen(true);  // Open the modal
       };
       const handleUpdateFormSubmit = async (e) => {
@@ -573,8 +578,8 @@ const ProductDetail = ({ categories }) => {
         try {
           setLoading(true);
           const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  payload  );
-          if (response.data && response.data.data && response.data.data.is_update) {
-            // fetchData(); // Re-fetch the data after updating
+          if (response.data && response.data.data && response.data.data.is_updated) {
+            fetchVariantDetail(); // Re-fetch the data after updating
             Swal.fire({
               title: 'Success!',
               text: 'Variant data has been updated successfully.',
@@ -1093,29 +1098,38 @@ const ProductDetail = ({ categories }) => {
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
-            {variantOptions?.map((variant) => (
-              <div key={variant.type_id}>
-                <label htmlFor="variantOption" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
-                  {variant.type_name}
-                  {variant.type_name.toLowerCase().includes("wood type") && <span className="required" style={{ color: 'red' }}>*</span>}
-                </label>
-                <select
-                  id="variantOption"
-                  name={variant.type_id}
-                  required={variant.type_name.toLowerCase().includes("wood type")}
-                  value={selectedVariants[variant.type_id] || ''}
-                  onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-                  className="dropdown"
-                >
-                  <option value="">Select Variant Value</option>
-                  {variant.option_value_list?.map((option) => (
-                    <option key={option.type_value_id} value={option.type_value_id}>
-                      {option.type_value_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+             {variantOptions?.map((variant) => (
+        <div key={variant.type_id}>
+          <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
+            {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
+              <span className="required" style={{ color: 'red' }}>*</span>
+            )}
+          </label>
+          <select
+            id={`variant-select-${variant.type_id}`}
+            name={variant.type_id}
+            required={variant.type_name.toLowerCase().includes("wood type")}
+            value={selectedVariants[variant.type_id] || ''} // Preselect the option based on selectedVariants
+            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+            className="dropdown"
+            style={{
+              width: '100%',
+              margin: '6px 0px 6px 0px',
+              padding: '10px 0px 10px 0px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              color: 'rgba(0, 0, 0, 0.6)',
+            }}
+          >
+            <option value="">Select Variant Value</option>
+            {variant.option_value_list?.map((option) => (
+              <option value={option.type_value_id} key={option.type_value_id}>
+                {option.type_value_name}
+              </option>
             ))}
+          </select>
+        </div>
+      ))}
             <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>
               Update Variant
             </Button>
