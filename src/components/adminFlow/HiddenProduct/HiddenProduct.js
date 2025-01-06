@@ -126,7 +126,7 @@ const CreateUser = () => {
               <th className="taxonomy-column" style={{width: '40%'}} >Taxonomy </th>
               <th className="others-column" style={{width: '5%'}}>Action</th></tr>
           </thead>
-          <tbody>
+          <tbody style={{backgroundColor:'white'}}>
             {users.map((item) => (
               <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} >
                 <td className="checkbox-column">
