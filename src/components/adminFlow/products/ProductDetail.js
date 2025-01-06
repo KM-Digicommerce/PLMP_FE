@@ -1098,7 +1098,7 @@ const ProductDetail = ({ categories }) => {
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
-             {variantOptions?.map((variant) => (
+             {/* {variantOptions?.map((variant) => (
         <div key={variant.type_id}>
           <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
             {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
@@ -1129,7 +1129,7 @@ const ProductDetail = ({ categories }) => {
             ))}
           </select>
         </div>
-      ))}
+      ))} */}
             <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>
               Update Variant
             </Button>
