@@ -186,7 +186,7 @@ const HistoryPage = () => {
         className="buttons-container"
         style={{
           display: 'flex',
-          gap: '1rem',
+          gap: '31px',
           marginBottom: '1.5rem',
           flexWrap: 'wrap',
           justifyContent: 'center',

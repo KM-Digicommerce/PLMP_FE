@@ -11,7 +11,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 import { LinearProgress } from '@mui/material';
 
-const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick, OnUserClick, OnRevokePriceClick }) => {
+const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, OnAddProductClick, onDashboardClick, onHistoryClick,onBrandClick, OnExportClick, OnImportClick, OnPriceClick, OnHiddenClick,OnUserClick, OnRevokePriceClick }) => {
   const [showProductsSubmenu, setShowProductsSubmenu] = useState(false);
   const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -103,6 +103,8 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     }
     if (section !== 'products' && section !== 'setting') {
       setShowProductsSubmenu(false);  // Close the product submenu
+      localStorage.removeItem("categoryId");
+      localStorage.removeItem("levelCategory");
     }
     if (section !== 'setting') {
       setShowSettingsSubmenu(false);  // Close the admin control submenu
@@ -113,9 +115,18 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       if (section === 'all-products' || section === 'add-product') {
         setActiveSection('products')
       }
+      if (section === 'add-product') {
+        navigate('/Admin/addproduct');
+      }
+      if (section === 'hidden') {
+        navigate('/Admin/hiddenproduct');
+      }
       if (section === 'settings' || section === 'users') {
         setActiveSection('setting')
       }
+      if (section === 'variants') {  navigate('/Admin/variantlist'); }
+      if (section === 'categories') {  navigate('/Admin/categorylist'); }
+      if (section === 'history') {  navigate('/Admin/history'); }
       setActiveSection(section);
     if (section === 'brand' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
       navigate('/Admin/vendor'); 
@@ -213,7 +224,9 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
             <ul className="subMenu">
               <li onClick={() => { handleSectionClick('settings'); }}
                 className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
-                  <li onClick={() => { OnRevokePriceClick(); handleSectionClick('restore'); }}
+                <li onClick={() => { OnHiddenClick(); handleSectionClick('hidden'); }}
+                className={activeSection === 'hidden' ? 'active' : ''}>Inactive Products</li>
+                <li onClick={() => { OnRevokePriceClick(); handleSectionClick('restore'); }}
                 className={activeSection === 'restore' ? 'active' : ''} >Restore Price</li>
               <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
                 className={activeSection === 'users' ? 'active' : ''}>Users</li>

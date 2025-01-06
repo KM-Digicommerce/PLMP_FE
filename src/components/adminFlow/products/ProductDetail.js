@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
-import { Button, Modal, Box, InputAdornment } from '@mui/material';
+import { Button, Modal, Box } from '@mui/material';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
@@ -25,12 +27,12 @@ const ProductDetail = ({ categories }) => {
     const [selectedlevel6, setSelectedlevel6] = useState('');
 
     const [categoryIdForVariant, setCategoryIdForVariant] = useState('');
-    const [categoryLevelForcategories, setCategoryLevelForcategories] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [categoryIds, setCategoryIds] = useState('');
 
     const [categoryName, setCategoryName] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isupdatePopupOpen, setIsUpdatePopupOpen] = useState(false);
     const [selectedVariants, setSelectedVariants] = useState({
         sku_number: '',
         unfinishedPrice: '',
@@ -201,29 +203,22 @@ const ProductDetail = ({ categories }) => {
                 const productObj = response.data.data.product_obj;
                 setCategoryIds(response.data.data.category_id);
                 setCategoryIdForVariant(response.data.data.category_id);
-                setCategoryLevelForcategories('level-1');
                 if (response.data.data.category_name === 'level-1') {
                     handleCategorySelect(response.data.data.category_id);
-                    setCategoryLevelForcategories('level-1');
                 }
                 if (response.data.data.category_name === 'level-2') {
                     handleLevel2Select(response.data.data.category_id);
-                    setCategoryLevelForcategories('level-2');
                 }
                 if (response.data.data.category_name === 'level-3') {
                     handleLevel3Select(response.data.data.category_id);
-                    setCategoryLevelForcategories('level-3');
                 }
                 if (response.data.data.category_name === 'level-4') {
                     handleLevelSelect('level-4', response.data.data.category_id);
-                    setCategoryLevelForcategories('level-4');
                 }
                 if (response.data.data.category_name === 'level-5') {
                     handleLevelSelect('level-5', response.data.data.category_id);
-                    setCategoryLevelForcategories('level-5');
                 }
                 if (response.data.data.category_name === 'level-6') {
-                    setCategoryLevelForcategories('level-6');
                     handleLevelSelect('level-6', response.data.data.category_id);
                 }
                 setCategoryLevel(productCategory);
@@ -259,18 +254,9 @@ const ProductDetail = ({ categories }) => {
     }, [productId]);
     const fetchVariantDetail = async () => {
         try {
-            const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {
-                product_id: productId,
-            });
-            if (variantResponse.data && variantResponse.data.data) {
-                setVariantData(variantResponse.data.data || []);
-            }
-        } catch (err) {
-            setError('Error fetching product details 2');
-        } finally {
-            setLoading(false);
-        }
-    };
+            const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {   product_id: productId,  });
+            if (variantResponse.data && variantResponse.data.data) {      setVariantData(variantResponse.data.data || []);   }
+        } catch (err) {    setError('Error fetching product details 2');   } finally {      setLoading(false);   } };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value, });
@@ -293,45 +279,19 @@ const ProductDetail = ({ categories }) => {
                     text: 'Please edit something! No changes detected',
                     icon: 'warning',
                     confirmButtonText: 'OK',
-                    customClass: {
-                        container: 'swal-custom-container',
-                        popup: 'swal-custom-popup',
-                        title: 'swal-custom-title',
-                        confirmButton: 'swal-custom-confirm',
-                        cancelButton: 'swal-custom-cancel'
-                    }
+                    customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'  }
                 });
                 return;
             }
             try {
                 const payload = {
                     id: formData.product_id || '',
-                    update_obj: {
-                        product_name: formData.product_name,
-                        url: formData.url,
-                        base_price: formData.base_price,
-                        breadcrumb: formData.breadcrumb,
-                        mpn: formData.mpn,
-                        brand_id: formData.brand_id,
-                        tags: formData.tags,
-                        key_features: formData.key_features,
-                        msrp: formData.msrp,
-                        features: formData.features,
-                        long_description: formData.long_description,
-                        short_description: formData.short_description,
-                        attributes: formData.attributes,
-                        model: formData.model,
-                        upc_ean: formData.upc_ean,
+                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,  features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,  model: formData.model,  upc_ean: formData.upc_ean,
                     }
                 };
                 await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
                 Swal.fire({
-                    title: 'Success!', text: 'Product updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
-                        container: 'swal-custom-container',
-                        popup: 'swal-custom-popup',
-                        title: 'swal-custom-title',
-                        confirmButton: 'swal-custom-confirm',
-                        cancelButton: 'swal-custom-cancel'
+                    title: 'Success!', text: 'Product updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
                     }
                 }).then(() => {
                     fetchProductDetail(productId);
@@ -351,22 +311,18 @@ const ProductDetail = ({ categories }) => {
           const params = new URLSearchParams();
           params.set('categoryId', categoryId);
           params.set('level', category_level);
-                navigate(`/Admin?${params.toString()}`);
+                navigate(`/Admin/categorylist?${params.toString()}`);
         } else {
           console.log("Category ID or level not found in localStorage");
            navigate(`/Admin`);
         }
       };
-
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
     const swapProductToCategory = async () => {
         if (categoryIds) {
             try {
-                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {
-                    product_id: productId,
-                    category_id: categoryId,
-                    category_name: categoryName
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {  product_id: productId,  category_id: categoryId,  category_name: categoryName
                 });
                 if (response.status === 200) {
                     Swal.fire({
@@ -400,7 +356,6 @@ const ProductDetail = ({ categories }) => {
             return updatedVariants;
         });
     };
-
     const handleVariantChange = (typeId, optionId) => {        
         setSelectedVariants((prev) => ({
             ...prev,
@@ -511,7 +466,144 @@ const ProductDetail = ({ categories }) => {
         }
         return feature;
       };
-      
+      const handleVisibilityToggle = async (e, variant) => {
+        e.stopPropagation(); // Prevent click propagation if necessary
+        // Toggle the visibility based on the current state of `is_active`
+        const updatedVisibility = !variant.is_active;
+        // Update local state immediately
+        console.log(updatedVisibility,'updatedVisibility');
+        console.log(variant.id,'updatedVisibility');
+        console.log(`Visibility toggled for variant: ${variant.sku_number} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
+        // Show confirmation dialog with SweetAlert
+        Swal.fire({
+          title: "Are you sure?",
+          text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected variant?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,
+          cancelButtonText: "No, stay",
+          customClass: {
+            container: 'swal-custom-container',
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-custom-confirm',
+            cancelButton: 'swal-custom-cancel'
+          }
+        }).then((result) => {
+          // If the user clicks "Yes", then call the API to update the product status
+          if (result.isConfirmed) {
+            const payload = { id: variant.id, is_active: updatedVisibility };
+            // Call the API to update product visibility in the backend
+            axiosInstance.post(`${process.env.REACT_APP_IP}/UpdateVarientActiveInActive/`, payload)
+              .then((response) => {
+                if (response.data && response.data.data && response.data.data.is_update) {
+                  // After successful update, optionally refetch data or update UI
+                  fetchVariantDetail();
+                  Swal.fire({
+                    title: 'Success!',
+                    text: `The variant has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,
+                    icon: 'success',
+                    customClass: {
+                      container: 'swal-custom-container',
+                      popup: 'swal-custom-popup',
+                      title: 'swal-custom-title',
+                      confirmButton: 'swal-custom-confirm',
+                      cancelButton: 'swal-custom-cancel'
+                    }
+                  });
+                } else {
+                  alert("Unexpected response structure");
+                }
+              })
+              .catch((err) => {
+                setError(err.message);
+                Swal.fire({
+                  title: 'Error',
+                  text: 'There was an issue updating the variant status.',
+                  icon: 'error',
+                  customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel'
+                  }
+                });
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          } else {
+            Swal.fire({
+              title: 'Cancelled',
+              text: 'No changes were made.',
+              icon: 'info',
+              customClass: {
+                container: 'swal-custom-container',
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                confirmButton: 'swal-custom-confirm',
+                cancelButton: 'swal-custom-cancel'
+              }
+            });
+          }
+        });
+      };
+      const handleEditClick = async(variant) => {
+        console.log(variant,'Varaint fuill data');
+        // Set the selected variant data to populate the modal form
+        setSelectedVariants({
+          id:variant.id,
+          sku: variant.sku_number,
+          unfinishedPrice: variant.un_finished_price,
+          finishedPrice: variant.finished_price,
+          retailPrice: variant.retail_price,
+          quantity: variant.quantity || 0,
+        });
+        try {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
+            setVariantOptions(res.data.data.varient_list);
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
+        setIsUpdatePopupOpen(true);  // Open the modal
+      };
+      const handleUpdateFormSubmit = async (e) => {
+        e.preventDefault();
+        // Construct payload based on the updated variant details
+        const payload = { ...selectedVariants };
+    
+        try {
+          setLoading(true);
+          const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  payload  );
+          if (response.data && response.data.data && response.data.data.is_updated) {
+            fetchVariantDetail(); // Re-fetch the data after updating
+            Swal.fire({
+              title: 'Success!',
+              text: 'Variant data has been updated successfully.',
+              icon: 'success',
+              customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+              }
+            });
+            setIsUpdatePopupOpen(false);  // Close the modal after successful update
+          } else {
+            alert('Unexpected response structure');
+          }
+        } catch (err) {
+          setError(err.message);
+          Swal.fire({
+            title: 'Error',
+            text: 'There was an issue updating the variant data.',
+            icon: 'error',
+            customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+              }
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
     return (
         <div>
             <div className='section_container'>
@@ -861,6 +953,7 @@ const ProductDetail = ({ categories }) => {
                                             <th>Finished Price</th>
                                             <th>Retail Price</th>
                                             <th>Options</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -876,6 +969,18 @@ const ProductDetail = ({ categories }) => {
                                                             <div key={index}>{option.type_name}: {option.type_value}</div>
                                                         ) : null
                                                     )}
+                                                </td>
+                                                <td className="others-column">
+                                                     <FontAwesomeIcon
+                                                                      icon={variant.is_active ? faEye : faEyeSlash}
+                                                                      onClick={(e) => handleVisibilityToggle(e, variant)}
+                                                                      style={{ cursor: 'pointer', fontSize: '16px' }}
+                                                                    />
+                                                    <FontAwesomeIcon
+                                                        icon={faEdit}
+                                                        onClick={() => handleEditClick(variant)}
+                                                        style={{ cursor: 'pointer', fontSize: '16px', marginLeft: '10px' }}
+                                                    />
                                                 </td>
                                             </tr>
                                         ))}
@@ -895,29 +1000,31 @@ const ProductDetail = ({ categories }) => {
                                         <form onSubmit={handleFormSubmit}>
                                         <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
                                         <input type="text" name="sku" className="input_pdp" value={selectedVariants.sku} onChange={handleVariantDetailChange}  />
-                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price</label>
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price <span className="required">*</span></label>
                                             <input type="text" name="sku" className="input_pdp" value={selectedVariants.unfinishedPrice || ''}  onChange={(e) => {
                                                     const value = e.target.value;
                                                     if (/^\d*\.?\d{0,2}$/.test(value)) {
                                                         handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
                                                     }  }}  />
-                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Finished Price</label>
-                                            <input  type="text"  name="finishedPrice"  className="input_pdp"  value={selectedVariants.finishedPrice}   onChange={(e) => {     const value = e.target.value;      if (/^\d*\.?\d{0,2}$/.test(value)) {        handleVariantDetailChange({ target: { name: 'finishedPrice', value } });      }    }}  />
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Finished Price <span className="required">*</span></label>
+                                            <input  type="text"  name="finishedPrice"  className="input_pdp"  value={selectedVariants.finishedPrice}  onChange={(e) => {  const value = e.target.value;    if (/^\d*\.?\d{0,2}$/.test(value)) {  handleVariantDetailChange({ target: { name: 'finishedPrice', value } });  } }}  />
                                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price</label>
+                                                <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price <span className="required">*</span></label>
                                                 {RetailPrice === 1 ? (
                                                     <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X ` : '0X'}(by default)</label>
                                                 ) : (
                                                     <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
                                                 )}
                                             </div>
-                                            <input type="text" className="input_pdp"  name="totalPrice" value={selectedVariants.retailPrice.toFixed(2)} readOnly />
-                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Quantity</label>
-                                            <input type="number" name="quantity" className="input_pdp" value={selectedVariants.quantity} onChange={handleVariantDetailChange}  />
+                                            <input type="text" className="input_pdp"  name="totalPrice" value={parseFloat(selectedVariants.retailPrice || 0).toFixed(2)} readOnly />
+                                            <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Quantity <span className="required">*</span></label>
+                                            <input type="number" name="quantity" className="input_pdp" value={selectedVariants.quantity}  onChange={(e) => { const value = e.target.value; if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });  } }} onWheel={(e) => e.target.blur()} />
                                             {variantOptions?.map((variant) => (
                                                 <div key={variant.type_id}>
-                                                      <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>{variant.type_name}</label>
-                                                    <select id="brand-select" name="brand_id" required value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
+                                                      <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>{variant.type_name}  {variant.type_name.toLowerCase().includes("wood type") && (
+        <span className="required" style={{ color: 'red' }}>*</span>
+      )}</label>
+                                                    <select id="brand-select" name="brand_id" required={variant.type_name.toLowerCase().includes("wood type")} value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
                                                         <option value="">Select Variant Value</option>
                                                         {variant.option_value_list?.map((option) => (
                                                             <option value={option.type_value_id}>
@@ -933,7 +1040,102 @@ const ProductDetail = ({ categories }) => {
                                         </form>
                                     </Box>
                                 </Modal>
-
+                                <Modal
+        open={isupdatePopupOpen}
+        onClose={() => setIsUpdatePopupOpen(false)}  // Close the modal
+        aria-labelledby="variant-modal-title"
+        aria-describedby="variant-modal-description"
+        className="variant_model_pdp"
+      >
+        <Box sx={{
+          width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
+        }}>
+          <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
+          <form onSubmit={handleUpdateFormSubmit}>
+            <label htmlFor="sku" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
+            <input
+              type="text"
+              name="sku"
+              className="input_pdp"
+              value={selectedVariants.sku}
+              onChange={handleVariantDetailChange}
+            />
+            <label htmlFor="unfinishedPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price <span className="required">*</span></label>
+            <input
+              type="text"
+              name="unfinishedPrice"
+              className="input_pdp"
+              value={selectedVariants.unfinishedPrice || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(value)) {
+                  handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
+                }
+              }}
+            />
+            <label htmlFor="finishedPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Finished Price <span className="required">*</span></label>
+            <input
+              type="text"
+              name="finishedPrice"
+              className="input_pdp"
+              value={selectedVariants.finishedPrice}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(value)) {
+                  handleVariantDetailChange({ target: { name: 'finishedPrice', value } });
+                }
+              }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price <span className="required">*</span></label>
+              <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
+                {RetailPrice === 1 ? `${RetailPrice}X` : '0X'}
+              </label>
+            </div>
+            <input type="text" className="input_pdp" name="retailPrice" value=  {parseFloat(selectedVariants.retailPrice || 0).toFixed(2)}  readOnly  />
+            <label htmlFor="quantity" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Quantity <span className="required">*</span></label>
+            <input type="number" name="quantity" className="input_pdp" value={selectedVariants.quantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
+             {/* {variantOptions?.map((variant) => (
+        <div key={variant.type_id}>
+          <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
+            {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
+              <span className="required" style={{ color: 'red' }}>*</span>
+            )}
+          </label>
+          <select
+            id={`variant-select-${variant.type_id}`}
+            name={variant.type_id}
+            required={variant.type_name.toLowerCase().includes("wood type")}
+            value={selectedVariants[variant.type_id] || ''} // Preselect the option based on selectedVariants
+            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+            className="dropdown"
+            style={{
+              width: '100%',
+              margin: '6px 0px 6px 0px',
+              padding: '10px 0px 10px 0px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              color: 'rgba(0, 0, 0, 0.6)',
+            }}
+          >
+            <option value="">Select Variant Value</option>
+            {variant.option_value_list?.map((option) => (
+              <option value={option.type_value_id} key={option.type_value_id}>
+                {option.type_value_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))} */}
+            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>
+              Update Variant
+            </Button>
+          </form>
+        </Box>
+      </Modal>
                             </div>
                         )}
 
