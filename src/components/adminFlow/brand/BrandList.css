@@ -103,55 +103,21 @@
 }
 .brand-card { background-color: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; width: 200px;
 }
-.brand-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-.brand-name { font-size: 18px; font-weight: 600; color: #333; margin: 0;
-}
-.brand-id { font-size: 14px; color: #777;
-}
-#vendor-logo{ width: 40% !important;
-}
+.brand-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
+.brand-name { font-size: 18px; font-weight: 600; color: #333; margin: 0; }
+.brand-id { font-size: 14px; color: #777; }
+#vendor-logo{ width: 42% !important; }
 .vendor_input{ width: 100%; height: 43px !important; margin: 0 auto;}
-.alphabet-filter { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px;
-}
-.filter-letter { background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; padding: 5px 10px; font-size: 14px; cursor: pointer; transition: all 0.3s ease;
-}
+.alphabet-filter { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
+.filter-letter { background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; padding: 5px 10px; font-size: 14px; cursor: pointer; transition: all 0.3s ease; }
 .filter-letter:hover { background-color: #e0e0e0;}
 .filter-letter.active { background-color: #007bff; color: #fff; border-color: #007bff;}
 .alphabetical-dropdown{display: inline-block;}
 .dropdown-select{display: inline-block;margin: 0px 18px 0px 10px;}
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  margin: 0 auto;
-  width: 40%;
-  padding: 10px 0px 0px 0px;
-}
-
-.pagination-button {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.pagination-button.active {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-  border-color: #007bff;
-}
-
-.pagination-button:hover {
-  background-color: #e9ecef;
-}
-
+.pagination-container { display: flex; justify-content: center; align-items: center; gap: 5px; margin: 0 auto; width: 40%; padding: 10px 0px 0px 0px; }
+.pagination-button { padding: 8px 12px; border: 1px solid #ddd; background-color: #f9f9f9; color: #333; cursor: pointer; transition: background-color 0.2s;}
+.pagination-button.active { background-color: #007bff; color: white; font-weight: bold; border-color: #007bff;}
+.pagination-button:hover { background-color: #e9ecef;}
 .prev-button,
-.next-button {
-  font-weight: bold;
-  width: 18%;
-}
+.next-button { font-weight: bold; width: 18%;}
+.swal2-html-container{overflow: hidden;}

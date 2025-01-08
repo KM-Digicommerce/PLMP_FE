@@ -44,14 +44,32 @@ const BrandList = () => {
   );
   const handleAddBrand = async () => {
     const { value: formValues } = await Swal.fire({
-      title: 'Add New Vendor',
       html: `
-        <input id="vendor-name" class="swal2-input vendor_input" placeholder="Enter Vendor Name">
-    <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight:bold; color: #555;">Vendor Logo:</label>
-    <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
-  `,
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+        <button 
+          id="close-popup-btn" 
+          style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
+          &times;
+        </button>
+        <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
+      </div>
+      <div>
+        <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Name">
+        <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
+        <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
+      </div>
+    `,
       showCancelButton: true,
       focusConfirm: false,
+      didOpen: () => {
+        // Add close functionality to the button after the popup renders
+        const closeButton = document.getElementById('close-popup-btn');
+        if (closeButton) {
+          closeButton.addEventListener('click', () => {
+            Swal.close();
+          });
+        }
+      },
       preConfirm: () => {
         const vendorName = document.getElementById('vendor-name').value;
         const vendorLogo = document.getElementById('vendor-logo').files[0];
@@ -60,7 +78,7 @@ const BrandList = () => {
         }
         return { vendorName, vendorLogo };
       },
-      customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
+      customClass: { container: 'swal-custom-container swal-overflow', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
       },
     });
   
@@ -129,7 +147,7 @@ const BrandList = () => {
         });
       }
     }
-  };  
+  };   
   useEffect(() => {
     fetchBrands();
   }, []);
@@ -215,10 +233,7 @@ const BrandList = () => {
                   src={
                     brand.logo ||
                     'https://img.freepik.com/free-vector/creative-furniture-store-logo_23-2148455884.jpg?semt=ais_hybrid'
-                  }
-                  alt={`${brand.name} Logo`}
-                  className="brand-logo-image"
-                />
+                  } alt={`${brand.name} Logo`} className="brand-logo-image"  />
               </div>
               <h3 className="brand-name">{brand.name}</h3>
               <p className="brand-id">ID: {brand.brand_number}</p>
@@ -226,39 +241,24 @@ const BrandList = () => {
           ))}
         </div>
         <div className="pagination-container">
-  {currentPage > 1 && (
-    <button
-      className="pagination-button prev-button"
-      onClick={() => handlePageChange(currentPage - 1)}
-    >
-      &laquo; Prev
-    </button>
-  )}
-  {Array.from({ length: totalPages }, (_, i) => i + 1)
-    .slice(Math.max(0, currentPage - 3), currentPage + 2)
+        {totalPages > 1 && currentPage > 1 && (
+  <button className="pagination-button prev-button" onClick={() => handlePageChange(currentPage - 1)}> &laquo; Prev </button> )}
+{totalPages > 1 && (
+  Array.from({ length: totalPages }, (_, i) => i + 1)
+    .slice(Math.max(0, currentPage - 3), currentPage + 2)  // Adjust range of pages to display
     .map((page) => (
-      <button
-        key={page}
-        className={`pagination-button ${page === currentPage ? 'active' : ''}`}
-        onClick={() => handlePageChange(page)}
-      >
-        {page}
-      </button>
-    ))}
-  {currentPage < totalPages && (
-    <button
-      className="pagination-button next-button"
-      onClick={() => handlePageChange(currentPage + 1)}
-    >
-      Next &raquo;
-    </button>
-  )}
+      // Don't show page "1" if the totalPages is 1
+      (totalPages > 1 || page > 1) && (
+        <button  key={page}  className={`pagination-button ${page === currentPage ? 'active' : ''}`}  onClick={() => handlePageChange(page)} >    {page}  </button>  )
+    ))
+)}
+{totalPages > 1 && currentPage < totalPages && (
+  <button className="pagination-button next-button" onClick={() => handlePageChange(currentPage + 1)} >
+    Next &raquo; </button>)}
 </div>
-
       </>
       )}
     </div>
   );
 };
-
 export default BrandList;

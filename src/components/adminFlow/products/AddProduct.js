@@ -249,14 +249,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <div className="pricing-grid">
                         <div className="pricing-field">
                             <label htmlFor="base_price">Base <span className="required">*</span></label>
-                            <input
-                                type="number"
-                                id="base_price"
-                                name="base_price"
-                                required
-                                placeholder="Base"
-                                value={productData.base_price}
-                                onChange={(e) => {
+                            <input  type="number"  id="base_price"  name="base_price"  required  placeholder="Base"  value={productData.base_price}  onChange={(e) => {
                                     handleChange(e, 'base_price'); // Pass the event and field name
                                     handleDecimalInput(e, 'base_price');
                                 }}
@@ -265,14 +258,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         </div>
                         <div className="pricing-field">
                             <label htmlFor="msrp">MSRP <span className="required">*</span></label>
-                            <input
-                                type="number"
-                                id="msrp"
-                                name="msrp"
-                                required
-                                placeholder="MSRP"
-                                value={productData.msrp}
-                                onChange={(e) => {
+                            <input  type="number"  id="msrp"  name="msrp"  required  placeholder="MSRP"  value={productData.msrp}  onChange={(e) => {
                                     handleChange(e, 'msrp'); // Pass the event and field name
                                     handleDecimalInput(e, 'msrp');
                                 }}
@@ -281,14 +267,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                         </div>
                         <div className="pricing-field">
                             <label htmlFor="discount_price">Discount <span className="required">*</span></label>
-                            <input
-                                type="number"
-                                id="discount_price"
-                                name="discount_price"
-                                required
-                                placeholder="Discount"
-                                value={productData.discount_price || ''}
-                                onChange={(e) => {
+                            <input type="number" id="discount_price" name="discount_price" required placeholder="Discount" value={productData.discount_price || ''} onChange={(e) => {
                                     handleChange(e, 'discount_price'); // Pass the event and field name
                                     handleDecimalInput(e, 'discount_price');
                                 }}
@@ -804,38 +783,25 @@ const categoryDropdownRef = useRef(null);
                     break;
     
                 case 5:
-                    const level4Category = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .flatMap(level3 => level3.level_three_category_list)
-                        .find(level4 => level4._id === selectedValue);
-    
-                    if (!level4Category) {
-                        console.error('Level 4 category not found for ID:', selectedValue);
-                        return;
-                    }
-                    const level3CategoryForLevel5 = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .flatMap(level2 => level2.level_two_category_list)
-                        .find(level3 => level3._id === level4Category.level_three_category_id);
-    
-                    if (!level3CategoryForLevel5) {
-                        console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
-                        return;
-                    }
-                    const level2CategoryForLevel5 = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel5._id));
-                    if (!level2CategoryForLevel5) {
-                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
-                        return;
-                    }
-                    const level1CategoryForLevel5 = categories.categories.category_list.find(level1 =>
-                        level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel5._id)
-                    );
-                    if (!level1CategoryForLevel5) {
-                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
-                        return;
+                    let level4Category, level3CategoryForLevel5, level2CategoryForLevel5, level1CategoryForLevel5;
+                    categories.categories.category_list.some(level1 => {
+                      return level1.level_one_category_list.some(level2 => {
+                        return level2.level_two_category_list.some(level3 => {
+                          return level3.level_three_category_list.some(level4 => {
+                            if (level4.level_four_category_list.some(level5 => level5._id === selectedValue)) {
+                              level1CategoryForLevel5 = level1;
+                              level2CategoryForLevel5 = level2;
+                              level3CategoryForLevel5 = level3;
+                              level4Category = level4;
+                              return true;  }
+                            return false;
+                          });
+                        });
+                      });
+                    });
+                    if (!level1CategoryForLevel5 || !level2CategoryForLevel5 || !level3CategoryForLevel5 || !level4Category) {
+                      console.error('Parent categories not found for Level 5 category with ID:', selectedValue);
+                      return;
                     }
                     setSelectedCategoryId(level1CategoryForLevel5._id);
                     setselectedLevel2Id(level2CategoryForLevel5._id);
@@ -844,43 +810,29 @@ const categoryDropdownRef = useRef(null);
                     setSelectedlevel5(selectedValue);
                     break;
                 case 6:
-                    const level5Category = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .flatMap(level3 => level3.level_three_category_list) .flatMap(level4 => level4.level_four_category_list) .find(level5 => level5._id === selectedValue);
-    
-                    if (!level5Category) {
-                        console.error('Level 5 category not found for ID:', selectedValue);
-                        return;
-                    }
-    
-                    const level4CategoryForLevel6 = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .flatMap(level3 => level3.level_three_category_list) .find(level4 => level4._id === level5Category.level_four_category_id);
-    
-                    if (!level4CategoryForLevel6) {
-                        console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
-                        return;
-                    }
-    
-                    const level3CategoryForLevel6 = categories.categories.category_list .flatMap(level1 => level1.level_one_category_list) .flatMap(level2 => level2.level_two_category_list) .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
-    
-                    if (!level3CategoryForLevel6) {
-                        console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
-                        return;
-                    }
-    
-                    const level2CategoryForLevel6 = categories.categories.category_list
-                        .flatMap(level1 => level1.level_one_category_list)
-                        .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel6._id));
-    
-                    if (!level2CategoryForLevel6) {
-                        console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
-                        return;
-                    }
-    
-                    const level1CategoryForLevel6 = categories.categories.category_list.find(level1 =>
-                        level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel6._id)
-                    );
-    
-                    if (!level1CategoryForLevel6) {
-                        console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
-                        return;
+                    let level5Category, level4CategoryForLevel6, level3CategoryForLevel6, level2CategoryForLevel6, level1CategoryForLevel6;
+                    categories.categories.category_list.some(level1 => {
+                      return level1.level_one_category_list.some(level2 => {
+                        return level2.level_two_category_list.some(level3 => {
+                          return level3.level_three_category_list.some(level4 => {
+                            return level4.level_four_category_list.some(level5 => {
+                              if (level5.level_five_category_list.some(level6 => level6._id === selectedValue)) {
+                                level1CategoryForLevel6 = level1;
+                                level2CategoryForLevel6 = level2;
+                                level3CategoryForLevel6 = level3;
+                                level4CategoryForLevel6 = level4;
+                                level5Category = level5;
+                                return true;
+                              }
+                              return false;
+                            });
+                          });
+                        });
+                      });
+                    });
+                    if (!level1CategoryForLevel6 || !level2CategoryForLevel6 || !level3CategoryForLevel6 || !level4CategoryForLevel6 || !level5Category) {
+                      console.error('Parent categories not found for Level 6 category with ID:', selectedValue);
+                      return;
                     }
                     setSelectedCategoryId(level1CategoryForLevel6._id);
                     setselectedLevel2Id(level2CategoryForLevel6._id);

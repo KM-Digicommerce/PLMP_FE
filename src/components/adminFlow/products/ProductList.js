@@ -229,8 +229,36 @@ const ProductList = () => {
       setSortVisible(!sortVisible);
     }
   };
-  const handleSearchChange = (event) => { setSearchQuery(event.target.value);};
-  const filteredProducts = responseData.filter((item) =>  item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) );
+  const handleSearchChange = async(event) => {
+     setSearchQuery(event.target.value);
+     const query = event.target.value;
+     if (query !== '') {
+       setResponseData([]);
+     }
+     try {
+       const response = await axiosInstance.get(
+         `${process.env.REACT_APP_IP}/obtainAllProductList/`,
+         {
+           params: {
+             search:query
+           }
+         }
+       );   
+       setResponseData(response.data.data.product_list);
+       console.log('Response',responseData);
+     } catch (error) {
+       console.error('Error fetching product list:', error);
+     }
+    };
+  const filteredProducts = responseData.filter((product) => {
+    const productName = product.product_name?.toLowerCase() || '';
+    const model = product.model?.toLowerCase() || '';
+    const tags = product.tags?.toLowerCase() || '';
+    const mpn = product.mpn?.toLowerCase() || '';
+    const query = searchQuery.toLowerCase();
+    return ( productName.includes(query) || model.includes(query) || tags.includes(query) || mpn.includes(query)
+    );
+  });
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortColumn) return 0;
     const aValue = a[sortColumn];
@@ -244,11 +272,22 @@ const ProductList = () => {
       const clonedProductData = { ...product, product_id: undefined }; // Avoid copying product_id
       navigate(`/Admin/addproduct`, { state: { productData: clonedProductData } });
   };
-  
+  const clearSearchInput = () => {
+    setSearchQuery('');
+    const filter = true;
+    fetchData({ filter });
+  };
   return (
     <div className="product-list">
-      <div className="search-container">
-        <input type="text" placeholder="Search products..." value={searchQuery} onChange={handleSearchChange} className="search-input"  />
+      <div className="search-container" style={{position:'relative'}}>
+        <input type="text" placeholder="Search products..." value={searchQuery} onChange={handleSearchChange} className="search-input"  style={{ paddingRight: '30px' }} />
+        {searchQuery && (
+         <button
+         onClick={clearSearchInput}
+         style={{
+           position: 'absolute', right: '266px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%', top:'-3px'
+         }}   >    ✕     </button>
+      )}
       </div>
       <div className="sort-container">
       {searchVisible && (

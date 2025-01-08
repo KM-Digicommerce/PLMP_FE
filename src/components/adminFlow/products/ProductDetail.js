@@ -553,7 +553,6 @@ const ProductDetail = ({ categories }) => {
       };
       const handleEditClick = async(variant) => {
         console.log(variant,'Varaint fuill data');
-        // Set the selected variant data to populate the modal form
         setSelectedVariants({
           id:variant.id,
           sku: variant.sku_number,
@@ -561,6 +560,7 @@ const ProductDetail = ({ categories }) => {
           finishedPrice: variant.finished_price,
           retailPrice: variant.retail_price,
           quantity: variant.quantity || 0,
+          options:variant.varient_option_list
         });
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
@@ -572,12 +572,28 @@ const ProductDetail = ({ categories }) => {
       };
       const handleUpdateFormSubmit = async (e) => {
         e.preventDefault();
-        // Construct payload based on the updated variant details
-        const payload = { ...selectedVariants };
-    
+        const options = variantOptions
+        .map((variant) => {
+            const selectedOption = selectedVariants[variant.type_id];
+            if (selectedOption) {
+                return {
+                    option_name_id: variant.type_id,
+                    option_value_id: selectedOption,
+                };
+            }
+            return null;
+        })
+        .filter((option) => option !== null);
         try {
           setLoading(true);
-          const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  payload  );
+          const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  {
+            id:selectedVariants.id,
+            sku: selectedVariants.sku,
+            unfinishedPrice: selectedVariants.unfinishedPrice,
+            finishedPrice: selectedVariants.finishedPrice,
+            retailPrice: selectedVariants.retailPrice,
+            quantity: selectedVariants.quantity,
+            options: options,}  );
           if (response.data && response.data.data && response.data.data.is_updated) {
             fetchVariantDetail(); // Re-fetch the data after updating
             Swal.fire({
@@ -623,37 +639,24 @@ const ProductDetail = ({ categories }) => {
 
                         {view === 'productDetail' && (
                             <div className="product-info-section">
-
                                 <div className="product-image-section">
                                     <div className="main-product-image">
-                                        <img
-                                            src={mainImage}
-                                            alt="Main Product"
-                                            className="product-image-large"
-                                        />
+                                        <img src={mainImage} alt="Main Product" className="product-image-large"  />
                                     </div>
                                     <div className="thumbnail-container">
                                         {formData.image && (
                                             formData.image.length > 2 && (
                                                 <span
                                                     className="thumbnail-scroll-btn prev-btn"
-                                                    onClick={handleScrollPrev}
-                                                >
-                                                    &lt;
-                                                </span>
+                                                    onClick={handleScrollPrev} >    &lt; </span>
                                             )
                                         )}
                                         <div className="thumbnail-section">
                                             {Array.isArray(formData.image) &&
                                                 formData.image.map((image, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src={image}
-                                                        alt={`Thumbnail ${index + 1}`}
-                                                        className={`product-thumbnail ${mainImage === image ? "active-thumbnail" : ""
+                                                    <img  key={index}  src={image}  alt={`Thumbnail ${index + 1}`}  className={`product-thumbnail ${mainImage === image ? "active-thumbnail" : ""
                                                             }`}
-                                                        onClick={() => handleThumbnailClick(image)}
-                                                    />
+                                                        onClick={() => handleThumbnailClick(image)}   />
                                                 ))}
                                         </div>
                                         {formData.image && (
@@ -661,10 +664,7 @@ const ProductDetail = ({ categories }) => {
                                                 <span
                                                     className="thumbnail-scroll-btn next-btn"
                                                     onClick={handleScrollNext}
-                                                >
-                                                    &gt;
-                                                </span>
-                                            )
+                                                >    &gt;  </span> )
                                         )}
                                     </div>
                                 </div>
@@ -672,8 +672,7 @@ const ProductDetail = ({ categories }) => {
                                     <div className="CategoryTable-header-edit">
                                         <h3>Edit Product Details</h3>
                                         {categoryLevel && (
-                                            <span className='categoryLevel'>{categoryLevel}</span>
-                                        )}
+                                            <span className='categoryLevel'>{categoryLevel}</span>   )}
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="mpn">MPN</label>
@@ -700,8 +699,7 @@ const ProductDetail = ({ categories }) => {
                                                 });
                                             }}
                                             className="dropdown"
-                                            style={{ width: '100%', margin: '6px 4px 6px 2px',border:'1px solid #ccc',borderRadius:'4px', }}
-                                        >
+                                            style={{ width: '100%', margin: '6px 4px 6px 2px',border:'1px solid #ccc',borderRadius:'4px', }}  >
                                             {brand.map((item) => (
                                                 <option value={item.id}>
                                                     {item.name}
@@ -709,7 +707,6 @@ const ProductDetail = ({ categories }) => {
                                             ))}
                                         </select>
                                     </div>
-
                                     {/* <div className="form-group">
                                         <label htmlFor="base_price">Base Price</label>
                                         <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
@@ -730,16 +727,54 @@ const ProductDetail = ({ categories }) => {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="upc_ean">UPC_EAN</label>
-                                        <input type="text" id="upc_ean" name="upc_ean" className='input_pdps' value={String(formData.upc_ean || '')} onChange={handleChange}
-                                        />
+                                        <input type="text" id="upc_ean" name="upc_ean" className='input_pdps' value={String(formData.upc_ean || '')} onChange={handleChange}   />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="dimensions">Dimensions</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="height" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Height</label>
+                                                <input type="text" id="height" name="height" className="dimensions" style={{ width: '60%' }} value={String(formData.height || '')} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="width" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Width</label>
+                                            <input type="text" id="width" name="width" className="dimensions" style={{ width: '60%' }} value={String(formData.width || '')} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="depth" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Depth</label>
+                                                <input type="text" id="depth" name="depth" className="dimensions" style={{ width: '60%' }} value={String(formData.depth || '')} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="unit" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
+                                                <select id="unit" name="unit" className="dimensions-unit" style={{ width: '80%' }} value={formData.unit || ''} onChange={handleChange} >
+                                                    <option value="in">Inches - in</option>
+                                                    <option value="mm">Millimeters -mm</option>
+                                                    <option value="ft">Feet - ft</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
-
                         {view === 'taxonomy' && (
-                            <div className="taxonomy-section">
-                                <h3>Taxonomy</h3>
+                            <div className="taxonomy-section" >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
+                                    <h3>Taxonomy</h3>
+                                    <div className="product-info-display">
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>MPN: </label>
+                                            <span>{formData.mpn ? formData.mpn : 'N/A'}</span>
+                                        </div>
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>Product Name: </label>
+                                            <span>{formData.product_name ? formData.product_name : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
                                     <div className='DropdownColumn'>
@@ -935,8 +970,18 @@ const ProductDetail = ({ categories }) => {
 
                         {view === 'variants' && (
                             <div className="variant-section">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
                                     <h3>Product Variants</h3>
+                                    <div className="product-info-display">
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>MPN: </label>
+                                            <span>{formData.mpn ? formData.mpn : 'N/A'}</span>
+                                        </div>
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>Product Name: </label>
+                                            <span>{formData.product_name ? formData.product_name : 'N/A'}</span>
+                                        </div>
+                                    </div>
                                     <button className='cls_addvariant'
                                         variant="contained"
                                         color="primary"
@@ -945,7 +990,7 @@ const ProductDetail = ({ categories }) => {
                                         Add Variant Option
                                     </button>
                                 </div>
-                                <table className="variant-table">
+                                <table className="variant-table pdp-variant-table">
                                     <thead>
                                         <tr>
                                             <th>Variant SKU</th>
@@ -986,13 +1031,7 @@ const ProductDetail = ({ categories }) => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <Modal
-                                    open={isPopupOpen}
-                                    onClose={handleClosePopup} 
-                                    aria-labelledby="variant-modal-title"
-                                    aria-describedby="variant-modal-description"
-                                    className="variant_model_pdp"
-                                >
+                                <Modal open={isPopupOpen} onClose={handleClosePopup}  aria-labelledby="variant-modal-title" aria-describedby="variant-modal-description" className="variant_model_pdp" >
                                     <Box  sx={{
                                             width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
                                         }}    >
@@ -1022,8 +1061,7 @@ const ProductDetail = ({ categories }) => {
                                             {variantOptions?.map((variant) => (
                                                 <div key={variant.type_id}>
                                                       <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>{variant.type_name}  {variant.type_name.toLowerCase().includes("wood type") && (
-        <span className="required" style={{ color: 'red' }}>*</span>
-      )}</label>
+        <span className="required" style={{ color: 'red' }}>*</span> )}</label>
                                                     <select id="brand-select" name="brand_id" required={variant.type_name.toLowerCase().includes("wood type")} value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
                                                         <option value="">Select Variant Value</option>
                                                         {variant.option_value_list?.map((option) => (
@@ -1040,52 +1078,30 @@ const ProductDetail = ({ categories }) => {
                                         </form>
                                     </Box>
                                 </Modal>
-                                <Modal
-        open={isupdatePopupOpen}
-        onClose={() => setIsUpdatePopupOpen(false)}  // Close the modal
-        aria-labelledby="variant-modal-title"
-        aria-describedby="variant-modal-description"
-        className="variant_model_pdp"
-      >
+                                <Modal open={isupdatePopupOpen} onClose={() => setIsUpdatePopupOpen(false)}   aria-labelledby="variant-modal-title" aria-describedby="variant-modal-description" className="variant_model_pdp"  >
         <Box sx={{
-          width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
-        }}>
+          width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,  }}>
           <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
           <form onSubmit={handleUpdateFormSubmit}>
             <label htmlFor="sku" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
-            <input
-              type="text"
-              name="sku"
-              className="input_pdp"
-              value={selectedVariants.sku}
-              onChange={handleVariantDetailChange}
+            <input  type="text"  name="sku"  className="input_pdp"  value={selectedVariants.sku}  onChange={handleVariantDetailChange}
             />
             <label htmlFor="unfinishedPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Unfinished Price <span className="required">*</span></label>
-            <input
-              type="text"
-              name="unfinishedPrice"
-              className="input_pdp"
-              value={selectedVariants.unfinishedPrice || ''}
+            <input type="text" name="unfinishedPrice" className="input_pdp" value={selectedVariants.unfinishedPrice || ''}
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*\.?\d{0,2}$/.test(value)) {
                   handleVariantDetailChange({ target: { name: 'unfinishedPrice', value } });
                 }
-              }}
-            />
+              }}  />
             <label htmlFor="finishedPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Finished Price <span className="required">*</span></label>
-            <input
-              type="text"
-              name="finishedPrice"
-              className="input_pdp"
-              value={selectedVariants.finishedPrice}
+            <input type="text" name="finishedPrice" className="input_pdp" value={selectedVariants.finishedPrice}
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*\.?\d{0,2}$/.test(value)) {
                   handleVariantDetailChange({ target: { name: 'finishedPrice', value } });
                 }
-              }}
-            />
+              }} />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price <span className="required">*</span></label>
               <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
@@ -1098,29 +1114,21 @@ const ProductDetail = ({ categories }) => {
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
-             {/* {variantOptions?.map((variant) => (
+             {variantOptions?.map((variant) => (
         <div key={variant.type_id}>
           <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
             {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
               <span className="required" style={{ color: 'red' }}>*</span>
             )}
           </label>
-          <select
+          <select  
             id={`variant-select-${variant.type_id}`}
             name={variant.type_id}
             required={variant.type_name.toLowerCase().includes("wood type")}
             value={selectedVariants[variant.type_id] || ''} // Preselect the option based on selectedVariants
             onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
             className="dropdown"
-            style={{
-              width: '100%',
-              margin: '6px 0px 6px 0px',
-              padding: '10px 0px 10px 0px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              color: 'rgba(0, 0, 0, 0.6)',
-            }}
-          >
+            style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)', }}  >
             <option value="">Select Variant Value</option>
             {variant.option_value_list?.map((option) => (
               <option value={option.type_value_id} key={option.type_value_id}>
@@ -1129,16 +1137,10 @@ const ProductDetail = ({ categories }) => {
             ))}
           </select>
         </div>
-      ))} */}
-            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>
-              Update Variant
-            </Button>
-          </form>
-        </Box>
-      </Modal>
-                            </div>
+      ))}
+            <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>   Update Variant </Button> </form>  </Box>
+      </Modal>          </div>
                         )}
-
                         {/* {view === 'pricing' && (
                             <div className="pricing-section">
                                 <h3>Pricing Details</h3>
@@ -1160,10 +1162,21 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                             </div>
                         )} */}
-
                         {view === 'otherDetails' && (
                             <div className="other-details-section">
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
                                 <h3>Other Product Details</h3>
+                                <div className="product-info-display">
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>MPN: </label>
+                                            <span>{formData.mpn ? formData.mpn : 'N/A'}</span>
+                                        </div>
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>Product Name: </label>
+                                            <span>{formData.product_name ? formData.product_name : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                    </div>
                                 <div className="form-group">
                                     <label htmlFor="key_features">Key Features</label>
                                     <textarea
@@ -1282,33 +1295,18 @@ const ProductDetail = ({ categories }) => {
                                             }
                                         }}
                                         onChange={(e) => {
-                                            handleChange({
-                                                target: {
-                                                    name: 'short_description',
-                                                    value: e.target.value,
-                                                },
-                                            });
-                                        }}
-                                    />
+                                            handleChange({  target: { name: 'short_description', value: e.target.value,     },   });   }}  />
                                 </div>
-
                                 <div className="form-group">
                                     <label htmlFor="long_description">Long Description</label>
-                                    <textarea
-                                        id="long_description"
-                                        name="long_description"
-                                        className="input_pdps"
-                                        value={formData.long_description ? formatFeature(formData.long_description) : ''}
-                                        onKeyDown={(e) => {
+                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description ? formatFeature(formData.long_description) : ''}  onKeyDown={(e) => {
                                             if (e.key === ' ') {
                                                 e.preventDefault(); // Prevent default space action
                                                 const cursorPosition = e.target.selectionStart;
                                                 const updatedValue =
                                                     formData.long_description.slice(0, cursorPosition) +  ' ' +  formData.long_description.slice(cursorPosition); // Add a space at the cursor position
                                                 handleChange({
-                                                    target: {
-                                                        name: 'long_description',
-                                                        value: updatedValue,
+                                                    target: {  name: 'long_description',  value: updatedValue,
                                                     },
                                                 });
                                             } else if (e.key === 'Enter') {
@@ -1326,9 +1324,7 @@ const ProductDetail = ({ categories }) => {
                                         }}
                                         onChange={(e) => {
                                             handleChange({
-                                                target: {
-                                                    name: 'long_description',
-                                                    value: e.target.value,
+                                                target: {   name: 'long_description',   value: e.target.value,
                                                 },
                                             });
                                         }}
@@ -1336,11 +1332,7 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="tags">Tags</label>
-                                    <textarea
-                                        id="tags"
-                                        name="tags"
-                                        className="input_pdps"
-                                        value={formData.tags ? formatFeature(formData.tags) : ''}
+                                    <textarea id="tags" name="tags" className="input_pdps" value={formData.tags ? formatFeature(formData.tags) : ''}
                                         onKeyDown={(e) => {
                                             if (e.key === ' ') {
                                                 e.preventDefault(); // Prevent default space action
@@ -1359,21 +1351,10 @@ const ProductDetail = ({ categories }) => {
                                                 const updatedValue =
                                                     formData.tags.slice(0, cursorPosition) +  '\n* ' + formData.tags.slice(cursorPosition); // Add a new line with '* ' at the cursor position
                                                 handleChange({
-                                                    target: {
-                                                        name: 'tags',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            }
+                                                    target: {  name: 'tags',  value: updatedValue,  },  });    }
                                         }}
                                         onChange={(e) => {
-                                            handleChange({
-                                                target: {
-                                                    name: 'tags',
-                                                    value: e.target.value,
-                                                },
-                                            });
-                                        }}
+                                            handleChange({   target: { name: 'tags', value: e.target.value, }, });  }}
                                     />
                                 </div>
                             </div>
