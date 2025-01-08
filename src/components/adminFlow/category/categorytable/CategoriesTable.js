@@ -551,8 +551,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
-    // localStorage.removeItem("categoryId");
-    // localStorage.removeItem("levelCategory");
   };
   const handlelevel4 = (e) => {
     const selectedValue = e;
@@ -561,14 +559,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       categories.category_list.some(level1 => {
           const foundLevel2 = level1.level_one_category_list.find(level2 => 
               level2.level_two_category_list.some(level3 => 
-                  level3.level_three_category_list.some(level4 => level4._id === selectedValue)
-              )
-          );
+                  level3.level_three_category_list.some(level4 => level4._id === selectedValue) ) );
           if (foundLevel2) {
               const foundLevel3 = foundLevel2.level_two_category_list.find(level3 => 
                   level3.level_three_category_list.some(level4 => level4._id === selectedValue)
               );
-              
+
               if (foundLevel3) {
                   level1Category = level1;
                   level2Category = foundLevel2;
@@ -611,51 +607,33 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const handlelevel5 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level4Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .find(level4 => level4._id === selectedValue);
-
-  if (!level4Category) {
-      console.error('Level 4 category not found for ID:', selectedValue);
-      return;
-  }
-
-  const level3CategoryForLevel5 = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id === level4Category.level_three_category_id);
-
-  if (!level3CategoryForLevel5) {
-      console.error('Level 3 category not found for ID:', level3CategoryForLevel5._id);
-      return;
-  }
-
-  const level2CategoryForLevel5 = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel5._id));
-
-  if (!level2CategoryForLevel5) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel5._id);
-      return;
-  }
-
-  const level1CategoryForLevel5 = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel5._id)
-  );
-
-  if (!level1CategoryForLevel5) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel5._id);
-      return;
-  }
-      setSelectedCategoryId(level1CategoryForLevel5._id);
-      setSelectedLevel2Id(level2CategoryForLevel5._id);
-      setSelectedLevel3Id(level3CategoryForLevel5._id);
+      let level4Category, level3Category, level2Category, level1Category;
+      categories.category_list.some(level1 => {
+        return level1.level_one_category_list.some(level2 => {
+          return level2.level_two_category_list.some(level3 => {
+            return level3.level_three_category_list.some(level4 => {
+              if (level4.level_four_category_list.some(level5 => level5._id === selectedValue)) {
+                level1Category = level1;
+                level2Category = level2;
+                level3Category = level3;
+                level4Category = level4;
+                return true;  }
+              return false;
+            });
+          });
+        });
+      });
+      if (!level1Category || !level2Category || !level3Category || !level4Category) {
+        console.error('Parent categories not found for Level 5 category with ID:', selectedValue);
+        return;
+      }
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(level3Category._id);
       setSelectedlevel4(level4Category._id);
-      setSelectedCategoryIdPopup(level1CategoryForLevel5._id);
-      setSelectedLevel2IdPopup(level2CategoryForLevel5._id);
-      setSelectedLevel3IdPopup(level3CategoryForLevel5._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
+      setSelectedLevel3IdPopup(level3Category._id);
       setSelectedLevel4IdPopup(level4Category._id);
       setSelectedlevel5(selectedValue);
       setSelectedLevel5IdPopup(selectedValue);
@@ -671,71 +649,43 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedLevel5IdPopup('');
       setSelectedlevel6('');
     }
-    // localStorage.removeItem("categoryId");
-    // localStorage.removeItem("levelCategory");
   };
   const handlelevel6 = (e) => {
     const selectedValue = e;
     if (selectedValue && selectedValue !== 'add') {
-      const level5Category = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .flatMap(level4 => level4.level_four_category_list)
-      .find(level5 => level5._id === selectedValue);
-
-  if (!level5Category) {
-      console.error('Level 5 category not found for ID:', selectedValue);
-      return;
-  }
-
-  const level4CategoryForLevel6 = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .flatMap(level3 => level3.level_three_category_list)
-      .find(level4 => level4._id === level5Category.level_four_category_id);
-
-  if (!level4CategoryForLevel6) {
-      console.error('Level 4 category not found for ID:', level4CategoryForLevel6._id);
-      return;
-  }
-
-  const level3CategoryForLevel6 = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .flatMap(level2 => level2.level_two_category_list)
-      .find(level3 => level3._id === level4CategoryForLevel6.level_three_category_id);
-
-  if (!level3CategoryForLevel6) {
-      console.error('Level 3 category not found for ID:', level3CategoryForLevel6._id);
-      return;
-  }
-
-  const level2CategoryForLevel6 = categories.category_list
-      .flatMap(level1 => level1.level_one_category_list)
-      .find(level2 => level2.level_two_category_list.some(level3 => level3._id === level3CategoryForLevel6._id));
-
-  if (!level2CategoryForLevel6) {
-      console.error('Level 2 category not found for Level 3 category with ID:', level2CategoryForLevel6._id);
-      return;
-  }
-
-  const level1CategoryForLevel6 = categories.category_list.find(level1 =>
-      level1.level_one_category_list.some(level2 => level2._id === level2CategoryForLevel6._id)
-  );
-
-  if (!level1CategoryForLevel6) {
-      console.error('Level 1 category not found for Level 2 category with ID:', level1CategoryForLevel6._id);
-      return;
-  }
-      setSelectedCategoryId(level1CategoryForLevel6._id);
-      setSelectedLevel2Id(level3CategoryForLevel6._id);
-      setSelectedLevel3Id(level3CategoryForLevel6._id);
-      setSelectedlevel4(level4CategoryForLevel6._id);
+      let level5Category, level4Category, level3Category, level2Category, level1Category;
+      categories.category_list.some(level1 => {
+        return level1.level_one_category_list.some(level2 => {
+          return level2.level_two_category_list.some(level3 => {
+            return level3.level_three_category_list.some(level4 => {
+              return level4.level_four_category_list.some(level5 => {
+                if (level5.level_five_category_list.some(level6 => level6._id === selectedValue)) {
+                  level1Category = level1;
+                  level2Category = level2;
+                  level3Category = level3;
+                  level4Category = level4;
+                  level5Category = level5;
+                  return true;
+                }
+                return false;
+              });
+            });
+          });
+        });
+      });
+      if (!level1Category || !level2Category || !level3Category || !level4Category || !level5Category) {
+        console.error('Parent categories not found for Level 6 category with ID:', selectedValue);
+        return;
+      }
+      setSelectedCategoryId(level1Category._id);
+      setSelectedLevel2Id(level2Category._id);
+      setSelectedLevel3Id(level3Category._id);
+      setSelectedlevel4(level4Category._id);
       setSelectedlevel5(level5Category._id);
-      setSelectedCategoryIdPopup(level1CategoryForLevel6._id);
-      setSelectedLevel2IdPopup(level2CategoryForLevel6._id);
-      setSelectedLevel3IdPopup(level3CategoryForLevel6._id);
-      setSelectedLevel4IdPopup(level4CategoryForLevel6._id);
+      setSelectedCategoryIdPopup(level1Category._id);
+      setSelectedLevel2IdPopup(level2Category._id);
+      setSelectedLevel3IdPopup(level3Category._id);
+      setSelectedLevel4IdPopup(level4Category._id);
       setSelectedLevel5IdPopup(level5Category._id);
       setSelectedlevel6(selectedValue);
       setIslevel6DropdownOpen(false);
@@ -748,7 +698,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel6('');
     }
   };
-  
   
 const handleLevelClear = (e) => {
   setSelectedCategoryId(e);
@@ -937,17 +886,13 @@ const handleLevelClear = (e) => {
   };
   let sortedProductss = [];
   if (responseDatasearch.length > 0) {
-    console.log('responseDatasearch');
     sortedProductss = sortProducts(responseDatasearch);
   } else if (responseData.length > 0) {
-    console.log('responseData');
     sortedProductss = sortProducts(responseData);
   } 
   if (products.length > 0) {
-    console.log('products')
     sortedProductss = sortProducts(products);
   }
-
   const getFilteredAndSortedProducts = () => {
     return sortedProductss.filter((product) => {
       const productName = product.product_name?.toLowerCase() || '';
@@ -955,7 +900,6 @@ const handleLevelClear = (e) => {
       const tags = product.tags?.toLowerCase() || '';
       const mpn = product.mpn?.toLowerCase() || '';
       const query = searchQuerylist.toLowerCase();
-  
       return (
         productName.includes(query) ||
         model.includes(query) ||
@@ -1294,9 +1238,7 @@ const handleLevelClear = (e) => {
                         style={{
                           position: 'absolute', right: '6px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%',
                         }}
-                      >
-                        ✕
-                      </button>
+                      >    ✕     </button>
                     )}
                   </div>
                   {suggestions.length > 0 && (
@@ -1375,26 +1317,29 @@ const handleLevelClear = (e) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {getFilteredAndSortedProducts().map((product) => (
-                  <TableRow key={product.product_id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' },cursor:'pointer' }}>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{Array.isArray(product.image) ? (  <img src={product.image[0]|| Soon } alt={product.product_name} className="product-image-round"
-                      />  ) : ( <img src={product.image} alt={product.product_name} className="product-image-round"    onClick={() => handleProductSelect(product.product_id)} />
-                    )}
-                    </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.mpn}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  className="product-cell"  onClick={() => handleProductSelect(product.product_id)} >{product.product_name}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.brand}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}  onClick={() => handleProductSelect(product.product_id)} >{product.category_name}</TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }} className="others-column">
-                      <FontAwesomeIcon icon={product.is_active ? faEye : faEyeSlash} onClick={(e) => handleVisibilityToggle(e, product)} style={{ cursor: 'pointer', fontSize: '16px' }}  />
-                    </TableCell>
-                    {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.base_price ? `$${product.base_price}` : ''}
-                    </TableCell>
-                    <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.msrp ? `$${product.msrp}` : ''}</TableCell> */}
-                    {/* <TableCell sx={{ padding: '15px', fontSize: '14px' }}>{product.model}</TableCell> */}
-                  </TableRow>
-                ))}
-              </TableBody>
+  {getFilteredAndSortedProducts().length > 0 ? (
+    getFilteredAndSortedProducts().map((product) => (
+      <TableRow   key={product.product_id}  sx={{ '&:hover': { backgroundColor: '#f5f5f5' }, cursor: 'pointer' }}  >
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }}>
+          {Array.isArray(product.image) ? (
+            <img src={product.image[0] || Soon} alt={product.product_name} className="product-image-round"
+            /> ) : (
+            <img src={product.image} alt={product.product_name} className="product-image-round" onClick={() => handleProductSelect(product.product_id)} />   )} </TableCell>
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} >  {product.mpn}  </TableCell>
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }} className="product-cell" onClick={() => handleProductSelect(product.product_id)} >  {product.product_name}</TableCell>
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)} >  {product.brand} </TableCell>
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }} onClick={() => handleProductSelect(product.product_id)}>  {product.category_name} </TableCell>
+        <TableCell sx={{ padding: '15px', fontSize: '14px' }} className="others-column">
+          <FontAwesomeIcon icon={product.is_active ? faEye : faEyeSlash} onClick={(e) => handleVisibilityToggle(e, product)} style={{ cursor: 'pointer', fontSize: '16px' }}  />
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={6} sx={{ textAlign: 'center', padding: '20px', fontSize: '16px', color: '#888' }}>  No products found for the selected category.  </TableCell>
+    </TableRow>
+  )}
+</TableBody>
             </Table>
           </TableContainer>
         </div>
