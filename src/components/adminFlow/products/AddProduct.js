@@ -166,8 +166,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                                                 />
                                             </div>
                                             <div style={{ flex: 1 }}>
-                                                <label htmlFor="unit" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
-                                                <select id="unit" name="unit" className="dimensions-unit" style={{ width: '80%' }} value={productData.unit} onChange={handleChange} >
+                                                <label htmlFor="units" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
+                                                <select id="units" name="units" className="dimensions-unit" style={{ width: '80%' }} value={productData.units} onChange={handleChange} >
                                                     <option value="in">in</option>
                                                     <option value="mm">mm</option>
                                                     <option value="ft">ft</option>
@@ -361,7 +361,7 @@ const AddProduct = (categories) => {
                 width:'',
                 depth:'',
                 length:'',
-                unit:'in',
+                units:'in',
                 long_description: '',
                 short_description: '',
                 features: '',
@@ -395,7 +395,7 @@ const AddProduct = (categories) => {
     }]);
     const handleLoadNewmodel = () => {
         setProductData({
-            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', unit:'in',long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'',  option_str:'', varients: [{
+            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in',long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'',  option_str:'', varients: [{
                     sku_number: '',
                     finished_price: '0',
                     un_finished_price: '0',
@@ -577,7 +577,7 @@ const AddProduct = (categories) => {
                     },
                   })
                 setProductData({
-                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', unit:'in', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'', option_str:'', varients: [{
+                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'', option_str:'', varients: [{
                             sku_number: '',
                             finished_price: '0',
                             un_finished_price: '0',

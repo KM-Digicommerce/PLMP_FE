@@ -433,7 +433,7 @@ const ProductDetail = ({ categories }) => {
             try {
                 const payload = {
                     id: formData.product_id || '',
-                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,   height: formData.height, width: formData.width, depth: formData.depth,length: formData.length, unit: formData.unit, features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,option_str:formData.option_str,features_notes:formData.features_notes, model: formData.model,  upc_ean: formData.upc_ean,
+                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,   height: formData.height, width: formData.width, depth: formData.depth,length: formData.length, units: formData.units, features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,option_str:formData.option_str,features_notes:formData.features_notes, model: formData.model,  upc_ean: formData.upc_ean,
                     }
                 };
                 await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
@@ -936,8 +936,8 @@ const ProductDetail = ({ categories }) => {
                                                 />
                                             </div>
                                             <div style={{ flex: 1 }}>
-                                                <label htmlFor="unit" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
-                                                <select id="unit" name="unit" className="dimensions-unit" style={{ width: '80%' }} value={formData.unit || ''} onChange={handleChange} >
+                                                <label htmlFor="units" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
+                                                <select id="units" name="units" className="dimensions-unit" style={{ width: '80%' }} value={formData.units || ''} onChange={handleChange} >
                                                     <option value="in">Inches - in</option>
                                                     <option value="mm">Millimeters -mm</option>
                                                     <option value="ft">Feet - ft</option>
