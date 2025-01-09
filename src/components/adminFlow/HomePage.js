@@ -20,6 +20,7 @@ import Price from './Price/Price.js';
 import CreateUser from './Users/CreateUser.js';
 import RevokePrice from './Price/RevokePrice.js';
 import HiddenProduct from './HiddenProduct/HiddenProduct.js';
+import VendorSummary from './brand/VendorSummary.js';
 
 
 function HomePage() {
@@ -37,6 +38,8 @@ function HomePage() {
   const [showUser, setShowUser] = useState(false);
   const [showHidden, setShowHidden] = useState(false);
   const [showRevokePrice, setShowRevokePrice] = useState(false);
+  const [showVendorSummary, setShowvendorsummary] = useState(false);
+
 
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();
@@ -236,6 +239,24 @@ function HomePage() {
     setShowVariantsTable(false);
     setAddProduct(false);
   };
+  // const handlevendorSummaryClick = () => {
+  //   if ((location.pathname.includes("product/"))) { 
+  //     navigate("/Admin/hiddenproduct");
+  //   }
+  //   setShowvendorsummary(true);
+  //   setShowHidden(false);
+  //   setShowUser(false);
+  //   setShowPrice(false);
+  //   setShowImport(false);
+  //   setShowExport(false);
+  //   setShowBrand(false);
+  //   setShowHistory(false);
+  //   setShowDashboard(false);
+  //   setShowCategoriesTable(false);
+  //   setShowProductList(false);
+  //   setShowVariantsTable(false);
+  //   setAddProduct(false);
+  // };
 // const renderContent = () => {
 //   const path = location.pathname;
 
@@ -290,6 +311,7 @@ function HomePage() {
             OnHiddenClick={handleHiddenClick}
             OnUserClick={handleCreateUserClick}
             OnRevokePriceClick={handleRevokePriceClick}
+            // OnVendorSummaryClick={handlevendorSummaryClick}
             // OnRevokePriceClick={() => handleNavigation('/Admin/revokeprice')}
 
 
@@ -316,6 +338,7 @@ function HomePage() {
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
             <Route path="/hiddenproduct" element={  showHidden ? ( <HiddenProduct />):null} />
             <Route path="/restoreprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
+            <Route path="/vendorsummary/:brandId" element={ ( <VendorSummary />)} />
           </Routes>
           {/* {renderContent()} */}
         </div>

@@ -477,6 +477,7 @@ const ProductDetail = ({ categories }) => {
                     })
                     setCategoryIds('');
                     setCategoryName('');
+                    setCategoryIdForVariant(categoryId);
                 } else {
                     alert('Failed to update category');
                 }
