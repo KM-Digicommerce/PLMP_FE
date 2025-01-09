@@ -1,0 +1,60 @@
+.vendor-summary {
+    margin: 20px;
+  }
+  
+  .vendor-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .back-to-vendor-btn, .go-to-products-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .back-to-vendor-btn:hover, .go-to-products-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .vendor-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 400px;
+    margin: 0 auto;
+  }
+  
+  .vendor-card-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .vendor-card-header h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .vendor-card-header h3 {
+    font-size: 20px;
+    color: #666;
+  }
+  
+  .vendor-card-body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .vendor-card-body p {
+    margin: 10px 0;
+  }
+  
+  .vendor-card-body strong {
+    font-weight: bold;
+  }
+  
