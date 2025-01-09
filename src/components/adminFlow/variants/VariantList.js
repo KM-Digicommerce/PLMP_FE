@@ -510,8 +510,12 @@ const VariantList = ({ categories }) => {
        
        
     // };
-    const handleApplyClick = async (varient_option_id, type_id,category_level) => {
-        const selectedCategoryIds = Object.values(rowSelectedCategoryIds).flat();
+    const handleApplyClick = async (varient_option_id, type_id,category_level, option_value_list) => {
+        let selectedCategoryIds = Object.values(rowSelectedCategoryIds).flat();
+        console.log(selectedValues.length ,'selectedCategoryIds.length');
+        let options = '';
+        if (selectedValues.length === 0) { options = option_value_list; }
+        else{ options = selectedValues; }
         try {
             const response = await axiosInstance.post(
                 `${process.env.REACT_APP_IP}/updatevarientToReleatedCategories/`,
@@ -520,7 +524,7 @@ const VariantList = ({ categories }) => {
                     category_level : category_level,
                     varient_option_id:varient_option_id,
                     type_id :type_id,
-                    option_value_list : selectedValues,
+                    option_value_list : options,
 
                 });
              if (response.data && response.data.data.is_updated === true) {
@@ -907,7 +911,7 @@ const VariantList = ({ categories }) => {
                     )}
                 </div>
                 {rowSelectedCategoryIds[index]?.length > 0 && (
-        <button   onClick={() => handleApplyClick(variant.varient_option_id, variant.type_id, selectedCategoryLevelForVariant)} style={{ margin: "0px 0px 0px 10px", width:'20%', padding:'11px 2px 10px 2px' }}>
+        <button   onClick={() => handleApplyClick(variant.varient_option_id, variant.type_id, selectedCategoryLevelForVariant, variant.option_value_list)} style={{ margin: "0px 0px 0px 10px", width:'20%', padding:'11px 2px 10px 2px' }}>
           Apply
         </button>
       )}
