@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './ProductDetail.css';
@@ -8,6 +8,8 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
+import ReactQuill from 'react-quill'; // React wrapper for Quill
+import 'react-quill/dist/quill.snow.css';
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
@@ -43,7 +45,8 @@ const ProductDetail = ({ categories }) => {
     });
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
-
+    const quillRef = useRef();
+    const [editorReady, setEditorReady] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -58,6 +61,47 @@ const ProductDetail = ({ categories }) => {
         level5: '',
         level6: '',
     });
+      const categoryDropdownRef = useRef(null);
+      const categoryDropdown2Ref = useRef(null);
+      const categoryDropdown3Ref = useRef(null);
+      const categoryDropdown4Ref = useRef(null);
+      const categoryDropdown5Ref = useRef(null);
+      const categoryDropdown6Ref = useRef(null);
+      useEffect(() => {
+        if (editorReady && quillRef.current) {
+          const quill = quillRef.current.getEditor();
+          quill.keyboard.addBinding({ key: 'Enter' }, function (range, context) {
+            const currentLine = quill.getText(range.index - 1, 1);
+    
+            if (/[a-zA-Z]\.$/.test(currentLine)) {
+              const lines = quill.getText().split('\n');
+              const subPoints = lines.filter(line => /^[a-zA-Z]\.$/.test(line.trim()));
+              const nextLetter = String.fromCharCode(97 + subPoints.length);
+              quill.insertText(range.index, '\n' + nextLetter + '. ');
+              return false;
+            } else {
+              quill.insertText(range.index, '\n* ');
+              return false;
+            }
+          });
+        }
+      }, [editorReady]); // Runs when the editor is ready
+    
+      const handleClickOutside = (event) => {
+        if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
+        if (categoryDropdown2Ref.current && !categoryDropdown2Ref.current.contains(event.target)) { setIsLevel2DropdownOpen(false); }
+        if (categoryDropdown3Ref.current && !categoryDropdown3Ref.current.contains(event.target)) { setIsLevel3DropdownOpen(false); }
+        if (categoryDropdown4Ref.current && !categoryDropdown4Ref.current.contains(event.target)) { setIslevel4DropdownOpen(false); }
+        if (categoryDropdown5Ref.current && !categoryDropdown5Ref.current.contains(event.target)) { setIslevel5DropdownOpen(false); }
+        if (categoryDropdown6Ref.current && !categoryDropdown6Ref.current.contains(event.target)) { setIslevel6DropdownOpen(false); }
+      };
+    
+      useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, []);
     const [RetailPrice, setShowRetailPrice] = useState([0]);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
     const [unsavedChanges, setUnsavedChanges] = useState(false);
@@ -67,29 +111,22 @@ const ProductDetail = ({ categories }) => {
     );
 
     const levelOneCategory = categories?.category_list?.find(level1 => level1._id === selectedCategoryId);
-    const filteredCategoriesLevel2 = levelOneCategory?.level_one_category_list.filter(level2 =>
-        level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
-    );
+    const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
+    const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory?.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
 
     const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
-    const filteredCategoriesLevel3 = levelTwoCategory?.level_two_category_list.filter(level3 =>
-        level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
-    );
+    const filteredCategoriesLevel3 = levelTwoCategory
+    ? levelTwoCategory?.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
+        level3.name.toLowerCase().includes(safeSearchQuery) );
 
     const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
-    const filteredCategoriesLevel4 = levelThreeCategory?.level_three_category_list.filter(level4 =>
-        level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
-    );
+    const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
 
     const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
-    const filteredCategoriesLevel5 = levelFourCategory?.level_four_category_list.filter(level5 =>
-        level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
-    );
+    const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
 
     const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
-    const filteredCategoriesLevel6 = levelFiveCategory?.level_five_category_list.filter(level6 =>
-        level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
-    );
+    const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -113,70 +150,180 @@ const ProductDetail = ({ categories }) => {
         setIsCategoryDropdownOpen(false);
     };
     const handleLevel2Select = (id) => {
-        let level1Category;
-        categories.category_list.some(level1 => {
-            const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === id);
-            if (foundLevel2) {
-                level1Category = level1;
-                return true;
-            }
-            return false;
-        });
-        if (!level1Category) {
-            console.error('Level 1 category not found for Level 2 category with ID:', id);
-            return;
-        }
-        setSelectedCategoryId(level1Category._id);
-        setselectedLevel2Id(id);
-        setSelectedLevel3Id('');
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel2DropdownOpen(false);
-    };
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            let level1Category;
+            categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
+                if (foundLevel2) {
+                    level1Category = level1;
+                    return true;
+                }
+                return false;
+            });
 
+            if (!level1Category) {
+                console.error('Level 1 category not found for Level 2 category with ID:', selectedValue);
+                return;
+            }
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(selectedValue);
+            setSelectedLevel3Id('');
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel2DropdownOpen(false);
+        }
+        else {
+            setselectedLevel2Id('');
+        }
+    };
     const handleLevel3Select = (id) => {
-        let level1Category = '';
-        let level2Category = '';
-        categories?.category_list?.some(level1 => {
-            const foundLevel2 = level1.level_one_category_list.find(level2 =>
-                level2.level_two_category_list.some(level3 => level3._id === id)
-            );
-
-            if (foundLevel2) {
-                level1Category = level1;
-                level2Category = foundLevel2;
-                return true;
+        const selectedValue = id;
+        if (selectedValue !== '') {
+            let level1Category, level2Category;
+            categories.category_list.some(level1 => {
+                const foundLevel2 = level1.level_one_category_list.find(level2 =>
+                    level2.level_two_category_list.some(level3 => level3._id === selectedValue));
+                if (foundLevel2) {
+                    level1Category = level1;
+                    level2Category = foundLevel2;
+                    return true;
+                }
+                return false;
+            });
+            if (!level2Category || !level1Category) {
+                console.error('Parent categories not found for selected Level 3 category with ID:', selectedValue);
+                return;
             }
-            return false;
-        });
-
-        if (!level2Category || !level1Category) {
-            console.error('Parent categories not found for selected Level 3 category with ID:', id);
-            return;
+            setSelectedCategoryId(level1Category._id);
+            setselectedLevel2Id(level2Category._id);
+            setSelectedLevel3Id(selectedValue);
+            setSelectedlevel4('');
+            setSelectedlevel5('');
+            setSelectedlevel6('');
+            setIsLevel3DropdownOpen(false);
         }
-        setSelectedCategoryId(level1Category._id);
-        setselectedLevel2Id(level2Category._id);
-        setSelectedLevel3Id(id);
-        setSelectedlevel4('');
-        setSelectedlevel5('');
-        setSelectedlevel6('');
-        setIsLevel3DropdownOpen(false);
+        else {
+            setSelectedLevel3Id('');
+        }
     };
-
     const handleLevelSelect = (level, id) => {
-        switch (level) {
-            case 4:
-                setSelectedlevel4(id);
-                break;
-            case 5:
-                setSelectedlevel5(id);
-                break;
-            case 6:
-                setSelectedlevel6(id);
-                break;
-            default:
-                break;
+        const selectedValue = id || '';        
+        if (selectedValue !== '') {
+            switch (level) {
+                case 4:
+                    let level1Category, level2Category, level3Category;
+                    categories.category_list.some(level1 => {
+                        const foundLevel2 = level1.level_one_category_list.find(level2 => 
+                            level2.level_two_category_list.some(level3 => 
+                                level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+                            )
+                        );
+                        if (foundLevel2) {
+                            const foundLevel3 = foundLevel2.level_two_category_list.find(level3 => 
+                                level3.level_three_category_list.some(level4 => level4._id === selectedValue)
+                            );
+                            
+                            if (foundLevel3) {
+                                level1Category = level1;
+                                level2Category = foundLevel2;
+                                level3Category = foundLevel3;
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+    
+                    if (!level1Category || !level2Category || !level3Category) {
+                        console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
+                        return;
+                    }
+                    setSelectedCategoryId(level1Category._id);
+                    setselectedLevel2Id(level2Category._id);
+                    setSelectedLevel3Id(level3Category._id);
+                    setSelectedlevel4(selectedValue);
+                    setSelectedlevel5('');
+                    setSelectedlevel6('');
+                    break;
+    
+                case 5:
+                    let level4Category, level3CategoryForLevel5, level2CategoryForLevel5, level1CategoryForLevel5;
+                    categories.category_list.some(level1 => {
+                      return level1.level_one_category_list.some(level2 => {
+                        return level2.level_two_category_list.some(level3 => {
+                          return level3.level_three_category_list.some(level4 => {
+                            if (level4.level_four_category_list.some(level5 => level5._id === selectedValue)) {
+                              level1CategoryForLevel5 = level1;
+                              level2CategoryForLevel5 = level2;
+                              level3CategoryForLevel5 = level3;
+                              level4Category = level4;
+                              return true;  }
+                            return false;
+                          });
+                        });
+                      });
+                    });
+                    if (!level1CategoryForLevel5 || !level2CategoryForLevel5 || !level3CategoryForLevel5 || !level4Category) {
+                      console.error('Parent categories not found for Level 5 category with ID:', selectedValue);
+                      return;
+                    }
+                    setSelectedCategoryId(level1CategoryForLevel5._id);
+                    setselectedLevel2Id(level2CategoryForLevel5._id);
+                    setSelectedLevel3Id(level3CategoryForLevel5._id);
+                    setSelectedlevel4(level4Category._id);
+                    setSelectedlevel5(selectedValue);
+                    break;
+                case 6:
+                    let level5Category, level4CategoryForLevel6, level3CategoryForLevel6, level2CategoryForLevel6, level1CategoryForLevel6;
+                    categories.category_list.some(level1 => {
+                      return level1.level_one_category_list.some(level2 => {
+                        return level2.level_two_category_list.some(level3 => {
+                          return level3.level_three_category_list.some(level4 => {
+                            return level4.level_four_category_list.some(level5 => {
+                              if (level5.level_five_category_list.some(level6 => level6._id === selectedValue)) {
+                                level1CategoryForLevel6 = level1;
+                                level2CategoryForLevel6 = level2;
+                                level3CategoryForLevel6 = level3;
+                                level4CategoryForLevel6 = level4;
+                                level5Category = level5;
+                                return true;
+                              }
+                              return false;
+                            });
+                          });
+                        });
+                      });
+                    });
+                    if (!level1CategoryForLevel6 || !level2CategoryForLevel6 || !level3CategoryForLevel6 || !level4CategoryForLevel6 || !level5Category) {
+                      console.error('Parent categories not found for Level 6 category with ID:', selectedValue);
+                      return;
+                    }
+                    setSelectedCategoryId(level1CategoryForLevel6._id);
+                    setselectedLevel2Id(level2CategoryForLevel6._id);
+                    setSelectedLevel3Id(level3CategoryForLevel6._id);
+                    setSelectedlevel4(level4CategoryForLevel6._id);
+                    setSelectedlevel5(level5Category._id);
+                    setSelectedlevel6(selectedValue);
+                    break;
+                
+                default:
+                    break;
+            }
+        } else {
+            switch (level) {
+                case 4:
+                    setSelectedlevel4('');
+                    break;
+                case 5:
+                    setSelectedlevel5('');
+                    break;
+                case 6:
+                    setSelectedlevel6('');
+                    break;
+                default:
+                    break;
+            }
         }
     };
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
@@ -286,7 +433,7 @@ const ProductDetail = ({ categories }) => {
             try {
                 const payload = {
                     id: formData.product_id || '',
-                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,  features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,  model: formData.model,  upc_ean: formData.upc_ean,
+                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,   height: formData.height, width: formData.width, depth: formData.depth,length: formData.length, unit: formData.unit, features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,option_str:formData.option_str,features_notes:formData.features_notes, model: formData.model,  upc_ean: formData.upc_ean,
                     }
                 };
                 await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
@@ -322,7 +469,7 @@ const ProductDetail = ({ categories }) => {
     const swapProductToCategory = async () => {
         if (categoryIds) {
             try {
-                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/swapProductToCategory/`, {  product_id: productId,  category_id: categoryId,  category_name: categoryName
+                const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateTaxonomyForProduct/`, {  product_id: productId,  category_id: categoryId,  category_level: categoryName
                 });
                 if (response.status === 200) {
                     Swal.fire({
@@ -620,6 +767,39 @@ const ProductDetail = ({ categories }) => {
           setLoading(false);
         }
       };
+      const handleTextareaChange = (e, fieldName) => {
+        const { name, value } = e.target;
+        if (e.key === ' ') {
+            e.preventDefault(); // Prevent default space action
+            const cursorPosition = e.target.selectionStart;
+            const updatedValue = value.slice(0, cursorPosition) + ' ' + value.slice(cursorPosition); 
+            handleChange({ target: { name, value: updatedValue, }, });
+        } else if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default Enter action
+            const cursorPosition = e.target.selectionStart;
+            const updatedValue = value.slice(0, cursorPosition) + '\n* ' + value.slice(cursorPosition); 
+            handleChange({ target: { name, value: updatedValue, }, });
+        }
+    };    
+    const handlePaste = (e, fieldName) => {
+        const { name } = e.target;
+        e.preventDefault(); // Prevent the default paste behavior
+        const pastedText = e.clipboardData.getData('text');
+        const formattedText = pastedText.split('\n').map(line => `* ${line.trim()}`) .join('\n');
+        handleChange({ target: { name, value: formattedText, },
+        });
+    };
+      const handleEditorChange = (value) => {
+        handleChange({
+          target: {
+            name: 'option_str',
+            value,
+          },
+        });
+      };
+      const handleEditorReady = () => {
+        setEditorReady(true);
+      };
     return (
         <div>
             <div className='section_container'>
@@ -629,7 +809,9 @@ const ProductDetail = ({ categories }) => {
             <button onClick={() => handleNavigation('productDetail')} className={view === 'productDetail' ? 'productDetail active' : 'productDetail'}>Product Detail</button>
             <button onClick={() => handleNavigation('taxonomy')} className={view === 'taxonomy' ? 'taxonomy active' : 'taxonomy'}>Taxonomy</button>
             <button onClick={() => handleNavigation('variants')} className={view === 'variants' ? 'variants active' : 'variants'}>Variants & Pricing</button>
-            <button onClick={() => handleNavigation('otherDetails')} className={view === 'otherDetails' ? 'otherDetails active' : 'otherDetails'}>Other Details</button>
+            <button onClick={() => handleNavigation('keyDetails')} className={view === 'keyDetails' ? 'keyDetails active' : 'keyDetails'}>Key Details</button>
+            <button onClick={() => handleNavigation('rawData')} className={view === 'rawData' ? 'rawData active' : 'rawData'}>Raw Data</button>
+            <button onClick={() => handleNavigation('options')} className={view === 'options' ? 'options active' : 'options'}>Options</button>
           </div>
                 </div>
             </div>
@@ -748,6 +930,11 @@ const ProductDetail = ({ categories }) => {
                                                 />
                                             </div>
                                             <div style={{ flex: 1 }}>
+                                                <label htmlFor="length" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Length</label>
+                                                <input type="text" id="length" name="length" className="dimensions" style={{ width: '60%' }} value={String(formData.length || '')} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
                                                 <label htmlFor="unit" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
                                                 <select id="unit" name="unit" className="dimensions-unit" style={{ width: '80%' }} value={formData.unit || ''} onChange={handleChange} >
                                                     <option value="in">Inches - in</option>
@@ -777,29 +964,28 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdownRef}>
                                         <label htmlFor="categorySelect">Level 1:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
-                                            {!isCategoryDropdownOpen && (
-                                                <div className="dropdown-options-disabled" aria-disabled="true">
+                                            {isCategoryDropdownOpen && (
+                                                <div className="dropdown-options" >
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level1}
                                                         onChange={(e) => handleSearchChange('level1', e.target.value)}
-                                                        disabled
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleCategorySelect('')}>
+                                                    <div className=" dropdown-option" onClick={() => handleCategorySelect('')}>
                                                         <span>Select Category</span>
                                                     </div>
                                                     {filteredCategories.map(level1 => (
-                                                        <div className=" dropdown-option-disabled" key={level1._id || ''} onClick={() => {
+                                                        <div className=" dropdown-option" key={level1._id || ''} onClick={() => {
                                                             handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1');
                                                         }} >
                                                             <span>{level1.name}</span>
@@ -811,7 +997,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 2 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdown2Ref}>
                                         <label htmlFor="sectionSelect">Level 2:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                                             <div className="selected-category">
@@ -819,20 +1005,20 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel2DropdownOpen && (
-                                                <div className="dropdown-options-disabled" aria-disabled="true">
+                                                <div className="dropdown-options" >
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level2}
                                                         onChange={(e) => handleSearchChange('level2', e.target.value)}
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevel2Select('')}>
+                                                    <div className=" dropdown-option" onClick={() => handleLevel2Select('')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel2?.map(level2 => (
-                                                        <div className=" dropdown-option-disabled" key={level2._id || ''} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                                        <div className=" dropdown-option" key={level2._id || ''} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                                             <span>{level2.name}</span>
                                                         </div>
                                                     ))}
@@ -842,7 +1028,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 3 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdown3Ref}>
                                         <label htmlFor="productTypeSelect">Level 3:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                                             <div className="selected-category">
@@ -850,20 +1036,20 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel3DropdownOpen && (
-                                                <div className="dropdown-options-disabled" aria-disabled="true">
+                                                <div className="dropdown-options">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level3}
                                                         onChange={(e) => handleSearchChange('level3', e.target.value)}
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevel3Select('')}>
+                                                    <div className=" dropdown-option" onClick={() => handleLevel3Select('')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel3?.map(level3 => (
-                                                        <div className=" dropdown-option-disabled" key={level3._id || ''} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                                        <div className=" dropdown-option" key={level3._id || ''} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                                             <span>{level3.name}</span>
                                                         </div>
                                                     ))}
@@ -873,7 +1059,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 4 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdown4Ref}>
                                         <label htmlFor="level4Select">Level 4:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                                             <div className="selected-category">
@@ -881,20 +1067,20 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel4DropdownOpen && (
-                                                <div className="dropdown-options-disabled">
+                                                <div className="dropdown-options">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level4}
                                                         onChange={(e) => handleSearchChange('level4', e.target.value)}
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(4, '')}>
+                                                    <div className=" dropdown-option" onClick={() => handleLevelSelect(4, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel4?.map(level4 => (
-                                                        <div className=" dropdown-option-disabled" key={level4._id || ''} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                                        <div className=" dropdown-option" key={level4._id || ''} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                                             <span>{level4.name}</span>
                                                         </div>
                                                     ))}
@@ -904,7 +1090,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 5 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdown5Ref}>
                                         <label htmlFor="level5Select">Level 5:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                                             <div className="selected-category">
@@ -912,20 +1098,20 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel5DropdownOpen && (
-                                                <div className="dropdown-options-disabled">
+                                                <div className="dropdown-options">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level5}
                                                         onChange={(e) => handleSearchChange('level5', e.target.value)}
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(5, '')}>
+                                                    <div className=" dropdown-option" onClick={() => handleLevelSelect(5, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel5?.map(level5 => (
-                                                        <div className=" dropdown-option-disabled" key={level5._id || ''} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                                        <div className=" dropdown-option" key={level5._id || ''} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                                             <span>{level5.name}</span>
                                                         </div>
                                                     ))}
@@ -935,7 +1121,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 6 Dropdown */}
-                                    <div className='DropdownColumn'>
+                                    <div className='DropdownColumn' ref={categoryDropdown6Ref}>
                                         <label htmlFor="level6Select">Level 6:</label>
                                         <div className="custom-dropdown custom-width" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                                             <div className="selected-category">
@@ -943,20 +1129,20 @@ const ProductDetail = ({ categories }) => {
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel6DropdownOpen && (
-                                                <div className="dropdown-options-disabled">
+                                                <div className="dropdown-options">
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
                                                         value={searchQueries.level6}
                                                         onChange={(e) => handleSearchChange('level6', e.target.value)}
-                                                        className="dropdown-search-input"
+                                                        className="dropdown-search-input pdp-search"
                                                         onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
                                                     />
-                                                    <div className=" dropdown-option-disabled" onClick={() => handleLevelSelect(6, '')}>
+                                                    <div className=" dropdown-option" onClick={() => handleLevelSelect(6, '')}>
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel6?.map(level6 => (
-                                                        <div className=" dropdown-option-disabled" key={level6._id || ''} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                                        <div className=" dropdown-option" key={level6._id || ''} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                                             <span>{level6.name}</span>
                                                         </div>
                                                     ))}
@@ -1162,7 +1348,7 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                             </div>
                         )} */}
-                        {view === 'otherDetails' && (
+                        {view === 'keyDetails' && (
                             <div className="other-details-section">
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
                                 <h3>Other Product Details</h3>
@@ -1184,38 +1370,11 @@ const ProductDetail = ({ categories }) => {
                                         name="key_features"
                                         className="input_pdps"
                                         value={formData.key_features ? formatFeature(formData.key_features) : ''}
-                                        onKeyDown={(e) => {
-                                            if (e.key === ' ') {
-                                                e.preventDefault(); // Prevent default space action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.key_features.slice(0, cursorPosition) +  ' ' +  formData.key_features.slice(cursorPosition); // Add a space at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'key_features',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            } else if (e.key === 'Enter') {
-                                                e.preventDefault(); // Prevent default Enter action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.key_features.slice(0, cursorPosition) +   '\n* ' +  formData.key_features.slice(cursorPosition); // Add a new line with '* ' at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'key_features',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            }
-                                        }}
+                                        onKeyDown={(e) => handleTextareaChange(e, 'key_features')}
+                                        onPaste={(e) => handlePaste(e, 'key_features')}
                                         onChange={(e) => {
-                                            handleChange({
-                                                target: {
-                                                    name: 'key_features',
-                                                    value: e.target.value,
-                                                },
-                                            });
+                                            handleChange({ target: { name: 'key_features', value: e.target.value, },
+                                            });   
                                         }}
                                     />
                                 </div>
@@ -1226,39 +1385,9 @@ const ProductDetail = ({ categories }) => {
                                         name="features"
                                         className="input_pdps"
                                         value={formData.features ? formatFeature(formData.features) : ''}
-                                        onKeyDown={(e) => {
-                                            if (e.key === ' ') {
-                                                e.preventDefault();
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.features.slice(0, cursorPosition) +  ' ' + formData.features.slice(cursorPosition);
-                                                handleChange({
-                                                    target: {
-                                                        name: 'features',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            } else if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.features.slice(0, cursorPosition) +  '\n* ' + formData.features.slice(cursorPosition);
-                                                handleChange({
-                                                    target: {
-                                                        name: 'features',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            }
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange({
-                                                target: {
-                                                    name: 'features',
-                                                    value: e.target.value,
-                                                },
-                                            });
-                                        }}
+                                        onKeyDown={(e) => handleTextareaChange(e, 'features')}
+                                        onChange={(e) => handleChange({ target: { name: 'features', value: e.target.value } })}
+                                        onPaste={(e) => handlePaste(e, 'features')} // Add paste functionality
                                     />
                                 </div>
 
@@ -1269,97 +1398,84 @@ const ProductDetail = ({ categories }) => {
                                         name="short_description"
                                         className="input_pdps"
                                         value={formData.short_description ? formatFeature(formData.short_description) : ''}
-                                        onKeyDown={(e) => {
-                                            if (e.key === ' ') {
-                                                e.preventDefault(); // Prevent default space action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.short_description.slice(0, cursorPosition) +   ' ' +  formData.short_description.slice(cursorPosition); // Add a space at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'short_description',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            } else if (e.key === 'Enter') {
-                                                e.preventDefault(); // Prevent default Enter action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.short_description.slice(0, cursorPosition) +   '\n* ' + formData.short_description.slice(cursorPosition); // Add a new line with '* ' at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'short_description',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            }
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange({  target: { name: 'short_description', value: e.target.value,     },   });   }}  />
+                                        onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
+                                        onChange={(e) => handleChange({ target: { name: 'short_description', value: e.target.value } })}
+                                        onPaste={(e) => handlePaste(e, 'short_description')}
+                                             />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="long_description">Long Description</label>
-                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description ? formatFeature(formData.long_description) : ''}  onKeyDown={(e) => {
-                                            if (e.key === ' ') {
-                                                e.preventDefault(); // Prevent default space action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.long_description.slice(0, cursorPosition) +  ' ' +  formData.long_description.slice(cursorPosition); // Add a space at the cursor position
-                                                handleChange({
-                                                    target: {  name: 'long_description',  value: updatedValue,
-                                                    },
-                                                });
-                                            } else if (e.key === 'Enter') {
-                                                e.preventDefault(); // Prevent default Enter action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.long_description.slice(0, cursorPosition) + '\n* ' + formData.long_description.slice(cursorPosition); // Add a new line with '* ' at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'long_description',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            }
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange({
-                                                target: {   name: 'long_description',   value: e.target.value,
-                                                },
-                                            });
-                                        }}
+                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description ? formatFeature(formData.long_description) : ''} 
+                                    onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
+                                    onChange={(e) => handleChange({ target: { name: 'long_description', value: e.target.value } })}
+                                    onPaste={(e) => handlePaste(e, 'long_description')} 
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="tags">Tags</label>
                                     <textarea id="tags" name="tags" className="input_pdps" value={formData.tags ? formatFeature(formData.tags) : ''}
-                                        onKeyDown={(e) => {
-                                            if (e.key === ' ') {
-                                                e.preventDefault(); // Prevent default space action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.tags.slice(0, cursorPosition) + ' ' + formData.tags.slice(cursorPosition); // Add a space at the cursor position
-                                                handleChange({
-                                                    target: {
-                                                        name: 'tags',
-                                                        value: updatedValue,
-                                                    },
-                                                });
-                                            } else if (e.key === 'Enter') {
-                                                e.preventDefault(); // Prevent default Enter action
-                                                const cursorPosition = e.target.selectionStart;
-                                                const updatedValue =
-                                                    formData.tags.slice(0, cursorPosition) +  '\n* ' + formData.tags.slice(cursorPosition); // Add a new line with '* ' at the cursor position
-                                                handleChange({
-                                                    target: {  name: 'tags',  value: updatedValue,  },  });    }
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange({   target: { name: 'tags', value: e.target.value, }, });  }}
+                                       onKeyDown={(e) => handleTextareaChange(e, 'tags')}
+                                       onChange={(e) => handleChange({ target: { name: 'tags', value: e.target.value } })}
+                                       onPaste={(e) => handlePaste(e, 'tags')}
                                     />
                                 </div>
                             </div>
                         )}
-                        {view !== 'variants' && view !== 'taxonomy' && (
+                         {view === 'rawData' && (
+                            <div className="other-details-section">
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
+                                <h3>Raw Data Details</h3>
+                                <div className="product-info-display">
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>MPN: </label>
+                                            <span>{formData.mpn ? formData.mpn : 'N/A'}</span>
+                                        </div>
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>Product Name: </label>
+                                            <span>{formData.product_name ? formData.product_name : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                <div className="form-group">
+                                    <label htmlFor="features_notes">Standard Features/Notes:</label>
+                                    <textarea id="features_notes" name="features_notes" className="input_pdps" value={formData.features_notes ? formatFeature(formData.features_notes) : ''}
+                                   onKeyDown={(e) => handleTextareaChange(e, 'features_notes')} // Use common keydown handler
+                                   onChange={(e) => handleChange({ target: { name: 'features_notes', value: e.target.value } })}
+                                   onPaste={(e) => handlePaste(e, 'features_notes')}
+/>
+                                </div>
+                            </div>
+                        )}
+                        {view === 'options' && (
+                            <div className="other-details-section">
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
+                                <h3>Option Details</h3>
+                                <div className="product-info-display">
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>MPN: </label>
+                                            <span>{formData.mpn ? formData.mpn : 'N/A'}</span>
+                                        </div>
+                                        <div className="product-info">
+                                            <label style={{ fontWeight: 'bold' }}>Product Name: </label>
+                                            <span>{formData.product_name ? formData.product_name : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                <div className="form-group">
+                                    <label htmlFor="option_str">Options:</label>
+                                    <ReactQuill
+                                        ref={quillRef}
+                                        value={formData.option_str || ''}
+                                        onChange={handleEditorChange}
+                                        theme="snow"
+                                        placeholder="Start typing here..."
+                                        onReady={handleEditorReady}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {/* {view !== 'variants' && view !== 'taxonomy' && ( */}
+                         {view !== 'variants' && (
                             <button
                                 type="submit"
                                 className="save-button_pdp"

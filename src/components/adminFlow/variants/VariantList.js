@@ -12,7 +12,9 @@ const VariantList = ({ categories }) => {
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
     const [clearBtn, setShowclearBtn] = useState(false);
-    const [isCategorySelected ,  setIsCategorySelected] = useState(false);
+    const dropdownRef = useRef([]);
+    const [selectedValues, setSelectedValues] = useState([]); // Store selected values in the desired format
+    const [searchQuery, setSearchQuery] = useState('');
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -36,6 +38,11 @@ const VariantList = ({ categories }) => {
     const categoryDropdown4Ref = useRef(null);
     const categoryDropdown5Ref = useRef(null);
     const categoryDropdown6Ref = useRef(null);
+    const [filteredCategoriesdropdown, setFilteredCategories] = useState([]);
+    const [filteredCategoriesdropdownSearch, setFilteredCategoriesSearch] = useState([]);
+
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+     const [selectedCategories, setSelectedCategories] = useState([]);
    
     const handleClickOutside = (event) => {
      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
@@ -99,7 +106,6 @@ const VariantList = ({ categories }) => {
         const isIdInLastLevel = lastLevelCategoryIds.some(category => String(category.id) === selectedIdString);
         if (id && level) {
             setShowclearBtn(true);
-            setIsCategorySelected(true);
         }                
         if (isIdInLastLevel) {
             setIsAddProductVisible(true);
@@ -115,6 +121,20 @@ const VariantList = ({ categories }) => {
     };
     useEffect(() => {
         handleCategorySelectForVariants();
+    }, []);
+    const handleMultiSelectCategory = async (id, level) => {
+        const payload={};
+        try {
+            const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainListofCategoryCombinations/`,{payload});
+            console.log(res,'response here ');
+            setFilteredCategories(res.data.data.last_all_ids || []);
+            setFilteredCategoriesSearch(res.data.data.last_all_ids || []);
+        } catch (err) {
+            console.log('ERROR', err);
+        }
+    };
+    useEffect(() => {
+        handleMultiSelectCategory();
     }, []);
     const handleLevel2Select = (id) => {
         const selectedValue = id;
@@ -141,11 +161,8 @@ const VariantList = ({ categories }) => {
             setSelectedlevel6('');
             setIsLevel2DropdownOpen(false);
         }
-        else {
-            setSelectedLevel2Id('');
-        }
+        else {  setSelectedLevel2Id(''); }
     };
-
     const handleLevel3Select = (id) => {
         const selectedValue = id;
         if (selectedValue !== '') {
@@ -173,15 +190,10 @@ const VariantList = ({ categories }) => {
             setSelectedlevel6('');
             setIsLevel3DropdownOpen(false);
         }
-        else {
-            setSelectedLevel3Id('');
-        }
+        else {  setSelectedLevel3Id(''); }
     };
-
     const handleLevelSelect = (level, id) => {
-        const selectedValue = id || '';
-        console.log(selectedValue, 'selectedValue');
-        
+        const selectedValue = id || '';        
         if (selectedValue !== '') {
             switch (level) {
                 case 4:
@@ -206,12 +218,10 @@ const VariantList = ({ categories }) => {
                         }
                         return false;
                     });
-    
                     if (!level1Category || !level2Category || !level3Category) {
                         console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
                         return;
-                    }
-    
+                    }    
                     // Set the selected categories and reset lower levels
                     setSelectedCategoryId(level1Category._id);
                     setSelectedLevel2Id(level2Category._id);
@@ -220,7 +230,6 @@ const VariantList = ({ categories }) => {
                     setSelectedlevel5('');
                     setSelectedlevel6('');
                     break;
-    
                 case 5:
                       let level4Category, level3CategoryForLevel5, level2CategoryForLevel5, level1CategoryForLevel5;
                       categories.category_list.some(level1 => {
@@ -249,7 +258,6 @@ const VariantList = ({ categories }) => {
                     setSelectedlevel5(selectedValue);
                     setSelectedlevel6('');
                     break;
-    
                 case 6:
                     let level5Category, level4CategoryForLevel6, level3CategoryForLevel6, level2CategoryForLevel6, level1CategoryForLevel6;
                     categories.category_list.some(level1 => {
@@ -271,7 +279,6 @@ const VariantList = ({ categories }) => {
                         });
                       });
                     });
-                
                     if (!level1CategoryForLevel6 || !level2CategoryForLevel6 || !level3CategoryForLevel6 || !level4CategoryForLevel6 || !level5Category) {
                       console.error('Parent categories not found for Level 6 category with ID:', selectedValue);
                       return;
@@ -283,7 +290,6 @@ const VariantList = ({ categories }) => {
                     setSelectedlevel5(level5Category._id);
                     setSelectedlevel6(selectedValue);
                     break;
-                
                 default:
                     break;
             }
@@ -303,7 +309,6 @@ const VariantList = ({ categories }) => {
             }
         }
     };
-    
     const [error, setError] = useState(null);
     //  To make visible the next level categories
     const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
@@ -334,6 +339,8 @@ const VariantList = ({ categories }) => {
         setIslevel4DropdownOpen(false);
         setIslevel5DropdownOpen(false);
         setIslevel6DropdownOpen(false);
+        setRowSelectedCategoryIds({});
+        setSelectedValues([]);
       }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         setError(null);
@@ -377,7 +384,6 @@ const VariantList = ({ categories }) => {
             customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel'
             }
         });
-
         if (typeValueName) {
             try {
                 setError(null);
@@ -404,6 +410,151 @@ const VariantList = ({ categories }) => {
             }  }
     };
     const variantList = variantsData && variantsData.varient_list ? variantsData.varient_list : [];
+    const [dropdownOpen, setDropdownOpen] = useState({}); 
+    const [rowSelectedCategoryIds, setRowSelectedCategoryIds] = useState({});
+    const handleDropdownClick = (index) => {
+        setDropdownOpen((prev) => {
+            // Toggle the clicked dropdown's open/close state
+            return {
+                [index]: !prev[index], // Toggle the clicked dropdown
+            };
+        });
+    };
+    const handleClickOutsidedropdown = (event) => {
+        if (dropdownRef.current && Array.isArray(dropdownRef.current)) {
+            let isClickInsideAnyDropdown = dropdownRef.current.some(
+                (ref) => ref && ref.contains(event.target)
+            );
+            if (!isClickInsideAnyDropdown) {
+                setDropdownOpen({});  } } };
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutsidedropdown);
+        return () => document.removeEventListener('mousedown', handleClickOutsidedropdown);
+    }, []);
+      const handleSearchChangedropdown = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filtered = filteredCategoriesdropdownSearch.filter((category) =>
+            category.category_name.toLowerCase().includes(query)
+        );
+        setFilteredCategories(filtered);        
+    };
+    const handleCategorySelectdropdown = (e, index) => {
+        const categoryId = e.target.value;
+    
+        setRowSelectedCategoryIds((prevState) => {
+            const updatedState = { ...prevState };
+            if (!updatedState[index]) {
+                updatedState[index] = [];
+            }
+    
+            if (categoryId === "all") {
+                const allCategoryIds = filteredCategoriesdropdownSearch.map((cat) => cat.id);
+                updatedState[index] = ["all", ...allCategoryIds];
+            } else {
+                const isSelected = updatedState[index].includes(categoryId);
+                if (isSelected) {
+                    updatedState[index] = updatedState[index].filter((id) => id !== categoryId);
+                } else {
+                    updatedState[index] = [...updatedState[index], categoryId];
+                }
+            }
+    
+            return updatedState;
+        });
+    };
+    // const handleCategorySelectdropdown = (e) => {
+    //     const categoryId = e.target.value;
+    //     if (categoryId === "all") {
+    //         console.log('All');
+    //         if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+    //             setSelectedCategories([]);
+    //             setSelectedCategoryIds([]);
+    //         } else {
+    //             const allCategoryIds = filteredCategoriesdropdownSearch.map((cat) => cat.id);
+    //             setSelectedCategories([{ name: "Apply to all categories" }]);
+    //             setSelectedCategoryIds(allCategoryIds);
+    //         }
+    //     } else {
+    //         console.log('Else',categoryId);
+    //         const category = filteredCategoriesdropdownSearch.find((category) => category.id === categoryId);
+    //         console.log(category,'category');
+            
+    //         if (category) {
+    //             if (selectedCategoryIds.includes(category.id)) {
+    //                 setSelectedCategories((prevSelectedCategories) =>
+    //                     prevSelectedCategories.filter((selectedCategory) => selectedCategory.id !== category.id)
+    //                 );
+    //                 setSelectedCategoryIds((prevSelectedCategoryIds) =>
+    //                     prevSelectedCategoryIds.filter((id) => id !== category.id)
+    //                 );
+    //             } else {
+    //                 if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
+    //                     setSelectedCategories([]);
+    //                     setSelectedCategoryIds([]);
+    //                 }
+    //                 console.log('Inside to set categories');
+    //                 setSelectedCategories((prevSelectedCategories) => [
+    //                     ...prevSelectedCategories,
+    //                     category,
+    //                 ]);
+    //                 setSelectedCategoryIds((prevSelectedCategoryIds) => {
+    //                     const newCategoryIds = [...prevSelectedCategoryIds, category.id];
+    //                     return newCategoryIds;
+    //                 });
+    //                 console.log('selectedCategories',selectedCategories);
+    //                 console.log('selectedCategoryIds',selectedCategoryIds);
+    //             }
+    //         }
+    //     }
+       
+       
+    // };
+    const handleApplyClick = async (varient_option_id, type_id,category_level) => {
+        const selectedCategoryIds = Object.values(rowSelectedCategoryIds).flat();
+        try {
+            const response = await axiosInstance.post(
+                `${process.env.REACT_APP_IP}/updatevarientToReleatedCategories/`,
+                {
+                    category_id_list : selectedCategoryIds,
+                    category_level : category_level,
+                    varient_option_id:varient_option_id,
+                    type_id :type_id,
+                    option_value_list : selectedValues,
+
+                });
+             if (response.data && response.data.data.is_updated === true) {
+                    Swal.fire({ title: 'Success!', text: 'Related categories updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+                      }
+                    });
+            console.log("API call successful:", response);
+            setSelectedCategories([]); // Clear selected categories after applying
+            setSelectedCategoryIds([]);
+          } else {
+            console.log("API call failed:", response);
+          }
+          setRowSelectedCategoryIds({});
+          setSelectedValues([]);
+        } catch (error) {
+            setRowSelectedCategoryIds({});
+            setSelectedValues([]);
+          console.error("Error during API call:", error);
+        } 
+      };
+      const handleOptionSelect = (typeValueName, typeValueId) => {
+        setSelectedValues((prevSelected) => {
+            const isSelected = prevSelected.some(  (item) => item.type_value_id === typeValueId );
+            if (isSelected) {
+                return prevSelected.filter( (item) => item.type_value_id !== typeValueId );
+            } else {
+                return [
+                    ...prevSelected,
+                    { type_value_name: typeValueName, type_value_id: typeValueId },
+                ];
+            }
+        });
+    };
+    
     return (
         <div className='variant-schema'>
             <div className='CategoryTable-header'>
@@ -439,7 +590,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select Category</span>
                                     </div>
                                     {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
                                             <span>{level1.name}</span>
                                         </div>
                                     ))}
@@ -473,7 +624,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -507,7 +658,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -541,7 +692,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                             <span>{level4.name}</span>
                                         </div>
                                     ))}
@@ -575,7 +726,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                             <span>{level5.name}</span>
                                         </div>
                                     ))}
@@ -609,7 +760,7 @@ const VariantList = ({ categories }) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                             <span>{level6.name}</span>
                                         </div>
                                     ))}
@@ -643,9 +794,10 @@ const VariantList = ({ categories }) => {
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '14%' }}>Option Type</th>
-                                        <th style={{ width: '46%' }}>Values</th>
-                                        <th style={{ width: '40%' }}>Applicable Categories</th>
+                                        <th style={{ width: '12%' }}>Option Type</th>
+                                        <th style={{ width: '20%' }}>Values</th>
+                                        <th style={{ width: '27%' }}>Applicable Categories</th>
+                                        <th style={{ width: '50%' }}>Other Available Categories</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -657,17 +809,19 @@ const VariantList = ({ categories }) => {
                                             >+
                                             </button></td>
                                             <td>
-                                                {variant.option_value_list.length > 0 ? (
-                                                    <ul className="option-value-list">
-                                                        {variant.option_value_list.map((value, valueIndex) => (
-                                                            <li key={valueIndex} className="option-value-item">
-                                                                {value.type_value_name}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                ) : (
-                                                    <span>No values available</span>
-                                                )}
+                                            {variant.option_value_list.length > 0 ? (
+            <ul className="option-value-list">
+                {variant.option_value_list.map((value) => {
+                    const isSelected = selectedValues.some( (item) => item.type_value_id === value.type_value_id );
+                    return (
+                        <li
+                            key={value.type_value_id}
+                            className={`option-value-item ${ isSelected ? "selected" : "" }`}
+                            style={{ cursor: "pointer", padding: "6px", backgroundColor: isSelected ? "#d7ffe6" : "#fff", border: "1px solid #ccc", borderRadius: "4px", marginBottom: "4px", }}
+                            onClick={() => handleOptionSelect(  value.type_value_name,  value.type_value_id ) }  >
+                            {isSelected && (  <span style={{ marginRight: "8px", color: "#18b418" }}>  ✔  </span> )}  {value.type_value_name} </li>  );
+                })}
+            </ul>   ) : ( <span>No values available</span> )}
                                             </td>
                                             <td>
                                                 <ul className="option-category-list">
@@ -678,6 +832,87 @@ const VariantList = ({ categories }) => {
                                                         ))}
                                                 </ul>
                                             </td>
+                                            <td>
+   
+            <div style={{ margin: "10px 0" }}>
+                <div
+                  ref={(el) => (dropdownRef.current[index] = el)}
+                    style={{ position: "relative", display: "inline-block" }}  >
+                    <div
+                        style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "225px",  cursor: "pointer",  background: "#fff",  fontSize: "14px",  display: "flex",  alignItems: "center",  justifyContent: "space-between",
+                        }}
+                        onClick={() => {
+                            handleDropdownClick(index); }}  >
+                        Select Category
+                        <span style={{ fontSize: "12px", color: "#918f8f" }}>▼</span>
+                    </div>
+
+                    {dropdownOpen[index] && (
+                        <div
+                            style={{  width: "228px",  border: "1px solid #ccc",  backgroundColor: "#fff",  zIndex: 1000,  maxHeight: "130px",  overflowY: "auto",  padding: "8px",  position: "absolute",  top: "110%",  left: 0,  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",  borderRadius: "5px",
+                            }}
+                        >
+                            <input  type="text"  placeholder="Search category..."  value={searchQuery}  onChange={handleSearchChangedropdown}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}  style={{  width: "92%",  padding: "6px",  marginBottom: "8px",  fontSize: "14px",  border: "1px solid #ccc",  borderRadius: "4px",   }}
+                            />
+                            <div
+                                style={{  padding: "8px",  cursor: "pointer",  background: "lightgrey",  borderRadius: "4px",  marginBottom: "4px",  fontSize: "14px",
+                                }}
+                                onClick={() =>
+                                    handleCategorySelectdropdown(
+                                        { target: { value: "all" } },
+                                        index
+                                    )
+                                }
+                            >
+                                Apply to all categories
+                            </div>
+                            {filteredCategoriesdropdown.length > 0 ? (
+                                filteredCategoriesdropdown.map((category) => (
+                                    <div
+                                        style={{  padding: "6px",  cursor: "pointer",  borderRadius: "4px",  background: selectedCategoryIds.includes( category.id )  ? "#d7ffe6"  : "#fff", fontSize: "14px", marginBottom: "2px",  }}
+                                        onClick={() =>
+                                            handleCategorySelectdropdown(
+                                                { target: { value: category.id } },
+                                                index
+                                            )
+                                        }
+                                    >
+                                         {rowSelectedCategoryIds[index]?.includes(
+                                                        category.id
+                                                    ) && (
+                                            <span
+                                                style={{
+                                                    marginRight: "8px",
+                                                    color: "#18b418",
+                                                }}
+                                            >
+                                                ✔
+                                            </span>
+                                        )}
+                                        {category.category_name}
+                                    </div>
+                                ))
+                            ) : (
+                                <div
+                                    style={{
+                                        padding: "6px",
+                                        fontSize: "14px",
+                                        color: "#999",
+                                    }}
+                                >
+                                    No categories found.
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+                {rowSelectedCategoryIds[index]?.length > 0 && (
+        <button   onClick={() => handleApplyClick(variant.varient_option_id, variant.type_id, selectedCategoryLevelForVariant)} style={{ margin: "0px 0px 0px 10px", width:'20%', padding:'11px 2px 10px 2px' }}>
+          Apply
+        </button>
+      )}
+            </div>
+        </td>
                                         </tr>
                                     ))}
                                 </tbody>

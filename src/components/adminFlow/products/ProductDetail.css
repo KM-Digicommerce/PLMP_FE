@@ -9,11 +9,13 @@
 }
 .section-buttons button { display: block; padding: 10px 10px 11px 6px; background-color: #323335; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background-color 0.2s ease; text-align: justify;
 }
-.section-buttons .variants { width: 94%;}
-.section-buttons .productDetail { width: 74%;}
-.section-buttons .taxonomy {  width: 17%;}
-.section-buttons .otherDetails { width: 68%;}
-.section-buttons .pricing { width: 28%;}
+.section-buttons .variants { min-width: 22%;}
+.section-buttons .productDetail { min-width: 18%;}
+.section-buttons .taxonomy { min-width: 14%;}
+.section-buttons .keyDetails { min-width: 15%;}
+.section-buttons .pricing {min-width: 10%;}
+.section-buttons .options {min-width: 12%;}
+.section-buttons .rawData {min-width: 14%;}
 .section-buttons button:hover {
   background-color: #706e6e94;
   color: black;
@@ -39,6 +41,7 @@
 /* .variant-section h3, */
 /* .taxonomy-section h3, */
 /* .pricing-section h3,.other-details-section h3 {  font-size: 1rem;  margin-bottom: 1rem;  color: #333;  border-bottom: 2px solid #007bff;  padding-bottom: 8px;} */
+.form-group .dimensions{ margin: 0px !important;}
 .form-group {  display: flex;  flex-direction: column; }
 .form-group label {  font-size: 14px;  color: #666;  margin-bottom: 3px;}
 .form-group input {  padding: 10px;  font-size: 14px;  border: 1px solid #ddd;  border-radius: 4px;  margin: 4px !important;}
@@ -51,7 +54,6 @@
 .save-button_pdp:hover {  background-color: #218838;}
 .swal-custom-confirm { width: 100% !important;}
 .cls_addvariant { background: rgb(144 144 144); margin: 0; width: 15%;}
-
 .select_pdp { margin: 2px;}
 .input_pdp { margin: 4px 0px 4px 0px !important; width: 95% !important;}
 .input_pdps {  margin: 0px !important;  width: 97% !important;}
@@ -84,11 +86,13 @@ input[type="number"] {  margin: 6px 10px 6px 10px !important;}
 .next-btn { right: -25px; }
 .dropdown-options[aria-disabled="true"] { pointer-events: none; opacity: 0.6; }
 .dropdown-disabled {  cursor: not-allowed; }
-.dropdown-option-disabled { display: none;}
-.dropdown-options-disabled{  display: none; }
+/* .dropdown-option-disabled { display: none;}
+.dropdown-options-disabled{  display: none; } */
 .css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root{ width: 99% !important;font-size: 12px !important;}
 .css-1gp2w1d-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{font-size: 7px !important;}
 .css-1y6tzp0-MuiFormControl-root{padding: 0px 0px 0px 4px !important;width: 99% !important;}
 #RetailPrice{width: 93% !important;margin: 6px 3px 6px 3px !important;font-size: 12px;padding: 13px;}
 .custom-width{width: 275px !important;}
 .pdp-variant-table{margin-top: 10px;}
+.pdp-search{margin: 1px 0px 0px 0px; width: 92%;}
+.dimensions-unit{margin-top: 0px !important;border-radius: 4px;border: 1px solid #ccc;}
