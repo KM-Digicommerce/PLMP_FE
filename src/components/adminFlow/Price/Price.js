@@ -25,10 +25,8 @@ const PriceComponent = () => {
   const [variantOptions, setVariantOptions] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
-
   const [selectedBrandForVariant, setSelectedBrandForVariant] = useState(null);
   const [selectedBrandIdForVariant, setSelectedBrandIdForVariant] = useState(null);
-
   const [variantTypeValues, setVariantTypeValues] = useState([]); // Example data, replace with API call
   const [selectedVariantValues, setSelectedVariantValues] = useState([]);
   const [selectedVariantValueIds, setSelectedVariantValueIds] = useState([]);

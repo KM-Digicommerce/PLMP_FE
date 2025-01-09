@@ -92,7 +92,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     category_level: selectedCategoryLevel,
                     category_id: selectedCategoryId,
                   });
-               console.log(response.data.data.category_name,'responae');
                setBreadcrumbs(response.data.data.category_name);
             } catch (err) {
                 console.error('Error fetching variants:', err);
@@ -143,6 +142,39 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
 
                     <label htmlFor="product_name">Product Name <span className="required">*</span></label>
                     <input type="text" name="product_name" className="add_input_field" placeholder="" required value={productData.product_name} onChange={handleChange}  autoComplete="off" />
+                    <div className="form-group">
+                                        <label htmlFor="dimensions">Dimensions</label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px', padding:'6px 20px 6px 10px' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="height" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Height</label>
+                                                <input type="number" id="height" name="height" className="dimensions" style={{ width: '60%' }}  value={productData.height} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="width" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Width</label>
+                                            <input type="number" id="width" name="width" className="dimensions" style={{ width: '60%' }} value={productData.width} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="depth" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Depth</label>
+                                                <input type="number" id="depth" name="depth" className="dimensions" style={{ width: '60%' }} value={productData.depth} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="length" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}}>Length</label>
+                                                <input type="number" id="length" name="length" className="dimensions" style={{ width: '60%' }} value={productData.length} onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <label htmlFor="unit" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
+                                                <select id="unit" name="unit" className="dimensions-unit" style={{ width: '80%' }} value={productData.unit} onChange={handleChange} >
+                                                    <option value="in">in</option>
+                                                    <option value="mm">mm</option>
+                                                    <option value="ft">ft</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                 </div>
                 <div className="form-section">
                     <div className="CategoryTable-header">
@@ -243,7 +275,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
                     <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
                 </div>
-
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
                     <div className="pricing-grid">
@@ -284,6 +315,16 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
                 </div>
+                <div className="form-section">
+                    <h3 style={{ margin: '6px' }}>Raw Data</h3>
+                    {/* <label htmlFor="features_notes">Standard Features/Notes:</label> */}
+                    <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} />
+                </div>
+                <div className="form-section">
+                    <h3 style={{ margin: '6px' }}>Options</h3>
+                    {/* <label htmlFor="option_str">Option </label> */}
+                    <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} />
+                </div>
                 <button onClick={onSave} className="save-button">Add Product</button>
             </div>
         </div>
@@ -316,6 +357,11 @@ const AddProduct = (categories) => {
                 breadcrumb: '',
                 brand_id: '',
                 product_name: '',
+                height:'',
+                width:'',
+                depth:'',
+                length:'',
+                unit:'in',
                 long_description: '',
                 short_description: '',
                 features: '',
@@ -324,6 +370,8 @@ const AddProduct = (categories) => {
                 msrp: '',
                 base_price: '',
                 key_features: '',
+                features_notes:'',
+                option_str:'',
                 varients: [
                     {
                         sku_number: '',
@@ -347,7 +395,7 @@ const AddProduct = (categories) => {
     }]);
     const handleLoadNewmodel = () => {
         setProductData({
-            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '', varients: [{
+            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', unit:'in',long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'',  option_str:'', varients: [{
                     sku_number: '',
                     finished_price: '0',
                     un_finished_price: '0',
@@ -400,9 +448,7 @@ const AddProduct = (categories) => {
         setSelectedVariants(updatedVariants);
       };
       
-    const handleVariantDetailChange = (e, index) => {
-        console.log('Inside Variant change 1');
-        
+    const handleVariantDetailChange = (e, index) => {        
         const { name, value } = e.target;
         setSelectedVariants(prev => {
             const updatedVariants = [...prev];
@@ -413,17 +459,15 @@ const AddProduct = (categories) => {
             else if (RetailPriceOption === 'unfinished_price' && name === 'unfinishedPrice') {
                 updatedVariants[index].retailPrice = RetailPrice * parseFloat(updatedVariants[index].unfinishedPrice || 0);
             }
-            else{
-                console.log('Inside else pae');
-                
+            else{                
                 updatedVariants[index].retailPrice = 1 * (parseFloat(updatedVariants[index].finishedPrice) || 0);
             }
             return updatedVariants;
         });
     };
     const handleChange = async (e) => {
+        let updatedValue = '';
         const { name, value } = e.target;
-        console.log(value,'Values');
         if (name === 'brand_id' && value !== '') {
             try {
                 const payload = {
@@ -443,11 +487,18 @@ const AddProduct = (categories) => {
                 }
                
         }
+        if (name === 'height' && value !== '' || name === 'width' && value !== '' || name === 'depth' && value !== '' || name === 'length' && value !== '') {
+             updatedValue = !isNaN(value) && value !== '' ? parseFloat(value).toFixed(2) : value;
+        }
+        else{
+            updatedValue = value;
+        }
+
         setProductData({
             ...productData,
             product_obj: {
                 ...productData.product_obj,
-                [name]: value
+                [name]: updatedValue
             }
         });
     };
@@ -526,7 +577,7 @@ const AddProduct = (categories) => {
                     },
                   })
                 setProductData({
-                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '', varients: [{
+                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', unit:'in', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'', option_str:'', varients: [{
                             sku_number: '',
                             finished_price: '0',
                             un_finished_price: '0',
@@ -570,7 +621,7 @@ const AddProduct = (categories) => {
     });
     const [selectedCategoryForVariant, setSelectedCategoryForVariant] = useState('');
     const [selectedCategoryLevel, setSelectedCategoryLevel] = useState('');
-const categoryDropdownRef = useRef(null);
+  const categoryDropdownRef = useRef(null);
   const categoryDropdown2Ref = useRef(null);
   const categoryDropdown3Ref = useRef(null);
   const categoryDropdown4Ref = useRef(null);
@@ -617,8 +668,7 @@ const categoryDropdownRef = useRef(null);
 
     const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
 
-    const filteredCategoriesLevel6 = levelFiveCategory
-        ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
+    const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
     const handleSearchChange = (level, value) => {
         setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -891,7 +941,6 @@ const categoryDropdownRef = useRef(null);
                             <div className="selected-category">
                                 {selectedCategoryId ? categories.categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
                                 <span className="dropdown-icons">
-
                                     <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                 </span>
                             </div>
