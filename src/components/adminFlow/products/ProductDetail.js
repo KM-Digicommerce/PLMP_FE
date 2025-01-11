@@ -7,7 +7,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash,faEdit,faClone } from '@fortawesome/free-solid-svg-icons';
 import ReactQuill from 'react-quill'; // React wrapper for Quill
 import 'react-quill/dist/quill.snow.css';
 import { FaTrashAlt } from 'react-icons/fa'; // For delete icon
@@ -44,7 +44,7 @@ const ProductDetail = ({ categories }) => {
     });
     const [variantOptions, setVariantOptions] = useState([]);
     const [varient_option_list, setvarient_option_list] = useState([]);
-    
+    const UserRole = localStorage.getItem('user_role');
     const [brand, setBrand] = useState([]);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
@@ -720,11 +720,30 @@ const ProductDetail = ({ categories }) => {
           prevVariants.filter((variant) => variant.type_name !== typeName)
         );
       };
+      const handleCloneClick = async(e, variantId) => {
+        console.log('Variant', variantId);
+        e.stopPropagation(); // Prevent row click event from triggering
+        try {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/cloneVarient/`,{
+          id : productId,
+          variant_id : variantId
+        });
+        if (response.data.data.is_created === true) {
+             Swal.fire({ title: 'Success', text: 'Variant Cloned successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+        }
+        else {
+             Swal.fire({  title: 'Error',  text: 'Failed to Clone Variant!',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
+             });
+        }
+        fetchVariantDetail();
+    } catch (err) {
+        console.log(err);
+    }
+      };
       const handleEditClick = async(variant) => {
         console.log('variantOptions',variantOptions);
         let option_list = variant.varient_option_list;
         console.log(option_list,'option_list data');
-
         console.log(option_list.length,'length',variantOptions.length);
         console.log(variant,'Varaint fuill data');
         if (variantOptions.length > 0 && variant.varient_option_list.length > 0) {
@@ -1237,11 +1256,19 @@ const ProductDetail = ({ categories }) => {
                                                     )}
                                                 </td>
                                                 <td className="others-column">
+                                                    <FontAwesomeIcon
+                                                                        icon={faClone}
+                                                                        onClick={(e) => handleCloneClick(e, variant.id)}
+                                                                        style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff', padding:'0px 7px 0px 4px' }}
+                                                                      />
+                      {UserRole === 'admin' && (
+
                                                      <FontAwesomeIcon
                                                                       icon={variant.is_active ? faEye : faEyeSlash}
                                                                       onClick={(e) => handleVisibilityToggle(e, variant)}
                                                                       style={{ cursor: 'pointer', fontSize: '16px' }}
                                                                     />
+                      )}
                                                     <FontAwesomeIcon
                                                         icon={faEdit}
                                                         onClick={() => handleEditClick(variant)}

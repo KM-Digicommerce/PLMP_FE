@@ -60,20 +60,64 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
         };
       }, []);
     const handleAddBrand = async () => {
-        const { value: brandName } = await Swal.fire({
-          title: 'Add New Vendor',
-          input: 'text',
-          inputLabel: 'Vendor Name',
-          inputPlaceholder: 'Enter the Vendor name',
-          showCancelButton: true,
-        });
-    
-        if (brandName) {
-          try {
-            await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
-            Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {    container: 'swal-custom-container',    popup: 'swal-custom-popup',    title: 'swal-custom-title',    confirmButton: 'swal-custom-confirm',    cancelButton: 'swal-custom-cancel',
+        const { value: formValues } = await Swal.fire({
+              html: `
+             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+          <button 
+            id="close-popup-btn" 
+            style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
+            &times;
+          </button>
+          <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
+        </div>
+        <div>
+          <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Name" style="margin-bottom: 10px;">
+            <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Email Address" style="margin-bottom: 10px;">
+          <input id="contact-info" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Contact Information" style="margin-bottom: 10px;">
+          <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Address" style="margin-bottom: 10px; width: 97%; height: 80px; padding:6px;"></textarea>
+          <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Website" style="margin-bottom: 10px;">
+            <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
+          <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
+        </div>
+            `,
+              showCancelButton: true,
+              focusConfirm: false,
+              didOpen: () => {
+                // Add close functionality to the button after the popup renders
+                const closeButton = document.getElementById('close-popup-btn');
+                if (closeButton) {
+                  closeButton.addEventListener('click', () => {
+                    Swal.close();
+                  });
+                }
+              },
+              preConfirm: () => {
+                const name = document.getElementById('vendor-name').value;
+                const email = document.getElementById('vendor-email').value;
+                const address = document.getElementById('vendor-address').value;
+                const website = document.getElementById('vendor-website').value;
+                const mobile_number = document.getElementById('contact-info').value;
+                const logo = document.getElementById('vendor-logo').files[0];
+                if (!name) {
+                  Swal.showValidationMessage('Please enter a vendor name');
+                }
+                return { name, email,address,website,mobile_number, logo };
+              },
+              customClass: { container: 'swal-custom-container swal-overflow', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
               },
             });
+    
+        if (formValues) {            
+            const { name, logo, email, address, website, mobile_number } = formValues;
+          try {
+            const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/createBrand/`,  formValues,
+                { headers: { 'Content-Type': 'multipart/form-data',  }, } );
+                   if (response.data.data.is_created === true) {
+                             Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',
+                               customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+                               },
+                             });
+                           }
             fetchBrand();
           } catch (error) {
             console.error('Error adding Vendor:', error);

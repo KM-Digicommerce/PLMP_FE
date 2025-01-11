@@ -25,7 +25,9 @@ const ProductList = () => {
   const [sortVisible, setSortVisible] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showTextCategories, setShowTextCategories] = useState(false);
-
+  const BrandIdFilters = localStorage.getItem('brandId');
+  const [BrandIdFilter, setBrandIdFilter] = useState('');
+  const UserRole = localStorage.getItem('user_role');
   const handleVisibilityToggle = async (e, product) => {
     e.stopPropagation(); // Prevent click propagation if necessary
     // Toggle the visibility based on the current state of `is_active`
@@ -144,6 +146,7 @@ const ProductList = () => {
       else{  setSortOption(''); }    
   };
   const fetchData = async (params = {}) => {
+    setResponseData([]);
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
@@ -176,11 +179,7 @@ const ProductList = () => {
       console.error("Error fetching brands:", err);
     }
   };
-  useEffect(() => {
-    fetchData({ filter: true });
-    fetchCategories();
-    fetchBrands();
-  }, []);
+  
   const handleCategoryChange = async (event) => {
     const selectedCategoryId = event.target.value;
     setSelectedCategory(selectedCategoryId);
@@ -259,24 +258,64 @@ const ProductList = () => {
     return ( productName.includes(query) || model.includes(query) || tags.includes(query) || mpn.includes(query)
     );
   });
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  let sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortColumn) return 0;
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
     if (aValue === bValue) return 0;
     return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
   });
-  const handleCloneClick = (e, product) => {
-    console.log('product',product);
+  const handleCloneClick = async(e, productId) => {
     e.stopPropagation(); // Prevent row click event from triggering
-      const clonedProductData = { ...product, product_id: undefined }; // Avoid copying product_id
-      navigate(`/Admin/addproduct`, { state: { productData: clonedProductData } });
+    try {
+    const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/cloneProduct/`,{
+      id : productId
+    });
+    if (response.data.data.is_created === true) {
+         Swal.fire({ title: 'Success', text: 'Product Cloned successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+    }
+    else {
+         Swal.fire({  title: 'Error',  text: 'Failed to Clone product!',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
+         });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+    const filter = true;
+    fetchData({ filter });
   };
   const clearSearchInput = () => {
     setSearchQuery('');
     const filter = true;
     fetchData({ filter });
   };
+  useEffect(() => {
+    if (BrandIdFilters) {
+      setBrandIdFilter(BrandIdFilters);
+    }
+    fetchCategories();
+    fetchBrands();
+  }, []);
+  useEffect(() => {
+    if (BrandIdFilter) {
+      sortedProducts ='';
+      setResponseData([]);
+      // If a brandId is found in localStorage or set by previous effect, fetch data for that brand
+      console.log(BrandIdFilter, 'Inside If');
+      setSelectedBrand(BrandIdFilter);
+      fetchData({ brand_id: BrandIdFilter });
+      const timeoutId = setTimeout(() => {
+        localStorage.removeItem('brandId');
+        console.log('brandId removed from localStorage after 1 minute');
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+        } else {
+          setResponseData([]);
+      console.log(BrandIdFilter, 'Else ');
+      // If no brandId, fetch general data without any filter
+      fetchData({ filter: true });
+    }
+  }, [BrandIdFilter]);
   return (
     <div className="product-list">
       <div className="search-container" style={{position:'relative'}}>
@@ -391,11 +430,18 @@ const ProductList = () => {
                     onClick={(e) => handleVisibilityToggle(e, item.product_id)}
                     style={{ cursor: 'pointer', fontSize: '16px' }}
                   /> */}
+                  <FontAwesomeIcon
+                    icon={faClone}
+                    onClick={(e) => handleCloneClick(e, item.product_id)}
+                    style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff', padding:'0px 7px 0px 4px' }}
+                  />
+                      {UserRole === 'admin' && (
                     <FontAwesomeIcon
                   icon={item.is_active ? faEye : faEyeSlash}
                   onClick={(e) => handleVisibilityToggle(e, item)}
                   style={{ cursor: 'pointer', fontSize: '16px' }}
                 />
+                      )}
                 </td>
                 {/* <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>
                 <td className="msrpprice-column">{item.msrp ? `$${item.msrp}` : ''}</td> */}

@@ -322,10 +322,9 @@ function HomePage() {
             <Route path="/" element={
               showDashboard ? (
                 <Dashboard />
-              )  : showProductList ? (
-                <ProductList productTypeId={selectedProductTypeId} />
               ) : null
             } />
+            <Route path="/allproducts" element={<ProductList productTypeId={selectedProductTypeId}/>} />
             <Route path="/history" element={ showHistory ? ( <HistoryPage />):null} />
             <Route path="/categorylist"  element={showCategoriesTable ? (<CategoriesTable categories={categoriesData} refreshCategories={fetchCategories}  />) : null}  />
             <Route path="/variantlist"  element={showVariantsTable ? (<VariantList categories={categoriesData} />) : null}  />
