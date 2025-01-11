@@ -102,7 +102,7 @@ const VendorSummary = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">Email Id</label>
                 <input
                   type="email"
                   id="email"
@@ -112,7 +112,7 @@ const VendorSummary = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="mobile_number">Contact</label>
+                <label htmlFor="mobile_number">Contact Information</label>
                 <input
                   type="text"
                   id="mobile_number"
@@ -150,9 +150,10 @@ const VendorSummary = () => {
             </div>
           ) : (
             <>
+              <p><strong>Name:</strong> {vendor.name}</p>
               <p><strong>Id:</strong> {vendor.brand_number}</p>
-              <p><strong>Email:</strong> {vendor.email}</p>
-              <p><strong>Contact:</strong> {vendor.mobile_number}</p>
+              <p><strong>Email-id:</strong> {vendor.email}</p>
+              <p><strong>Contact Information:</strong> {vendor.mobile_number}</p>
               <p><strong>Address:</strong> {vendor.address}</p>
               <p><strong>Website:</strong> {vendor.website || '-'}</p>
               <p><strong>Product Count: </strong>{vendor.product_count || '0'}</p>
