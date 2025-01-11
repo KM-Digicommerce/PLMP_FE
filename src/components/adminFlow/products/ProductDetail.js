@@ -43,7 +43,7 @@ const ProductDetail = ({ categories }) => {
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
-    const [varient_option_list, setvarient_option_list] = useState([]);
+    const [variant_option_list, setvarient_option_list] = useState([]);
     const UserRole = localStorage.getItem('user_role');
     const [brand, setBrand] = useState([]);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -746,11 +746,11 @@ const ProductDetail = ({ categories }) => {
         console.log(option_list,'option_list data');
         console.log(option_list.length,'length',variantOptions.length);
         console.log(variant,'Varaint fuill data');
-        if (variantOptions.length > 0 && variant.varient_option_list.length > 0) {
-            console.log('Inisde if');
-            setvarient_option_list(variant.varient_option_list);
-        }
-        // console.log(variant.varient_option_list,'varient_option_list data');
+        let unmatchedOptions = [];
+
+        // Loop through variant's option list
+      
+        // console.log(variant.variant_option_list,'variant_option_list data');
         setSelectedVariants({
           id:variant.id,
           sku: variant.sku_number,
@@ -764,6 +764,33 @@ const ProductDetail = ({ categories }) => {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
             console.log(res,'res cehk her');
             setVariantOptions(res.data.data.varient_list);
+            option_list.forEach((option) => {
+                console.log(option.type_name, 'option.type_name');
+                
+                // Check if the option's type_name and type_value_id are found in variantOptions
+                const isMatch = res.data.data.varient_list.some((variantOption) => {
+                  return variantOption.option_value_list.some((optionValue) => 
+                    optionValue.type_value_id === option.type_value_id && 
+                    variantOption.type_name === option.type_name
+      
+                  );
+                 
+                });
+               
+                console.log('isMatch:', isMatch);  // Check if a match was found
+            
+                // If no match is found, add it to the unmatchedOptions array
+                if (!isMatch) {
+                  console.log(option.type_name, ' else option.type_name');
+                  unmatchedOptions.push(option);
+                }
+              });
+            
+              // If there are unmatched options, set the variant_option_list state
+              if (unmatchedOptions.length > 0) {
+                console.log('Unmatched options found, setting variant_option_list', unmatchedOptions);
+                setvarient_option_list(unmatchedOptions);
+              }
         } catch (err) {
             console.error('Error fetching variants:', err);
         }
@@ -771,7 +798,6 @@ const ProductDetail = ({ categories }) => {
       };
       const handleUpdateFormSubmit = async (e) => {
         console.log(e,'Update submit');
-        
         e.preventDefault();
         const options = variantOptions
         .map((variant) => {
@@ -785,6 +811,18 @@ const ProductDetail = ({ categories }) => {
             return null;
         })
         .filter((option) => option !== null);
+        //  options = variant_option_list
+        // .map((variant) => {
+        //     const selectedOption = selectedVariants[variant.type_id];
+        //     if (selectedOption) {
+        //         return {
+        //             option_name_id: variant.type_id,
+        //             option_value_id: selectedOption,
+        //         };
+        //     }
+        //     return null;
+        // })
+        // .filter((option) => option !== null);
         try {
           setLoading(true);
           const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  {
@@ -1233,12 +1271,12 @@ const ProductDetail = ({ categories }) => {
                                 <table className="variant-table pdp-variant-table">
                                     <thead>
                                         <tr>
-                                            <th>Variant SKU</th>
-                                            <th>Unfinished Price</th>
-                                            <th>Finished Price</th>
-                                            <th>Retail Price</th>
-                                            <th>Options</th>
-                                            <th>Action</th>
+                                            <th style={{ minWidth: '150px' }}>Variant SKU</th>
+                                            <th style={{ minWidth: '150px' }}>Unfinished Price</th>
+                                            <th style={{ minWidth: '150px' }}>Finished Price</th>
+                                            <th style={{ minWidth: '150px' }}>Retail Price</th>
+                                            <th style={{ minWidth: '150px' }}>Options</th>
+                                            <th style={{ minWidth: '90px' }}>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1362,15 +1400,15 @@ const ProductDetail = ({ categories }) => {
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
-              {varient_option_list.length > 0 ? (
-  varient_option_list.map((variant) => (
+              {variant_option_list.length > 0 ? (
+  variant_option_list.map((variant) => (
     <div key={variant.type_name}>
       {variant.type_name ? (
         <>
           <label
             htmlFor={variant.type_name}
             style={{  margin: '0px 0px 0px 1px',  color: 'rgba(0, 0, 0, 0.6)',  }}  >
-            {variant.type_name}
+            {variant.type_name} 111
             <button
               onClick={() => handleDeleteVariant(variant.type_name)}
               style={{  background: 'none',  border: 'none',  color: 'red',  cursor: 'pointer',  width: 'auto',  float: 'right',}}  >
