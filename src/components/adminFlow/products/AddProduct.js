@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
@@ -106,7 +106,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         }
     }, [isOpen, selectedCategoryId]);
     if (!isOpen) return null;
-
+    
     return (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -271,9 +271,28 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <label htmlFor="long_description">Long Description <span className="required">*</span></label>
-                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    {/* <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} /> */}
+                    <textarea
+    name="long_description"
+    placeholder="Long Description"
+    required
+    value={productData.product_obj.long_description}
+    onChange={handleChange}
+    onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
+    onPaste={(e) => handlePaste(e, 'long_description')}
+/>
+
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
-                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
+                    {/* <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} /> */}
+                    <textarea
+    name="short_description"
+    placeholder="Short Description"
+    required
+    value={productData.product_obj.short_description}
+    onChange={handleChange}
+    onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
+    onPaste={(e) => handlePaste(e, 'short_description')}
+/>
                 </div>
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
@@ -310,20 +329,26 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
-                    <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
+                    {/* <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
                     <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
-                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
+                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} /> */}
+                    <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} />
+                    <textarea name="attributes" placeholder="Attributes" required value={productData.product_obj.attributes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'attributes')} onPaste={(e) => handlePaste(e, 'attributes')} />
+                    <textarea name="tags" placeholder="Tags" required value={productData.product_obj.tags} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'tags')} onPaste={(e) => handlePaste(e, 'tags')} />
+                    <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Raw Data</h3>
                     {/* <label htmlFor="features_notes">Standard Features/Notes:</label> */}
-                    <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} />
+                    {/* <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} /> */}
+                    <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.product_obj.features_notes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features_notes')} onPaste={(e) => handlePaste(e, 'features_notes')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Options</h3>
                     {/* <label htmlFor="option_str">Option </label> */}
-                    <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} />
+                    {/* <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} /> */}
+                    <textarea name="option_str" placeholder="Options" required value={productData.product_obj.option_str} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'option_str')} onPaste={(e) => handlePaste(e, 'option_str')} />
                 </div>
                 <button onClick={onSave} className="save-button">Add Product</button>
             </div>
@@ -465,9 +490,63 @@ const AddProduct = (categories) => {
             return updatedVariants;
         });
     };
+    const handleTextareaChange = (e, fieldName) => {
+        const { name, value } = e.target;
+        // Ensure the first line starts with a bullet point if the field is empty
+        if (value === "" && e.key === "Enter") {
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: "* "
+            }
+          });
+          return; }
+        // Handle Enter key press: Add bullet point before the new line
+        if (e.key === "Enter") {
+          e.preventDefault(); // Prevent the default enter action
+          const cursorPosition = e.target.selectionStart;
+          const updatedValue = value.slice(0, cursorPosition) + "\n* " + value.slice(cursorPosition);
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: updatedValue
+            }
+          });
+        }
+        // Normal typing and space handling
+        if (e.key === " " || e.key !== "Enter") {
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: value
+            }
+          });
+        }
+      };
+      // Handle paste: Format pasted content by adding * to each line
+      const handlePaste = (e, fieldName) => {
+        e.preventDefault(); // Prevent the default paste behavior
+        const pastedText = e.clipboardData.getData("text");
+        // Format pasted text: Add a bullet point to each new line
+        const formattedText = pastedText
+          .split("\n") // Split pasted text by new line
+          .map((line) => `* ${line.trim()}`) // Add * before each line
+          .join("\n"); // Join the lines back together
+        setProductData({
+          ...productData,
+          product_obj: {
+            ...productData.product_obj,
+            [fieldName]: formattedText
+          }
+        });
+      };    
     const handleChange = async (e) => {
         let updatedValue = '';
         const { name, value } = e.target;
+        console.log(value,'value');
         if (name === 'brand_id' && value !== '') {
             try {
                 const payload = {
@@ -491,6 +570,8 @@ const AddProduct = (categories) => {
              updatedValue = !isNaN(value) && value !== '' ? parseFloat(value).toFixed(2) : value;
         }
         else{
+            console.log('else sfsfd',name);
+            
             updatedValue = value;
         }
 
@@ -1144,6 +1225,8 @@ const AddProduct = (categories) => {
                         onSave={handleSave}
                         productData={productData}
                         handleChange={handleChange}
+                        handlePaste={handlePaste}
+                        handleTextareaChange={handleTextareaChange}
                         handleVariantChange={handleVariantChange}
                         selectedCategoryId={selectedCategoryForVariant}
                         selectedVariants={selectedVariants}

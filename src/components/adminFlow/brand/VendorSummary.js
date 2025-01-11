@@ -46,23 +46,26 @@ const VendorSummary = () => {
       </button>
       <button
         className="go-to-products-btn"
-        style={{display:'none'}}
+        // style={{display:'none'}}
         onClick={() => navigate(`/Admin/products/${brandId}`)}
       >  Go to Products
       </button>
     </div>
     <div className="vendor-card">
       <div className="vendor-card-header">
-        <h2>{vendor.brand_number}</h2>
-        <h3>{vendor.name}</h3>
+      <div className="brand-logo">
+                <img  src={ vendor.logo || 'https://img.freepik.com/free-vector/creative-furniture-store-logo_23-2148455884.jpg?semt=ais_hybrid'  } alt={`${vendor.name} Logo`} className="brand-logo-image"  />
+              </div>
+        <h2>{vendor.name}</h2>
+        {/* <h3>{vendor.brand_number}</h3> */}
       </div>
-
       <div className="vendor-card-body">
-        {vendor.email && <p><strong>Email:</strong> {vendor.email}</p>}
-        {vendor.mobile_number && <p><strong>Contact:</strong> {vendor.mobile_number}</p>}
-        {vendor.address && <p><strong>Address:</strong> {vendor.address}</p>}
-        {vendor.website && <p><strong>Website:</strong> {vendor.website}</p>}
-        {vendor.product_count && <p><strong>Product Count:</strong> {vendor.product_count}</p>}
+        {vendor.brand_number && <p><strong>Id:</strong> {vendor.brand_number}</p>}
+        <p><strong>Email:</strong> {vendor.email}</p>
+        <p><strong>Contact:</strong> {vendor.mobile_number}</p>
+        <p><strong>Address:</strong> {vendor.address}</p>
+        <p><strong>Website:</strong> {vendor.website || '-'}</p>
+        <p><strong>Product Count: </strong>{vendor.product_count || '0'}</p>
       </div>
     </div>
   </div>
