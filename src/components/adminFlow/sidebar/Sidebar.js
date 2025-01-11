@@ -25,6 +25,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   const navigate = useNavigate();
   const location = useLocation();
   const [uploadProgress, setUploadProgress] = useState(0);
+  const UserRole = localStorage.getItem('user_role');
 
   const showUploadErrorSwal = (message) => {
     Swal.fire({title: 'Upload Failed',text: message,icon: 'error',confirmButtonText: 'OK',customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
@@ -112,18 +113,11 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
     if (section !== 'products') {
       setShowProductsSubmenu(false);  // Close the admin control submenu
     }
-      if (section === 'all-products' || section === 'add-product') {
-        setActiveSection('products')
-      }
-      if (section === 'add-product') {
-        navigate('/Admin/addproduct');
-      }
-      if (section === 'hidden') {
-        navigate('/Admin/hiddenproduct');
-      }
-      if (section === 'settings' || section === 'users') {
-        setActiveSection('setting')
-      }
+      if (section === 'all-products' || section === 'add-product') {  setActiveSection('products')  }
+      if (section === 'all-products') { navigate('/Admin/allproducts'); }
+      if (section === 'add-product') { navigate('/Admin/addproduct'); }
+      if (section === 'hidden') {  navigate('/Admin/hiddenproduct');  }
+      if (section === 'settings' || section === 'users') {  setActiveSection('setting')  }
       if (section === 'variants') {  navigate('/Admin/variantlist'); }
       if (section === 'categories') {  navigate('/Admin/categorylist'); }
       if (section === 'history') {  navigate('/Admin/history'); }
@@ -219,19 +213,35 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
         </li>
         <li onClick={() => {toggleSettingsSubmenu(); handleSectionClick('setting');}} className={`productsMenu ${activeSection === 'setting' ? 'active' : ''}`}>
         <FontAwesomeIcon icon={faCog} className="icon" />
-        Admin control
-          {showSettingsSubmenu && (
-            <ul className="subMenu">
-              <li onClick={() => { handleSectionClick('settings'); }}
-                className={activeSection === 'settings' ? 'active' : ''} >Settings</li>
-                <li onClick={() => { OnHiddenClick(); handleSectionClick('hidden'); }}
-                className={activeSection === 'hidden' ? 'active' : ''}>Inactive Products</li>
-                <li onClick={() => { OnRevokePriceClick(); handleSectionClick('restore'); }}
-                className={activeSection === 'restore' ? 'active' : ''} >Restore Price</li>
-              <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
-                className={activeSection === 'users' ? 'active' : ''}>Users</li>
-            </ul>
-          )}
+        {UserRole === 'admin' ? 'Admin control' : 'User control'}
+        {UserRole === 'admin' && showSettingsSubmenu && (
+        <ul className="subMenu">
+          <li onClick={() => { handleSectionClick('settings'); }}
+              className={activeSection === 'settings' ? 'active' : ''}>
+            Settings
+          </li>
+          <li onClick={() => { OnHiddenClick(); handleSectionClick('hidden'); }}
+              className={activeSection === 'hidden' ? 'active' : ''}>
+            Inactive Products
+          </li>
+          <li onClick={() => { OnRevokePriceClick(); handleSectionClick('restore'); }}
+              className={activeSection === 'restore' ? 'active' : ''}>
+            Restore Price
+          </li>
+          <li onClick={() => { OnUserClick(); handleSectionClick('users'); }}
+              className={activeSection === 'users' ? 'active' : ''}>
+            Users
+          </li>
+        </ul>
+      )}
+      {UserRole !== 'admin' && showSettingsSubmenu && (
+        <ul className="subMenu">
+          <li onClick={() => { handleSectionClick('settings'); }}
+              className={activeSection === 'settings' ? 'active' : ''}>
+            Settings
+          </li>
+        </ul>
+      )}
         </li>
       </ul>
       <Modal open={showImportModal} onClose={closeImportModal}>

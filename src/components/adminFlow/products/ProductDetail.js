@@ -7,9 +7,10 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash,faEdit,faClone } from '@fortawesome/free-solid-svg-icons';
 import ReactQuill from 'react-quill'; // React wrapper for Quill
 import 'react-quill/dist/quill.snow.css';
+import { FaTrashAlt } from 'react-icons/fa'; // For delete icon
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
@@ -27,11 +28,9 @@ const ProductDetail = ({ categories }) => {
     const [selectedlevel4, setSelectedlevel4] = useState('');
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
-
     const [categoryIdForVariant, setCategoryIdForVariant] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [categoryIds, setCategoryIds] = useState('');
-
     const [categoryName, setCategoryName] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [isupdatePopupOpen, setIsUpdatePopupOpen] = useState(false);
@@ -44,9 +43,9 @@ const ProductDetail = ({ categories }) => {
         quantity: '',
     });
     const [variantOptions, setVariantOptions] = useState([]);
+    const [varient_option_list, setvarient_option_list] = useState([]);
+    const UserRole = localStorage.getItem('user_role');
     const [brand, setBrand] = useState([]);
-    const quillRef = useRef();
-    const [editorReady, setEditorReady] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -67,12 +66,13 @@ const ProductDetail = ({ categories }) => {
       const categoryDropdown4Ref = useRef(null);
       const categoryDropdown5Ref = useRef(null);
       const categoryDropdown6Ref = useRef(null);
+    const quillRef = useRef();
+    const [editorReady, setEditorReady] = useState(false);
       useEffect(() => {
         if (editorReady && quillRef.current) {
           const quill = quillRef.current.getEditor();
           quill.keyboard.addBinding({ key: 'Enter' }, function (range, context) {
             const currentLine = quill.getText(range.index - 1, 1);
-    
             if (/[a-zA-Z]\.$/.test(currentLine)) {
               const lines = quill.getText().split('\n');
               const subPoints = lines.filter(line => /^[a-zA-Z]\.$/.test(line.trim()));
@@ -504,12 +504,28 @@ const ProductDetail = ({ categories }) => {
             return updatedVariants;
         });
     };
-    const handleVariantChange = (typeId, optionId) => {        
-        setSelectedVariants((prev) => ({
-            ...prev,
-            [typeId]: optionId,
-        }));
-    };
+    // const handleVariantChange = (typeId, optionId) => {        
+    //     setSelectedVariants((prev) => ({
+    //         ...prev,
+    //         [typeId]: optionId,
+    //     }));
+    // };
+    const handleVariantChange = (type_id, selectedValue) => {
+        setSelectedVariants((prevSelectedVariants) => {
+          const updatedOptions = prevSelectedVariants.options?.map(option => 
+            option.type_id === type_id
+              ? { ...option, type_value_id: selectedValue }
+              : option
+          ) || [];
+      
+          return {
+            ...prevSelectedVariants,
+            options: updatedOptions,
+            [type_id]: selectedValue // Update the selected value for this variant
+          };
+        });
+      };
+      
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         if (selectedVariants.sku !== '') {
@@ -699,8 +715,42 @@ const ProductDetail = ({ categories }) => {
           }
         });
       };
+      const handleDeleteVariant = (typeName) => {
+        setvarient_option_list((prevVariants) =>
+          prevVariants.filter((variant) => variant.type_name !== typeName)
+        );
+      };
+      const handleCloneClick = async(e, variantId) => {
+        console.log('Variant', variantId);
+        e.stopPropagation(); // Prevent row click event from triggering
+        try {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/cloneVarient/`,{
+          id : productId,
+          variant_id : variantId
+        });
+        if (response.data.data.is_created === true) {
+             Swal.fire({ title: 'Success', text: 'Variant Cloned successfully!', icon: 'success', customClass: {  container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel',  },});
+        }
+        else {
+             Swal.fire({  title: 'Error',  text: 'Failed to Clone Variant!',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
+             });
+        }
+        fetchVariantDetail();
+    } catch (err) {
+        console.log(err);
+    }
+      };
       const handleEditClick = async(variant) => {
+        console.log('variantOptions',variantOptions);
+        let option_list = variant.varient_option_list;
+        console.log(option_list,'option_list data');
+        console.log(option_list.length,'length',variantOptions.length);
         console.log(variant,'Varaint fuill data');
+        if (variantOptions.length > 0 && variant.varient_option_list.length > 0) {
+            console.log('Inisde if');
+            setvarient_option_list(variant.varient_option_list);
+        }
+        // console.log(variant.varient_option_list,'varient_option_list data');
         setSelectedVariants({
           id:variant.id,
           sku: variant.sku_number,
@@ -712,6 +762,7 @@ const ProductDetail = ({ categories }) => {
         });
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
+            console.log(res,'res cehk her');
             setVariantOptions(res.data.data.varient_list);
         } catch (err) {
             console.error('Error fetching variants:', err);
@@ -719,6 +770,8 @@ const ProductDetail = ({ categories }) => {
         setIsUpdatePopupOpen(true);  // Open the modal
       };
       const handleUpdateFormSubmit = async (e) => {
+        console.log(e,'Update submit');
+        
         e.preventDefault();
         const options = variantOptions
         .map((variant) => {
@@ -1203,11 +1256,19 @@ const ProductDetail = ({ categories }) => {
                                                     )}
                                                 </td>
                                                 <td className="others-column">
+                                                    <FontAwesomeIcon
+                                                                        icon={faClone}
+                                                                        onClick={(e) => handleCloneClick(e, variant.id)}
+                                                                        style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff', padding:'0px 7px 0px 4px' }}
+                                                                      />
+                      {UserRole === 'admin' && (
+
                                                      <FontAwesomeIcon
                                                                       icon={variant.is_active ? faEye : faEyeSlash}
                                                                       onClick={(e) => handleVisibilityToggle(e, variant)}
                                                                       style={{ cursor: 'pointer', fontSize: '16px' }}
                                                                     />
+                      )}
                                                     <FontAwesomeIcon
                                                         icon={faEdit}
                                                         onClick={() => handleEditClick(variant)}
@@ -1301,30 +1362,63 @@ const ProductDetail = ({ categories }) => {
               onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value)) {  handleVariantDetailChange({ target: { name: 'quantity', value } });   }   }}     onWheel={(e) => e.target.blur()}  />
-             {variantOptions?.map((variant) => (
-        <div key={variant.type_id}>
-          <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
-            {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
-              <span className="required" style={{ color: 'red' }}>*</span>
-            )}
+              {varient_option_list.length > 0 ? (
+  varient_option_list.map((variant) => (
+    <div key={variant.type_name}>
+      {variant.type_name ? (
+        <>
+          <label
+            htmlFor={variant.type_name}
+            style={{  margin: '0px 0px 0px 1px',  color: 'rgba(0, 0, 0, 0.6)',  }}  >
+            {variant.type_name}
+            <button
+              onClick={() => handleDeleteVariant(variant.type_name)}
+              style={{  background: 'none',  border: 'none',  color: 'red',  cursor: 'pointer',  width: 'auto',  float: 'right',}}  >
+              <FaTrashAlt />
+            </button>
           </label>
-          <select  
-            id={`variant-select-${variant.type_id}`}
-            name={variant.type_id}
-            required={variant.type_name.toLowerCase().includes("wood type")}
-            value={selectedVariants[variant.type_id] || ''} // Preselect the option based on selectedVariants
-            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
-            className="dropdown"
-            style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)', }}  >
-            <option value="">Select Variant Value</option>
-            {variant.option_value_list?.map((option) => (
-              <option value={option.type_value_id} key={option.type_value_id}>
-                {option.type_value_name}
-              </option>
-            ))}
+
+          <select id={`variant-select-${variant.type_name}`} name={variant.type_value} value={''} // Preselect the option based on selectedVariants className="dropdown"
+            style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)',
+            }}
+          >
+            <option value="">{variant.type_value || ''}</option>
           </select>
-        </div>
+        </>
+      ) : null}
+    </div>
+  ))
+) : (null)}
+
+{variantOptions?.map((variant) => (
+  <div key={variant.type_id}>
+    <label htmlFor={variant.type_id} style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
+      {variant.type_name} {variant.type_name.toLowerCase().includes("wood type") && (
+        <span className="required" style={{ color: 'red' }}>*</span>
+      )}
+    </label>
+    <select  
+      id={`variant-select-${variant.type_id}`}
+      name={variant.type_id}
+      required={variant.type_name.toLowerCase().includes("wood type")}
+      value={
+        selectedVariants.options?.find(option => option.type_id === variant.type_id)?.type_value_id || 
+        selectedVariants[variant.type_id] || "" // Make sure it defaults to an empty string if no selection
+          } 
+            onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
+      className="dropdown"
+      style={{ width: '100%', margin: '6px 0px 6px 0px', padding: '10px 0px 10px 0px', border: '1px solid #ccc', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)' }}
+    >
+      <option value="">Select Variant Value</option>
+      {variant.option_value_list?.map((option) => (
+        <option value={option.type_value_id} key={option.type_value_id}>
+          {option.type_value_name}
+        </option>
       ))}
+    </select>
+  </div>
+))}
+
             <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>   Update Variant </Button> </form>  </Box>
       </Modal>          </div>
                         )}
@@ -1352,7 +1446,7 @@ const ProductDetail = ({ categories }) => {
                         {view === 'keyDetails' && (
                             <div className="other-details-section">
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
-                                <h3>Other Product Details</h3>
+                                <h3>Key Product Details</h3>
                                 <div className="product-info-display">
                                         <div className="product-info">
                                             <label style={{ fontWeight: 'bold' }}>MPN: </label>

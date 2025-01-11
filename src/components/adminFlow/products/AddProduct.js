@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVariantChange, selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
@@ -60,20 +60,64 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         };
       }, []);
     const handleAddBrand = async () => {
-        const { value: brandName } = await Swal.fire({
-          title: 'Add New Vendor',
-          input: 'text',
-          inputLabel: 'Vendor Name',
-          inputPlaceholder: 'Enter the Vendor name',
-          showCancelButton: true,
-        });
-    
-        if (brandName) {
-          try {
-            await axiosInstance.post(`${process.env.REACT_APP_IP}/createBrand/`, { name: brandName });
-            Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',  customClass: {    container: 'swal-custom-container',    popup: 'swal-custom-popup',    title: 'swal-custom-title',    confirmButton: 'swal-custom-confirm',    cancelButton: 'swal-custom-cancel',
+        const { value: formValues } = await Swal.fire({
+              html: `
+             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+          <button 
+            id="close-popup-btn" 
+            style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
+            &times;
+          </button>
+          <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
+        </div>
+        <div>
+          <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Name" style="margin-bottom: 10px;">
+            <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Email Address" style="margin-bottom: 10px;">
+          <input id="contact-info" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Contact Information" style="margin-bottom: 10px;">
+          <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Address" style="margin-bottom: 10px; width: 97%; height: 80px; padding:6px;"></textarea>
+          <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Website" style="margin-bottom: 10px;">
+            <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
+          <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
+        </div>
+            `,
+              showCancelButton: true,
+              focusConfirm: false,
+              didOpen: () => {
+                // Add close functionality to the button after the popup renders
+                const closeButton = document.getElementById('close-popup-btn');
+                if (closeButton) {
+                  closeButton.addEventListener('click', () => {
+                    Swal.close();
+                  });
+                }
+              },
+              preConfirm: () => {
+                const name = document.getElementById('vendor-name').value;
+                const email = document.getElementById('vendor-email').value;
+                const address = document.getElementById('vendor-address').value;
+                const website = document.getElementById('vendor-website').value;
+                const mobile_number = document.getElementById('contact-info').value;
+                const logo = document.getElementById('vendor-logo').files[0];
+                if (!name) {
+                  Swal.showValidationMessage('Please enter a vendor name');
+                }
+                return { name, email,address,website,mobile_number, logo };
+              },
+              customClass: { container: 'swal-custom-container swal-overflow', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
               },
             });
+    
+        if (formValues) {            
+            const { name, logo, email, address, website, mobile_number } = formValues;
+          try {
+            const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/createBrand/`,  formValues,
+                { headers: { 'Content-Type': 'multipart/form-data',  }, } );
+                   if (response.data.data.is_created === true) {
+                             Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',
+                               customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+                               },
+                             });
+                           }
             fetchBrand();
           } catch (error) {
             console.error('Error adding Vendor:', error);
@@ -106,7 +150,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
         }
     }, [isOpen, selectedCategoryId]);
     if (!isOpen) return null;
-
+    
     return (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -271,9 +315,28 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <label htmlFor="long_description">Long Description <span className="required">*</span></label>
-                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    {/* <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} /> */}
+                    <textarea
+    name="long_description"
+    placeholder="Long Description"
+    required
+    value={productData.product_obj.long_description}
+    onChange={handleChange}
+    onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
+    onPaste={(e) => handlePaste(e, 'long_description')}
+/>
+
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
-                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
+                    {/* <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} /> */}
+                    <textarea
+    name="short_description"
+    placeholder="Short Description"
+    required
+    value={productData.product_obj.short_description}
+    onChange={handleChange}
+    onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
+    onPaste={(e) => handlePaste(e, 'short_description')}
+/>
                 </div>
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
@@ -310,20 +373,26 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange, handleVaria
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
-                    <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
+                    {/* <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
                     <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
-                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} />
+                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} /> */}
+                    <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} />
+                    <textarea name="attributes" placeholder="Attributes" required value={productData.product_obj.attributes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'attributes')} onPaste={(e) => handlePaste(e, 'attributes')} />
+                    <textarea name="tags" placeholder="Tags" required value={productData.product_obj.tags} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'tags')} onPaste={(e) => handlePaste(e, 'tags')} />
+                    <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Raw Data</h3>
                     {/* <label htmlFor="features_notes">Standard Features/Notes:</label> */}
-                    <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} />
+                    {/* <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} /> */}
+                    <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.product_obj.features_notes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features_notes')} onPaste={(e) => handlePaste(e, 'features_notes')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Options</h3>
                     {/* <label htmlFor="option_str">Option </label> */}
-                    <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} />
+                    {/* <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} /> */}
+                    <textarea name="option_str" placeholder="Options" required value={productData.product_obj.option_str} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'option_str')} onPaste={(e) => handlePaste(e, 'option_str')} />
                 </div>
                 <button onClick={onSave} className="save-button">Add Product</button>
             </div>
@@ -465,9 +534,63 @@ const AddProduct = (categories) => {
             return updatedVariants;
         });
     };
+    const handleTextareaChange = (e, fieldName) => {
+        const { name, value } = e.target;
+        // Ensure the first line starts with a bullet point if the field is empty
+        if (value === "" && e.key === "Enter") {
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: "* "
+            }
+          });
+          return; }
+        // Handle Enter key press: Add bullet point before the new line
+        if (e.key === "Enter") {
+          e.preventDefault(); // Prevent the default enter action
+          const cursorPosition = e.target.selectionStart;
+          const updatedValue = value.slice(0, cursorPosition) + "\n* " + value.slice(cursorPosition);
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: updatedValue
+            }
+          });
+        }
+        // Normal typing and space handling
+        if (e.key === " " || e.key !== "Enter") {
+          setProductData({
+            ...productData,
+            product_obj: {
+              ...productData.product_obj,
+              [fieldName]: value
+            }
+          });
+        }
+      };
+      // Handle paste: Format pasted content by adding * to each line
+      const handlePaste = (e, fieldName) => {
+        e.preventDefault(); // Prevent the default paste behavior
+        const pastedText = e.clipboardData.getData("text");
+        // Format pasted text: Add a bullet point to each new line
+        const formattedText = pastedText
+          .split("\n") // Split pasted text by new line
+          .map((line) => `* ${line.trim()}`) // Add * before each line
+          .join("\n"); // Join the lines back together
+        setProductData({
+          ...productData,
+          product_obj: {
+            ...productData.product_obj,
+            [fieldName]: formattedText
+          }
+        });
+      };    
     const handleChange = async (e) => {
         let updatedValue = '';
         const { name, value } = e.target;
+        console.log(value,'value');
         if (name === 'brand_id' && value !== '') {
             try {
                 const payload = {
@@ -491,6 +614,8 @@ const AddProduct = (categories) => {
              updatedValue = !isNaN(value) && value !== '' ? parseFloat(value).toFixed(2) : value;
         }
         else{
+            console.log('else sfsfd',name);
+            
             updatedValue = value;
         }
 
@@ -1144,6 +1269,8 @@ const AddProduct = (categories) => {
                         onSave={handleSave}
                         productData={productData}
                         handleChange={handleChange}
+                        handlePaste={handlePaste}
+                        handleTextareaChange={handleTextareaChange}
                         handleVariantChange={handleVariantChange}
                         selectedCategoryId={selectedCategoryForVariant}
                         selectedVariants={selectedVariants}

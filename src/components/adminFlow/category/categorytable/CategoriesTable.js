@@ -87,8 +87,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           console.warn("Unknown category level:", categoryLevelForcategories);
           break;
       }
-      // localStorage.removeItem("categoryId");
-      // localStorage.removeItem("levelCategory");
     }
   }
 }, []);
@@ -601,8 +599,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       setSelectedlevel5('');
       setSelectedlevel6('');
     }
-    // localStorage.removeItem("categoryId");
-    // localStorage.removeItem("levelCategory");
   };
   const handlelevel5 = (e) => {
     const selectedValue = e;

@@ -13,7 +13,6 @@ const VariantList = ({ categories }) => {
     const [selectedlevel6, setSelectedlevel6] = useState('');
     const [clearBtn, setShowclearBtn] = useState(false);
     const dropdownRef = useRef([]);
-    const [selectedValues, setSelectedValues] = useState([]); // Store selected values in the desired format
     const [searchQuery, setSearchQuery] = useState('');
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
@@ -340,7 +339,7 @@ const VariantList = ({ categories }) => {
         setIslevel5DropdownOpen(false);
         setIslevel6DropdownOpen(false);
         setRowSelectedCategoryIds({});
-        setSelectedValues([]);
+        setRowSelectedValues({});
       }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         setError(null);
@@ -378,6 +377,7 @@ const VariantList = ({ categories }) => {
 
     const handleAddVariantValue = async (typeId, varient_option_id) => {
         const { value: typeValueName } = await Swal.fire({title: 'Add Variant Value',input: 'text',inputPlaceholder: 'Enter variant value name',showCancelButton: true,confirmButtonText: 'Save',
+            inputAttributes: { autocomplete: 'off', },
             inputValidator: (value) => {
                 if (!value) {  return 'You need to enter a value!'; }
             },
@@ -463,59 +463,12 @@ const VariantList = ({ categories }) => {
             return updatedState;
         });
     };
-    // const handleCategorySelectdropdown = (e) => {
-    //     const categoryId = e.target.value;
-    //     if (categoryId === "all") {
-    //         console.log('All');
-    //         if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
-    //             setSelectedCategories([]);
-    //             setSelectedCategoryIds([]);
-    //         } else {
-    //             const allCategoryIds = filteredCategoriesdropdownSearch.map((cat) => cat.id);
-    //             setSelectedCategories([{ name: "Apply to all categories" }]);
-    //             setSelectedCategoryIds(allCategoryIds);
-    //         }
-    //     } else {
-    //         console.log('Else',categoryId);
-    //         const category = filteredCategoriesdropdownSearch.find((category) => category.id === categoryId);
-    //         console.log(category,'category');
-            
-    //         if (category) {
-    //             if (selectedCategoryIds.includes(category.id)) {
-    //                 setSelectedCategories((prevSelectedCategories) =>
-    //                     prevSelectedCategories.filter((selectedCategory) => selectedCategory.id !== category.id)
-    //                 );
-    //                 setSelectedCategoryIds((prevSelectedCategoryIds) =>
-    //                     prevSelectedCategoryIds.filter((id) => id !== category.id)
-    //                 );
-    //             } else {
-    //                 if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
-    //                     setSelectedCategories([]);
-    //                     setSelectedCategoryIds([]);
-    //                 }
-    //                 console.log('Inside to set categories');
-    //                 setSelectedCategories((prevSelectedCategories) => [
-    //                     ...prevSelectedCategories,
-    //                     category,
-    //                 ]);
-    //                 setSelectedCategoryIds((prevSelectedCategoryIds) => {
-    //                     const newCategoryIds = [...prevSelectedCategoryIds, category.id];
-    //                     return newCategoryIds;
-    //                 });
-    //                 console.log('selectedCategories',selectedCategories);
-    //                 console.log('selectedCategoryIds',selectedCategoryIds);
-    //             }
-    //         }
-    //     }
-       
-       
-    // };
     const handleApplyClick = async (varient_option_id, type_id,category_level, option_value_list) => {
         let selectedCategoryIds = Object.values(rowSelectedCategoryIds).flat();
-        console.log(selectedValues.length ,'selectedCategoryIds.length');
+        let rowSelectedValues1 = Object.values(rowSelectedValues).flat();
         let options = '';
-        if (selectedValues.length === 0) { options = option_value_list; }
-        else{ options = selectedValues; }
+        if (rowSelectedValues1.length === 0) { options = option_value_list; }
+        else{ options = rowSelectedValues1; }
         try {
             const response = await axiosInstance.post(
                 `${process.env.REACT_APP_IP}/updatevarientToReleatedCategories/`,
@@ -528,46 +481,63 @@ const VariantList = ({ categories }) => {
 
                 });
              if (response.data && response.data.data.is_updated === true) {
-                    Swal.fire({ title: 'Success!', text: 'Related categories updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+                    Swal.fire({ title: 'Success!', text: 'Other categories updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
                       }
                     });
             console.log("API call successful:", response);
             setSelectedCategories([]); // Clear selected categories after applying
             setSelectedCategoryIds([]);
           } else {
+         Swal.fire({  title: 'Error',  text: 'Failed to Update Category.',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+                 },
+               });
             console.log("API call failed:", response);
           }
           setRowSelectedCategoryIds({});
-          setSelectedValues([]);
+          setRowSelectedValues({});
         } catch (error) {
             setRowSelectedCategoryIds({});
-            setSelectedValues([]);
+            setRowSelectedValues({});
+              Swal.fire({  title: 'Error',  text: 'Failed to Update Category.',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+                 },
+               });
           console.error("Error during API call:", error);
         } 
       };
-      const handleOptionSelect = (typeValueName, typeValueId) => {
-        setSelectedValues((prevSelected) => {
-            const isSelected = prevSelected.some(  (item) => item.type_value_id === typeValueId );
-            if (isSelected) {
-                return prevSelected.filter( (item) => item.type_value_id !== typeValueId );
-            } else {
-                return [
-                    ...prevSelected,
-                    { type_value_name: typeValueName, type_value_id: typeValueId },
-                ];
-            }
-        });
+      const [rowSelectedValues, setRowSelectedValues] = useState({});
+      const handleOptionSelect = (typeValueName, typeValueId, index) => {
+        console.log(typeValueName, 'typeValueName');
+        console.log(typeValueId, 'typeValueId');
+        if (typeValueId !== '') {
+            setRowSelectedValues((prevState) => {
+                const updatedState = { ...prevState };
+                // Ensure the current row (index) has an array of selected values
+                if (!updatedState[index]) { updatedState[index] = []; }
+                // Check if the value is already selected for this row
+                const isSelected = updatedState[index].some((item) => item.type_value_id === typeValueId);
+                if (isSelected) {
+                    // Deselect the value if it was already selected
+                    updatedState[index] = updatedState[index].filter((item) => item.type_value_id !== typeValueId);
+                } else {
+                    // Select the value if it wasn't selected
+                    updatedState[index] = [
+                        ...updatedState[index],
+                        { type_value_name: typeValueName, type_value_id: typeValueId },
+                    ];
+                }
+                // Ensure we only store the selected values for the current row
+                // We overwrite all previous rows with the current row's values
+                return { [index]: updatedState[index] };
+            });
+        }
     };
-    
     return (
         <div className='variant-schema'>
             <div className='CategoryTable-header'>
             <h2 className='header_cls'>Variants Schema</h2>
             </div>
             <div className='CategoryContainer'>
-            {clearBtn && (
-      <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>
-      )}
+            {clearBtn && (  <button className='clear_cat_btn' onClick={() => handleLevelClear('')} >Clear all</button>  )}
                 <div className='DropdownsContainer'>
                     {/* Level 1 Dropdown */}
                     <div className='DropdownColumn' ref={categoryDropdownRef}>
@@ -814,18 +784,35 @@ const VariantList = ({ categories }) => {
                                             </button></td>
                                             <td>
                                             {variant.option_value_list.length > 0 ? (
-            <ul className="option-value-list">
-                {variant.option_value_list.map((value) => {
-                    const isSelected = selectedValues.some( (item) => item.type_value_id === value.type_value_id );
-                    return (
-                        <li
-                            key={value.type_value_id}
-                            className={`option-value-item ${ isSelected ? "selected" : "" }`}
-                            style={{ cursor: "pointer", padding: "6px", backgroundColor: isSelected ? "#d7ffe6" : "#fff", border: "1px solid #ccc", borderRadius: "4px", marginBottom: "4px", }}
-                            onClick={() => handleOptionSelect(  value.type_value_name,  value.type_value_id ) }  >
-                            {isSelected && (  <span style={{ marginRight: "8px", color: "#18b418" }}>  ✔  </span> )}  {value.type_value_name} </li>  );
-                })}
-            </ul>   ) : ( <span>No values available</span> )}
+    <ul className="option-value-list">
+        {variant.option_value_list.map((value) => {
+            const isSelected = rowSelectedValues[index]?.some((item) => item.type_value_id === value.type_value_id);
+            return (
+                <li
+                    key={value.type_value_id}
+                    className={`option-value-item ${isSelected ? "selected" : ""}`}
+                    style={{
+                        cursor: "pointer",
+                        padding: "6px",
+                        backgroundColor: isSelected ? "#d7ffe6" : "#fff",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        marginBottom: "4px",
+                    }}
+                    onClick={() => handleOptionSelect(value.type_value_name, value.type_value_id, index)}
+                >
+                    {isSelected && (
+                        <span style={{ marginRight: "8px", color: "#18b418" }}>✔</span>
+                    )}
+                    {value.type_value_name}
+                </li>
+            );
+        })}
+    </ul>
+) : (
+    <span>No values available</span>
+)}
+
                                             </td>
                                             <td>
                                                 <ul className="option-category-list">
