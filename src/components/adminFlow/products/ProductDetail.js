@@ -461,7 +461,7 @@ const ProductDetail = ({ categories }) => {
                 navigate(`/Admin/categorylist?${params.toString()}`);
         } else {
           console.log("Category ID or level not found in localStorage");
-           navigate(`/Admin`);
+           navigate(`/Admin/allproducts`);
         }
       };
     if (loading) return <p>Loading...</p>;
@@ -473,7 +473,7 @@ const ProductDetail = ({ categories }) => {
                 });
                 if (response.status === 200) {
                     Swal.fire({
-                        title: 'Success!', text: 'Category updated successfully!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
+                        title: 'Success!', text: 'New category is updated successfully so kindly update the variants accordingly!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
                     })
                     setCategoryIds('');
                     setCategoryName('');
