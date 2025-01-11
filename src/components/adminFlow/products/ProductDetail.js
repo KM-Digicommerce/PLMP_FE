@@ -1408,7 +1408,7 @@ const ProductDetail = ({ categories }) => {
           <label
             htmlFor={variant.type_name}
             style={{  margin: '0px 0px 0px 1px',  color: 'rgba(0, 0, 0, 0.6)',  }}  >
-            {variant.type_name} 111
+            {variant.type_name}
             <button
               onClick={() => handleDeleteVariant(variant.type_name)}
               style={{  background: 'none',  border: 'none',  color: 'red',  cursor: 'pointer',  width: 'auto',  float: 'right',}}  >
