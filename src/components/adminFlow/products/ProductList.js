@@ -155,7 +155,7 @@ const ProductList = () => {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
 
       if (response.data && response.data.data && response.data.data.product_list) {
-        setResponseData(response.data.data.product_list);
+        setResponseData(response.data.data.product_list);        
       } else {
         alert("Unexpected response structure");
       }
@@ -292,7 +292,7 @@ const ProductList = () => {
     const filteredProducts = responseData.filter((product) => {
       const productName = product.product_name?.toLowerCase() || '';
       const model = product.model?.toLowerCase() || '';
-      const tags = product.tags?.toLowerCase() || '';
+      const tags = product.category_name?.toLowerCase() || '';
       const mpn = product.mpn?.toLowerCase() || '';
       const query = searchQuery.toLowerCase();
       return (
@@ -367,8 +367,16 @@ const ProductList = () => {
       <div className="sort-container">
                   {sortVisiblebyVariant && (
         <>          
+          <select value={selectedVariant} onChange={handleVariantChange} className="filter-dropdown ">
+            <option value="">All Variants</option>
+            {variants.map((variant) => (
+              <option key={variant.type_id} value={variant.type_id}>
+                {variant.type_name}
+              </option>
+            ))}
+          </select>
           {selectedVariant && (
-            <select value={selectedOptionValue} onChange={handleOptionValueChange} className="filter-dropdown ">
+            <select value={selectedOptionValue} onChange={handleOptionValueChange} className="filter-dropdown variant_dropdown">
               <option value="">Select Option</option>
               {optionValues.map((option) => (
                 <option key={option.type_value_id} value={option.type_value_id}>
@@ -377,14 +385,6 @@ const ProductList = () => {
               ))}
             </select>
           )}
-          <select value={selectedVariant} onChange={handleVariantChange} className="filter-dropdown variant_dropdown">
-            <option value="">All Variants</option>
-            {variants.map((variant) => (
-              <option key={variant.type_id} value={variant.type_id}>
-                {variant.type_name}
-              </option>
-            ))}
-          </select>
         </>
       )}
       {searchVisible && (
