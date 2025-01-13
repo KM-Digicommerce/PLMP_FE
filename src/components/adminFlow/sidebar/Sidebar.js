@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Sidebar.css';
 import ApiResponseModal from '../../../ApiResponseModal';
 import Swal from 'sweetalert2';
@@ -21,9 +21,16 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
   const [selectedFilepath, setSelectedFilepath] = useState(null);
+  
   const [activeSection, setActiveSection] = useState('dashboard');
   const navigate = useNavigate();
   const location = useLocation();
+  const path = location.pathname;
+  useEffect(() => {
+    if (path === '/Admin/allproducts') {
+      setActiveSection('products');
+    }
+  }, [path])
   const [uploadProgress, setUploadProgress] = useState(0);
   const UserRole = localStorage.getItem('user_role');
 
@@ -114,7 +121,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       setShowProductsSubmenu(false);  // Close the admin control submenu
     }
       if (section === 'all-products' || section === 'add-product') {  setActiveSection('products')  }
-      if (section === 'all-products') { navigate('/Admin/allproducts'); }
+      if (section === 'all-products') { navigate('/Admin/allproducts');window.location.reload(); }
       if (section === 'add-product') { navigate('/Admin/addproduct'); }
       if (section === 'hidden') {  navigate('/Admin/hiddenproduct');  }
       if (section === 'settings' || section === 'users') {  setActiveSection('setting')  }

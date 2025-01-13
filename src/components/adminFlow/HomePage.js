@@ -38,8 +38,6 @@ function HomePage() {
   const [showUser, setShowUser] = useState(false);
   const [showHidden, setShowHidden] = useState(false);
   const [showRevokePrice, setShowRevokePrice] = useState(false);
-  const [showVendorSummary, setShowvendorsummary] = useState(false);
-
 
   const [showDashboard, setShowDashboard] = useState(true); // Default to show dashboard  
   const navigate = useNavigate();

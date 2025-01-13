@@ -315,8 +315,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <label htmlFor="long_description">Long Description <span className="required">*</span></label>
-                    {/* <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} /> */}
-                    <textarea
+                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    {/* <textarea
     name="long_description"
     placeholder="Long Description"
     required
@@ -324,11 +324,10 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
     onChange={handleChange}
     onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
     onPaste={(e) => handlePaste(e, 'long_description')}
-/>
-
+/> */}
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
-                    {/* <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} /> */}
-                    <textarea
+                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
+                    {/* <textarea
     name="short_description"
     placeholder="Short Description"
     required
@@ -336,7 +335,7 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
     onChange={handleChange}
     onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
     onPaste={(e) => handlePaste(e, 'short_description')}
-/>
+/> */}
                 </div>
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>

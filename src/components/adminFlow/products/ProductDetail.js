@@ -11,6 +11,7 @@ import { faEye, faEyeSlash,faEdit,faClone } from '@fortawesome/free-solid-svg-ic
 import ReactQuill from 'react-quill'; // React wrapper for Quill
 import 'react-quill/dist/quill.snow.css';
 import { FaTrashAlt } from 'react-icons/fa'; // For delete icon
+import { Close as CloseIcon } from '@mui/icons-material';
 
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
@@ -105,7 +106,6 @@ const ProductDetail = ({ categories }) => {
     const [RetailPrice, setShowRetailPrice] = useState([0]);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
     const [unsavedChanges, setUnsavedChanges] = useState(false);
-
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
@@ -135,11 +135,13 @@ const ProductDetail = ({ categories }) => {
         setCategoryId(id);
         setCategoryIds(id);
         setCategoryName(category_name);
-        // setSelectedCategoryForVariant(id);
+        if (id !== categoryIdForVariant) {
+            setUnsavedChanges(true);
+        }
     };
-    useEffect(() => {
-        handleCategorySelectForVariants();
-    }, []);
+    // useEffect(() => {
+    //     handleCategorySelectForVariants();
+    // }, []);
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         setselectedLevel2Id('');
@@ -473,7 +475,7 @@ const ProductDetail = ({ categories }) => {
                 });
                 if (response.status === 200) {
                     Swal.fire({
-                        title: 'Success!', text: 'New category is updated successfully so kindly update the variants accordingly!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
+                        title: 'Success!', text: 'The category has been updated successfully however check the variants accordingly!', icon: 'success', confirmButtonText: 'OK', customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel' }
                     })
                     setCategoryIds('');
                     setCategoryName('');
@@ -603,7 +605,9 @@ const ProductDetail = ({ categories }) => {
     const handleClosePopup = () => {
         setIsPopupOpen(false);
     };
-
+    const handleEditClosePopup = () => {
+        setIsUpdatePopupOpen(false);
+    };
     const handleThumbnailClick = (image) => {
         setMainImage(image);
     };
@@ -620,7 +624,7 @@ const ProductDetail = ({ categories }) => {
         if (unsavedChanges) {
           const shouldNavigate = window.confirm("You have some unsaved changes, do you want to continue?");
           if (!shouldNavigate)   return; // Don't change the view
-        else { setFormData(originalData); setUnsavedChanges(false); }
+        else { setFormData(originalData);    fetchProductDetail(productId);            setUnsavedChanges(false); }
         }
         setView(targetView);
       };
@@ -640,8 +644,7 @@ const ProductDetail = ({ categories }) => {
         console.log(`Visibility toggled for variant: ${variant.sku_number} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
         // Show confirmation dialog with SweetAlert
         Swal.fire({
-          title: "Are you sure?",
-          text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected variant?`,
+          title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected variant?`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
@@ -1056,15 +1059,15 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdownRef}>
+                                    <div className='DropdownColumn' ref={categoryDropdownRef} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="categorySelect">Level 1:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isCategoryDropdownOpen && (
-                                                <div className="dropdown-options" >
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }}>
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1089,15 +1092,15 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 2 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdown2Ref}>
+                                    <div className='DropdownColumn' ref={categoryDropdown2Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="sectionSelect">Level 2:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel2DropdownOpen && (
-                                                <div className="dropdown-options" >
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }} >
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1120,15 +1123,15 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 3 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdown3Ref}>
+                                    <div className='DropdownColumn' ref={categoryDropdown3Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="productTypeSelect">Level 3:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {isLevel3DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }}>
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1151,15 +1154,15 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 4 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdown4Ref}>
+                                    <div className='DropdownColumn' ref={categoryDropdown4Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level4Select">Level 4:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel4DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }}>
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1182,15 +1185,15 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 5 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdown5Ref}>
+                                    <div className='DropdownColumn' ref={categoryDropdown5Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level5Select">Level 5:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width"  style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel5DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }}>
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1213,15 +1216,15 @@ const ProductDetail = ({ categories }) => {
                                     </div>
 
                                     {/* Level 6 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdown6Ref}>
+                                    <div className='DropdownColumn' ref={categoryDropdown6Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level6Select">Level 6:</label>
-                                        <div className="custom-dropdown custom-width" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                             </div>
                                             {islevel6DropdownOpen && (
-                                                <div className="dropdown-options">
+                                                <div className="dropdown-options"  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block',cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                                     <input
                                                         type="text"
                                                         placeholder="Search category..."
@@ -1321,6 +1324,8 @@ const ProductDetail = ({ categories }) => {
                                     <Box  sx={{
                                             width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,
                                         }}    >
+                                             <button  onClick={handleClosePopup}  className='btn_moal'  style={{  position: 'absolute',  top: '0px',  right: '-43px',  border: 'none',  background: 'transparent',  fontSize: '20px',  color: '#333',  cursor: 'pointer',   }}  >   <CloseIcon />  </button>
+
                                         <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
                                         <form onSubmit={handleFormSubmit}>
                                         <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
@@ -1367,6 +1372,7 @@ const ProductDetail = ({ categories }) => {
                                 <Modal open={isupdatePopupOpen} onClose={() => setIsUpdatePopupOpen(false)}   aria-labelledby="variant-modal-title" aria-describedby="variant-modal-description" className="variant_model_pdp"  >
         <Box sx={{
           width: 450, padding: 2, maxHeight: '90vh', overflowY: 'auto', margin: 'auto', backgroundColor: 'white', borderRadius: '8px', top: '1%', position: 'absolute', left: '50%', transform: 'translateX(-50%)', boxShadow: 3,  }}>
+            <button  onClick={handleEditClosePopup}  className='btn_moal'  style={{  position: 'absolute',  top: '0px',  right: '-43px',  border: 'none',  background: 'transparent',  fontSize: '20px',  color: '#333',  cursor: 'pointer',   }}  >   <CloseIcon />  </button>
           <h3 id="variant-modal-title" style={{ textAlign: 'center', margin: '0' }}>Variant Details</h3>
           <form onSubmit={handleUpdateFormSubmit}>
             <label htmlFor="sku" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>SKU <span className="required">*</span></label>
@@ -1530,18 +1536,14 @@ const ProductDetail = ({ categories }) => {
                                         id="short_description"
                                         name="short_description"
                                         className="input_pdps"
-                                        value={formData.short_description ? formatFeature(formData.short_description) : ''}
-                                        onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
+                                        value={formData.short_description || ''}
                                         onChange={(e) => handleChange({ target: { name: 'short_description', value: e.target.value } })}
-                                        onPaste={(e) => handlePaste(e, 'short_description')}
                                              />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="long_description">Long Description</label>
-                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description ? formatFeature(formData.long_description) : ''} 
-                                    onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
+                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description || ''} 
                                     onChange={(e) => handleChange({ target: { name: 'long_description', value: e.target.value } })}
-                                    onPaste={(e) => handlePaste(e, 'long_description')} 
                                     />
                                 </div>
                                 <div className="form-group">
@@ -1608,12 +1610,17 @@ const ProductDetail = ({ categories }) => {
                             </div>
                         )}
                         {/* {view !== 'variants' && view !== 'taxonomy' && ( */}
-                         {view !== 'variants' && (
-                            <button
-                                type="submit"
-                                className="save-button_pdp"
-                                onClick={view === 'taxonomy' ? swapProductToCategory : undefined} > Save  </button>
-                        )}
+                        {view !== 'variants' && (
+    <button
+        type="submit"
+        className="save-button_pdp"
+        onClick={view === 'taxonomy' && UserRole === 'admin' ? swapProductToCategory : undefined}
+        style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }} // Hide button for non-admin users in taxonomy view
+    >
+        Save
+    </button>
+)}
+
                     </div>
                 </form>
             </div>

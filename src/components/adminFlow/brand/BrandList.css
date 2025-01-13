@@ -121,3 +121,6 @@
 .prev-button,
 .next-button { font-weight: bold; width: 18%;}
 .swal2-html-container{overflow: hidden !important;}
+#vendor-address::placeholder {
+  color: #c9c9c9; /* Change this color to your preferred color */
+}

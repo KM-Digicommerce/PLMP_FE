@@ -46,11 +46,11 @@ const BrandList = () => {
   <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
 </div>
 <div>
-  <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Name" style="margin-bottom: 10px;">
-    <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Email Address" style="margin-bottom: 10px;">
-  <input id="contact-info" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Contact Information" style="margin-bottom: 10px;">
-  <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Address" style="margin-bottom: 10px; width: 97%; height: 80px; padding:6px;"></textarea>
-  <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Website" style="margin-bottom: 10px;">
+  <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Name" style="margin-bottom: 10px;font-size: 16px;">
+    <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Email Id" style="margin-bottom: 10px;font-size: 16px;">
+  <input id="contact-info" class="swal2-input vendor_input" autocomplete="off" placeholder="Contact Information" style="margin-bottom: 10px;font-size: 16px;">
+  <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Address" style="margin-bottom: 10px; width: 96%; height: 80px; padding:6px 6px 6px 12px; font-size:16px;font-family: sans-serif;"></textarea>
+  <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Website" style="margin-bottom: 10px;font-size: 16px;">
     <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
   <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
 </div>

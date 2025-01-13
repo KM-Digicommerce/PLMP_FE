@@ -770,8 +770,8 @@ const VariantList = ({ categories }) => {
                                     <tr>
                                         <th style={{ width: '12%' }}>Option Type</th>
                                         <th style={{ width: '20%' }}>Values</th>
-                                        <th style={{ width: '27%' }}>Applicable Categories</th>
-                                        <th style={{ width: '50%' }}>Other Available Categories</th>
+                                        <th style={{ width: '27%', display:'none' }}>Applicable Categories</th>
+                                        <th style={{ width: '13%' }}>Other Available Categories</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -814,7 +814,7 @@ const VariantList = ({ categories }) => {
 )}
 
                                             </td>
-                                            <td>
+                                            <td style={{display:'none' }}>
                                                 <ul className="option-category-list">
                                                     {variant.tagged_category_list
                                                         .filter((item) => item)
