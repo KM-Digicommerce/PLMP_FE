@@ -79,6 +79,9 @@ const CreateUser = () => {
       {showForm && (
         <div className="modalOverlay">
           <div className="modalCard">
+          <button className="closeButtonTop" onClick={() => setShowForm(false)}>
+        &times;
+      </button>
             <h2>Create Account</h2>
             {error && <div className="error">{error}</div>}
             <form onSubmit={handleSubmit}>
