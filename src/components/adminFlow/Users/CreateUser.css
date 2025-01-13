@@ -12,7 +12,7 @@
   }
   /* Modal card styling */
   .modalCard {  background-color: white;  padding: 40px;  border-radius: 8px;  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  width: 100%;  max-width: 400px;
-  }
+    position: relative;}
   
   /* Form input styling */
   .inputGroup { margin-bottom: 8px;}
@@ -39,3 +39,10 @@
   /* Close button */
   .closeButton { margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; width: 100%;
   }  
+  .closeButtonTop {  position: absolute;  top: 31px;  right: -35px;  background: transparent;  border: none;  font-size: 34px;  color: #333; /* Set color for the X */  cursor: pointer;  transition: color 0.3s ease;
+  }
+  
+  /* Change color on hover */
+  .closeButtonTop:hover {
+    color: #ff0000; /* Red color when hovered */
+  }

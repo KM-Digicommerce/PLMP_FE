@@ -343,7 +343,7 @@ const VariantList = ({ categories }) => {
       }
     const handleAddVariant = useCallback(async (category_varient_id, selectedCategoryForVariant, selectedCategoryLevelForVariant) => {
         setError(null);
-        Swal.fire({title: 'Add New Variant',input: 'text',showCancelButton: true,confirmButtonText: 'Save',cancelButtonText: 'Cancel',customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel',
+        Swal.fire({title: 'Add New Variant',input: 'text',showCancelButton: true,confirmButtonText: 'Save',cancelButtonText: 'Cancel', showCloseButton: true, customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-variant', cancelButton: 'swal-custom-cancel',
             },
             inputAttributes: { autocomplete: 'off', },
             inputValidator: (value) => {
@@ -377,6 +377,7 @@ const VariantList = ({ categories }) => {
 
     const handleAddVariantValue = async (typeId, varient_option_id) => {
         const { value: typeValueName } = await Swal.fire({title: 'Add Variant Value',input: 'text',inputPlaceholder: 'Enter variant value name',showCancelButton: true,confirmButtonText: 'Save',
+            showCloseButton: true,
             inputAttributes: { autocomplete: 'off', },
             inputValidator: (value) => {
                 if (!value) {  return 'You need to enter a value!'; }
