@@ -12,6 +12,7 @@ const VendorSummary = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchVendorDetails = async () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/?id=${brandId}`);
@@ -140,12 +141,7 @@ const VendorSummary = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <button
-                className="update-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
+              <button className="update-btn" onClick={handleUpdate}  >  Save </button>
             </div>
           ) : (
             <>
