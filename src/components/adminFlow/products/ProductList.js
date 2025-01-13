@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './ProductList.css';
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter,faSort, faClone, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faFilter,faSlidersH, faSort, faClone, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import Swal from 'sweetalert2';
 
@@ -14,20 +14,26 @@ const ProductList = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortOption, setSortOption] = useState(''); // default value to 'newest'
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [selectedVariant, setSelectedVariant] = useState(''); // The selected variant type
+  const [selectedOptionValue, setSelectedOptionValue] = useState(''); 
+  const [variants, setVariants] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
+  // const [selectedVariantId, setSelectedVariant] = useState('');
   const [searchVisible, setSearchVisible] = useState(false);
   const [sortVisible, setSortVisible] = useState(false);
+  const [sortVisiblebyVariant, setsortVisiblebyVariant] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showTextCategories, setShowTextCategories] = useState(false);
-  const BrandIdFilters = localStorage.getItem('brandId');
-  const [BrandIdFilter, setBrandIdFilter] = useState('');
-  const UserRole = localStorage.getItem('user_role');
+  const [showTextForVariant, setshowTextForVariant] = useState(false);
+  const BrandId = queryParams.get("brandID");  const UserRole = localStorage.getItem('user_role');
   const handleVisibilityToggle = async (e, product) => {
     e.stopPropagation(); // Prevent click propagation if necessary
     // Toggle the visibility based on the current state of `is_active`
@@ -39,9 +45,7 @@ const ProductList = () => {
           ? { ...item, is_active: updatedVisibility }
           : item
       )
-    );
-    console.log(`Visibility toggled for product: ${product.product_name} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
-    // Show confirmation dialog with SweetAlert
+    );    // Show confirmation dialog with SweetAlert
     Swal.fire({
       title: "Are you sure?",
       text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
@@ -145,8 +149,7 @@ const ProductList = () => {
   }
       else{  setSortOption(''); }    
   };
-  const fetchData = async (params = {}) => {
-    setResponseData([]);
+  const fetchData = async (params = {}) => {    
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
@@ -179,6 +182,14 @@ const ProductList = () => {
       console.error("Error fetching brands:", err);
     }
   };
+  const fetchVariants = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptions/`);
+      setVariants(response.data.data.varient_list || []);
+    } catch (err) {
+      console.error("Error fetching brands:", err);
+    }
+  };
   
   const handleCategoryChange = async (event) => {
     const selectedCategoryId = event.target.value;
@@ -196,6 +207,20 @@ const ProductList = () => {
       fetchData({ brand_id: selectedBrandId });
     }
     else{   fetchData();  }
+  };
+  const handleVariantChange = async (event) => {
+    const selectedVariantId = event.target.value;
+    setSelectedVariant(selectedVariantId);
+    if (selectedVariantId !== '') {
+      fetchData({ variant_option_name_id: selectedVariantId });
+    }
+    else{   fetchData();  }
+  };
+  const handleOptionValueChange = (e) => {
+    setSelectedOptionValue(e.target.value);
+    if (e.target.value !== '') {
+      fetchData({ variant_option_name_id: selectedVariant, variant_option_value_id: e.target.value });
+    }
   };
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -221,11 +246,26 @@ const ProductList = () => {
     if (searchVisible) {
       setSearchVisible(!searchVisible);
     }
+    if (sortVisiblebyVariant) {
+      setsortVisiblebyVariant(!sortVisiblebyVariant);
+    }
   };
   const handleBrandSortClick = () => {
     setSearchVisible(!searchVisible);
     if (sortVisible) {
       setSortVisible(!sortVisible);
+    }
+    if (sortVisiblebyVariant) {
+      setsortVisiblebyVariant(!sortVisiblebyVariant);
+    }
+  };
+  const handleVariantSortClick = () => {
+    setsortVisiblebyVariant(!sortVisiblebyVariant);
+    if (sortVisible) {
+      setSortVisible(!sortVisible);
+    }
+    if (searchVisible) {
+      setSearchVisible(!searchVisible);
     }
   };
   const handleSearchChange = async(event) => {
@@ -249,22 +289,27 @@ const ProductList = () => {
        console.error('Error fetching product list:', error);
      }
     };
-  const filteredProducts = responseData.filter((product) => {
-    const productName = product.product_name?.toLowerCase() || '';
-    const model = product.model?.toLowerCase() || '';
-    const tags = product.tags?.toLowerCase() || '';
-    const mpn = product.mpn?.toLowerCase() || '';
-    const query = searchQuery.toLowerCase();
-    return ( productName.includes(query) || model.includes(query) || tags.includes(query) || mpn.includes(query)
-    );
-  });
-  let sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (!sortColumn) return 0;
-    const aValue = a[sortColumn];
-    const bValue = b[sortColumn];
-    if (aValue === bValue) return 0;
-    return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
-  });
+    const filteredProducts = responseData.filter((product) => {
+      const productName = product.product_name?.toLowerCase() || '';
+      const model = product.model?.toLowerCase() || '';
+      const tags = product.tags?.toLowerCase() || '';
+      const mpn = product.mpn?.toLowerCase() || '';
+      const query = searchQuery.toLowerCase();
+      return (
+        productName.includes(query) ||
+        model.includes(query) ||
+        tags.includes(query) ||
+        mpn.includes(query)
+      );
+    });
+    
+    let sortedProducts = [...filteredProducts].sort((a, b) => {
+      if (!sortColumn) return 0;
+      const aValue = a[sortColumn] ? a[sortColumn].toString().toLowerCase() : ''; 
+      const bValue = b[sortColumn] ? b[sortColumn].toString().toLowerCase() : '';
+          if (aValue === bValue) return 0;
+          return (aValue > bValue ? 1 : -1) * (sortOrder === "asc" ? 1 : -1);
+    });
   const handleCloneClick = async(e, productId) => {
     e.stopPropagation(); // Prevent row click event from triggering
     try {
@@ -290,32 +335,23 @@ const ProductList = () => {
     fetchData({ filter });
   };
   useEffect(() => {
-    if (BrandIdFilters) {
-      setBrandIdFilter(BrandIdFilters);
-    }
     fetchCategories();
     fetchBrands();
+    fetchVariants();
   }, []);
   useEffect(() => {
-    if (BrandIdFilter) {
-      sortedProducts ='';
-      setResponseData([]);
+
+    if (BrandId !== '' && BrandId !== null) {
       // If a brandId is found in localStorage or set by previous effect, fetch data for that brand
-      console.log(BrandIdFilter, 'Inside If');
-      setSelectedBrand(BrandIdFilter);
-      fetchData({ brand_id: BrandIdFilter });
-      const timeoutId = setTimeout(() => {
-        localStorage.removeItem('brandId');
-        console.log('brandId removed from localStorage after 1 minute');
-      }, 1000);
-      return () => clearTimeout(timeoutId);
+      setSelectedBrand(BrandId);
+      fetchData({ brand_id: BrandId });
         } else {
-          setResponseData([]);
-      console.log(BrandIdFilter, 'Else ');
       // If no brandId, fetch general data without any filter
       fetchData({ filter: true });
     }
-  }, [BrandIdFilter]);
+  }, []);
+  const selectedVariantData = variants.find(variant => variant.type_id === selectedVariant);
+  const optionValues = selectedVariantData ? selectedVariantData.option_value_list : [];
   return (
     <div className="product-list">
       <div className="search-container" style={{position:'relative'}}>
@@ -329,6 +365,28 @@ const ProductList = () => {
       )}
       </div>
       <div className="sort-container">
+                  {sortVisiblebyVariant && (
+        <>          
+          {selectedVariant && (
+            <select value={selectedOptionValue} onChange={handleOptionValueChange} className="filter-dropdown ">
+              <option value="">Select Option</option>
+              {optionValues.map((option) => (
+                <option key={option.type_value_id} value={option.type_value_id}>
+                  {option.type_value_name}
+                </option>
+              ))}
+            </select>
+          )}
+          <select value={selectedVariant} onChange={handleVariantChange} className="filter-dropdown variant_dropdown">
+            <option value="">All Variants</option>
+            {variants.map((variant) => (
+              <option key={variant.type_id} value={variant.type_id}>
+                {variant.type_name}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
       {searchVisible && (
                    <select value={selectedBrand} onChange={handleBrandChange} className="filter-dropdown" >
                    <option value="">All Vendors</option>
@@ -342,6 +400,14 @@ const ProductList = () => {
                   {categories.map((cat) => (
                     <option value={cat.id}>{cat.name}</option>   ))} </select> )}
         <div style={{ position: 'relative', display: 'inline-block' }}>
+        <FontAwesomeIcon
+          icon={faSlidersH}
+          onClick={handleVariantSortClick}
+          style={{ cursor: 'pointer', fontSize: '18px', marginRight: '10px',padding:'15px 5px' }}
+          onMouseEnter={() => setshowTextForVariant(true)}
+          onMouseLeave={() => setshowTextForVariant(false)}
+        />
+        {showTextForVariant && (  <span  style={{  position: 'absolute',  top: '-25px',  left: '0',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',   }} >   Filter by Variants</span> )}
         <FontAwesomeIcon
           icon={faFilter}
           onClick={handleBrandSortClick}
@@ -395,23 +461,23 @@ const ProductList = () => {
           </thead>
           <tbody>
             {sortedProducts.map((item) => (
-              <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} onClick={() => handleProductSelect(item.product_id)}>
+              <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} >
                 <td className="checkbox-column">
                   <input type="checkbox" checked={selectedProducts.includes(item.product_id)} onChange={() => handleSelectProduct(item.product_id)} />
                 </td>
-                <td className="checkbox-column">
+                <td className="checkbox-column" onClick={() => handleProductSelect(item.product_id)}>
                   {Array.isArray(item.image) ? (
                     <img src={item.image[0] || Soon } alt={item.product_name} className="product-image-round" />
                   ) : (
                     <img  src={item.image}  alt={item.product_name}  className="product-image-round"  />
                   )}
                 </td>
-                <td className="mpn-column" style={{width:'12%'}}>{item.mpn}</td>
-                <td className="product-cell">
+                <td className="mpn-column" style={{width:'12%'}} onClick={() => handleProductSelect(item.product_id)}>{item.mpn}</td>
+                <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
                   <span className="product-name">{item.product_name}</span>
                 </td>
-                <td className="mpn-column">{item.brand}</td>
-                <td className="attributes-column">{item.category_name}</td>
+                <td className="mpn-column" onClick={() => handleProductSelect(item.product_id)}>{item.brand}</td>
+                <td className="attributes-column" onClick={() => handleProductSelect(item.product_id)}>{item.category_name}</td>
                 {/* <td className="others-column"> */}
                   {/* <FontAwesomeIcon
                     icon={faClone}

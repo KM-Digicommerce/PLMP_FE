@@ -154,3 +154,6 @@ border: 1px solid #ccc;
   border: 1px solid #ccc;
     border-radius: 4px;
 }
+.variant_dropdown{
+  margin: 8px 0px 7px 7px;
+}

@@ -97,42 +97,27 @@ const CreateUser = () => {
               </div>
               <div className="inputGroup">
                 <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                  autoComplete="off"
+                <input  type="text"  id="name"  name="name"  value={formData.name}  onChange={handleInputChange}  className="input"  required  autoComplete="off"
                 />
               </div>
               <div className="inputGroup">
                 <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                  autoComplete="off"
+                <input  type="email"  id="email"  name="email"  value={formData.email}  onChange={handleInputChange}  className="input"  required  autoComplete="off"
                 />
               </div>
               <div className="inputGroup">
                 <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                  autoComplete="off"
+                <input  type="password"  id="password"  name="password"  value={formData.password}  onChange={handleInputChange}  className="input"  required  autoComplete="off"
                 />
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="role">Role</label>
+                <select  id="role"  name="role"  style={{width:'98%'}} value={formData.role}  onChange={handleInputChange}  className="input"  required
+                >
+                  <option value="">Select User</option>
+                  <option value="admin">Admin</option>
+                  <option value="client-user">User</option>
+                </select>
               </div>
               <button type="submit" className="signbutton" disabled={loading}>
                 {loading ? "Creating..." : "Sign Up"}

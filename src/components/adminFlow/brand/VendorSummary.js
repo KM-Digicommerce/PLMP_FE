@@ -57,8 +57,7 @@ const VendorSummary = () => {
     }
   };
   const handleClick = (brandId) => {
-    localStorage.setItem('brandId', brandId);
-    navigate('/Admin/allproducts');
+    navigate(`/Admin/allproducts?brandID=${brandId}`);
   };
   if (loading) {
     return <p>Loading Vendor Details...</p>;
@@ -157,6 +156,7 @@ const VendorSummary = () => {
               <p><strong>Address:</strong> {vendor.address}</p>
               <p><strong>Website:</strong> {vendor.website || '-'}</p>
               <p><strong>Product Count: </strong>{vendor.product_count || '0'}</p>
+              <p><strong>Sku Count: </strong>{vendor.sku_count || '0'}</p>
             </>
           )}
         </div>
