@@ -26,7 +26,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);

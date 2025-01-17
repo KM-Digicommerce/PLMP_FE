@@ -11,35 +11,11 @@
     height: 0;
   }
   
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-  }
+  .slider {  position: absolute;  cursor: pointer;  top: 0;  left: 0;  right: 0;  bottom: 0;  background-color: #ccc;  transition: 0.4s;  border-radius: 34px; }
+  .slider:before {  position: absolute;  content: "";  height: 14px;  width: 14px;  left: 3px;  bottom: 3px;  background-color: white;  transition: 0.4s;  border-radius: 50%; }
   
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
+  input:checked + .slider { background-color: #4caf50; }
   
-  input:checked + .slider {
-    background-color: #4caf50;
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(14px);
-    }
+  input:checked + .slider:before {  transform: translateX(14px);  }
 .apply-btn{  background-color: #007bff;  color: white;  border: none;  border-radius: 5px;  cursor: pointer;  font-size: 14px;  transition: background-color 0.3s;  margin: 0px;  width: 12%;  }
+.clear-btn{  background-color: #007bff;  color: white;  border: none;  border-radius: 5px;  cursor: pointer;  font-size: 14px;  transition: background-color 0.3s;  margin: 0px;  width: 20%;float: right; }

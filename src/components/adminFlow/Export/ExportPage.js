@@ -374,12 +374,39 @@ const ExportPage = (categories) => {
 
   const handleExport = async () => {
     setLoading(true);
+    const { value: formValues } = await Swal.fire({
+        title: 'Export Options',
+        html: ` <div style="font-size: 16px; padding-bottom: 10px;">
+          <label for="includeInactiveProducts" style="display: block;">
+            <input type="checkbox" id="includeInactiveProducts" style="margin-right: 8px;" /> 
+            Include Inactive Products
+          </label>
+          <label for="includeInactiveVariants" style="display: block;margin: 0px 6px 0px 0px;">
+            <input type="checkbox" id="includeInactiveVariants" style="margin-right: 8px;" />
+            Include Inactive Variants
+          </label>
+        </div> `,
+        showCancelButton: true,
+        confirmButtonText: 'Export',
+        cancelButtonText: 'Cancel',
+        focusCancel: true,
+        customClass: { container: 'swal-custom-container ', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm export-custom', cancelButton: 'swal-custom-cancel'
+        },
+        preConfirm: () => {
+          const includeInactiveProducts = !document.getElementById('includeInactiveProducts').checked;
+          const includeInactiveVariants = !document.getElementById('includeInactiveVariants').checked;
+          return { includeInactiveProducts, includeInactiveVariants };
+        }
+      });
+      if (formValues) {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/exportAll/`, {
         responseType: 'blob',
         params: {
-            category_id: selectedCategoryForVariant
-        }
+            category_id: selectedCategoryForVariant,
+            is_active_product: formValues.includeInactiveProducts,
+            is_active_variant: formValues.includeInactiveVariants
+          }
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -400,6 +427,7 @@ const ExportPage = (categories) => {
     } finally {
       setLoading(false);
     }
+}
   };
   return (
     <div className='export-page' style={{padding:'7px'}}>
@@ -436,7 +464,7 @@ const ExportPage = (categories) => {
                                         <span>Select Category</span>
                                     </div>
                                     {filteredCategories.map(level1 => (
-                                        <div className="dropdown-option" key={level1._id} onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}>
                                             <span>{level1.name}</span>
                                         </div>
                                     ))}
@@ -470,7 +498,7 @@ const ExportPage = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel2?.map(level2 => (
-                                        <div className="dropdown-option" key={level2._id} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                             <span>{level2.name}</span>
                                         </div>
                                     ))}
@@ -504,7 +532,7 @@ const ExportPage = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel3?.map(level3 => (
-                                        <div className="dropdown-option" key={level3._id} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                             <span>{level3.name}</span>
                                         </div>
                                     ))}
@@ -538,7 +566,7 @@ const ExportPage = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel4?.map(level4 => (
-                                        <div className="dropdown-option" key={level4._id} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                             <span>{level4.name}</span>
                                         </div>
                                     ))}
@@ -572,7 +600,7 @@ const ExportPage = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel5?.map(level5 => (
-                                        <div className="dropdown-option" key={level5._id} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                             <span>{level5.name}</span>
                                         </div>
                                     ))}
@@ -606,7 +634,7 @@ const ExportPage = (categories) => {
                                         <span>Select category</span>
                                     </div>
                                     {filteredCategoriesLevel6?.map(level6 => (
-                                        <div className="dropdown-option" key={level6._id} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                        <div className="dropdown-option" onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                             <span>{level6.name}</span>
                                         </div>
                                     ))}
