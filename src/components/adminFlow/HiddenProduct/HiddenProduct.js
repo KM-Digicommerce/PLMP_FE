@@ -3,12 +3,14 @@ import axiosInstance from "../../../utils/axiosConfig";
 import {faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 
 const CreateUser = () => {
   const [users, setUsers] = useState([]); // State to store the list of users
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const fetchUsers = async () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainInActiveProducts/`);
@@ -37,7 +39,7 @@ const CreateUser = () => {
     );
     console.log(`Visibility toggled for product: ${product.product_name} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
     // Show confirmation dialog with SweetAlert
-    Swal.fire({ title: "Are you sure?", text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`, icon: "warning", showCancelButton: true, confirmButtonColor: "#d33", cancelButtonColor: "#3085d6", confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`, cancelButtonText: "No, stay", customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
+    Swal.fire({ title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`, icon: "warning", showCancelButton: true, confirmButtonColor: "#d33", cancelButtonColor: "#3085d6", confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`, cancelButtonText: "No, stay", customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
       }
     }).then((result) => {
       // If the user clicks "Yes", then call the API to update the product status
@@ -107,6 +109,10 @@ const CreateUser = () => {
       }
     });
   };
+  const handleProductSelect = (productId) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/Admin/product/${productId}`);
+  };
   return (
     <div style={{padding:'7px'}}>
         <h2 style={{margin:'0px 0px 20px 0px'}}>Inactive Products</h2>
@@ -129,19 +135,19 @@ const CreateUser = () => {
           <tbody style={{backgroundColor:'white'}}>
             {users.map((item) => (
               <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} >
-                <td className="checkbox-column">
+                <td className="checkbox-column" onClick={() => handleProductSelect(item.product_id)}>
                   {Array.isArray(item.image) ? (
                     <img src={item.image[0] || Soon } alt={item.product_name} className="product-image-round" />
                   ) : (
                     <img  src={item.image}  alt={item.product_name}  className="product-image-round"  />
                   )}
                 </td>
-                <td className="mpn-column" style={{width:'12%'}}>{item.mpn}</td>
-                <td className="product-cell">
+                <td className="mpn-column" style={{width:'12%'}} onClick={() => handleProductSelect(item.product_id)}>{item.mpn}</td>
+                <td className="product-cell" onClick={() => handleProductSelect(item.product_id)}>
                   <span className="product-name">{item.product_name}</span>
                 </td>
-                <td className="mpn-column">{item.brand}</td>
-                <td className="attributes-column">{item.category_name}</td>
+                <td className="mpn-column" onClick={() => handleProductSelect(item.product_id)}>{item.brand}</td>
+                <td className="attributes-column" onClick={() => handleProductSelect(item.product_id)}>{item.category_name}</td>
                 <td className="others-column">
                     <FontAwesomeIcon
                   icon={item.is_active ? faEye : faEyeSlash}

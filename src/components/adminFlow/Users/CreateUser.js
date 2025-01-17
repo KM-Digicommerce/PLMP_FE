@@ -115,7 +115,7 @@ const CreateUser = () => {
               </div>
               <div className="inputGroup">
                 <label htmlFor="role">Role</label>
-                <select  id="role"  name="role"  style={{width:'98%'}} value={formData.role}  onChange={handleInputChange}  className="input"  required
+                <select  id="role"  name="role"  style={{width:'98%',cursor:'pointer'}} value={formData.role}  onChange={handleInputChange}  className="input"  required
                 >
                   <option value="">Select User</option>
                   <option value="admin">Admin</option>

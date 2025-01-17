@@ -205,7 +205,7 @@ function HomePage() {
   };
   const handleHiddenClick = () => {
     if ((location.pathname.includes("product/"))) { 
-      navigate("/Admin/hiddenproduct");
+      navigate("/Admin/inactiveproducts");
     }
     setShowHidden(true);
     setShowUser(false);
@@ -333,7 +333,7 @@ function HomePage() {
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
-            <Route path="/hiddenproduct" element={  showHidden ? ( <HiddenProduct />):null} />
+            <Route path="/inactiveproducts" element={  showHidden ? ( <HiddenProduct />):null} />
             <Route path="/restoreprice" element={  showRevokePrice ? ( <RevokePrice />):null} />
             <Route path="/vendorsummary/:brandId" element={ ( <VendorSummary />)} />
           </Routes>

@@ -529,7 +529,7 @@ const handleVariantValueRemove = (id) => {
 
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none' }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer' }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id}>
@@ -608,7 +608,7 @@ const handleVariantValueRemove = (id) => {
         <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} min="0" style={{ width: "45%", paddingRight: "30px", backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", backgroundSize: "16px 16px", border: formSubmitted && !priceInput ? "1px solid red" : "1px solid #ccc", }} />
       </div>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block", border: "1px solid #ccc",appearance:'none' }}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block", border: "1px solid #ccc",appearance:'none',cursor:'pointer' }}>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
@@ -623,7 +623,7 @@ const handleVariantValueRemove = (id) => {
 
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor <span className="required">*</span> </h4>
     <div>
-      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
+      <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
         <option value="">Select Vendor</option>
         {brands.map((brand) => (
           <option value={brand.id} >
@@ -646,7 +646,7 @@ const handleVariantValueRemove = (id) => {
           Select Variant  <span className="required">*</span>
         </h3>
         <select
-          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none'  }}
+          style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer'  }}
           onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
           {variantOptions?.map((variant) => (
@@ -724,14 +724,14 @@ const handleVariantValueRemove = (id) => {
       <select
         value={currencyOption}
         onChange={handleCurrencyChange}
-        style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "56px", margin:'0px' }} >
+        style={{  padding: "10px",  borderRadius: "5px",  border: "1px solid #ccc",  width: "56px", margin:'0px',cursor:'pointer' }} >
         <option value="%">%</option>
         <option value="$">$</option>
       </select>
     </div>
     <div
       style={{ margin: "0px 0px 0px 0px", display: "inline-block", }} >
-      <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block",appearance:'none'  }} >
+      <select value={variantpriceOption} onChange={handleVariantPriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "215px", display: "inline-block",appearance:'none',cursor:'pointer'  }} >
         <option value="finished_price">Finished Wholesale Price</option>
         <option value="un_finished_price">Unfinished Wholesale Price</option>
       </select>

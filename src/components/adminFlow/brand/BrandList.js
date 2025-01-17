@@ -156,6 +156,7 @@ const BrandList = () => {
         <select
     id="alphabetical-filter"
     className="dropdown-select"
+    style={{cursor:'pointer'}}
     value={filterLetter}
     onChange={(e) => {
       const selectedLetter = e.target.value;
