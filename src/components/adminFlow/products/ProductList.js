@@ -31,6 +31,8 @@ const ProductList = () => {
   const [sortVisible, setSortVisible] = useState(false);
   const [sortVisiblebyVariant, setsortVisiblebyVariant] = useState(false);
   const [showText, setShowText] = useState(false);
+  const [hoveredProductId, setHoveredProductId] = useState(null);  // Track hovered product ID
+  const [hoveredVisibilityId, setHoveredVisibilityId] = useState(null); // Track hovered visibility icon
   const [showTextCategories, setShowTextCategories] = useState(false);
   const [showTextForVariant, setshowTextForVariant] = useState(false);
   const BrandId = queryParams.get("brandID");  const UserRole = localStorage.getItem('user_role');
@@ -47,8 +49,7 @@ const ProductList = () => {
       )
     );    // Show confirmation dialog with SweetAlert
     Swal.fire({
-      title: "Are you sure?",
-      text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
+      title:`Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -431,7 +432,7 @@ const ProductList = () => {
               }} >   Filter by Categories </span>
           )}
         </div>
-        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown">
+        <select onChange={handleSortChange} value={sortOption} className="sort-dropdown" style={{ cursor: 'pointer',}}>
         <option value="">Sort by Products</option>
           <option value="newest">Newest Products</option>
           <option value="oldest">Oldest Products</option>
@@ -446,7 +447,7 @@ const ProductList = () => {
           <thead>
             <tr>
               <th className="checkbox-column" style={{width:'3%'}}>
-                <input type="checkbox" onChange={handleSelectAll} checked={selectedProducts.length === sortedProducts.length}  />
+                <input type="checkbox" style={{ cursor: 'pointer',}} onChange={handleSelectAll} checked={selectedProducts.length === sortedProducts.length}  />
               </th>
               <th className="checkbox-column" style={{width:'3%'}} onClick={() => handleSort("product_image")}>Image{sortColumn === "product_image" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
               <th className="mpn-column" style={{width:'8%'}} onClick={() => handleSort("mpn")}>MPN{sortColumn === "mpn" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</th>
@@ -462,8 +463,8 @@ const ProductList = () => {
           <tbody>
             {sortedProducts.map((item) => (
               <tr key={`product-${item.product_id}`} style={{cursor:'pointer'}} >
-                <td className="checkbox-column">
-                  <input type="checkbox" checked={selectedProducts.includes(item.product_id)} onChange={() => handleSelectProduct(item.product_id)} />
+                <td className="checkbox-column" >
+                  <input type="checkbox" style={{ cursor: 'pointer',}} checked={selectedProducts.includes(item.product_id)} onChange={() => handleSelectProduct(item.product_id)} />
                 </td>
                 <td className="checkbox-column" onClick={() => handleProductSelect(item.product_id)}>
                   {Array.isArray(item.image) ? (
@@ -478,35 +479,39 @@ const ProductList = () => {
                 </td>
                 <td className="mpn-column" onClick={() => handleProductSelect(item.product_id)}>{item.brand}</td>
                 <td className="attributes-column" onClick={() => handleProductSelect(item.product_id)}>{item.category_name}</td>
-                {/* <td className="others-column"> */}
-                  {/* <FontAwesomeIcon
-                    icon={faClone}
-                    onClick={(e) => handleCloneClick(e, item)}
-                    style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff' }}
-                  /> */}
-                  {/* <FontAwesomeIcon
-                    icon={isVisible ? faEye : faEyeSlash}
-                    onClick={(e) => handleVisibilityToggle(e, item)}
-                    style={{ cursor: 'pointer', fontSize: '16px' }}
-                  />
-                </td> */}
                 <td className="others-column">
-                  {/* <FontAwesomeIcon
-                    icon={visibilityState[item.product_id] ? faEye : faEyeSlash}
-                    onClick={(e) => handleVisibilityToggle(e, item.product_id)}
-                    style={{ cursor: 'pointer', fontSize: '16px' }}
-                  /> */}
+                <div style={{ position: 'relative', display: 'inline-block' }}>
                   <FontAwesomeIcon
                     icon={faClone}
                     onClick={(e) => handleCloneClick(e, item.product_id)}
                     style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff', padding:'0px 7px 0px 4px' }}
+                    onMouseEnter={() => setHoveredProductId(item.product_id)}  // Set hovered product ID
+                    onMouseLeave={() => setHoveredProductId(null)}
                   />
+                {hoveredProductId === item.product_id && (  // Show tooltip only for the hovered row's clone icon
+            <span
+              style={{  position: 'absolute',  top: '-25px',  left: '0',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+              }} > Clone Product</span>
+          )}
+                  </div>
                       {UserRole === 'admin' && (
+                        <div
+                        style={{ position: 'relative', display: 'inline-block' }}
+                        onMouseEnter={() => setHoveredVisibilityId(item.product_id)}  // Set hovered visibility icon ID
+                        onMouseLeave={() => setHoveredVisibilityId(null)}  // Reset hovered visibility icon ID
+                      >
                     <FontAwesomeIcon
                   icon={item.is_active ? faEye : faEyeSlash}
                   onClick={(e) => handleVisibilityToggle(e, item)}
-                  style={{ cursor: 'pointer', fontSize: '16px' }}
-                />
+                  style={{ cursor: 'pointer', fontSize: '16px' }}  />
+                {hoveredVisibilityId === item.product_id && (
+                    <span
+                      style={{  position: 'absolute',  top: '-25px',  left: '50%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+                      }}  >
+                      {item.is_active ? 'Active Product' : 'Inactive Product'}
+                    </span>
+                  )}
+                </div>
                       )}
                 </td>
                 {/* <td className="price-column">{item.base_price ? `$${item.base_price}` : ''}</td>

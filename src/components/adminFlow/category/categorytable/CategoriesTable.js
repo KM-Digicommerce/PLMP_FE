@@ -45,7 +45,12 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [responseDatasearch, setResponseDatasearch] = useState([]);
-
+  const [hoveredCategoryLevel1, setHoveredCategoryLevel1] = useState(false); 
+  const [hoveredCategoryLevel2, setHoveredCategoryLevel2] = useState(false); 
+  const [hoveredCategoryLevel3, setHoveredCategoryLevel3] = useState(false); 
+  const [hoveredCategoryLevel4, setHoveredCategoryLevel4] = useState(false); 
+  const [hoveredCategoryLevel5, setHoveredCategoryLevel5] = useState(false); 
+  const [hoveredCategoryLevel6, setHoveredCategoryLevel6] = useState(false); 
   const location = useLocation();
   const getQueryParams = () => {
     const params = new URLSearchParams(location.search);
@@ -134,8 +139,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     console.log(`Visibility toggled for product: ${product.product_name} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
     // Show confirmation dialog with SweetAlert
     Swal.fire({
-      title: "Are you sure?",
-      text: `You have ${updatedVisibility ? 'enabled' : 'disabled'} changes. Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
+      title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -919,13 +923,21 @@ const handleLevelClear = (e) => {
             <div className="custom-dropdown"  onClick={() => {
       setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
     }}>
-              <div className="selected-category">
+              <div className="selected-category" >
                 {selectedCategoryId ? categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name
                   : 'Select Category'}
                 <span className="dropdown-icons">
-                  <AddOutlinedIcon onClick={() => handleCategorySelect("add")} />
+                  <AddOutlinedIcon onClick={() => handleCategorySelect("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel1(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel1(false)} />
                   <ChevronDownIcon style={{ fontSize: 25 }} />
                 </span>
+                {hoveredCategoryLevel1 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-1 Category
+            </span>
+          )}
               </div>
               {isCategoryDropdownOpen && (
                 <div className="dropdown-options">
@@ -975,9 +987,17 @@ const handleLevelClear = (e) => {
               <div className="selected-category">
                 {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  < AddOutlinedIcon onClick={() => handleLevel2Select("add")} />
+                <AddOutlinedIcon onClick={() => handleLevel2Select("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel2(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel2(false)} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
+                {hoveredCategoryLevel2 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-2 Category
+            </span>
+          )}
               </div>
               {isLevel2DropdownOpen && (
                 <div className="dropdown-options">
@@ -1014,9 +1034,17 @@ const handleLevelClear = (e) => {
               <div className="selected-category">
                 {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  <AddOutlinedIcon onClick={() => handleLevel3Select('add')} />
-                  <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
+                <AddOutlinedIcon onClick={() => handleLevel3Select("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel3(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel3(false)} />
+                <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
+                {hoveredCategoryLevel3 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-3 Category
+            </span>
+          )}
               </div>
               {isLevel3DropdownOpen && (
                 <div className="dropdown-options">
@@ -1052,9 +1080,17 @@ const handleLevelClear = (e) => {
               <div className="selected-category">
                 {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  < AddOutlinedIcon onClick={() => handlelevel4('add')} />
+                <AddOutlinedIcon onClick={() => handlelevel4("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel4(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel4(false)} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
+                {hoveredCategoryLevel4 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-4 Category
+            </span>
+          )}
               </div>
               {islevel4DropdownOpen && (
                 <div className="dropdown-options">
@@ -1090,9 +1126,17 @@ const handleLevelClear = (e) => {
               <div className="selected-category">
                 {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  < AddOutlinedIcon onClick={() => handlelevel5('add')} />
+                <AddOutlinedIcon onClick={() => handlelevel5("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel5(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel5(false)} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
+                {hoveredCategoryLevel5 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-5 Category
+            </span>
+          )}
               </div>
               {islevel5DropdownOpen && (
                 <div className="dropdown-options">
@@ -1126,9 +1170,17 @@ const handleLevelClear = (e) => {
               <div className="selected-category">
                 {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
                 <span className="dropdown-icons">
-                  < AddOutlinedIcon onClick={() => handlelevel6('add')} />
+                  <AddOutlinedIcon onClick={() => handlelevel6("add")}  style={{ cursor: 'pointer', fontSize: 24 }}
+              onMouseEnter={() => setHoveredCategoryLevel6(true)} // Set hovered category ID
+              onMouseLeave={() => setHoveredCategoryLevel6(false)} />
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
+                {hoveredCategoryLevel6 && (
+            <span
+              style={{  position: 'absolute',  top: '-28px',  left: '86%',  transform: 'translateX(-50%)',   backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000', }} >
+                Add Level-6 Category
+            </span>
+          )}
               </div>
               {islevel6DropdownOpen && (
                 <div className="dropdown-options">

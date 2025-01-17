@@ -123,7 +123,7 @@ const Sidebar = ({  onCategoriesClick, onAllProductsClick, OnAllVariantsClick, O
       if (section === 'all-products' || section === 'add-product') {  setActiveSection('products')  }
       if (section === 'all-products') { navigate('/Admin/allproducts');window.location.reload(); }
       if (section === 'add-product') { navigate('/Admin/addproduct'); }
-      if (section === 'hidden') {  navigate('/Admin/hiddenproduct');  }
+      if (section === 'hidden') {  navigate('/Admin/inactiveproducts');  }
       if (section === 'settings' || section === 'users') {  setActiveSection('setting')  }
       if (section === 'variants') {  navigate('/Admin/variantlist'); }
       if (section === 'categories') {  navigate('/Admin/categorylist'); }

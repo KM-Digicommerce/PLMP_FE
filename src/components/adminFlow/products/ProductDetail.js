@@ -45,7 +45,11 @@ const ProductDetail = ({ categories }) => {
     });
     const [variantOptions, setVariantOptions] = useState([]);
     const [variant_option_list, setvarient_option_list] = useState([]);
+    const [previous_variant_option_list, setPreviousvariant_option_list] = useState([]);
     const UserRole = localStorage.getItem('user_role');
+    const [hoveredVariantId, setHoveredVariantId] = useState(null); // Track the hovered variant ID
+    const [hoveredVariantIdForEdit, setHoveredVariantIdForEdit] = useState(null); // Track the hovered variant ID
+    const [hoveredVisibilityId, setHoveredVisibilityId] = useState(null); // Track hovered visibility icon
     const [brand, setBrand] = useState([]);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
@@ -345,7 +349,7 @@ const ProductDetail = ({ categories }) => {
             const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainProductDetails/`, { id: productId, });
             if (response.data && response.data.data) {
                 const productCategory = response.data.data.category_level;
-                const RetailPrice = response.data.data.category_brand_price.price;
+                const RetailPrice = response.data.data.category_brand_price.price;                
                 const RetailPriceOption = response.data.data.category_brand_price.price_option;
                 setShowRetailPrice(RetailPrice);
                 setShowRetailPriceOption(RetailPriceOption);
@@ -506,12 +510,6 @@ const ProductDetail = ({ categories }) => {
             return updatedVariants;
         });
     };
-    // const handleVariantChange = (typeId, optionId) => {        
-    //     setSelectedVariants((prev) => ({
-    //         ...prev,
-    //         [typeId]: optionId,
-    //     }));
-    // };
     const handleVariantChange = (type_id, selectedValue) => {
         setSelectedVariants((prevSelectedVariants) => {
           const updatedOptions = prevSelectedVariants.options?.map(option => 
@@ -744,16 +742,12 @@ const ProductDetail = ({ categories }) => {
     }
       };
       const handleEditClick = async(variant) => {
-        console.log('variantOptions',variantOptions);
+        setvarient_option_list([]);
+        setPreviousvariant_option_list([]);
         let option_list = variant.varient_option_list;
-        console.log(option_list,'option_list data');
-        console.log(option_list.length,'length',variantOptions.length);
-        console.log(variant,'Varaint fuill data');
         let unmatchedOptions = [];
-
+        let matchedOptions = [];
         // Loop through variant's option list
-      
-        // console.log(variant.variant_option_list,'variant_option_list data');
         setSelectedVariants({
           id:variant.id,
           sku: variant.sku_number,
@@ -765,34 +759,27 @@ const ProductDetail = ({ categories }) => {
         });
         try {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${categoryIdForVariant}`);
-            console.log(res,'res cehk her');
             setVariantOptions(res.data.data.varient_list);
             option_list.forEach((option) => {
-                console.log(option.type_name, 'option.type_name');
-                
                 // Check if the option's type_name and type_value_id are found in variantOptions
                 const isMatch = res.data.data.varient_list.some((variantOption) => {
                   return variantOption.option_value_list.some((optionValue) => 
                     optionValue.type_value_id === option.type_value_id && 
                     variantOption.type_name === option.type_name
-      
                   );
-                 
                 });
-               
-                console.log('isMatch:', isMatch);  // Check if a match was found
-            
                 // If no match is found, add it to the unmatchedOptions array
                 if (!isMatch) {
-                  console.log(option.type_name, ' else option.type_name');
-                  unmatchedOptions.push(option);
-                }
+                  unmatchedOptions.push(option); } 
+                if(isMatch) {
+                    matchedOptions.push(option);  }
               });
-            
               // If there are unmatched options, set the variant_option_list state
               if (unmatchedOptions.length > 0) {
-                console.log('Unmatched options found, setting variant_option_list', unmatchedOptions);
                 setvarient_option_list(unmatchedOptions);
+              }
+              if (matchedOptions.length > 0) {
+                setPreviousvariant_option_list(matchedOptions);
               }
         } catch (err) {
             console.error('Error fetching variants:', err);
@@ -800,9 +787,8 @@ const ProductDetail = ({ categories }) => {
         setIsUpdatePopupOpen(true);  // Open the modal
       };
       const handleUpdateFormSubmit = async (e) => {
-        console.log(e,'Update submit');
         e.preventDefault();
-        const options = variantOptions
+        let options = variantOptions
         .map((variant) => {
             const selectedOption = selectedVariants[variant.type_id];
             if (selectedOption) {
@@ -814,19 +800,37 @@ const ProductDetail = ({ categories }) => {
             return null;
         })
         .filter((option) => option !== null);
-        //  options = variant_option_list
-        // .map((variant) => {
-        //     const selectedOption = selectedVariants[variant.type_id];
-        //     if (selectedOption) {
-        //         return {
-        //             option_name_id: variant.type_id,
-        //             option_value_id: selectedOption,
-        //         };
-        //     }
-        //     return null;
-        // })
-        // .filter((option) => option !== null);
-        try {
+        const additionalOptions = variant_option_list
+        .map((variant) => {
+            if (variant.type_id && variant.type_value_id) {
+                return {
+                    option_name_id: variant.type_id,
+                    option_value_id: variant.type_value_id,
+                };
+            }
+            return null;
+        })
+        .filter((option) => option !== null);
+        const PreviousOptions = previous_variant_option_list
+        .map((variant) => {
+            if (variant.type_id && variant.type_value_id) {
+                return {
+                    option_name_id: variant.type_id,
+                    option_value_id: variant.type_value_id,
+                };
+            }
+            return null;
+        })
+        .filter((option) => option !== null);
+    // Merge the two arrays (options and additionalOptions)
+    options = options.concat(additionalOptions);
+    const filteredPreviousOptions = PreviousOptions.filter((prevOption) => {
+        return !options.some((newOption) => newOption.option_name_id === prevOption.option_name_id);
+    });
+    const finalOptions = [...filteredPreviousOptions, ...options];
+    // options = options.concat(PreviousOptions);
+    console.log('Final Options:', finalOptions);
+    try {
           setLoading(true);
           const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  {
             id:selectedVariants.id,
@@ -835,7 +839,7 @@ const ProductDetail = ({ categories }) => {
             finishedPrice: selectedVariants.finishedPrice,
             retailPrice: selectedVariants.retailPrice,
             quantity: selectedVariants.quantity,
-            options: options,}  );
+            options: finalOptions,}  );
           if (response.data && response.data.data && response.data.data.is_updated) {
             fetchVariantDetail(); // Re-fetch the data after updating
             Swal.fire({
@@ -877,13 +881,31 @@ const ProductDetail = ({ categories }) => {
         }
     };    
     const handlePaste = (e, fieldName) => {
-        const { name } = e.target;
+        const { name, value } = e.target;
         e.preventDefault(); // Prevent the default paste behavior
         const pastedText = e.clipboardData.getData('text');
-        const formattedText = pastedText.split('\n').map(line => `* ${line.trim()}`) .join('\n');
-        handleChange({ target: { name, value: formattedText, },
-        });
+        // Split the pasted text by newlines and trim each line
+        const pastedLines = pastedText.split('\n').map(line => line.trim());
+        // Get the current cursor position
+        const cursorPosition = e.target.selectionStart;
+        // Get the content before and after the cursor
+        const currentTextBeforeCursor = value.slice(0, cursorPosition);
+        const currentTextAfterCursor = value.slice(cursorPosition);
+        // Check if the last line has a '*' (i.e., it's already a list item)
+        const lastLine = currentTextBeforeCursor.split('\n').pop().trim();
+        // If the last line has '*' at the end, treat the pasted content as a new list starting with '*'
+        if (lastLine.startsWith('*')) {
+            const formattedText = pastedLines.map(line => `* ${line}`).join('\n'); // Prepend '*' to each pasted line
+            const updatedValue = currentTextBeforeCursor + '\n' + formattedText + currentTextAfterCursor;
+            handleChange({ target: { name, value: updatedValue } });
+        } else {
+            // Otherwise, treat the paste as normal text without adding '*' (non-list case)
+            const formattedText = pastedLines.join(' '); // Join the pasted lines into one line (without newlines)
+            const updatedValue = currentTextBeforeCursor + formattedText + currentTextAfterCursor;
+            handleChange({ target: { name, value: updatedValue } });
+        }
     };
+    
       const handleEditorChange = (value) => {
         handleChange({
           target: {
@@ -976,7 +998,7 @@ const ProductDetail = ({ categories }) => {
                                                 });
                                             }}
                                             className="dropdown"
-                                            style={{ width: '100%', margin: '6px 4px 6px 2px',border:'1px solid #ccc',borderRadius:'4px', }}  >
+                                            style={{ width: '100%', margin: '6px 4px 6px 2px',border:'1px solid #ccc',borderRadius:'4px', cursor:'pointer' }}  >
                                             {brand.map((item) => (
                                                 <option value={item.id}>
                                                     {item.name}
@@ -1031,7 +1053,7 @@ const ProductDetail = ({ categories }) => {
                                             </div>
                                             <div style={{ flex: 1 }}>
                                                 <label htmlFor="units" style={{fontSize: '12px',color:'#a7a7a7', padding:'7px 0px 0px 0px'}} >Unit</label>
-                                                <select id="units" name="units" className="dimensions-unit" style={{ width: '80%' }} value={formData.units || ''} onChange={handleChange} >
+                                                <select id="units" name="units" className="dimensions-unit" style={{ width: '80%',cursor:'pointer' }} value={formData.units || ''} onChange={handleChange} >
                                                     <option value="in">Inches - in</option>
                                                     <option value="mm">Millimeters -mm</option>
                                                     <option value="ft">Feet - ft</option>
@@ -1059,7 +1081,7 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className='DropdownsContainer'>
                                     {/* Level 1 Dropdown */}
-                                    <div className='DropdownColumn' ref={categoryDropdownRef} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
+                                    <div className='DropdownColumn' ref={categoryDropdownRef} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer', }} >
                                         <label htmlFor="categorySelect">Level 1:</label>
                                         <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                                             <div className="selected-category">
@@ -1080,7 +1102,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select Category</span>
                                                     </div>
                                                     {filteredCategories.map(level1 => (
-                                                        <div className=" dropdown-option" key={level1._id || ''} onClick={() => {
+                                                        <div className=" dropdown-option" onClick={() => {
                                                             handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1');
                                                         }} >
                                                             <span>{level1.name}</span>
@@ -1094,7 +1116,7 @@ const ProductDetail = ({ categories }) => {
                                     {/* Level 2 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown2Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="sectionSelect">Level 2:</label>
-                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer', borderColor: filteredCategoriesLevel2?.length === 0 ? 'red' : '#ccc' }} onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
@@ -1113,7 +1135,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel2?.map(level2 => (
-                                                        <div className=" dropdown-option" key={level2._id || ''} onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
+                                                        <div className=" dropdown-option" onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                                                             <span>{level2.name}</span>
                                                         </div>
                                                     ))}
@@ -1125,7 +1147,7 @@ const ProductDetail = ({ categories }) => {
                                     {/* Level 3 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown3Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="productTypeSelect">Level 3:</label>
-                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' , borderColor: filteredCategoriesLevel3?.length === 0 ? 'red' : '#ccc'}} onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedLevel3Id ? levelTwoCategory?.level_two_category_list.find(level3 => level3._id === selectedLevel3Id)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
@@ -1144,7 +1166,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel3?.map(level3 => (
-                                                        <div className=" dropdown-option" key={level3._id || ''} onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
+                                                        <div className=" dropdown-option" onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                                                             <span>{level3.name}</span>
                                                         </div>
                                                     ))}
@@ -1156,7 +1178,7 @@ const ProductDetail = ({ categories }) => {
                                     {/* Level 4 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown4Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level4Select">Level 4:</label>
-                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer', borderColor: filteredCategoriesLevel4?.length === 0 ? 'red' : '#ccc' }} onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
@@ -1175,7 +1197,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel4?.map(level4 => (
-                                                        <div className=" dropdown-option" key={level4._id || ''} onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
+                                                        <div className=" dropdown-option" onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                                                             <span>{level4.name}</span>
                                                         </div>
                                                     ))}
@@ -1187,7 +1209,7 @@ const ProductDetail = ({ categories }) => {
                                     {/* Level 5 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown5Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level5Select">Level 5:</label>
-                                        <div className="custom-dropdown custom-width"  style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width"  style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer', borderColor: filteredCategoriesLevel5?.length === 0 ? 'red' : '#ccc' }} onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
@@ -1206,7 +1228,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel5?.map(level5 => (
-                                                        <div className=" dropdown-option" key={level5._id || ''} onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
+                                                        <div className=" dropdown-option" onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                                                             <span>{level5.name}</span>
                                                         </div>
                                                     ))}
@@ -1218,7 +1240,7 @@ const ProductDetail = ({ categories }) => {
                                     {/* Level 6 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown6Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level6Select">Level 6:</label>
-                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
+                                        <div className="custom-dropdown custom-width" style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer', borderColor: filteredCategoriesLevel6?.length === 0 ? 'red' : '#ccc' }} onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
                                             <div className="selected-category">
                                                 {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
                                                 <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
@@ -1237,7 +1259,7 @@ const ProductDetail = ({ categories }) => {
                                                         <span>Select category</span>
                                                     </div>
                                                     {filteredCategoriesLevel6?.map(level6 => (
-                                                        <div className=" dropdown-option" key={level6._id || ''} onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
+                                                        <div className=" dropdown-option" onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                                                             <span>{level6.name}</span>
                                                         </div>
                                                     ))}
@@ -1297,24 +1319,58 @@ const ProductDetail = ({ categories }) => {
                                                     )}
                                                 </td>
                                                 <td className="others-column">
+                                                <div style={{ position: 'relative', display: 'inline-block' }}>
                                                     <FontAwesomeIcon
                                                                         icon={faClone}
                                                                         onClick={(e) => handleCloneClick(e, variant.id)}
                                                                         style={{ cursor: 'pointer', fontSize: '18px', color: '#007bff', padding:'0px 7px 0px 4px' }}
+                                                                        onMouseEnter={() => setHoveredVariantId(variant.id)} 
+                                                                        onMouseLeave={() => setHoveredVariantId(null)} 
                                                                       />
+                                                                       {hoveredVariantId === variant.id && (  // Only show tooltip for the hovered variant's clone icon
+                  <span
+                    style={{  position: 'absolute',  top: '-25px',  left: '50%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+                    }}
+                  >
+                    Clone Variant
+                  </span>
+                )}
+                </div>
                       {UserRole === 'admin' && (
-
-                                                     <FontAwesomeIcon
-                                                                      icon={variant.is_active ? faEye : faEyeSlash}
-                                                                      onClick={(e) => handleVisibilityToggle(e, variant)}
-                                                                      style={{ cursor: 'pointer', fontSize: '16px' }}
-                                                                    />
+                                                      <div
+                                                      style={{ position: 'relative', display: 'inline-block' }}
+                                                      onMouseEnter={() => setHoveredVisibilityId(variant.id)}  // Set hovered visibility icon ID
+                                                      onMouseLeave={() => setHoveredVisibilityId(null)}  // Reset hovered visibility icon ID
+                                                    >
+                                                      <FontAwesomeIcon
+                                                        icon={variant.is_active ? faEye : faEyeSlash}
+                                                        onClick={(e) => handleVisibilityToggle(e, variant)}
+                                                        style={{ cursor: 'pointer', fontSize: '16px' }}
+                                                      />
+                                                      {hoveredVisibilityId === variant.id && (
+                                                        <span
+                                                          style={{ position: 'absolute', top: '-25px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'black', color: 'white', padding: '5px 10px', borderRadius: '5px', fontSize: '12px', whiteSpace: 'nowrap', zIndex: '1000',
+                                                          }}  >
+                                                          {variant.is_active ? 'Active Variant' : 'Inactive Variant'}
+                                                        </span>
+                                                      )}
+                                                    </div>
                       )}
+                       <div style={{ position: 'relative', display: 'inline-block' }}>
                                                     <FontAwesomeIcon
                                                         icon={faEdit}
                                                         onClick={() => handleEditClick(variant)}
                                                         style={{ cursor: 'pointer', fontSize: '16px', marginLeft: '10px' }}
+                                                        onMouseEnter={() => setHoveredVariantIdForEdit(variant.id)} 
+                                                        onMouseLeave={() => setHoveredVariantIdForEdit(null)} 
                                                     />
+                                                     {hoveredVariantIdForEdit === variant.id && (
+                                                     <span
+                    style={{  position: 'absolute',  top: '-25px',  left: '50%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+                    }}  >
+                    Edit Variant
+                  </span> )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -1353,7 +1409,7 @@ const ProductDetail = ({ categories }) => {
                                                 <div key={variant.type_id}>
                                                       <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>{variant.type_name}  {variant.type_name.toLowerCase().includes("wood type") && (
         <span className="required" style={{ color: 'red' }}>*</span> )}</label>
-                                                    <select id="brand-select" name="brand_id" required={variant.type_name.toLowerCase().includes("wood type")} value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)' }} >
+                                                    <select id="brand-select" name="brand_id" required={variant.type_name.toLowerCase().includes("wood type")} value={selectedVariants[variant.type_id] || ''} onChange={(e) => handleVariantChange(variant.type_id, e.target.value)} className="dropdown" style={{ width: '100%', margin: '6px 0px 6px 0px',padding:'10px 0px 10px 0px',border:'1px solid #ccc',borderRadius:'4px',color:'rgba(0, 0, 0, 0.6)',cursor:'pointer' }} >
                                                         <option value="">Select Variant Value</option>
                                                         {variant.option_value_list?.map((option) => (
                                                             <option value={option.type_value_id}>
@@ -1397,8 +1453,11 @@ const ProductDetail = ({ categories }) => {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Retail Price <span className="required">*</span></label>
               <label htmlFor="retailPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>
-                {RetailPrice === 1 ? `${RetailPrice}X` : '0X'}
-              </label>
+              {RetailPrice === 1 ? (
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X ` : '0X'}(by default)</label>
+                                                ) : (
+                                                    <label htmlFor="totalPrice" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>  {RetailPrice ? `${RetailPrice}X` : '0X'}</label>
+                                                )}              </label>
             </div>
             <input type="text" className="input_pdp" name="retailPrice" value=  {parseFloat(selectedVariants.retailPrice || 0).toFixed(2)}  readOnly  />
             <label htmlFor="quantity" style={{ margin: "0px 0px 0px 1px", color: 'rgba(0, 0, 0, 0.6)' }}>Quantity <span className="required">*</span></label>
@@ -1423,7 +1482,7 @@ const ProductDetail = ({ categories }) => {
           </label>
 
           <select id={`variant-select-${variant.type_name}`} name={variant.type_value} value={''} // Preselect the option based on selectedVariants className="dropdown"
-            style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)',
+            style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer'
             }}
           >
             <option value="">{variant.type_value || ''}</option>
@@ -1451,7 +1510,7 @@ const ProductDetail = ({ categories }) => {
           } 
             onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
       className="dropdown"
-      style={{ width: '100%', margin: '6px 0px 6px 0px', padding: '10px 0px 10px 0px', border: '1px solid #ccc', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)' }}
+      style={{ width: '100%', margin: '6px 0px 6px 0px', padding: '10px 0px 10px 0px', border: '1px solid #ccc', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer' }}
     >
       <option value="">Select Variant Value</option>
       {variant.option_value_list?.map((option) => (

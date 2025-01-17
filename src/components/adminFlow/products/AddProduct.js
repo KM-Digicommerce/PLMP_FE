@@ -377,7 +377,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
                     <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
                     <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} /> */}
                     <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} />
-                    <textarea name="attributes" placeholder="Attributes" required value={productData.product_obj.attributes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'attributes')} onPaste={(e) => handlePaste(e, 'attributes')} />
+                    <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
+                    {/* <textarea name="attributes" placeholder="Attributes" required value={productData.product_obj.attributes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'attributes')} onPaste={(e) => handlePaste(e, 'attributes')} /> */}
                     <textarea name="tags" placeholder="Tags" required value={productData.product_obj.tags} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'tags')} onPaste={(e) => handlePaste(e, 'tags')} />
                     <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} />
                 </div>
@@ -573,19 +574,41 @@ const AddProduct = (categories) => {
       const handlePaste = (e, fieldName) => {
         e.preventDefault(); // Prevent the default paste behavior
         const pastedText = e.clipboardData.getData("text");
-        // Format pasted text: Add a bullet point to each new line
-        const formattedText = pastedText
-          .split("\n") // Split pasted text by new line
-          .map((line) => `* ${line.trim()}`) // Add * before each line
-          .join("\n"); // Join the lines back together
-        setProductData({
-          ...productData,
-          product_obj: {
-            ...productData.product_obj,
-            [fieldName]: formattedText
-          }
-        });
-      };    
+        // Get the current cursor position
+        const cursorPosition = e.target.selectionStart;
+        // Get the current value in the textarea before and after the cursor position
+        const { value } = e.target;
+        const currentTextBeforeCursor = value.slice(0, cursorPosition);
+        const currentTextAfterCursor = value.slice(cursorPosition);
+        // Check if the last line has '*' (i.e., it's already part of a list)
+        const lastLine = currentTextBeforeCursor.split('\n').pop().trim();
+        // Split the pasted text by newlines and trim each line
+        const pastedLines = pastedText.split("\n").map(line => line.trim());
+        if (lastLine.startsWith('*')) {
+            // If the last line has '*', treat the paste as appending to the last item
+            const formattedText = pastedLines.join(' '); // Join all pasted lines into one line
+            const updatedValue = currentTextBeforeCursor + ' ' + formattedText + currentTextAfterCursor;
+            setProductData({
+                ...productData,
+                product_obj: {
+                    ...productData.product_obj,
+                    [fieldName]: updatedValue
+                }
+            });
+        } else {
+            // Otherwise, format the pasted lines as new list items, each with a '*' at the start
+            const formattedText = pastedLines.map(line => `* ${line}`).join("\n");
+            const updatedValue = currentTextBeforeCursor + '\n' + formattedText + currentTextAfterCursor;
+            setProductData({
+                ...productData,
+                product_obj: {
+                    ...productData.product_obj,
+                    [fieldName]: updatedValue
+                }
+            });
+        }
+    };
+       
     const handleChange = async (e) => {
         let updatedValue = '';
         const { name, value } = e.target;
