@@ -64,3 +64,5 @@ input[type="number"] {
 .remove-variant-icon-button { margin-top: 10px; background: transparent; border: none; cursor: pointer;}
 .icon-trash { color: red;}
 .addproduct-schema{padding: 7px;}
+.remove-image-icon-button{margin-top: 0px; background: transparent; border: none; cursor: pointer; width: 3%; padding: 0px 4px 16px 8px; color: red;}
+.icon-trash-image{padding: 10px 0px 0px 0px;}

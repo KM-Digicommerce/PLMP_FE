@@ -8,13 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice }) => {
+const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice,addImageRow,removeImageRow }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [openDropdownIndex, setOpenDropdownIndex] = useState(null); // Track which dropdown is open
-
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
@@ -77,18 +76,14 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
           <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Address" style="margin-bottom: 10px; width: 97%; height: 80px; padding:6px;"></textarea>
           <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Enter Vendor Website" style="margin-bottom: 10px;">
             <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
-          <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
-        </div>
-            `,
+          <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;"> </div>  `,
               showCancelButton: true,
               focusConfirm: false,
               didOpen: () => {
                 // Add close functionality to the button after the popup renders
                 const closeButton = document.getElementById('close-popup-btn');
                 if (closeButton) {
-                  closeButton.addEventListener('click', () => {
-                    Swal.close();
-                  });
+                  closeButton.addEventListener('click', () => {   Swal.close();  });
                 }
               },
               preConfirm: () => {
@@ -108,7 +103,6 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
             });
     
         if (formValues) {            
-            const { name, logo, email, address, website, mobile_number } = formValues;
           try {
             const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/createBrand/`,  formValues,
                 { headers: { 'Content-Type': 'multipart/form-data',  }, } );
@@ -316,26 +310,8 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <label htmlFor="long_description">Long Description <span className="required">*</span></label>
                     <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
-                    {/* <textarea
-    name="long_description"
-    placeholder="Long Description"
-    required
-    value={productData.product_obj.long_description}
-    onChange={handleChange}
-    onKeyDown={(e) => handleTextareaChange(e, 'long_description')}
-    onPaste={(e) => handlePaste(e, 'long_description')}
-/> */}
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
                     <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
-                    {/* <textarea
-    name="short_description"
-    placeholder="Short Description"
-    required
-    value={productData.product_obj.short_description}
-    onChange={handleChange}
-    onKeyDown={(e) => handleTextareaChange(e, 'short_description')}
-    onPaste={(e) => handlePaste(e, 'short_description')}
-/> */}
                 </div>
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
@@ -372,34 +348,42 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
-                    {/* <textarea name="features" placeholder="Features" value={productData.features} onChange={handleChange} />
-                    <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
-                    <textarea name="tags" placeholder="Tags" value={productData.tags} onChange={handleChange} />
-                    <textarea name="key_features" placeholder="Key Features" value={productData.key_features} onChange={handleChange} /> */}
                     <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} />
                     <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
-                    {/* <textarea name="attributes" placeholder="Attributes" required value={productData.product_obj.attributes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'attributes')} onPaste={(e) => handlePaste(e, 'attributes')} /> */}
                     <textarea name="tags" placeholder="Tags" required value={productData.product_obj.tags} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'tags')} onPaste={(e) => handlePaste(e, 'tags')} />
                     <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Raw Data</h3>
-                    {/* <label htmlFor="features_notes">Standard Features/Notes:</label> */}
-                    {/* <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.features_notes} onChange={handleChange} /> */}
                     <textarea name="features_notes" placeholder="Standard Features Notes" required value={productData.product_obj.features_notes} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features_notes')} onPaste={(e) => handlePaste(e, 'features_notes')} />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Options</h3>
-                    {/* <label htmlFor="option_str">Option </label> */}
-                    {/* <textarea name="option_str" placeholder="Options" required value={productData.option_str} onChange={handleChange} /> */}
                     <textarea name="option_str" placeholder="Options" required value={productData.product_obj.option_str} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'option_str')} onPaste={(e) => handlePaste(e, 'option_str')} />
                 </div>
-                <button onClick={onSave} className="save-button">Add Product</button>
-            </div>
+                <div className="form-section">
+      <h3 style={{ margin: '6px' }}>Images  <button type="button" style={{float:'right',width:'16%', padding:'5px', margin:'0px 12px 0px 0px'}} onClick={addImageRow}>
+        Add Image
+      </button></h3>
+      {/* Render image input fields dynamically */}
+      {productData.product_obj.image.map((image, index) => (
+        <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+          <input  type="text"  name={`image_${index}`}  placeholder="Enter Image URL"  required  value={image}  onChange={(e) => handleChange(e, index)}  style={{ flex: 1 }}
+          />
+          {/* Show remove button (trash icon) only if there are more than one image row */}
+          {productData.product_obj.image.length > 1 && (
+            <button type="button" onClick={() => removeImageRow(index)}  className='remove-image-icon-button' > 
+              <FontAwesomeIcon icon={faTrash} className="icon-trash-image" /> </button>
+          )}
+        </div>
+      ))}
+      {/* Add Image Row Button */}
+    </div>
+     <button onClick={onSave} className="save-button">Add Product</button>  
+    </div>
         </div>
     );
 };
-
 const AddProduct = (categories) => {
     const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
     const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
@@ -411,45 +395,14 @@ const AddProduct = (categories) => {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
             setLastLevelCategoryIds(res.data.data.last_level_category);
         };
-
         fetchCategoryData();
     }, []);
     const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
        const  [productData, setProductData] = useState({
-            product_obj: {
-                category_id: '',
-                category_name: '',
-                model: '',
-                mpn: '',
-                upc_ean: '',
-                breadcrumb: '',
-                brand_id: '',
-                product_name: '',
-                height:'',
-                width:'',
-                depth:'',
-                length:'',
-                units:'in',
-                long_description: '',
-                short_description: '',
-                features: '',
-                attributes: '',
-                tags: '',
-                msrp: '',
-                base_price: '',
-                key_features: '',
-                features_notes:'',
-                option_str:'',
+            product_obj: {  category_id: '',  category_name: '',  model: '',  mpn: '',  upc_ean: '',  breadcrumb: '',  brand_id: '',  product_name: '',  height:'',  width:'',  depth:'',  length:'',  units:'in',  long_description: '',  short_description: '',  features: '',  attributes: '',  tags: '',  msrp: '',  base_price: '',  key_features: '',  features_notes:'',  option_str:'', image: [''],
                 varients: [
-                    {
-                        sku_number: '',
-                        finished_price: '0',
-                        un_finished_price: '0',
-                        quantity: '0',
-                        options: []
-                    }
-                ]
+                    { sku_number: '', finished_price: '0', un_finished_price: '0', quantity: '0', options: [] } ]
             }
         });
         useEffect(() => {
@@ -464,7 +417,7 @@ const AddProduct = (categories) => {
     }]);
     const handleLoadNewmodel = () => {
         setProductData({
-            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in',long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'',  option_str:'', varients: [{
+            product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in',long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'',  option_str:'',  image: [''],varients: [{
                     sku_number: '',
                     finished_price: '0',
                     un_finished_price: '0',
@@ -476,7 +429,6 @@ const AddProduct = (categories) => {
             }
         });
         setSelectedVariants([{  sku: '',   unfinishedPrice: '',   finishedPrice: '',   quantity: '',   totalPrice: 0,   retailPrice: 0,   options: []  }]);
-        
     };
     const addVariantRow = () => {
         setSelectedVariants(prevVariants => [
@@ -535,7 +487,7 @@ const AddProduct = (categories) => {
         });
     };
     const handleTextareaChange = (e, fieldName) => {
-        const { name, value } = e.target;
+        const { value } = e.target;
         // Ensure the first line starts with a bullet point if the field is empty
         if (value === "" && e.key === "Enter") {
           setProductData({
@@ -608,11 +560,45 @@ const AddProduct = (categories) => {
             });
         }
     };
-       
+    const addImageRow = () => {
+        setProductData({
+          ...productData,
+          product_obj: {
+            ...productData.product_obj,
+            image: [...productData.product_obj.image, ''], // Add an empty string to represent a new input
+          },
+        });
+      };
+      const removeImageRow = (index) => {
+        const updatedImages = [...productData.product_obj.image];
+        updatedImages.splice(index, 1); // Remove the image at the specified index
+    
+        setProductData({
+          ...productData,
+          product_obj: {
+            ...productData.product_obj,
+            image: updatedImages,
+          },
+        });
+      };
     const handleChange = async (e) => {
         let updatedValue = '';
         const { name, value } = e.target;
-        console.log(value,'value');
+        if (name.startsWith('image_')) {
+            // Extract the index from the name (e.g., image_0, image_1, etc.)
+            const imageIndex = parseInt(name.split('_')[1]);
+            // Update the image array
+            const updatedImages = [...productData.product_obj.image];
+            updatedImages[imageIndex] = value;
+            setProductData({
+              ...productData,
+              product_obj: {
+                ...productData.product_obj,
+                image: updatedImages,
+              },
+            });
+            return;
+          }
         if (name === 'brand_id' && value !== '') {
             try {
                 const payload = {
@@ -627,25 +613,17 @@ const AddProduct = (categories) => {
                   console.error("Error sending Vendor and category name:", error);
                   Swal.fire({  title: "Error",  text: "An error occurred while sending Vendor and category name.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
                 }
-                if (name === 'brand_id' && value === '') {
-                    setShowRetailPrice([0]); 
-                }
-               
+                if (name === 'brand_id' && value === '') {   setShowRetailPrice([0]);  }
         }
         if (name === 'height' && value !== '' || name === 'width' && value !== '' || name === 'depth' && value !== '' || name === 'length' && value !== '') {
              updatedValue = !isNaN(value) && value !== '' ? parseFloat(value).toFixed(2) : value;
         }
-        else{
-            console.log('else sfsfd',name);
-            
-            updatedValue = value;
-        }
-
+        else{ updatedValue = value; }
         setProductData({
             ...productData,
             product_obj: {
                 ...productData.product_obj,
-                [name]: updatedValue
+                [name]: updatedValue,
             }
         });
     };
@@ -724,7 +702,7 @@ const AddProduct = (categories) => {
                     },
                   })
                 setProductData({
-                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'', option_str:'', varients: [{
+                    product_obj: { model: '', mpn: '', upc_ean: '', breadcrumb: '', brand_id: '', product_name: '',  height:'', width:'', depth:'', length:'', units:'in', long_description: '', short_description: '', features: '', attributes: '', tags: '', msrp: '', base_price: '', key_features: '',features_notes:'', option_str:'', image: [''], varients: [{
                             sku_number: '',
                             finished_price: '0',
                             un_finished_price: '0',
@@ -736,22 +714,21 @@ const AddProduct = (categories) => {
                     }
                 });
                 setIsModalOpen(false);
-            } else {
-                alert('Failed to add product');
+            } else if (response.data?.data?.status === false) {
+                alert(response.data?.data?.error);
             }
+            else{ alert('Failed to add product!');}
         } catch (error) {
             console.error('Error adding product:', error);
             alert('An error occurred while adding the product.');
         }
     };
-
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedLevel2Id, setselectedLevel2Id] = useState('');
     const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
     const [selectedlevel4, setSelectedlevel4] = useState('');
     const [selectedlevel5, setSelectedlevel5] = useState('');
     const [selectedlevel6, setSelectedlevel6] = useState('');
-
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
     const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -774,7 +751,6 @@ const AddProduct = (categories) => {
   const categoryDropdown4Ref = useRef(null);
   const categoryDropdown5Ref = useRef(null);
   const categoryDropdown6Ref = useRef(null);
-
   const handleClickOutside = (event) => {
     if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
     if (categoryDropdown2Ref.current && !categoryDropdown2Ref.current.contains(event.target)) { setIsLevel2DropdownOpen(false); }
@@ -1093,14 +1069,7 @@ const AddProduct = (categories) => {
                             </div>
                             {isCategoryDropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level1}
-                                        onChange={(e) => handleSearchChange('level1', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
+                                    <input  type="text"  placeholder="Search category..."  value={searchQueries.level1}  onChange={(e) => handleSearchChange('level1', e.target.value)}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}  />
                                     <div className="dropdown-option" onClick={() => handleCategorySelect('')}>
                                         <span>Select Category</span>
                                     </div>
@@ -1121,20 +1090,12 @@ const AddProduct = (categories) => {
                             <div className="selected-category">
                                 {selectedLevel2Id ? levelOneCategory?.level_one_category_list.find(level2 => level2._id === selectedLevel2Id)?.name : 'Select category'}
                                 <span className="dropdown-icons">
-
                                     <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                 </span>
                             </div>
                             {isLevel2DropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level2}
-                                        onChange={(e) => handleSearchChange('level2', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
+                                    <input  type="text"  placeholder="Search category..."  value={searchQueries.level2}  onChange={(e) => handleSearchChange('level2', e.target.value)}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}   />
                                     <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                                         <span>Select category</span>
                                     </div>
@@ -1147,7 +1108,6 @@ const AddProduct = (categories) => {
                             )}
                         </div>
                     </div>
-
                     {/* Level 3 Dropdown */}
                     <div className='DropdownColumn' ref={categoryDropdown3Ref}>
                         <label htmlFor="productTypeSelect">Level 3:</label>
@@ -1158,14 +1118,7 @@ const AddProduct = (categories) => {
                             </div>
                             {isLevel3DropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level3}
-                                        onChange={(e) => handleSearchChange('level3', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()} // Keeps dropdown open on input click
-                                    />
+                                    <input  type="text"  placeholder="Search category..."  value={searchQueries.level3}  onChange={(e) => handleSearchChange('level3', e.target.value)}  className="dropdown-search-input"  onClick={(e) => e.stopPropagation()}    />
                                     <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                                         <span>Select category</span>
                                     </div>
@@ -1178,7 +1131,6 @@ const AddProduct = (categories) => {
                             )}
                         </div>
                     </div>
-
                     {/* Level 4 Dropdown */}
                     <div className='DropdownColumn' ref={categoryDropdown4Ref}>
                         <label htmlFor="level4Select">Level 4:</label>
@@ -1186,20 +1138,12 @@ const AddProduct = (categories) => {
                             <div className="selected-category">
                                 {selectedlevel4 ? levelThreeCategory?.level_three_category_list.find(level4 => level4._id === selectedlevel4)?.name : 'Select category'}
                                 <span className="dropdown-icons">
-
                                     <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                 </span>
                             </div>
                             {islevel4DropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level4}
-                                        onChange={(e) => handleSearchChange('level4', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
+                                    <input   type="text"   placeholder="Search category..."   value={searchQueries.level4}   onChange={(e) => handleSearchChange('level4', e.target.value)}   className="dropdown-search-input"   onClick={(e) => e.stopPropagation()} />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
                                         <span>Select category</span>
                                     </div>
@@ -1212,7 +1156,6 @@ const AddProduct = (categories) => {
                             )}
                         </div>
                     </div>
-
                     {/* Level 5 Dropdown */}
                     <div className='DropdownColumn' ref={categoryDropdown5Ref}>
                         <label htmlFor="level5Select">Level 5:</label>
@@ -1220,20 +1163,12 @@ const AddProduct = (categories) => {
                             <div className="selected-category">
                                 {selectedlevel5 ? levelFourCategory?.level_four_category_list.find(level5 => level5._id === selectedlevel5)?.name : 'Select category'}
                                 <span className="dropdown-icons">
-
                                     <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                 </span>
                             </div>
                             {islevel5DropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level5}
-                                        onChange={(e) => handleSearchChange('level5', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
+                                    <input   type="text"   placeholder="Search category..."   value={searchQueries.level5}   onChange={(e) => handleSearchChange('level5', e.target.value)}   className="dropdown-search-input"   onClick={(e) => e.stopPropagation()} />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
                                         <span>Select category</span>
                                     </div>
@@ -1246,7 +1181,6 @@ const AddProduct = (categories) => {
                             )}
                         </div>
                     </div>
-
                     {/* Level 6 Dropdown */}
                     <div className='DropdownColumn' ref={categoryDropdown6Ref}>
                         <label htmlFor="level6Select">Level 6:</label>
@@ -1254,20 +1188,12 @@ const AddProduct = (categories) => {
                             <div className="selected-category">
                                 {selectedlevel6 ? levelFiveCategory?.level_five_category_list.find(level6 => level6._id === selectedlevel6)?.name : 'Select category'}
                                 <span className="dropdown-icons">
-
                                     <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                 </span>
                             </div>
                             {islevel6DropdownOpen && (
                                 <div className="dropdown-options">
-                                    <input
-                                        type="text"
-                                        placeholder="Search category..."
-                                        value={searchQueries.level6}
-                                        onChange={(e) => handleSearchChange('level6', e.target.value)}
-                                        className="dropdown-search-input"
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
+                                    <input   type="text"   placeholder="Search category..."   value={searchQueries.level6}   onChange={(e) => handleSearchChange('level6', e.target.value)}   className="dropdown-search-input"   onClick={(e) => e.stopPropagation()}  />
                                     <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
                                         <span>Select category</span>
                                     </div>
@@ -1305,6 +1231,8 @@ const AddProduct = (categories) => {
                         handleVariantDecimalBlur={handleVariantDecimalBlur}
                         selectedCategoryLevel={selectedCategoryLevel}
                         RetailPrice={RetailPrice}
+                        addImageRow={addImageRow}
+                        removeImageRow={removeImageRow}
                     />
                 </div>
             )}

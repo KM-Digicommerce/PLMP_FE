@@ -7,7 +7,7 @@ import axiosInstance from '../../../../src/utils/axiosConfig';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash,faEdit,faClone } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash,faEdit,faClone,faTrash } from '@fortawesome/free-solid-svg-icons';
 import ReactQuill from 'react-quill'; // React wrapper for Quill
 import 'react-quill/dist/quill.snow.css';
 import { FaTrashAlt } from 'react-icons/fa'; // For delete icon
@@ -412,11 +412,31 @@ const ProductDetail = ({ categories }) => {
         } catch (err) {    setError('Error fetching product details 2');   } finally {      setLoading(false);   } };
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value, });
+     if (name.startsWith('image_')) {
+    const index = parseInt(name.split('_')[1]); // Extract the index from the name (image_0, image_1, etc.)
+    const updatedImages = [...formData.image];
+    updatedImages[index] = value; // Update the specific image URL at the given index
+    // Update formData with the new image array
+    setFormData({
+      ...formData,
+        image: updatedImages,
+    });
+  } else {
+    setFormData({  ...formData,  [name]: value, });
+  }
         if (JSON.stringify(formData) !== JSON.stringify(originalData)) {
             setUnsavedChanges(true);
         }
     };
+    const addImageRow = () => {
+        setFormData({  ...formData,  image: [...formData.image, ''], // Add an empty string to represent a new empty input
+        });
+      };
+    const deleteImageRow = (index) => {
+        const updatedImages = [...formData.image];
+        updatedImages.splice(index, 1); // Remove the image at the specified index
+        setFormData({  ...formData,  image: updatedImages, });
+      };
     const [mainImage, setMainImage] = useState(Soon);
     useEffect(() => {
         if (Array.isArray(formData.image) && formData.image.length > 0) {
@@ -439,7 +459,7 @@ const ProductDetail = ({ categories }) => {
             try {
                 const payload = {
                     id: formData.product_id || '',
-                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,   height: formData.height, width: formData.width, depth: formData.depth,length: formData.length, units: formData.units, features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description,  attributes: formData.attributes,option_str:formData.option_str,features_notes:formData.features_notes, model: formData.model,  upc_ean: formData.upc_ean,
+                    update_obj: {  product_name: formData.product_name,  url: formData.url,  base_price: formData.base_price,  breadcrumb: formData.breadcrumb,  mpn: formData.mpn,  brand_id: formData.brand_id,  tags: formData.tags,  key_features: formData.key_features,  msrp: formData.msrp,   height: formData.height, width: formData.width, depth: formData.depth,length: formData.length, units: formData.units,image:formData.image, features: formData.features,  long_description: formData.long_description,  short_description: formData.short_description, attributes: formData.attributes,option_str:formData.option_str,features_notes:formData.features_notes, model: formData.model,  upc_ean: formData.upc_ean,
                     }
                 };
                 await axiosInstance.put(`${process.env.REACT_APP_IP}/productUpdate/`, payload);
@@ -1006,20 +1026,6 @@ const ProductDetail = ({ categories }) => {
                                             ))}
                                         </select>
                                     </div>
-                                    {/* <div className="form-group">
-                                        <label htmlFor="base_price">Base Price</label>
-                                        <input type="text" id="base_price" className='input_pdps' name="base_price" value={String(`$${formData.base_price}` || '')}
-                                            onChange={(e) => {
-                                                const inputValue = e.target.value.replace(/[^0-9.]/g, '');
-                                                handleChange({
-                                                    target: {
-                                                        name: 'base_price',
-                                                        value: inputValue,
-                                                    },
-                                                });
-                                            }}
-                                        />
-                                    </div> */}
                                     <div className="form-group">
                                         <label htmlFor="model">Model</label>
                                         <input type="text" id="model" className='input_pdps' name="model" value={formData.model ? formData.model.toLowerCase().replace(/^(\w)/, (match) => match.toUpperCase()) : ''} onChange={handleChange} required />
@@ -1061,7 +1067,30 @@ const ProductDetail = ({ categories }) => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <div className="form-group">
+      <label htmlFor="image">Images <button
+        type="button"
+        onClick={addImageRow}
+        style={{ padding: '5px 15px',  backgroundColor: '#28a745',  color: 'white',  border: 'none',  cursor: 'pointer',float:'right', width:'16%'  }}  >
+        Add Image
+      </button></label>
+
+      {/* Render image input fields dynamically */}
+      {formData.image && formData.image.length > 0 ? (
+        formData.image.map((image, index) => (
+          <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+            <input  type="text"  id={`image_${index}`}  name={`image_${index}`}  className="input_pdps"  value={image}  onChange={(e) => handleChange(e, index)}  placeholder="Enter Image URL"  style={{ flex: 1 }}  />
+            {/* Show delete button for each row, only if there are more than one image */}
+            {formData.image.length > 1 && (
+                 <button type="button" onClick={() => deleteImageRow(index)}  className='remove-image-icon-button' style={{padding:'0px 4px 8px 4px'}}> 
+                              <FontAwesomeIcon icon={faTrash} className="icon-trash-image" /> </button>            )}
+          </div>
+        ))
+      ) : (
+        <p>No images available</p>
+      )}
+    </div>
+                             </div>
                             </div>
                         )}
                         {view === 'taxonomy' && (
