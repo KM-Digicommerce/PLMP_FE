@@ -36,8 +36,7 @@ const BrandList = () => {
   );
   const handleAddBrand = async () => {
     const { value: formValues } = await Swal.fire({
-      html: `
-     <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+      html: ` <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
   <button 
     id="close-popup-btn" 
     style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
@@ -46,7 +45,8 @@ const BrandList = () => {
   <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
 </div>
 <div>
-  <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Name" style="margin-bottom: 10px;font-size: 16px;">
+ <label for="vendor-name" style="font-size: 16px;float:left;font-family: sans-serif;">Vendor Name <span style="color: red; font-size: 16px;">*</span></label>
+<input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Name" style="margin-bottom: 10px; font-size: 16px;" required>
     <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Email Id" style="margin-bottom: 10px;font-size: 16px;">
   <input id="contact-info" class="swal2-input vendor_input" autocomplete="off" placeholder="Contact Information" style="margin-bottom: 10px;font-size: 16px;">
   <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Address" style="margin-bottom: 10px; width: 96%; height: 80px; padding:6px 6px 6px 12px; font-size:16px;font-family: sans-serif;"></textarea>

@@ -490,7 +490,7 @@ const ProductList = () => {
                   />
                 {hoveredProductId === item.product_id && (  // Show tooltip only for the hovered row's clone icon
             <span
-              style={{  position: 'absolute',  top: '-25px',  left: '0',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+              style={{  position: 'absolute',  top: '-28px',  left: '-19px',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
               }} > Clone Product</span>
           )}
                   </div>
@@ -506,7 +506,7 @@ const ProductList = () => {
                   style={{ cursor: 'pointer', fontSize: '16px' }}  />
                 {hoveredVisibilityId === item.product_id && (
                     <span
-                      style={{  position: 'absolute',  top: '-25px',  left: '50%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
+                      style={{  position: 'absolute',  top: '-28px',  left: '5%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
                       }}  >
                       {item.is_active ? 'Active Product' : 'Inactive Product'}
                     </span>
