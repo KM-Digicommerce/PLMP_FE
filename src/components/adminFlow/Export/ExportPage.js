@@ -378,11 +378,11 @@ const ExportPage = (categories) => {
         title: 'Export Options',
         html: ` <div style="font-size: 16px; padding-bottom: 10px;">
           <label for="includeInactiveProducts" style="display: block;">
-            <input type="checkbox" id="includeInactiveProducts" style="margin-right: 8px;" /> 
+            <input type="checkbox" id="includeInactiveProducts" style="" /> 
             Include Inactive Products
           </label>
-          <label for="includeInactiveVariants" style="display: block;margin: 0px 6px 0px 0px;">
-            <input type="checkbox" id="includeInactiveVariants" style="margin-right: 8px;" />
+          <label for="includeInactiveVariants" style="display: block;margin: 0px 8px 0px 0px;">
+            <input type="checkbox" id="includeInactiveVariants" style="" />
             Include Inactive Variants
           </label>
         </div> `,
