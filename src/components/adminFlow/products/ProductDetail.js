@@ -113,7 +113,6 @@ const ProductDetail = ({ categories }) => {
     const filteredCategories = categories?.category_list?.filter(category =>
         category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
     );
-
     const levelOneCategory = categories?.category_list?.find(level1 => level1._id === selectedCategoryId);
     const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
     const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory?.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
@@ -133,7 +132,9 @@ const ProductDetail = ({ categories }) => {
     const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories?.category_list?.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
     const handleSearchChange = (level, value) => {
+        console.log(level,value,'search here');
         setSearchQueries(prev => ({ ...prev, [level]: value }));
+        console.log(searchQueries,'search here');
     };
     const handleCategorySelectForVariants = async (id, category_name) => {
         setCategoryId(id);
@@ -396,21 +397,17 @@ const ProductDetail = ({ categories }) => {
         } catch (err) {
             console.log(err, 'err');
             setError('Error fetching product details');
-        } finally {
-            setLoading(false);
-        }
+        } finally {  setLoading(false);  }
     };
     useEffect(() => {
-        if (productId) {
-            fetchProductDetail(productId);
-        }
+        if (productId) {  fetchProductDetail(productId);   }
     }, [productId]);
     const fetchVariantDetail = async () => {
         try {
             const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {   product_id: productId,  });
             if (variantResponse.data && variantResponse.data.data) {      setVariantData(variantResponse.data.data || []);   }
         } catch (err) {    setError('Error fetching product details 2');   } finally {      setLoading(false);   } };
-    const handleChange = (e) => {
+    const handleChange = (e) => {        
         const { name, value } = e.target;
      if (name.startsWith('image_')) {
     const index = parseInt(name.split('_')[1]); // Extract the index from the name (image_0, image_1, etc.)
@@ -421,21 +418,18 @@ const ProductDetail = ({ categories }) => {
       ...formData,
         image: updatedImages,
     });
-  } else {
-    setFormData({  ...formData,  [name]: value, });
-  }
-        if (JSON.stringify(formData) !== JSON.stringify(originalData)) {
-            setUnsavedChanges(true);
-        }
+  } else {  setFormData({  ...formData,  [name]: value, });  }
+     if (JSON.stringify(formData) !== JSON.stringify(originalData)) { setUnsavedChanges(true);  }
     };
     const addImageRow = () => {
-        setFormData({  ...formData,  image: [...formData.image, ''], // Add an empty string to represent a new empty input
-        });
+        setFormData({  ...formData,  image: [...formData.image, ''],  });// Add an empty string to represent a new empty input
+            setUnsavedChanges(true);
       };
     const deleteImageRow = (index) => {
         const updatedImages = [...formData.image];
         updatedImages.splice(index, 1); // Remove the image at the specified index
         setFormData({  ...formData,  image: updatedImages, });
+        setUnsavedChanges(true);
       };
     const [mainImage, setMainImage] = useState(Soon);
     useEffect(() => {
@@ -642,7 +636,7 @@ const ProductDetail = ({ categories }) => {
         if (unsavedChanges) {
           const shouldNavigate = window.confirm("You have some unsaved changes, do you want to continue?");
           if (!shouldNavigate)   return; // Don't change the view
-        else { setFormData(originalData);    fetchProductDetail(productId);            setUnsavedChanges(false); }
+        else { setFormData(originalData);    fetchProductDetail(productId); setUnsavedChanges(false); }
         }
         setView(targetView);
       };
@@ -659,22 +653,9 @@ const ProductDetail = ({ categories }) => {
         // Update local state immediately
         console.log(updatedVisibility,'updatedVisibility');
         console.log(variant.id,'updatedVisibility');
-        console.log(`Visibility toggled for variant: ${variant.sku_number} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
-        // Show confirmation dialog with SweetAlert
+        console.log(`Visibility toggled for variant: ${variant.sku_number} to ${updatedVisibility ? 'Visible' : 'Invisible '}`); // Show confirmation dialog with SweetAlert
         Swal.fire({
-          title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected variant?`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,
-          cancelButtonText: "No, stay",
-          customClass: {
-            container: 'swal-custom-container',
-            popup: 'swal-custom-popup',
-            title: 'swal-custom-title',
-            confirmButton: 'swal-custom-confirm',
-            cancelButton: 'swal-custom-cancel'
+          title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected variant?`,  icon: "warning",  showCancelButton: true,  confirmButtonColor: "#d33",  cancelButtonColor: "#3085d6",  confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,  cancelButtonText: "No, stay",  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
           }
         }).then((result) => {
           // If the user clicks "Yes", then call the API to update the product status
@@ -686,34 +667,14 @@ const ProductDetail = ({ categories }) => {
                 if (response.data && response.data.data && response.data.data.is_update) {
                   // After successful update, optionally refetch data or update UI
                   fetchVariantDetail();
-                  Swal.fire({
-                    title: 'Success!',
-                    text: `The variant has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,
-                    icon: 'success',
-                    customClass: {
-                      container: 'swal-custom-container',
-                      popup: 'swal-custom-popup',
-                      title: 'swal-custom-title',
-                      confirmButton: 'swal-custom-confirm',
-                      cancelButton: 'swal-custom-cancel'
-                    }
+                  Swal.fire({  title: 'Success!',  text: `The variant has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,  icon: 'success',
+                    customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'  }
                   });
-                } else {
-                  alert("Unexpected response structure");
-                }
+                } else { alert("Unexpected response structure");  }
               })
               .catch((err) => {
                 setError(err.message);
-                Swal.fire({
-                  title: 'Error',
-                  text: 'There was an issue updating the variant status.',
-                  icon: 'error',
-                  customClass: {
-                    container: 'swal-custom-container',
-                    popup: 'swal-custom-popup',
-                    title: 'swal-custom-title',
-                    confirmButton: 'swal-custom-confirm',
-                    cancelButton: 'swal-custom-cancel'
+                Swal.fire({  title: 'Error',  text: 'There was an issue updating the variant status.',  icon: 'error',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
                   }
                 });
               })
@@ -721,16 +682,8 @@ const ProductDetail = ({ categories }) => {
                 setLoading(false);
               });
           } else {
-            Swal.fire({
-              title: 'Cancelled',
-              text: 'No changes were made.',
-              icon: 'info',
-              customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel'
+            Swal.fire({  title: 'Cancelled',  text: 'No changes were made.',  icon: 'info',
+              customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
               }
             });
           }
@@ -848,8 +801,6 @@ const ProductDetail = ({ categories }) => {
         return !options.some((newOption) => newOption.option_name_id === prevOption.option_name_id);
     });
     const finalOptions = [...filteredPreviousOptions, ...options];
-    // options = options.concat(PreviousOptions);
-    console.log('Final Options:', finalOptions);
     try {
           setLoading(true);
           const response = await axiosInstance.post( `${process.env.REACT_APP_IP}/VarientUpdate/`,  {
@@ -866,8 +817,7 @@ const ProductDetail = ({ categories }) => {
               title: 'Success!',
               text: 'Variant data has been updated successfully.',
               icon: 'success',
-              customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'
-              }
+              customClass: { container: 'swal-custom-container', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm', cancelButton: 'swal-custom-cancel'   }
             });
             setIsUpdatePopupOpen(false);  // Close the modal after successful update
           } else {
@@ -1074,7 +1024,6 @@ const ProductDetail = ({ categories }) => {
         style={{ padding: '5px 15px',  backgroundColor: '#28a745',  color: 'white',  border: 'none',  cursor: 'pointer',float:'right', width:'16%'  }}  >
         Add Image
       </button></label>
-
       {/* Render image input fields dynamically */}
       {formData.image && formData.image.length > 0 ? (
         formData.image.map((image, index) => (
@@ -1512,8 +1461,7 @@ const ProductDetail = ({ categories }) => {
 
           <select id={`variant-select-${variant.type_name}`} name={variant.type_value} value={''} // Preselect the option based on selectedVariants className="dropdown"
             style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer'
-            }}
-          >
+            }}   >
             <option value="">{variant.type_value || ''}</option>
           </select>
         </>
@@ -1539,8 +1487,7 @@ const ProductDetail = ({ categories }) => {
           } 
             onChange={(e) => handleVariantChange(variant.type_id, e.target.value)}
       className="dropdown"
-      style={{ width: '100%', margin: '6px 0px 6px 0px', padding: '10px 0px 10px 0px', border: '1px solid #ccc', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer' }}
-    >
+      style={{ width: '100%', margin: '6px 0px 6px 0px', padding: '10px 0px 10px 0px', border: '1px solid #ccc', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer' }}  >
       <option value="">Select Variant Value</option>
       {variant.option_value_list?.map((option) => (
         <option value={option.type_value_id} key={option.type_value_id}>
@@ -1550,31 +1497,9 @@ const ProductDetail = ({ categories }) => {
     </select>
   </div>
 ))}
-
             <Button type="submit" variant="contained" color="primary" sx={{ width: '100%', marginTop: 2 }}>   Update Variant </Button> </form>  </Box>
       </Modal>          </div>
                         )}
-                        {/* {view === 'pricing' && (
-                            <div className="pricing-section">
-                                <h3>Pricing Details</h3>
-                                <div className="form-group">
-                                    <label htmlFor="msrp">MSRP</label>
-                                    <input type="text" id="msrp" name="msrp" className='input_pdps'
-                                        value={String(`$${formData.msrp}` || '')}
-                                        // onChange={handleChange} required 
-                                        onChange={(e) => {
-                                            const inputValue = e.target.value.replace(/[^0-9.]/g, '');
-                                            handleChange({
-                                                target: {
-                                                    name: 'msrp',
-                                                    value: inputValue,
-                                                },
-                                            });
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        )} */}
                         {view === 'keyDetails' && (
                             <div className="other-details-section">
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
@@ -1632,7 +1557,7 @@ const ProductDetail = ({ categories }) => {
                                     <label htmlFor="long_description">Long Description</label>
                                     <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description || ''} 
                                     onChange={(e) => handleChange({ target: { name: 'long_description', value: e.target.value } })}
-                                    />
+                                    /> 
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="tags">Tags</label>
@@ -1664,8 +1589,7 @@ const ProductDetail = ({ categories }) => {
                                     <textarea id="features_notes" name="features_notes" className="input_pdps" value={formData.features_notes ? formatFeature(formData.features_notes) : ''}
                                    onKeyDown={(e) => handleTextareaChange(e, 'features_notes')} // Use common keydown handler
                                    onChange={(e) => handleChange({ target: { name: 'features_notes', value: e.target.value } })}
-                                   onPaste={(e) => handlePaste(e, 'features_notes')}
-/>
+                                   onPaste={(e) => handlePaste(e, 'features_notes')} />
                                 </div>
                             </div>
                         )}
@@ -1697,18 +1621,8 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                             </div>
                         )}
-                        {/* {view !== 'variants' && view !== 'taxonomy' && ( */}
                         {view !== 'variants' && (
-    <button
-        type="submit"
-        className="save-button_pdp"
-        onClick={view === 'taxonomy' && UserRole === 'admin' ? swapProductToCategory : undefined}
-        style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }} // Hide button for non-admin users in taxonomy view
-    >
-        Save
-    </button>
-)}
-
+    <button type="submit" className="save-button_pdp" onClick={view === 'taxonomy' && UserRole === 'admin' ? swapProductToCategory : undefined}  style={{ display: (view === 'taxonomy' && UserRole !== 'admin') ? 'none' : 'block' }} >Save</button> )}
                     </div>
                 </form>
             </div>

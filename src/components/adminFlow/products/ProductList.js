@@ -26,7 +26,6 @@ const ProductList = () => {
   const [variants, setVariants] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
-  // const [selectedVariantId, setSelectedVariant] = useState('');
   const [searchVisible, setSearchVisible] = useState(false);
   const [sortVisible, setSortVisible] = useState(false);
   const [sortVisiblebyVariant, setsortVisiblebyVariant] = useState(false);
@@ -154,7 +153,6 @@ const ProductList = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
-
       if (response.data && response.data.data && response.data.data.product_list) {
         setResponseData(response.data.data.product_list);        
       } else {
@@ -341,7 +339,6 @@ const ProductList = () => {
     fetchVariants();
   }, []);
   useEffect(() => {
-
     if (BrandId !== '' && BrandId !== null) {
       // If a brandId is found in localStorage or set by previous effect, fetch data for that brand
       setSelectedBrand(BrandId);
@@ -353,6 +350,16 @@ const ProductList = () => {
   }, []);
   const selectedVariantData = variants.find(variant => variant.type_id === selectedVariant);
   const optionValues = selectedVariantData ? selectedVariantData.option_value_list : [];
+  const handleFiltersClear = async () => {  
+   console.log('Clear all');
+   setSelectedCategory('');
+   setSelectedBrand('');
+   setSelectedOptionValue('');
+   setSelectedVariant('');
+   const filter = true;
+   fetchData({ filter });
+  }
+
   return (
     <div className="product-list">
       <div className="search-container" style={{position:'relative'}}>
@@ -364,8 +371,15 @@ const ProductList = () => {
            position: 'absolute', right: '266px', background: 'transparent', border: 'none', fontSize: '16px', color: '#aaa', cursor: 'pointer', width: '7%', top:'-3px'
          }}   >    ✕     </button>
       )}
+     
       </div>
+     
       <div className="sort-container">
+      {(selectedCategory.length > 0 || selectedVariant.length > 0 || selectedBrand.length > 0) && (
+      <button onClick={handleFiltersClear} className="filters-clear-btn">
+        Clear all
+      </button>
+      )}
                   {sortVisiblebyVariant && (
         <>          
           <select value={selectedVariant} onChange={handleVariantChange} className="filter-dropdown ">

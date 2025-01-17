@@ -179,6 +179,31 @@ const handlePriceChange = async (event) => {
     setSelectedBrandId(null);
     fetchBrands();
   };
+  const handlePriceApplyClear = async () => {  
+  setBrands([]);
+  setSelectedBrand(null);
+  setSelectedBrandId(null);
+  setPreviousPriceInput('');
+  setCurrentPriceInput('');
+  setPriceOption('');
+  setSelectedCategories([]); 
+  setSelectedCategoryIds([]);
+  fetchBrands();
+  }
+  const handleVarianyPriceApplyClear = async () => {  
+    setBrands([]);
+    setSelectedBrandForVariant(null);
+    setSelectedBrandIdForVariant(null);
+    setSelectedVariant(null);
+    setVariantOptions([]);
+    setSelectedVariantValues([]);
+    setSelectedVariantValueIds([]);
+    setPreviousVariantPriceInput('');
+    setCurrentVariantPriceInput('');
+    setVariantPriceOption('');
+    fetchVariantOptions();
+    fetchBrands();
+  }
 
   const handlePriceDisplayInInputField = async (selectedCategoryIds,selectedOption) => {
     if (selectedCategoryIds && selectedBrandId && selectedOption) {
@@ -316,11 +341,20 @@ const handlePriceChange = async (event) => {
 useEffect(() => {
   fetchVariantOptions();
 }, []); 
-
+useEffect(() => {
+  const defaultVariant = variantOptions?.find(variant => variant.name.toLowerCase() === 'wood type');  
+  if (defaultVariant) {
+    setSelectedVariant(defaultVariant); // Pre-select "wood type"
+    setSelectedVariantId(defaultVariant.id); 
+  }
+}, [variantOptions]); // Only run when variantOptions change
 const handleVariantSelect = async(id) => {    
   const variant = variantOptions.find((option) => option.id === id);
   setSelectedVariant(variant);
-  setSelectedVariantId(variant.id);
+  if (variant) {
+    setSelectedVariantId(variant.id); // Safely access variant.id
+  }
+  else{  setSelectedVariantId(''); }
   try {
     const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptionValueForRetailPrice/?id=${id}`);    
     setVariantTypeValues(response.data.data.varient_option_value_list);
@@ -522,6 +556,13 @@ const handleVariantValueRemove = (id) => {
       style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", cursor: "pointer", }}
       className="add-brand-btn revoke_btn" disabled={currentPriceInput === 0}> Restore </button>
   </div>
+  <div style={{display:'flex', padding:'10px 0px 0px 0px'}}>
+  {(selectedBrand || selectedCategoryIds.length > 0 || priceOption.length > 0) && (
+      <button onClick={handlePriceApplyClear} className="clear-btn">
+        Clear all
+      </button>
+    )}
+  </div>
   </div>  
 </div>
   </div>
@@ -555,22 +596,16 @@ const handleVariantValueRemove = (id) => {
         </h3>
         <select
           style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc",
-            width: "248px", display: "inline-block", appearance:'none',cursor:'pointer' }}
+            width: "248px", display: "inline-block", appearance:'none',cursor:'pointer' }}  value={selectedVariantId || ""}
           onChange={(e) => handleVariantSelect(e.target.value)}
         >
           <option value="" style={{ fontSize: "14px", fontWeight: "500" }}>Select Variant</option>
-          {/* {variantOptions?.map((variant) => (
-            <option value={variant.id}>
+           {variantOptions?.map((variant) => (
+            <option value={variant.id} selected={variant.name.toLowerCase() === 'wood type' && !selectedVariant} >
               {variant.name}
             </option>
-          ))} */}
-          {variantOptions
-  ?.filter((variant) => variant.name.toLowerCase() === "wood type") // Filter for "Wood Type" only
-  .map((variant) => (
-    <option style={{ fontSize: "14px", fontWeight: "500" }} key={variant.id} value={variant.id}>
-      {variant.name}
-    </option>
-  ))}
+          ))} 
+          {/* {variantOptions?.filter((variant) => variant.name.toLowerCase() === "wood type").map((variant) => (   <option style={{ fontSize: "14px", fontWeight: "500" }} key={variant.id} value={variant.id}>    {variant.name}  </option> ))} */}
         </select>
         <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
         {selectedVariant && (
@@ -667,6 +702,13 @@ const handleVariantValueRemove = (id) => {
       className="add-brand-btn revoke_variant_btn" disabled={currentVariantPriceInput === 0}>
       Restore
     </button>
+  </div>
+  <div style={{display:'flex', padding:'10px 0px 0px 0px'}}>
+  {(selectedBrandForVariant || selectedVariantValueIds.length > 0 || variantpriceOption.length > 0) && (
+      <button onClick={handleVarianyPriceApplyClear} className="clear-btn">
+        Clear all
+      </button>
+    )}
   </div>
   </div>
   

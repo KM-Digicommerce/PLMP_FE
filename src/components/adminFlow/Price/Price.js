@@ -12,11 +12,9 @@ const PriceComponent = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceOption, setPriceOption] = useState('finished_price');
   const [variantpriceOption, setVariantPriceOption] = useState('finished_price');
-
   const [priceInput, setInputPrice] = useState('');
   const [VariantpriceInput, setVariantInputPrice] = useState('');
   const [currencyOption, setcurrencyOption] = useState('%');
-
   const [tableData, setTableData] = useState([]);
   // const [productTableData, setProductTableData] = useState([]);
   const [productTableDataAfterSave, setProductTableDataAfterSave] = useState([]);
@@ -236,6 +234,16 @@ const PriceComponent = () => {
   const handleCurrencyChange = (e) => {
     setcurrencyOption(e.target.value);
   };
+  const handlePriceApplyClear = async () => {  
+    setBrands([]);
+    setSelectedBrand(null);
+    setSelectedBrandId(null);
+    setSelectedCategories([]);
+    setSelectedCategoryIds([]);
+    setInputPrice('');
+    setTableData([]);
+    fetchBrands();
+  }
   const handlePriceApply = async () => {   
     setFormSubmitted(true);
     if (!selectedBrand || !selectedCategoryIds.length || !priceInput) {
@@ -275,6 +283,22 @@ const PriceComponent = () => {
       console.log("Form submitted successfully");
     }
   };
+  const handleVarianyPriceApplyClear = async () => {  
+    setBrands([]);
+    setVariantOptions([]);
+    setSelectedVariant([]);
+    setSelectedVariantValues([]);
+    setVariantTypeValues([]);
+    setVariantOptions([]);
+    setSelectedVariant(null); 
+    setSelectedVariantValueIds([]);
+    setSelectedBrandForVariant(null);
+    setSelectedBrandIdForVariant(null);
+    setVariantInputPrice('');
+    setTableData([]);
+    fetchVariantOptions();
+    fetchBrands();
+  }
   const handleVariantPriceApply = async () => {
     setFormSubmittedForVariant(true);
     if (!selectedBrandIdForVariant || !selectedVariantValueIds.length || !selectedVariantId || !variantpriceOption || !currencyOption ||!VariantpriceInput) {
@@ -421,7 +445,6 @@ const PriceComponent = () => {
         const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainBrandCategoryWisePriceTable/`, payload); 
         const categoryList = response?.data?.data?.category_list || [];
         setTableData(categoryList);
-        console.log(response.data,'priceTableData');
     } catch (error) {
         console.error("Error fetching price table data:", error);
         Swal.fire({ title: "Error", text: "Failed to fetch price table data.", icon: "error", confirmButtonText: "OK", customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup', title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', },
@@ -454,11 +477,20 @@ const fetchAllData = async () => {
 useEffect(() => {
   fetchAllData();
 }, []);
-
+useEffect(() => {
+  const defaultVariant = variantOptions?.find(variant => variant.name.toLowerCase() === 'wood type');  
+  if (defaultVariant) {
+    setSelectedVariant(defaultVariant); // Pre-select "wood type"
+    setSelectedVariantId(defaultVariant.id); 
+  }
+}, [variantOptions]); // Only run when variantOptions change
 const handleVariantSelect = async(id) => {    
   const variant = variantOptions.find((option) => option.id === id);
   setSelectedVariant(variant);
-  setSelectedVariantId(variant.id);
+  if (variant) {
+    setSelectedVariantId(variant.id); // Safely access variant.id
+  }
+  else{  setSelectedVariantId(''); }
   try {
     const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptionValueForRetailPrice/?id=${id}`);    
     setVariantTypeValues(response.data.data.varient_option_value_list);
@@ -589,7 +621,6 @@ const handleVariantValueRemove = (id) => {
   </div>
 )}
       </div>
-
       <div style={{ marginTop: "12px", display: "inline-block" }}>
         {selectedCategories.map((category) => (
           <span
@@ -608,14 +639,19 @@ const handleVariantValueRemove = (id) => {
         <input className="" id="" type="number" value={priceInput} placeholder="value" required onChange={handleInputChange} min="0" style={{ width: "45%", paddingRight: "30px", backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='gray' d='M12.2 3.8a.75.75 0 0 0-1.05 0L8 6.94 4.85 3.8a.75.75 0 0 0-1.05 1.05L6.94 8l-3.14 3.15a.75.75 0 1 0 1.05 1.05L8 9.06l3.15 3.14a.75.75 0 0 0 1.05-1.05L9.06 8l3.14-3.15a.75.75 0 0 0 0-1.05Z'/></svg>")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", backgroundSize: "16px 16px", border: formSubmitted && !priceInput ? "1px solid red" : "1px solid #ccc", }} />
       </div>
       <div style={{ margin: '0px 0px 0px 0px', display: "inline-block" }}>
-        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block", border: "1px solid #ccc",appearance:'none',cursor:'pointer' }}>
+        <select value={priceOption} onChange={handlePriceChange} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", width: "200px", display: "inline-block",appearance:'none',cursor:'pointer' }}>
           <option value="finished_price">Finished Wholesale Price</option>
           <option value="un_finished_price">Unfinished Wholesale Price</option>
         </select>
         <span style={{ position: "relative", right: "25px", fontSize: "12px", color: formSubmitted && !selectedBrand ? "red" : "#918f8f",  }} >   ▼  </span>
       </div>
     </div>
-    <button onClick={() => handlePriceApply()} className="apply-btn">  Apply </button>
+    <button onClick={() => handlePriceApply()} className="apply-btn"> Apply </button>
+    {(selectedBrand || selectedCategoryIds.length > 0 || priceInput.length > 0) && (
+      <button onClick={handlePriceApplyClear} className="clear-btn">
+        Clear all
+      </button>
+    )}
   </div>
 
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
@@ -647,10 +683,11 @@ const handleVariantValueRemove = (id) => {
         </h3>
         <select
           style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer'  }}
+          value={selectedVariantId || ""}
           onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
           {variantOptions?.map((variant) => (
-            <option value={variant.id}>
+            <option value={variant.id} selected={variant.name.toLowerCase() === 'wood type' && !selectedVariant} >
               {variant.name}
             </option>
           ))}    
@@ -740,6 +777,9 @@ const handleVariantValueRemove = (id) => {
   </div>
   <button onClick={() =>handleVariantPriceApply() } className="apply-btn">  Apply  </button>
   <p style={{display:'contents'}}>(This given variant price will update the variant price and the retail price accordingly) <span className="required">*</span></p>
+  {(selectedBrandForVariant || selectedVariantValueIds.length > 0 || VariantpriceInput.length > 0) && (
+      <button onClick={handleVarianyPriceApplyClear} className="clear-btn"> Clear all </button>
+    )}
   </div>
 </div>
       {tableData.length > 0 ? (

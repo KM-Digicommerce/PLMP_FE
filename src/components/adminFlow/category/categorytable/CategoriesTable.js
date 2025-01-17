@@ -393,13 +393,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     window.history.pushState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
     localStorage.setItem("categoryId", id);
     localStorage.setItem("levelCategory", category_level);
-    // if (!responseDatasearch) {
       setResponseDatasearch([]);
-    //   setResponseData([]);
-    //   setProducts([]);
-      // fetchData(true);
-    // }
-   
   };
   const handleCloseConfirmation = () => {
     if (isTyping) {
@@ -566,7 +560,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               const foundLevel3 = foundLevel2.level_two_category_list.find(level3 => 
                   level3.level_three_category_list.some(level4 => level4._id === selectedValue)
               );
-
               if (foundLevel3) {
                   level1Category = level1;
                   level2Category = foundLevel2;
@@ -576,7 +569,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
           }
           return false;
       });
-
       if (!level1Category || !level2Category || !level3Category) {
           console.error('Parent categories not found for selected Level 4 category with ID:', selectedValue);
           return;
@@ -717,106 +709,14 @@ const handleLevelClear = (e) => {
   localStorage.removeItem("levelCategory");
    navigate(`/Admin/categorylist`);
 }
-  // if (!Array.isArray(filteredCategories ? filteredCategories : []) || filteredCategories.length === 0) {
-  //   return <div>No categories available</div>;
-  // }
   const handleProductSelect = (productId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/Admin/product/${productId}`);
   };
-
-  // Delete Category API Call
-  // const handleDeleteCategory = async (categoryId, category_name) => {
-  //   const confirmDelete = window.confirm('Are you sure you want to delete this category?');
-  //   if (!confirmDelete) return; // Exit if user cancels
-
-  //   try {
-  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/deleteCategory/`, {
-  //       data: { id: categoryId,category_name:category_name}, // Payload for delete API
-  //     });
-
-  //     // Check if the response indicates a successful deletion
-  //     if (response.status === 204 || response.status === 200) {
-  //       Swal.fire('Deleted!', 'Selected category has been deleted.', 'success');
-  //       await refreshCategories(); // Refresh categories after successful deletion
-  //     } else {
-  //       throw new Error('Unexpected response from server'); // Handle unexpected response
-  //     }
-  //   } catch (error) {
-  //     console.error('Error deleting category:', error);
-  //     alert('Error deleting category. Please try again.');
-  //   }
-  // };
-  // const handleEditCategory = async (categoryId, name) => {
-  //   try {
-  //     const response = await axiosInstance.delete(`${process.env.REACT_APP_IP}/updateCategory/`, {
-  //       data: {
-  //         id: categoryId,
-  //         name: newCategoryName,
-  //       }, // Payload for delete API
-  //     });
-  //     // Check if the response indicates a successful deletion
-  //     if (response.status === 204 || response.status === 200) {
-  //       await refreshCategories(); // Refresh categories after successful deletion
-  //     } else {
-  //       throw new Error('Unexpected response from server'); // Handle unexpected response
-  //     }
-  //   } catch (error) {
-  //     console.error('Error updating category:', error);
-  //     alert('Error updating category. Please try again.');
-  //   }
-  // };
-
-  // const handleCategoryNameChange = (e) => {
-  //   setNewCategoryName(e.target.value);
-  // };
-  // const cancelEdit = () => {
-  //   setEditingCategoryId(null);
-  //   setNewCategoryName('');
-  // };
-  // const handleEditProductType = (productTypeId, currentName, category_name) => {
-  //   Swal.fire({
-  //     title: 'Edit Product Type',
-  //     input: 'text',
-  //     inputValue: currentName,
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Save',
-  //     cancelButtonText: 'Cancel',
-  //     customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel', },
-  //     inputValidator: (value) => {
-  //       if (!value) {
-  //         return 'You need to write something!';
-  //       }
-  //     }
-  //   }).then(async (result) => {
-  //     console.log(result, 'result');
-  //     if (result.isConfirmed) {
-  //       try {
-  //         await axiosInstance.post(`${process.env.REACT_APP_IP}/updateCategory/`, {
-  //           id: productTypeId,
-  //           name: result.value,
-  //           category_name: category_name,
-  //         });
-
-  //         await refreshCategories();
-  //         console.log(result.status, 'result.status');
-
-  //         if (result.status != false) {
-  //           Swal.fire({ title: 'Updated!', text: 'Product type has been updated.', icon: 'success', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
-  //         }
-  //       } catch (error) {
-  //         console.error('Error updating product type:', error);
-  //         Swal.fire({ title: 'Error!', text: 'There was an error updating the product type.', icon: 'error', customClass: {      container: 'swal-custom-container',     popup: 'swal-custom-popup',     title: 'swal-custom-title',     confirmButton: 'swal-custom-confirm',     cancelButton: 'swal-custom-cancel', }, });
-  //              }
-  //     }
-  //   });
-  // };
-
   const handleSort = (column) => {
     const direction = sortOrder.column === column && sortOrder.direction === 'asc' ? 'desc' : 'asc';
     setSortOrder({ column, direction });
   };
-
   const sortProducts = (products) => {
     const sortedProducts = [...products];
     sortedProducts.sort((a, b) => {
@@ -839,7 +739,6 @@ const handleLevelClear = (e) => {
   const handleSortClick = () => {
     setSortOption('');
     setSortVisible(!sortVisible);
-    // fetchData(true);
     if (searchVisible) {
       fetchData(true);
       setSearchVisible(!searchVisible);
@@ -865,7 +764,6 @@ const handleLevelClear = (e) => {
         }
       );   
       setResponseDatasearch(response.data.data.product_list);
-      console.log('Response',responseDatasearch);
     } catch (error) {
       console.error('Error fetching product list:', error);
     }
@@ -950,37 +848,18 @@ const handleLevelClear = (e) => {
                   {filteredCategories.map(level1 => (
                     <div className="dropdown-option" onClick={() => { handleCategorySelect(level1._id); handleCategorySelectForVariants(level1._id, 'level-1'); }}
                     >
-                      {/* {editingCategoryId === level1._id ? ( */}
                         <div>
-                          {/* <input
-                            type="text"
-                            value={newCategoryName}
-                            onChange={handleCategoryNameChange}
-                          />
-                          <button onClick={() => handleEditCategory(level1._id)}>Save</button>
-                          <button onClick={cancelEdit}>Cancel</button> */}
                         </div>
-                      {/* ) : ( */}
                         <div>
                           <span>{level1.name}</span>
-                          {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level1._id, level1.name, 'level-1')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level1._id,'level-1');
-                          }} /> */}
                         </div>
-                      {/* // )} */}
                     </div>
                   ))}
-                  {/* <div className="dropdown-option" >
-                    <QueueOutlinedIcon onClick={() => handleCategorySelect("add")} />
-                  </div> */}
                 </div>
               )}
             </div>
           </div>
           {/* {level2Categories.length > 0 && ( */}
-          {/* <> */}
           <div className='DropdownColumn'  ref={categoryDropdown2Ref}>
             <label htmlFor="sectionSelect">Level 2:</label>
             <div className="custom-dropdown" onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}>
@@ -1009,25 +888,13 @@ const handleLevelClear = (e) => {
                   {filteredCategoriesLevel2?.map(level2 => (
                     <div className="dropdown-option"  onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
                       <span>{level2.name}</span>
-                      {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level2._id, level2.name, 'level-2')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level2._id,'level-2');
-                          }} /> */}
                     </div>
                   ))}
-                  {/* <div className="dropdown-option">
-                    <QueueOutlinedIcon onClick={() =>  handleLevel2Select("add")} />
-                  </div> */}
                 </div>
               )}
             </div>
           </div>
-          {/* </> */}
-          {/* // )} */}
-
-          {/* {level3Categories.length > 0 && (
-            <> */}
+          {/* {level3Categories.length > 0 && (  <> */}
           <div className='DropdownColumn' ref={categoryDropdown3Ref}>
             <label htmlFor="productTypeSelect">Level 3:</label>
             <div className="custom-dropdown" onClick={() => setIsLevel3DropdownOpen(!isLevel3DropdownOpen)}>
@@ -1056,24 +923,13 @@ const handleLevelClear = (e) => {
                   {filteredCategoriesLevel3?.map(level3 => (
                     <div className="dropdown-option" onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
                       <span>{level3.name}</span>
-                      {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level3._id, level3.name, 'level-3')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level3._id,'level-3');
-                          }} /> */}
                     </div>
                   ))}
-                  {/* <div className="dropdown-option" >
-                    <QueueOutlinedIcon onClick={() =>  handleLevel3Select('add')} />
-                  </div> */}
                 </div>
               )}
             </div>
           </div>
-          {/* </>
-          )} */}
-          {/* {level4Categories.length > 0 && (
-            <> */}
+          {/* {level4Categories.length > 0 && ( <> */}
           <div className='DropdownColumn' ref={categoryDropdown4Ref}>
             <label htmlFor="productTypeSelect">Level 4:</label>
             <div className="custom-dropdown" onClick={() => setIslevel4DropdownOpen(!islevel4DropdownOpen)}>
@@ -1102,24 +958,13 @@ const handleLevelClear = (e) => {
                   {filteredCategoriesLevel4?.map(level4 => (
                     <div className="dropdown-option"  onClick={() => { handlelevel4(level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
                       <span>{level4.name}</span>
-                      {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level4._id, level4.name, 'level-4')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level4._id,'level-4');
-                          }} /> */}
                     </div>
                   ))}
-                  {/* <div className="dropdown-option">
-                    <QueueOutlinedIcon onClick={() => handlelevel4('add')} />
-                  </div> */}
                 </div>
               )}
             </div>
           </div>
-          {/* </>
-          )} */}
-          {/* {level5Categories.length > 0 && (
-            <> */}
+          {/* {level5Categories.length > 0 && (  <> */}
           <div className='DropdownColumn' ref={categoryDropdown5Ref}>
             <label htmlFor="productTypeSelect">Level 5:</label>
             <div className="custom-dropdown" onClick={() => setIslevel5DropdownOpen(!islevel5DropdownOpen)}>
@@ -1148,22 +993,13 @@ const handleLevelClear = (e) => {
                   {filteredCategoriesLevel5?.map(level5 => (
                     <div className="dropdown-option"  onClick={() => { handlelevel5(level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
                       <span>{level5.name}</span>
-                      {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level5._id, level5.name, 'level-5')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level5._id,'level-5');
-                          }} /> */}
                     </div>
                   ))}
-
                 </div>
               )}
             </div>
           </div>
-          {/* </>
-    )} */}
-          {/* {level6Categories.length > 0 && (
-            <> */}
+          {/* {level6Categories.length > 0 && (  <> */}
           <div className='DropdownColumn' ref={categoryDropdown6Ref}>
             <label htmlFor="productTypeSelect">Level 6:</label>
             <div className="custom-dropdown" onClick={() => setIslevel6DropdownOpen(!islevel6DropdownOpen)}>
@@ -1192,20 +1028,12 @@ const handleLevelClear = (e) => {
                   {filteredCategoriesLevel6?.map(level6 => (
                     <div className="dropdown-option" onClick={() => { handlelevel6(level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
                       <span>{level6.name}</span>
-                      {/* <EditNoteOutlinedIcon onClick={() => handleEditProductType(level6._id, level6.name, 'level-6')} />
-                          <DeleteOutlinedIcon onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCategory(level6._id,'level-6');
-                          }} /> */}
                     </div>
                   ))}
-
                 </div>
               )}
             </div>
           </div>
-          {/* </>
-            )} */}
         </div>
         <Dialog open={showAddCategoryPopup} style={{ zIndex: 1400 }} onClose={() => handleCloseConfirmation()} fullWidth maxWidth="sm">
           <button onClick={() => handleCloseConfirmation()} color="secondary" className="close-button"> <span className="close-icon">X</span></button>
@@ -1349,19 +1177,6 @@ const handleLevelClear = (e) => {
                     {sortOrder.column === 'taxonomy' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
                   </TableCell>
                   <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} >   Action </TableCell>
-                  {/* <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('price')} >
-                    Base Price
-                    {sortOrder.column === 'price' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell>
-                  <TableCell  align="left"  sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }}  onClick={() => handleSort('msrp')} >
-
-                    MSRP
-                    {sortOrder.column === 'msrp' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell> */}
-                  {/* <TableCell align="left" sx={{ fontWeight: 'bold', fontSize: '14px', padding: '10px', cursor: 'pointer' }} onClick={() => handleSort('model')} >
-                    Model
-                    {sortOrder.column === 'model' && (sortOrder.direction === 'asc' ? ' ↑' : ' ↓')}
-                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>

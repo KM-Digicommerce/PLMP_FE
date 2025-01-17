@@ -157,3 +157,15 @@ border: 1px solid #ccc;
 .variant_dropdown{
   margin: 8px 0px 7px 7px;
 }
+.filters-clear-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s;
+  margin: 7px 22px 8px 0px;
+  width: 9%;
+  float: left;
+}
