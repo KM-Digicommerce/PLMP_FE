@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Login';
 import AdminHomePage from './components/adminFlow/HomePage'; 
 import SuperAdminHomePage from './components/superAdminFlow/SuperAdminHomePage'; 
-// import SuperAdminDashboard from './components/superAdminFlow/super-admin-dashboard/SuperAdminDashboard';
-// import Dashboard from './components/adminFlow//dashboard/Dashboard';
 function App() {
   return (
     <Router>
@@ -17,5 +15,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;
