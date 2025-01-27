@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Line, Bar } from 'react-chartjs-2';
+import { Line, Doughnut } from 'react-chartjs-2'; // Import Doughnut chart
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,6 +7,7 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  ArcElement, // ArcElement is required for Doughnut chart
   Title,
   Tooltip,
   Legend,
@@ -22,10 +23,12 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  ArcElement, // Register ArcElement
   Title,
   Tooltip,
   Legend
 );
+
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +87,7 @@ function Dashboard() {
   };
   const closeModal = () => setIsModalOpen(false);
   const handleVendorClick = () => {
-    setIsModalOpenVendor(true)
+    setIsModalOpenVendor(true);
     fetchVendors(); // Fetch vendors when the section is being displayed
   };
   const closeVendorModal = () => {
@@ -108,41 +111,23 @@ function Dashboard() {
       </div>
     );
   }
-  const variantData = {
-    labels: dashboardData.varent_list.map(item => item.type_name),
-    datasets: [
-      {
-        label: 'Option Value Count',
-        data: dashboardData.varent_list.map(item => item.option_value_count),
-        backgroundColor: 'rgba(38, 198, 218, 0.7)',
-        borderColor: 'rgba(38, 198, 218, 1)',
-        borderWidth: 2,
-      },
-      {
-        label: 'Option Value Count 2',
-        data: dashboardData.varent_list.map(item => item.option_value_count + 5),
-        backgroundColor: 'rgba(255, 159, 64, 0.7)',
-        borderColor: 'rgba(255, 159, 64, 1)',
-        borderWidth: 2,
-      },
-    ],
-  };
+
   const categoryData = {
     labels: Object.keys(dashboardData.category_project_dict),
     datasets: [
       {
         label: 'Projects/Products Count',
         data: Object.values(dashboardData.category_project_dict),
-        backgroundColor: '#4caf50',
-        borderColor: '#4caf50',
-        borderWidth: 2,
-      },
-      {
-        label: 'Another Data',
-        data: Object.values(dashboardData.category_project_dict).map(val => val + 10),
-        backgroundColor: '#36A2EB',
-        borderColor: '#36A2EB',
-        borderWidth: 2,
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4caf50',
+          '#F7A35C',
+          '#90ED7D',
+        ], // Add multiple colors for doughnut segments
+        borderColor: '#ffffff',
+        borderWidth: 1,
       },
     ],
   };
@@ -170,51 +155,47 @@ function Dashboard() {
       </div>
       <div className="charts-section">
         <div className="chart-card">
-          <h3>Variant-Options Count</h3>
-          <Line data={variantData} options={options} />
-        </div>
-        <div className="chart-card">
-          <h3>Category-Products Count</h3>
-          <Bar data={categoryData} options={options} />
+          <h3>End Level Category - Products Count</h3>
+          <Doughnut data={categoryData} options={options} /> {/* Updated chart */}
         </div>
       </div>
-      <Modal open={isModalOpen} className='modal-content-dashboard' onClose={closeModal}>
-  <div className="modal-container">
-    <h2>Parent Level Categories</h2>
-    <ul className='ulliclass'>
-      {parentCategories.length > 0 ? (
-        parentCategories.map((category) => (
-          <li key={category.id} className='ulliclass'>
-            {category.name}
-          </li>
-        ))
-      ) : (
-        <p>No categories found.</p>
-      )}
-    </ul>
-    <button onClick={closeModal} className='btn_dash'>Close</button>
-  </div>
-</Modal>
-<Modal open={isModalOpenvendor} className='modal-content-dashboard' onClose={closeVendorModal}>
-  <div className="modal-container">
-    <h2>Total Vendors</h2>
-    <ul className="ulliclass">
-              {vendors.length > 0 ? (
-                vendors.map(vendor => (
-                  <li key={vendor.id} className="ulliclass">
+      <Modal open={isModalOpen} className="modal-content-dashboard" onClose={closeModal}>
+        <div className="modal-container">
+          <h2>Parent Level Categories</h2>
+          <ul className="ulliclass">
+            {parentCategories.length > 0 ? (
+              parentCategories.map((category) => (
+                <li key={category.id} className="ulliclass">
+                  {category.name}
+                </li>
+              ))
+            ) : (
+              <p>No categories found.</p>
+            )}
+          </ul>
+          <button onClick={closeModal} className="btn_dash">Close</button>
+        </div>
+      </Modal>
+      <Modal open={isModalOpenvendor} className="modal-content-dashboard" onClose={closeVendorModal}>
+        <div className="modal-container">
+          <h2>Total Vendors</h2>
+          <ul className="ulliclass">
+            {vendors.length > 0 ? (
+              vendors.map((vendor) => (
+                <li key={vendor.id} className="ulliclass">
                   <div className="vendor-name">
                     <span>{vendor.name}</span>
                     <span className="product-count"> ({vendor.product_count} products)</span>
                   </div>
                 </li>
-                ))
-              ) : (
-                <p>No vendors found.</p>
-              )}
-            </ul>
-    <button onClick={closeVendorModal} className='btn_dash'>Close</button>
-  </div>
-</Modal>
+              ))
+            ) : (
+              <p>No vendors found.</p>
+            )}
+          </ul>
+          <button onClick={closeVendorModal} className="btn_dash">Close</button>
+        </div>
+      </Modal>
     </div>
   );
 }
