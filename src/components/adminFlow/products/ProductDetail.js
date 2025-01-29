@@ -9,10 +9,14 @@ import Soon from '../../../assets/image_2025_01_02T08_51_07_818Z.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash,faEdit,faClone,faTrash } from '@fortawesome/free-solid-svg-icons';
 import ReactQuill from 'react-quill'; // React wrapper for Quill
+import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css'; // Import bubble style (if needed)
 import { FaTrashAlt } from 'react-icons/fa'; // For delete icon
 import { Close as CloseIcon } from '@mui/icons-material';
-
+let Font = Quill.import('formats/font')
+Font.whitelist = ['Verdana', 'roboto', 'mirza', 'arial']
+Quill.register(Font, true)
 const ProductDetail = ({ categories }) => {
     const { productId } = useParams();
     const navigate = useNavigate();
@@ -73,6 +77,26 @@ const ProductDetail = ({ categories }) => {
       const categoryDropdown6Ref = useRef(null);
     const quillRef = useRef();
     const [editorReady, setEditorReady] = useState(false);
+    const modules = {
+        toolbar: [
+          [{ 'font': ['sans-serif', 'serif', 'monospace', 'Verdana'] }],
+          [{ size: [] }],
+          [{ 'header': '1' }, { 'header': '2' }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ color: [] }, { background: [] }],
+          [{ script: 'sub' }, { script: 'super' }],
+          ['blockquote', 'code-block'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ indent: '-1' }, { indent: '+1' }],
+          [{ align: [] }],
+          ['link', 'image', 'video', 'formula'],
+          ['clean']
+        ]
+      };
+      const formats = [
+        'font', 'size', 'header', 'bold', 'italic', 'underline', 'strike', 'color', 'background', 'script',
+        'blockquote', 'code-block', 'list', 'bullet', 'indent', 'align', 'link', 'image', 'video', 'formula'
+      ];
       useEffect(() => {
         if (editorReady && quillRef.current) {
           const quill = quillRef.current.getEditor();
@@ -90,7 +114,8 @@ const ProductDetail = ({ categories }) => {
             }
           });
         }
-      }, [editorReady]); // Runs when the editor is ready
+      }, [editorReady]);
+    
     
       const handleClickOutside = (event) => {
         if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
@@ -487,7 +512,7 @@ const ProductDetail = ({ categories }) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
     const swapProductToCategory = async () => {
-        if (categoryIds) {
+        if (categoryIds && categoryName && categoryId) {
             try {
                 const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/updateTaxonomyForProduct/`, {  product_id: productId,  category_id: categoryId,  category_level: categoryName
                 });
@@ -883,9 +908,6 @@ const ProductDetail = ({ categories }) => {
             value,
           },
         });
-      };
-      const handleEditorReady = () => {
-        setEditorReady(true);
       };
     return (
         <div>
@@ -1608,17 +1630,19 @@ const ProductDetail = ({ categories }) => {
                                         </div>
                                     </div>
                                     </div>
-                                <div className="form-group">
-                                    <label htmlFor="option_str">Options:</label>
-                                    <ReactQuill
-                                        ref={quillRef}
-                                        value={formData.option_str || ''}
-                                        onChange={handleEditorChange}
-                                        theme="snow"
-                                        placeholder="Start typing here..."
-                                        onReady={handleEditorReady}
-                                    />
-                                </div>
+                               <div className="form-group">
+      <label htmlFor="option_str">Options:</label>
+      <ReactQuill
+        ref={quillRef}
+        value={formData.option_str || ''}
+        onChange={handleEditorChange}
+        theme="snow"
+        placeholder="Start typing here..."
+        modules={modules}
+        formats={formats} // Add the formats to allow the desired HTML tags
+        onReady={() => setEditorReady(true)}
+      />
+    </div>
                             </div>
                         )}
                         {view !== 'variants' && (
