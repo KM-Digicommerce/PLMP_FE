@@ -153,7 +153,7 @@ function Dashboard() {
           <p>{dashboardData.total_parent_level_category}</p>
         </div>
       </div>
-      <div className="charts-section">
+     <div className="charts-section">
   <div className="chart-card">
     <h3>Category wise count</h3>
     <div className="doughnut-container">
@@ -161,33 +161,28 @@ function Dashboard() {
       <div className="chart-side">
         <Doughnut data={categoryData} options={{ ...options, plugins: { legend: { display: false } } }} />
       </div>
-    </div>
-  </div>
 
-  {/* Right side: Legends in a separate card */}
-  <div className="legend-card">
-    <h3>Legends</h3>
-    <div className="values-side">
-      {categoryData.labels.map((label, index) => {
-        // Cycle through the colors if there are more labels than colors
-        const colorIndex = index % categoryData.datasets[0].backgroundColor.length;
-        return (
-          <div key={index} className="value-item">
-            <div
-              className="color-box"
-              style={{
-                backgroundColor: categoryData.datasets[0].backgroundColor[colorIndex], // Cycle through colors
-              }}
-            ></div>
-            <span>{label}</span>
-          </div>
-        );
-      })}
+      {/* Right side: Legends with colors */}
+      <div className="values-side">
+        {categoryData.labels.map((label, index) => {
+          // Cycle through the colors if there are more labels than colors
+          const colorIndex = index % categoryData.datasets[0].backgroundColor.length;
+          return (
+            <div key={index} className="value-item">
+              <div
+                className="color-box"
+                style={{
+                  backgroundColor: categoryData.datasets[0].backgroundColor[colorIndex], // Cycle through colors
+                }}
+              ></div>
+              <span>{label}</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   </div>
 </div>
-
-
 
     
       <Modal open={isModalOpen} className="modal-content-dashboard" onClose={closeModal}>
