@@ -155,7 +155,7 @@ function Dashboard() {
       </div>
       <div className="charts-section">
         <div className="chart-card">
-          <h3>End Level Category - Products Count</h3>
+          <h3>Category wise count</h3>
           <Doughnut data={categoryData} options={options} /> {/* Updated chart */}
         </div>
       </div>
