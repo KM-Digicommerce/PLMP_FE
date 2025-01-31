@@ -432,7 +432,8 @@ const ProductDetail = ({ categories }) => {
             const variantResponse = await axiosInstance.post(`${process.env.REACT_APP_IP}/obtainAllVarientList/`, {   product_id: productId,  });
             if (variantResponse.data && variantResponse.data.data) {      setVariantData(variantResponse.data.data || []);   }
         } catch (err) {    setError('Error fetching product details 2');   } finally {      setLoading(false);   } };
-    const handleChange = (e) => {        
+    const handleChange = (e) => {  
+        setUnsavedChanges(true);
         const { name, value } = e.target;
      if (name.startsWith('image_')) {
     const index = parseInt(name.split('_')[1]); // Extract the index from the name (image_0, image_1, etc.)
@@ -487,13 +488,14 @@ const ProductDetail = ({ categories }) => {
                     }
                 }).then(() => {
                     fetchProductDetail(productId);
+                    setUnsavedChanges(false);
+                    console.log(unsavedChanges,'unsavedChanges submit in THEN');
                 });
                 setFormData('');
             } catch (err) {
                 alert('Error updating product');
             }
         }
-        setUnsavedChanges(false); 
     };
 
     const handleBackClick = () => {
@@ -657,7 +659,8 @@ const ProductDetail = ({ categories }) => {
         const container = document.querySelector(".thumbnail-section");
         container.scrollLeft -= 120; // Adjust scroll distance
     };
-    const handleNavigation = (targetView) => {        
+    const handleNavigation = (targetView) => { 
+           
         if (unsavedChanges) {
           const shouldNavigate = window.confirm("You have some unsaved changes, do you want to continue?");
           if (!shouldNavigate)   return; // Don't change the view
@@ -901,12 +904,20 @@ const ProductDetail = ({ categories }) => {
         }
     };
     
-      const handleEditorChange = (value) => {
-        handleChange({
-          target: {
-            name: 'option_str',
-            value,
-          },
+    //   const handleEditorChange = (value) => {
+    //     handleChange({
+    //       target: {
+    //         name: 'option_str',
+    //         value,
+    //       },
+    //     });
+    //   };
+      const handleEditorChange = (value, name) => {
+        console.log('inside handleEditorChange', value);
+        setUnsavedChanges(true); // Mark unsaved changes
+        setFormData({
+          ...formData,
+          [name]: value, // Update the specific field
         });
       };
     return (
@@ -1539,7 +1550,18 @@ const ProductDetail = ({ categories }) => {
                                     </div>
                                 <div className="form-group">
                                     <label htmlFor="key_features">Key Features</label>
-                                    <textarea
+                                    <ReactQuill
+        ref={quillRef}
+        name="key_features"
+        value={formData.key_features || ''}
+        onChange={(value) => handleEditorChange(value, 'key_features')}
+        theme="snow"
+        placeholder="Start typing here..."
+        modules={modules}
+        formats={formats}
+        onReady={() => setEditorReady(true)}
+      />
+                                    {/* <textarea
                                         id="key_features"
                                         name="key_features"
                                         className="input_pdps"
@@ -1550,11 +1572,22 @@ const ProductDetail = ({ categories }) => {
                                             handleChange({ target: { name: 'key_features', value: e.target.value, },
                                             });   
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="features">Features</label>
-                                    <textarea
+                                    <ReactQuill
+        ref={quillRef}
+        name="features"
+        value={formData.features || ''}
+        onChange={(value) => handleEditorChange(value, 'features')}
+        theme="snow"
+        placeholder="Start typing here..."
+        modules={modules}
+        formats={formats}
+        onReady={() => setEditorReady(true)}
+      />
+                                    {/* <textarea
                                         id="features"
                                         name="features"
                                         className="input_pdps"
@@ -1562,24 +1595,46 @@ const ProductDetail = ({ categories }) => {
                                         onKeyDown={(e) => handleTextareaChange(e, 'features')}
                                         onChange={(e) => handleChange({ target: { name: 'features', value: e.target.value } })}
                                         onPaste={(e) => handlePaste(e, 'features')} // Add paste functionality
-                                    />
+                                    /> */}
                                 </div>
 
                                 <div className="form-group">
                                     <label htmlFor="short_description">Short Description</label>
-                                    <textarea
+                                    <ReactQuill
+        ref={quillRef}
+        name="short_description"
+        value={formData.short_description || ''}
+        onChange={(value) => handleEditorChange(value, 'short_description')}
+        theme="snow"
+        placeholder="Start typing here..."
+        modules={modules}
+        formats={formats}
+        onReady={() => setEditorReady(true)}
+      />
+                                    {/* <textarea
                                         id="short_description"
                                         name="short_description"
                                         className="input_pdps"
                                         value={formData.short_description || ''}
                                         onChange={(e) => handleChange({ target: { name: 'short_description', value: e.target.value } })}
-                                             />
+                                             /> */}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="long_description">Long Description</label>
-                                    <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description || ''} 
+                                    <ReactQuill
+        ref={quillRef}
+        name="long_description"
+        value={formData.long_description || ''}
+        onChange={(value) => handleEditorChange(value, 'long_description')}
+        theme="snow"
+        placeholder="Start typing here..."
+        modules={modules}
+        formats={formats}
+        onReady={() => setEditorReady(true)}
+      />
+                                    {/* <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description || ''} 
                                     onChange={(e) => handleChange({ target: { name: 'long_description', value: e.target.value } })}
-                                    /> 
+                                    />  */}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="tags">Tags</label>
@@ -1634,12 +1689,13 @@ const ProductDetail = ({ categories }) => {
       <label htmlFor="option_str">Options:</label>
       <ReactQuill
         ref={quillRef}
+        name="option_str"
         value={formData.option_str || ''}
-        onChange={handleEditorChange}
+        onChange={(value) => handleEditorChange(value, 'option_str')}
         theme="snow"
         placeholder="Start typing here..."
         modules={modules}
-        formats={formats} // Add the formats to allow the desired HTML tags
+        formats={formats}
         onReady={() => setEditorReady(true)}
       />
     </div>
