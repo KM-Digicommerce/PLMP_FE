@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './SuperAdminHomePage.css';
 import SuperAdminSidebar from './sidebar/SuperAdminSidebar';
 import SuperAdminDashboard from './super-admin-dashboard/SuperAdminDashboard';
@@ -10,7 +10,6 @@ import Header from '../Header/Header';
 function SuperAdminHomePage() {
   const [activePage, setActivePage] = useState('SuperAdminDashboard');  // Default to SuperAdminDashboard
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Fetch categories (Optional if needed for clients or Dashboard)
   const fetchCategories = async () => {
