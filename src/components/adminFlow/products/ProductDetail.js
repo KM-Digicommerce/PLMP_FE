@@ -79,7 +79,7 @@ const ProductDetail = ({ categories }) => {
     const [editorReady, setEditorReady] = useState(false);
     const modules = {
         toolbar: [
-          [{ 'font': ['sans-serif', 'serif', 'monospace', 'Verdana'] }],
+          [{ 'font': ['sans-serif', 'serif', 'monospace',] }],
           [{ size: [] }],
           [{ 'header': '1' }, { 'header': '2' }],
           ['bold', 'italic', 'underline', 'strike'],
