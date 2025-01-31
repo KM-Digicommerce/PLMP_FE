@@ -76,6 +76,7 @@ const ProductDetail = ({ categories }) => {
       const categoryDropdown5Ref = useRef(null);
       const categoryDropdown6Ref = useRef(null);
     const quillRef = useRef();
+    const debounceRef = useRef();
     const [editorReady, setEditorReady] = useState(false);
     const modules = {
         toolbar: [
@@ -912,13 +913,28 @@ const ProductDetail = ({ categories }) => {
     //       },
     //     });
     //   };
+    //   const handleEditorChange = (value, name) => {
+    //     console.log('inside handleEditorChange', value);
+    //     setUnsavedChanges(true); // Mark unsaved changes
+    //     setFormData({
+    //       ...formData,
+    //       [name]: value, // Update the specific field
+    //     });
+    //   };
       const handleEditorChange = (value, name) => {
         console.log('inside handleEditorChange', value);
-        setUnsavedChanges(true); // Mark unsaved changes
-        setFormData({
-          ...formData,
-          [name]: value, // Update the specific field
-        });
+        // Clear the previous debounce timeout
+        clearTimeout(debounceRef.current);
+        // Set a new timeout to delay the state update
+        debounceRef.current = setTimeout(() => {
+          if (formData[name] !== value) {
+            setUnsavedChanges(true); // Mark unsaved changes
+            setFormData({
+              ...formData,
+              [name]: value, // Update the specific field
+            });
+          }
+        }, 300); // Adjust the debounce delay (in milliseconds) as needed
       };
     return (
         <div>
