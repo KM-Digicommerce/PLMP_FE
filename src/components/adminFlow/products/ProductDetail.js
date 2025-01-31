@@ -76,7 +76,8 @@ const ProductDetail = ({ categories }) => {
       const categoryDropdown5Ref = useRef(null);
       const categoryDropdown6Ref = useRef(null);
     const quillRef = useRef();
-    const debounceRef = useRef();
+    const [isInitialLoad, setIsInitialLoad] = useState(true); // State to track initial load
+    const debounceRef = useRef(null);
     const [editorReady, setEditorReady] = useState(false);
     const modules = {
         toolbar: [
@@ -924,19 +925,25 @@ const ProductDetail = ({ categories }) => {
     //     });
     //   };
     const handleEditorChange = (value, name) => {
-        console.log('inside handleEditorChange', value);
-        // Only perform state update if the value has changed.
         if (formData[name] !== value) {
-          // Clear any previous debounce timeout to avoid multiple triggers
-          clearTimeout(debounceRef.current);
-          // Set a new timeout for delayed state update
-          debounceRef.current = setTimeout(() => {
-            setUnsavedChanges(true); // Mark as unsaved
-            setFormData((prevState) => ({
-              ...prevState,
-              [name]: value, // Update the specific field with new value
-            }));
-          }, 300); // Delay for debouncing
+          console.log('inside handleEditorChange', value.length);
+      
+          // On the first change, mark it as not the initial load anymore
+          if (isInitialLoad) {
+            setIsInitialLoad(false); // Mark that we are no longer in the initial load state
+            setUnsavedChanges(false); // Initially, no changes, so false
+          } else {
+            // After initial load, check if data has changed
+            if (JSON.stringify(formData) !== JSON.stringify(originalData)) {
+              setUnsavedChanges(true); // Mark as unsaved if there are changes
+            }
+          }
+      
+          // Update the formData immediately after change
+          setFormData((prevState) => ({
+            ...prevState,
+            [name]: value, // Update the specific field with the new value
+          }));
         }
       };
     return (
