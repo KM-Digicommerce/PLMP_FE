@@ -75,7 +75,7 @@
 /* Charts section */
 .charts-section {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); /* Adjusted minimum width */
+  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); /* Adjusted minimum width */
   gap: 30px; /* Reduced gap */
 }
 
@@ -88,9 +88,9 @@
 
 .chart-card h3 {
   font-size: 1.5rem; /* Reduced font size */
-  font-weight: 500;
   margin-bottom: 15px; /* Reduced margin-bottom */
   color: #444;
+  font-weight: bold;
 }
 
 /* Loading spinner */
@@ -198,4 +198,41 @@ ul { list-style-type: none; padding: 0;
   height: 20px;
   border-radius: 50%;
   margin-right: 10px;
+}
+.doughnut-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Align the chart and legends at the top */
+}
+
+.chart-side {
+  flex: 1;
+  padding: 20px;
+}
+
+.values-side {
+  flex: 1 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-content: stretch;
+}
+
+.value-item {
+  margin-right: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.bold-heading {
+  font-weight: bold; /* Bold the Category wise count heading */
 }
