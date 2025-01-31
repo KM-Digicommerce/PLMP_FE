@@ -665,7 +665,9 @@ const ProductDetail = ({ categories }) => {
         if (unsavedChanges) {
           const shouldNavigate = window.confirm("You have some unsaved changes, do you want to continue?");
           if (!shouldNavigate)   return; // Don't change the view
-        else { setFormData(originalData);    fetchProductDetail(productId); setUnsavedChanges(false); }
+         setFormData(originalData);  
+         fetchProductDetail(productId); 
+         setUnsavedChanges(false); 
         }
         setView(targetView);
       };
@@ -921,20 +923,21 @@ const ProductDetail = ({ categories }) => {
     //       [name]: value, // Update the specific field
     //     });
     //   };
-      const handleEditorChange = (value, name) => {
+    const handleEditorChange = (value, name) => {
         console.log('inside handleEditorChange', value);
-        // Clear the previous debounce timeout
-        clearTimeout(debounceRef.current);
-        // Set a new timeout to delay the state update
-        debounceRef.current = setTimeout(() => {
-          if (formData[name] !== value) {
-            setUnsavedChanges(true); // Mark unsaved changes
-            setFormData({
-              ...formData,
-              [name]: value, // Update the specific field
-            });
-          }
-        }, 300); // Adjust the debounce delay (in milliseconds) as needed
+        // Only perform state update if the value has changed.
+        if (formData[name] !== value) {
+          // Clear any previous debounce timeout to avoid multiple triggers
+          clearTimeout(debounceRef.current);
+          // Set a new timeout for delayed state update
+          debounceRef.current = setTimeout(() => {
+            setUnsavedChanges(true); // Mark as unsaved
+            setFormData((prevState) => ({
+              ...prevState,
+              [name]: value, // Update the specific field with new value
+            }));
+          }, 300); // Delay for debouncing
+        }
       };
     return (
         <div>
