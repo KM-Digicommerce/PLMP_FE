@@ -9,8 +9,6 @@ import AddLevelFour from '../categoryform/AddLevelFour';
 import AddLevelFive from '../categoryform/AddLevelFive';
 import AddLevelSix from '../categoryform/AddLevelSix';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
-// import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-// import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -139,19 +137,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
     console.log(`Visibility toggled for product: ${product.product_name} to ${updatedVisibility ? 'Visible' : 'Invisible '}`);
     // Show confirmation dialog with SweetAlert
     Swal.fire({
-      title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,
-      cancelButtonText: "No, stay",
-      customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm',
-        cancelButton: 'swal-custom-cancel'
+      title: `Are you sure you want to ${updatedVisibility ? 'enable' : 'disable'} the selected product?`,  icon: "warning",  showCancelButton: true,  confirmButtonColor: "#d33",  cancelButtonColor: "#3085d6",  confirmButtonText: `Yes, ${updatedVisibility ? 'enable' : 'disable'} it`,  cancelButtonText: "No, stay",
+      customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
       }
     }).then((result) => {
       // If the user clicks "Yes", then call the API to update the product status
@@ -179,16 +166,8 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
                   console.error('Error fetching product list:', error);
                 }
               }
-              Swal.fire({
-                title: 'Success!',
-                text: `The product has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,
-                icon: 'success',
-                customClass: {
-                  container: 'swal-custom-container',
-                  popup: 'swal-custom-popup',
-                  title: 'swal-custom-title',
-                  confirmButton: 'swal-custom-confirm',
-                  cancelButton: 'swal-custom-cancel'
+              Swal.fire({  title: 'Success!',  text: `The product has been ${updatedVisibility ? 'enabled' : 'disabled'}.`,  icon: 'success',
+                customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
                 }
               });
             } else {
@@ -196,16 +175,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
             }
           })
           .catch((err) => {
-            Swal.fire({
-              title: 'Error',
-              text: 'There was an issue updating the product status.',
-              icon: 'error',
-              customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel'
+            Swal.fire({  title: 'Error',  text: 'There was an issue updating the product status.',  icon: 'error',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
               }
             });
           })
@@ -228,16 +198,7 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
               : item
           )
         );
-        Swal.fire({
-          title: 'Cancelled',
-          text: 'No changes were made.',
-          icon: 'info',
-          customClass: {
-            container: 'swal-custom-container',
-            popup: 'swal-custom-popup',
-            title: 'swal-custom-title',
-            confirmButton: 'swal-custom-confirm',
-            cancelButton: 'swal-custom-cancel'
+        Swal.fire({  title: 'Cancelled',  text: 'No changes were made.',  icon: 'info',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel'
           }
         });
       }
@@ -273,7 +234,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       } finally {  setLoading(false);
       }
     }
-   
   };
   useEffect(() => {
     fetchData(true); // By default, load newest products
@@ -297,8 +257,6 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   const [islevel4DropdownOpen, setIslevel4DropdownOpen] = useState(false);
   const [islevel5DropdownOpen, setIslevel5DropdownOpen] = useState(false);
   const [islevel6DropdownOpen, setIslevel6DropdownOpen] = useState(false);
-  // const [editingCategoryId, setEditingCategoryId] = useState(null);
-  // const [newCategoryName, setNewCategoryName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryLevel2, setSearchQueryLevel2] = useState('');
   const [searchQueryLevel3, setSearchQueryLevel3] = useState('');

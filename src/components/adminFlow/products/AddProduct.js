@@ -7,13 +7,35 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
+import ReactQuill from 'react-quill'; // Import ReactQuill
+import 'react-quill/dist/quill.snow.css'; 
 
-const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice,addImageRow,removeImageRow }) => {
+const Modal = ({ isOpen, onClose, onSave, productData,handleEditorChange, formats,modules, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice,addImageRow,removeImageRow }) => {
     const [variantOptions, setVariantOptions] = useState([]);
     const [brand, setBrand] = useState([]);
     const [breadcrumbs, setBreadcrumbs] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [openDropdownIndex, setOpenDropdownIndex] = useState(null); // Track which dropdown is open
+    const [editorReady, setEditorReady] = useState(false);
+    const quillRef = useRef();
+    useEffect(() => {
+        if (editorReady && quillRef.current) {
+          const quill = quillRef.current.getEditor();
+          quill.keyboard.addBinding({ key: 'Enter' }, function (range, context) {
+            const currentLine = quill.getText(range.index - 1, 1);
+            if (/[a-zA-Z]\.$/.test(currentLine)) {
+              const lines = quill.getText().split('\n');
+              const subPoints = lines.filter(line => /^[a-zA-Z]\.$/.test(line.trim()));
+              const nextLetter = String.fromCharCode(97 + subPoints.length);
+              quill.insertText(range.index, '\n' + nextLetter + '. ');
+              return false;
+            } else {
+              quill.insertText(range.index, '\n* ');
+              return false;
+            }
+          });
+        }
+      }, [editorReady]);
     useEffect(() => {
         if (isOpen && selectedCategoryId) {
             const fetchVariants = async () => {
@@ -308,9 +330,11 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Descriptions</h3>
                     <label htmlFor="long_description">Long Description <span className="required">*</span></label>
-                    <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} />
+                    {/* <textarea name="long_description" placeholder="Long Description" required value={productData.long_description} onChange={handleChange} /> */}
+                    <ReactQuill  ref={quillRef}  name="long_description"  value={productData.product_obj.long_description || ''}  onChange={(value) => handleEditorChange(value, 'long_description')}  theme="snow"  placeholder="Long description..."  modules={modules}  formats={formats}  onReady={() => setEditorReady(true)}  />
                     <label htmlFor="short_description">Short Description <span className="required">*</span></label>
-                    <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} />
+                    {/* <textarea name="short_description" placeholder="Short Description" required value={productData.short_description} onChange={handleChange} /> */}
+                    <ReactQuill  ref={quillRef}  name="short_description"  value={productData.product_obj.short_description || ''}  onChange={(value) => handleEditorChange(value, 'short_description')}  theme="snow"  placeholder="Short description..."  modules={modules}  formats={formats}  onReady={() => setEditorReady(true)}  />
                 </div>
                 <div className="form-section" style={{ display: 'none' }}>
                     <h3 style={{ margin: '6px' }}>Pricing</h3>
@@ -347,10 +371,14 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
 
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Features & Attributes</h3>
-                    <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} />
+                    {/* <textarea name="features" placeholder="Features" required value={productData.product_obj.features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'features')} onPaste={(e) => handlePaste(e, 'features')} /> */}
+                    {/* <label htmlFor="features">Features</label> */}
+                    <ReactQuill  ref={quillRef}  name="features"  value={productData.product_obj.features || ''}  onChange={(value) => handleEditorChange(value, 'features')}  theme="snow"  placeholder="Features..."  modules={modules}  formats={formats}  onReady={() => setEditorReady(true)}  />
                     <textarea name="attributes" placeholder="Attributes" value={productData.attributes} onChange={handleChange} />
                     <textarea name="tags" placeholder="Tags" required value={productData.product_obj.tags} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'tags')} onPaste={(e) => handlePaste(e, 'tags')} />
-                    <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} />
+                    {/* <textarea name="key_features" placeholder="Key Features" required value={productData.product_obj.key_features} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'key_features')} onPaste={(e) => handlePaste(e, 'key_features')} /> */}
+                    <label htmlFor="key_features">Key Features</label>
+        <ReactQuill  ref={quillRef}  name="key_features"  value={productData.product_obj.key_features || ''}  onChange={(value) => handleEditorChange(value, 'key_features')}  theme="snow"  placeholder="Key features..."  modules={modules}  formats={formats}  onReady={() => setEditorReady(true)}  />
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Raw Data</h3>
@@ -358,7 +386,9 @@ const Modal = ({ isOpen, onClose, onSave, productData, handleChange,handlePaste,
                 </div>
                 <div className="form-section">
                     <h3 style={{ margin: '6px' }}>Options</h3>
-                    <textarea name="option_str" placeholder="Options" required value={productData.product_obj.option_str} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'option_str')} onPaste={(e) => handlePaste(e, 'option_str')} />
+                    {/* <textarea name="option_str" placeholder="Options" required value={productData.product_obj.option_str} onChange={handleChange} onKeyDown={(e) => handleTextareaChange(e, 'option_str')} onPaste={(e) => handlePaste(e, 'option_str')} /> */}
+                    <ReactQuill  ref={quillRef}  name="option_str"  value={productData.product_obj.option_str || ''}  onChange={(value) => handleEditorChange(value, 'option_str')}  theme="snow"  placeholder="Options..."  modules={modules}  formats={formats}  onReady={() => setEditorReady(true)}
+        />
                 </div>
                 <div className="form-section">
       <h3 style={{ margin: '6px' }}>Images  <button type="button" style={{float:'right',width:'16%', padding:'5px', margin:'0px 12px 0px 0px'}} onClick={addImageRow}>
@@ -389,6 +419,43 @@ const AddProduct = (categories) => {
     const [clearBtn, setShowclearBtn] = useState(false);
     const [RetailPrice, setShowRetailPrice] = useState(1);
     const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const modules = {
+    toolbar: [
+      [{ 'font': ['sans-serif', 'serif', 'monospace'] }],
+      [{ size: [] }],
+      [{ 'header': '1' }, { 'header': '2' }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ color: [] }, { background: [] }],
+      [{ script: 'sub' }, { script: 'super' }],
+      ['blockquote', 'code-block'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      [{ align: [] }],
+      ['link', 'image', 'video', 'formula'],
+      ['clean']
+    ]
+  };
+  const formats = [
+    'font', 'size', 'header', 'bold', 'italic', 'underline', 'strike', 'color', 'background', 'script',
+    'blockquote', 'code-block', 'list', 'bullet', 'indent', 'align', 'link', 'image', 'video', 'formula'
+  ];
+  const handleEditorChange = (value, name) => {
+    if (productData.product_obj[name] !== value) {
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
+      
+      setProductData((prevState) => ({
+        ...prevState,
+        product_obj: {
+          ...prevState.product_obj,  // Preserve existing values in product_obj
+          [name]: value  // Update the specific field in product_obj
+        }
+      }));
+    }
+  };
+  
     useEffect(() => {
         const fetchCategoryData = async () => {
             const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
@@ -659,8 +726,12 @@ const AddProduct = (categories) => {
         });
       };
     
-    const handleSave = async () => {        
-        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.brand_id || !productData.product_obj.product_name || !productData.product_obj.short_description ) {            
+    const handleSave = async () => {    
+        console.log('productData:', productData);
+            console.log( productData.product_obj.short_description,'short_description 1' );
+            console.log( productData.short_description,'short_description 1' );
+
+        if (!productData.product_obj.model || !productData.product_obj.mpn || !productData.product_obj.upc_ean || !productData.product_obj.brand_id || !productData.product_obj.product_name || !productData.product_obj.short_description || !productData.product_obj.long_description ) {            
             alert("Please fill in all required fields.");
             return;
         }
@@ -1215,6 +1286,9 @@ const AddProduct = (categories) => {
                         onClose={() => {  setIsModalOpen(false);   handleLoadNewmodel();  }}
                         onSave={handleSave}
                         productData={productData}
+                        handleEditorChange={handleEditorChange}
+                        formats={formats}
+                        modules={modules}
                         handleChange={handleChange}
                         handlePaste={handlePaste}
                         handleTextareaChange={handleTextareaChange}
