@@ -77,7 +77,6 @@ const ProductDetail = ({ categories }) => {
       const categoryDropdown6Ref = useRef(null);
     const quillRef = useRef();
     const [isInitialLoad, setIsInitialLoad] = useState(true); // State to track initial load
-    const debounceRef = useRef(null);
     const [editorReady, setEditorReady] = useState(false);
     const modules = {
         toolbar: [
@@ -117,7 +116,6 @@ const ProductDetail = ({ categories }) => {
           });
         }
       }, [editorReady]);
-    
     
       const handleClickOutside = (event) => {
         if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) { setIsCategoryDropdownOpen(false); }
@@ -171,9 +169,6 @@ const ProductDetail = ({ categories }) => {
             setUnsavedChanges(true);
         }
     };
-    // useEffect(() => {
-    //     handleCategorySelectForVariants();
-    // }, []);
     const handleCategorySelect = async (id) => {
         setSelectedCategoryId(id);
         setselectedLevel2Id('');
@@ -441,7 +436,6 @@ const ProductDetail = ({ categories }) => {
     const index = parseInt(name.split('_')[1]); // Extract the index from the name (image_0, image_1, etc.)
     const updatedImages = [...formData.image];
     updatedImages[index] = value; // Update the specific image URL at the given index
-    // Update formData with the new image array
     setFormData({
       ...formData,
         image: updatedImages,
@@ -499,7 +493,6 @@ const ProductDetail = ({ categories }) => {
             }
         }
     };
-
     const handleBackClick = () => {
         let categoryId = localStorage.getItem("categoryId");
         let category_level = localStorage.getItem("levelCategory");
@@ -540,7 +533,6 @@ const ProductDetail = ({ categories }) => {
     };
     const handleVariantDetailChange = (e) => {
         const { name, value } = e.target;
-
         setSelectedVariants((prevVariants) => {
             const updatedVariants = { ...prevVariants };
             updatedVariants[name] = value;
@@ -560,7 +552,6 @@ const ProductDetail = ({ categories }) => {
               ? { ...option, type_value_id: selectedValue }
               : option
           ) || [];
-      
           return {
             ...prevSelectedVariants,
             options: updatedOptions,
@@ -595,7 +586,6 @@ const ProductDetail = ({ categories }) => {
                         total_price: RetailPrice,
                         quantity: selectedVariants.quantity,
                         options: options,
-    
                     },
                 });
                 const resd = res.data.data.status;
@@ -625,7 +615,6 @@ const ProductDetail = ({ categories }) => {
                 }
             });
         }
-      
     };
     const handleAddVariantClick = async () => {
         setSelectedVariants({
@@ -907,27 +896,8 @@ const ProductDetail = ({ categories }) => {
             handleChange({ target: { name, value: updatedValue } });
         }
     };
-    
-    //   const handleEditorChange = (value) => {
-    //     handleChange({
-    //       target: {
-    //         name: 'option_str',
-    //         value,
-    //       },
-    //     });
-    //   };
-    //   const handleEditorChange = (value, name) => {
-    //     console.log('inside handleEditorChange', value);
-    //     setUnsavedChanges(true); // Mark unsaved changes
-    //     setFormData({
-    //       ...formData,
-    //       [name]: value, // Update the specific field
-    //     });
-    //   };
     const handleEditorChange = (value, name) => {
         if (formData[name] !== value) {
-          console.log('inside handleEditorChange', value.length);
-      
           // On the first change, mark it as not the initial load anymore
           if (isInitialLoad) {
             setIsInitialLoad(false); // Mark that we are no longer in the initial load state
@@ -938,7 +908,6 @@ const ProductDetail = ({ categories }) => {
               setUnsavedChanges(true); // Mark as unsaved if there are changes
             }
           }
-      
           // Update the formData immediately after change
           setFormData((prevState) => ({
             ...prevState,
@@ -1149,7 +1118,6 @@ const ProductDetail = ({ categories }) => {
                                             )}
                                         </div>
                                     </div>
-
                                     {/* Level 2 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown2Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="sectionSelect">Level 2:</label>
@@ -1180,7 +1148,6 @@ const ProductDetail = ({ categories }) => {
                                             )}
                                         </div>
                                     </div>
-
                                     {/* Level 3 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown3Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }} >
                                         <label htmlFor="productTypeSelect">Level 3:</label>
@@ -1211,7 +1178,6 @@ const ProductDetail = ({ categories }) => {
                                             )}
                                         </div>
                                     </div>
-
                                     {/* Level 4 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown4Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level4Select">Level 4:</label>
@@ -1242,7 +1208,6 @@ const ProductDetail = ({ categories }) => {
                                             )}
                                         </div>
                                     </div>
-
                                     {/* Level 5 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown5Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level5Select">Level 5:</label>
@@ -1273,7 +1238,6 @@ const ProductDetail = ({ categories }) => {
                                             )}
                                         </div>
                                     </div>
-
                                     {/* Level 6 Dropdown */}
                                     <div className='DropdownColumn' ref={categoryDropdown6Ref} style={{ cursor: (view === 'taxonomy' && UserRole !== 'admin') ? 'not-allowed' : 'pointer' }}>
                                         <label htmlFor="level6Select">Level 6:</label>
@@ -1307,7 +1271,6 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                             </div>
                         )}
-
                         {view === 'variants' && (
                             <div className="variant-section">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginBottom: '0px', borderBottom:'2px solid #007bff' }}>
@@ -1404,9 +1367,7 @@ const ProductDetail = ({ categories }) => {
                                                      {hoveredVariantIdForEdit === variant.id && (
                                                      <span
                     style={{  position: 'absolute',  top: '-25px',  left: '50%',  transform: 'translateX(-50%)',  backgroundColor: 'black',  color: 'white',  padding: '5px 10px',  borderRadius: '5px',  fontSize: '12px',  whiteSpace: 'nowrap',  zIndex: '1000',
-                    }}  >
-                    Edit Variant
-                  </span> )}
+                    }}  >  Edit Variant   </span> )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1517,7 +1478,6 @@ const ProductDetail = ({ categories }) => {
               <FaTrashAlt />
             </button>
           </label>
-
           <select id={`variant-select-${variant.type_name}`} name={variant.type_value} value={''} // Preselect the option based on selectedVariants className="dropdown"
             style={{  width: '100%',  margin: '6px 0px 6px 0px',  padding: '10px 0px 10px 0px',  border: '1px solid #ccc',  borderRadius: '4px',  color: 'rgba(0, 0, 0, 0.6)',cursor:'pointer'
             }}   >
@@ -1576,17 +1536,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
                                 <div className="form-group">
                                     <label htmlFor="key_features">Key Features</label>
-                                    <ReactQuill
-        ref={quillRef}
-        name="key_features"
-        value={formData.key_features || ''}
-        onChange={(value) => handleEditorChange(value, 'key_features')}
-        theme="snow"
-        placeholder="Start typing here..."
-        modules={modules}
-        formats={formats}
-        onReady={() => setEditorReady(true)}
-      />
+                                    <ReactQuill   ref={quillRef}   name="key_features"   value={formData.key_features || ''}   onChange={(value) => handleEditorChange(value, 'key_features')}   theme="snow"   placeholder="Start typing here..."   modules={modules}   formats={formats}   onReady={() => setEditorReady(true)}   />
                                     {/* <textarea
                                         id="key_features"
                                         name="key_features"
@@ -1602,62 +1552,19 @@ const ProductDetail = ({ categories }) => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="features">Features</label>
-                                    <ReactQuill
-        ref={quillRef}
-        name="features"
-        value={formData.features || ''}
-        onChange={(value) => handleEditorChange(value, 'features')}
-        theme="snow"
-        placeholder="Start typing here..."
-        modules={modules}
-        formats={formats}
-        onReady={() => setEditorReady(true)}
-      />
-                                    {/* <textarea
-                                        id="features"
-                                        name="features"
-                                        className="input_pdps"
-                                        value={formData.features ? formatFeature(formData.features) : ''}
-                                        onKeyDown={(e) => handleTextareaChange(e, 'features')}
-                                        onChange={(e) => handleChange({ target: { name: 'features', value: e.target.value } })}
-                                        onPaste={(e) => handlePaste(e, 'features')} // Add paste functionality
-                                    /> */}
+                                    <ReactQuill   ref={quillRef}   name="features"   value={formData.features || ''}   onChange={(value) => handleEditorChange(value, 'features')}   theme="snow"   placeholder="Start typing here..."   modules={modules}   formats={formats}  onReady={() => setEditorReady(true)}  />
+                                    {/* <textarea  id="features"  name="features"  className="input_pdps"  value={formData.features ? formatFeature(formData.features) : ''}   onKeyDown={(e) => handleTextareaChange(e, 'features')}   onChange={(e) => handleChange({ target: { name: 'features', value: e.target.value } })}  onPaste={(e) => handlePaste(e, 'features')} // Add paste functionality   /> */}
                                 </div>
 
                                 <div className="form-group">
                                     <label htmlFor="short_description">Short Description</label>
-                                    <ReactQuill
-        ref={quillRef}
-        name="short_description"
-        value={formData.short_description || ''}
-        onChange={(value) => handleEditorChange(value, 'short_description')}
-        theme="snow"
-        placeholder="Start typing here..."
-        modules={modules}
-        formats={formats}
-        onReady={() => setEditorReady(true)}
-      />
-                                    {/* <textarea
-                                        id="short_description"
-                                        name="short_description"
-                                        className="input_pdps"
-                                        value={formData.short_description || ''}
-                                        onChange={(e) => handleChange({ target: { name: 'short_description', value: e.target.value } })}
-                                             /> */}
+                                    <ReactQuill   ref={quillRef}   name="short_description"   value={formData.short_description || ''}   onChange={(value) => handleEditorChange(value, 'short_description')}   theme="snow"   placeholder="Start typing here..."   modules={modules}   formats={formats}   onReady={() => setEditorReady(true)}  />
+                                    {/* <textarea id="short_description" name="short_description" className="input_pdps" value={formData.short_description || ''}
+                                        onChange={(e) => handleChange({ target: { name: 'short_description', value: e.target.value } })}        /> */}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="long_description">Long Description</label>
-                                    <ReactQuill
-        ref={quillRef}
-        name="long_description"
-        value={formData.long_description || ''}
-        onChange={(value) => handleEditorChange(value, 'long_description')}
-        theme="snow"
-        placeholder="Start typing here..."
-        modules={modules}
-        formats={formats}
-        onReady={() => setEditorReady(true)}
-      />
+                                    <ReactQuill   ref={quillRef}   name="long_description"   value={formData.long_description || ''}   onChange={(value) => handleEditorChange(value, 'long_description')}   theme="snow"   placeholder="Start typing here..."   modules={modules}   formats={formats}   onReady={() => setEditorReady(true)}  />
                                     {/* <textarea  id="long_description"  name="long_description"  className="input_pdps"  value={formData.long_description || ''} 
                                     onChange={(e) => handleChange({ target: { name: 'long_description', value: e.target.value } })}
                                     />  */}
@@ -1713,17 +1620,7 @@ const ProductDetail = ({ categories }) => {
                                     </div>
                                <div className="form-group">
       <label htmlFor="option_str">Options:</label>
-      <ReactQuill
-        ref={quillRef}
-        name="option_str"
-        value={formData.option_str || ''}
-        onChange={(value) => handleEditorChange(value, 'option_str')}
-        theme="snow"
-        placeholder="Start typing here..."
-        modules={modules}
-        formats={formats}
-        onReady={() => setEditorReady(true)}
-      />
+      <ReactQuill   ref={quillRef}   name="option_str"   value={formData.option_str || ''}   onChange={(value) => handleEditorChange(value, 'option_str')}   theme="snow"   placeholder="Start typing here..."   modules={modules}   formats={formats}   onReady={() => setEditorReady(true)}  />
     </div>
                             </div>
                         )}
